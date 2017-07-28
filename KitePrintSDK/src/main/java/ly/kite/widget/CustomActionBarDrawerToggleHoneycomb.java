@@ -42,7 +42,7 @@ class CustomActionBarDrawerToggleHoneycomb {
     private static final String TAG = "CustomActionBarDrawerTH";
 
     private static final int[] THEME_ATTRS = new int[]{
-            R.attr.homeAsUpIndicator
+        R.attr.homeAsUpIndicator
     };
 
     public static SetIndicatorInfo setActionBarUpIndicator(SetIndicatorInfo info, Activity activity,
@@ -51,16 +51,16 @@ class CustomActionBarDrawerToggleHoneycomb {
         if (true || info == null) {
             info = new SetIndicatorInfo(activity);
         }
-        if (info.setHomeAsUpIndicator != null) {
+        if (info.mSetHomeAsUpIndicator != null) {
             try {
                 final ActionBar actionBar = activity.getActionBar();
-                info.setHomeAsUpIndicator.invoke(actionBar, drawable);
-                info.setHomeActionContentDescription.invoke(actionBar, contentDescRes);
+                info.mSetHomeAsUpIndicator.invoke(actionBar, drawable);
+                info.mSetHomeActionContentDescription.invoke(actionBar, contentDescRes);
             } catch (Exception e) {
                 Log.w(TAG, "Couldn't set home-as-up indicator via JB-MR2 API", e);
             }
-        } else if (info.upIndicatorView != null) {
-            info.upIndicatorView.setImageDrawable(drawable);
+        } else if (info.mUpIndicatorView != null) {
+            info.mUpIndicatorView.setImageDrawable(drawable);
         } else {
             Log.w(TAG, "Couldn't set home-as-up indicator");
         }
@@ -73,13 +73,13 @@ class CustomActionBarDrawerToggleHoneycomb {
         if (info == null) {
             info = new SetIndicatorInfo(activity);
         }
-        if (info.setHomeAsUpIndicator != null) {
+        if (info.mSetHomeAsUpIndicator != null) {
             try {
                 final ActionBar actionBar = activity.getActionBar();
-                info.setHomeActionContentDescription.invoke(actionBar, contentDescRes);
+                info.mSetHomeActionContentDescription.invoke(actionBar, contentDescRes);
                 if (Build.VERSION.SDK_INT <= 19) {
-// For API 19 and earlier, we need to manually force the
-// action bar to generate a new content description.
+                    // For API 19 and earlier, we need to manually force the
+                    // action bar to generate a new content description.
                     actionBar.setSubtitle(actionBar.getSubtitle());
                 }
             } catch (Exception e) {
@@ -98,34 +98,34 @@ class CustomActionBarDrawerToggleHoneycomb {
     }
 
     static class SetIndicatorInfo {
-        public Method setHomeAsUpIndicator;
-        public Method setHomeActionContentDescription;
-        public ImageView upIndicatorView;
+        public Method mSetHomeAsUpIndicator;
+        public Method mSetHomeActionContentDescription;
+        public ImageView mUpIndicatorView;
 
         SetIndicatorInfo(Activity activity) {
 
             try {
-                setHomeAsUpIndicator = ActionBar.class.getDeclaredMethod("setHomeAsUpIndicator",
+                mSetHomeAsUpIndicator = ActionBar.class.getDeclaredMethod("setHomeAsUpIndicator",
                         Drawable.class);
-                setHomeActionContentDescription = ActionBar.class.getDeclaredMethod(
+                mSetHomeActionContentDescription = ActionBar.class.getDeclaredMethod(
                         "setHomeActionContentDescription", Integer.TYPE);
 
-// If we got the method we won't need the stuff below.
+                // If we got the method we won't need the stuff below.
                 return;
             } catch (NoSuchMethodException e) {
-// Oh well. We'll use the other mechanism below instead.
+                //Ignore. Oh well. We'll use the other mechanism below instead.
             }
 
             final View home = activity.findViewById(android.R.id.home);
             if (home == null) {
-// Action bar doesn't have a known configuration, an OEM messed with things.
+                // Action bar doesn't have a known configuration, an OEM messed with things.
                 return;
             }
 
             final ViewGroup parent = (ViewGroup) home.getParent();
             final int childCount = parent.getChildCount();
             if (childCount != 2) {
-// No idea which one will be the right one, an OEM messed with things.
+                // No idea which one will be the right one, an OEM messed with things.
                 return;
             }
 
@@ -134,8 +134,8 @@ class CustomActionBarDrawerToggleHoneycomb {
             final View up = first.getId() == android.R.id.home ? second : first;
 
             if (up instanceof ImageView) {
-// Jackpot! (Probably...)
-                upIndicatorView = (ImageView) up;
+                // Jackpot! (Probably...)
+                mUpIndicatorView = (ImageView) up;
             }
         }
     }
