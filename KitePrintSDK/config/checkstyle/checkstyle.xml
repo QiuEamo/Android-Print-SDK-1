@@ -48,11 +48,6 @@
         <!-- Check that switch statements have a "default" clause -->
         <module name="MissingSwitchDefault"/>
 
-        <!-- Check that the default is after all the cases in a switch statement -->
-        <module name="DefaultComesLast">
-            <property name="skipIfLastAndSharedWithCase" value="false"/>
-        </module>
-
         <!-- Check that class/interface declarations are in the right order:
         1) Class (static) variables. First the public class variables, then protected, then package level (no access modifier), and then private.
         2) Instance variables. First the public class variables, then protected, then package level (no access modifier), and then private.
@@ -123,11 +118,6 @@
             <property name="caseIndent" value="4"/>
             <property name="throwsIndent" value="4"/>
             <property name="arrayInitIndent" value="4"/>
-        </module>
-
-        <!-- Check for "TODO" comments -->
-        <module name="TodoComment">
-            <property name="format" value="(TODO)|(todo)|(Todo)|(FIXME)"/>
         </module>
 
         <!--#########################################################
