@@ -36,7 +36,6 @@
 
 package ly.kite.journey.creation.imagesource;
 
-
 ///// Import(s) /////
 
 import android.os.Bundle;
@@ -51,13 +50,11 @@ import java.util.List;
 
 import ly.kite.KiteSDK;
 import ly.kite.R;
+import ly.kite.catalogue.Product;
 import ly.kite.journey.AImageSource;
 import ly.kite.journey.ImageSourceAdaptor;
 import ly.kite.journey.creation.AProductCreationFragment;
-import ly.kite.ordering.ImageSpec;
 import ly.kite.util.Asset;
-import ly.kite.catalogue.Product;
-
 
 ///// Class Declaration /////
 
@@ -67,161 +64,141 @@ import ly.kite.catalogue.Product;
  * case design using an image.
  *
  *****************************************************/
-public class ImageSourceFragment extends AProductCreationFragment implements AdapterView.OnItemClickListener, AImageSource.IAssetConsumer
-  {
-  ////////// Static Constant(s) //////////
+public class ImageSourceFragment extends AProductCreationFragment implements AdapterView.OnItemClickListener, AImageSource.IAssetConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String      TAG  = "ImageSourceFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "ImageSourceFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private GridView mImageSourceGridView;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private GridView  mImageSourceGridView;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates a new instance of this fragment.
+     *
+     *****************************************************/
+    public static ImageSourceFragment newInstance(Product product) {
 
-  ////////// Static Initialiser(s) //////////
+        ImageSourceFragment fragment = new ImageSourceFragment();
 
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
-  ////////// Static Method(s) //////////
+        fragment.setArguments(arguments);
 
-  /*****************************************************
-   *
-   * Creates a new instance of this fragment.
-   *
-   *****************************************************/
-  public static ImageSourceFragment newInstance( Product product )
-    {
-    ImageSourceFragment fragment = new ImageSourceFragment();
-
-    Bundle arguments = new Bundle();
-    arguments.putParcelable( BUNDLE_KEY_PRODUCT, product );
-
-    fragment.setArguments( arguments );
-
-    return ( fragment );
+        return fragment;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// AEditImageFragment Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns the content view for this fragment
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-  ////////// AEditImageFragment Method(s) //////////
+        View view = layoutInflator.inflate(R.layout.screen_image_source, container, false);
 
-  /*****************************************************
-   *
-   * Returns the content view for this fragment
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.screen_image_source, container, false );
+        mImageSourceGridView = (GridView) view.findViewById(R.id.image_source_grid_view);
 
-    mImageSourceGridView = (GridView)view.findViewById( R.id.image_source_grid_view );
+        // Get the available image sources
+        ArrayList<AImageSource> imageSourceList = KiteSDK.getInstance(mKiteActivity).getAvailableImageSources();
 
+        // Set up the image source grid
 
-    // Get the available image sources
-    ArrayList<AImageSource> imageSourceList = KiteSDK.getInstance( mKiteActivity ).getAvailableImageSources();
+        ImageSourceAdaptor imageSourceAdaptor = new ImageSourceAdaptor(mKiteActivity, AImageSource.LayoutType.VERTICAL, imageSourceList);
 
+        mImageSourceGridView.setAdapter(imageSourceAdaptor);
 
-    // Set up the image source grid
+        mImageSourceGridView.setOnItemClickListener(this);
 
-    ImageSourceAdaptor imageSourceAdaptor = new ImageSourceAdaptor( mKiteActivity, AImageSource.LayoutType.VERTICAL, imageSourceList );
-
-    mImageSourceGridView.setAdapter( imageSourceAdaptor );
-
-    mImageSourceGridView.setOnItemClickListener( this );
-
-
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is top-most.
+     *
+     *****************************************************/
+    @Override
+    public void onTop() {
 
-  /*****************************************************
-   *
-   * Called when the fragment is top-most.
-   *
-   *****************************************************/
-  @Override
-  public void onTop()
-    {
-    super.onTop();
+        super.onTop();
 
-    mKiteActivity.setTitle( R.string.title_image_source );
+        mKiteActivity.setTitle(R.string.title_image_source);
     }
 
+    ////////// AdapterView.OnItemClickListener Method(s) //////////
 
-  ////////// AdapterView.OnItemClickListener Method(s) //////////
+    /*****************************************************
+     *
+     * Called when an item is clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-  /*****************************************************
-   *
-   * Called when an item is clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onItemClick( AdapterView<?> parent, View view, int position, long id )
-    {
-    if ( parent == mImageSourceGridView )
-      {
-      AImageSource imageSource = (AImageSource)mImageSourceGridView.getItemAtPosition( position );
+        if (parent == mImageSourceGridView) {
+            AImageSource imageSource = (AImageSource) mImageSourceGridView.getItemAtPosition(position);
 
-      imageSource.onPick( this, mProduct.getUserJourneyType().usesSingleImage() );
-      }
-    }
-
-
-  ////////// AImageSource.IAssetConsumer Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called with new assets.
-   *
-   *****************************************************/
-  @Override
-  public void isacOnAssets( List<Asset> assetList )
-    {
-    if ( assetList != null && assetList.size() > 0 )
-      {
-      // Add the assets to the assets / quantity list held by the activity. If the list has
-      // empty slots - insert the assets where there is space, and extend the list if
-      // necessary.
-      super.onAddAssets( assetList, 0, true );
-
-      // If we got at least one asset - call back to the activity. Otherwise we stay on this screen
-      // unless the user pressed back.
-      if ( mKiteActivity instanceof ICallback )
-        {
-        ( (ICallback)mKiteActivity ).isOnAssetsAdded();
+            imageSource.onPick(this, mProduct.getUserJourneyType().usesSingleImage());
         }
-      }
     }
 
+    ////////// AImageSource.IAssetConsumer Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Called with new assets.
+     *
+     *****************************************************/
+    @Override
+    public void isacOnAssets(List<Asset> assetList) {
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+        if (assetList != null && assetList.size() > 0) {
+            // Add the assets to the assets / quantity list held by the activity. If the list has
+            // empty slots - insert the assets where there is space, and extend the list if
+            // necessary.
+            super.onAddAssets(assetList, 0, true);
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * The callback interface.
-   *
-   *****************************************************/
-  public interface ICallback
-    {
-    public void isOnAssetsAdded();
+            // If we got at least one asset - call back to the activity. Otherwise we stay on this screen
+            // unless the user pressed back.
+            if (mKiteActivity instanceof ICallback) {
+                ((ICallback) mKiteActivity).isOnAssetsAdded();
+            }
+        }
     }
 
+    ////////// Method(s) //////////
 
-  }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * The callback interface.
+     *
+     *****************************************************/
+    public interface ICallback {
+        public void isOnAssetsAdded();
+    }
+
+}
 

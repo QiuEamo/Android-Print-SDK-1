@@ -36,7 +36,6 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -50,7 +49,6 @@ import android.widget.TextView;
 
 import ly.kite.R;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -59,153 +57,134 @@ import ly.kite.R;
  * of time before the customer session is ended.
  *
  *****************************************************/
-public class LogOutDialogFragment extends DialogFragment implements View.OnClickListener
-  {
-  ////////// Static Constant(s) //////////
+public class LogOutDialogFragment extends DialogFragment implements View.OnClickListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String  TAG = "LogOutDialogFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "LogOutDialogFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private TextView mTimeRemainingTextView;
+    private Button mCancelButton;
+    private Button mLogOutButton;
 
-  ////////// Member Variable(s) //////////
+    private long mTimeRemainingMillis;
 
-  private TextView  mTimeRemainingTextView;
-  private Button    mCancelButton;
-  private Button    mLogOutButton;
+    ////////// Static Initialiser(s) //////////
 
-  private long      mTimeRemainingMillis;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// DialogFragment Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the fragment is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  ////////// Static Method(s) //////////
+        super.onCreate(savedInstanceState);
 
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// DialogFragment Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    setCancelable( false );
+        setCancelable(false);
     }
 
+    /*****************************************************
+     *
+     * Returns the view.
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup parent, Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Returns the view.
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup parent, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.dialog_inactivity, parent, false );
+        View view = layoutInflator.inflate(R.layout.dialog_inactivity, parent, false);
 
-    mTimeRemainingTextView = (TextView)view.findViewById( R.id.time_remaining_text_view );
-    mCancelButton          = (Button)view.findViewById( R.id.cancel_button );
-    mLogOutButton          = (Button)view.findViewById( R.id.log_out_button );
+        mTimeRemainingTextView = (TextView) view.findViewById(R.id.time_remaining_text_view);
+        mCancelButton = (Button) view.findViewById(R.id.cancel_button);
+        mLogOutButton = (Button) view.findViewById(R.id.log_out_button);
 
-    if ( mTimeRemainingMillis > 0 )
-      {
-      displayTimeRemaining();
-      }
-
-    mCancelButton.setOnClickListener( this );
-    mLogOutButton.setOnClickListener( this );
-
-    return ( view );
-    }
-
-
-  ////////// View.OnClickListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when a view is clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onClick( View view )
-    {
-    Activity activity = getActivity();
-
-    if ( activity instanceof ICallback )
-      {
-      ICallback callback = (ICallback)activity;
-
-      if ( view == mCancelButton )
-        {
-        ///// Cancel /////
-
-        callback.onCancelLogOut();
+        if (mTimeRemainingMillis > 0) {
+            displayTimeRemaining();
         }
-      else if ( view == mLogOutButton )
-        {
-        ///// Log out /////
 
-        callback.onLogOut();
+        mCancelButton.setOnClickListener(this);
+        mLogOutButton.setOnClickListener(this);
+
+        return view;
+    }
+
+    ////////// View.OnClickListener Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called when a view is clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onClick(View view) {
+
+        Activity activity = getActivity();
+
+        if (activity instanceof ICallback) {
+            ICallback callback = (ICallback) activity;
+
+            if (view == mCancelButton) {
+                ///// Cancel /////
+
+                callback.onCancelLogOut();
+            } else if (view == mLogOutButton) {
+                ///// Log out /////
+
+                callback.onLogOut();
+            }
         }
-      }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the time remaining.
+     *
+     *****************************************************/
+    public void setTimeRemaining(long timeRemainingMillis) {
 
-  /*****************************************************
-   *
-   * Sets the time remaining.
-   *
-   *****************************************************/
-  public void setTimeRemaining( long timeRemainingMillis )
-    {
-    mTimeRemainingMillis = timeRemainingMillis;
+        mTimeRemainingMillis = timeRemainingMillis;
 
-    displayTimeRemaining();
+        displayTimeRemaining();
     }
 
+    /*****************************************************
+     *
+     * Displays the time remaining.
+     *
+     *****************************************************/
+    private void displayTimeRemaining() {
 
-  /*****************************************************
-   *
-   * Displays the time remaining.
-   *
-   *****************************************************/
-  private void displayTimeRemaining()
-    {
-    Activity activity = getActivity();
+        Activity activity = getActivity();
 
-    if ( activity != null )
-      {
-      mTimeRemainingTextView.setText( activity.getString( R.string.time_remaining_format_string, mTimeRemainingMillis / 1000 ) );
-      }
+        if (activity != null) {
+            mTimeRemainingTextView.setText(activity.getString(R.string.time_remaining_format_string, mTimeRemainingMillis / 1000));
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * A callback.
+     *
+     *****************************************************/
+    public interface ICallback {
+        public void onCancelLogOut();
 
-  /*****************************************************
-   *
-   * A callback.
-   *
-   *****************************************************/
-  public interface ICallback
-    {
-    public void onCancelLogOut();
-    public void onLogOut();
+        public void onLogOut();
     }
 
-  }
+}
 

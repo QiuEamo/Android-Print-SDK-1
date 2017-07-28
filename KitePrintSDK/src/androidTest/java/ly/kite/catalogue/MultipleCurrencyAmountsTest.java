@@ -36,10 +36,7 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
-import android.os.Parcel;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -48,7 +45,6 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Locale;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -56,172 +52,158 @@ import java.util.Locale;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class MultipleCurrencyAmountsTest extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class MultipleCurrencyAmountsTest extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "MultipleCurrencyAmountsTest";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MultipleCurrencyAmountsTest";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Fallback tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testFallback1() {
 
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-  ////////// Constructor(s) //////////
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
 
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback("GBP");
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Fallback tests.
-   *
-   *****************************************************/
-
-  public void testFallback1()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
-
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( "GBP" );
-
-    Assert.assertEquals( "ILS", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 4.99, singleAmounts.getAmountAsDouble() );
+        Assert.assertEquals("ILS", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(4.99, singleAmounts.getAmountAsDouble());
     }
 
-  public void testFallback2()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+    public void testFallback2() {
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 3.00 ) ) );
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( Locale.UK );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(3.00)));
 
-    Assert.assertEquals( "ILS", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 3.00, singleAmounts.getAmountAsDouble() );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(Locale.UK);
+
+        Assert.assertEquals("ILS", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(3.00, singleAmounts.getAmountAsDouble());
     }
 
-  public void testFallback3()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+    public void testFallback3() {
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( Locale.UK );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(Locale.UK);
+
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback4() {
 
-  public void testFallback4()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( (Currency)null );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback((Currency) null);
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback5() {
 
-  public void testFallback5()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( (Locale)null );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback((Locale) null);
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback6() {
 
-  public void testFallback6()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( new Locale( "en" ) );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(new Locale("en"));
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback7() {
 
-  public void testFallback7()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( new Locale( "fa" ) );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(new Locale("fa"));
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback8() {
 
-  public void testFallback8()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( new Locale( "en", "en" ) );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(new Locale("en", "en"));
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    public void testFallback9() {
 
-  public void testFallback9()
-    {
-    MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
+        MultipleCurrencyAmounts multipleAmounts = new MultipleCurrencyAmounts();
 
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "ILS" ), BigDecimal.valueOf( 4.99 ) ) );
-    multipleAmounts.add( new SingleCurrencyAmounts( Currency.getInstance( "GBP" ), BigDecimal.valueOf( 1.49 ), BigDecimal.valueOf( 2.99 ) ) );
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("ILS"), BigDecimal.valueOf(4.99)));
+        multipleAmounts.add(new SingleCurrencyAmounts(Currency.getInstance("GBP"), BigDecimal.valueOf(1.49), BigDecimal.valueOf(2.99)));
 
-    SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback( new Locale( "fa", "FA" ) );
+        SingleCurrencyAmounts singleAmounts = multipleAmounts.getAmountsWithFallback(new Locale("fa", "FA"));
 
-    Assert.assertEquals( "GBP", singleAmounts.getCurrencyCode() );
-    Assert.assertEquals( 1.49, singleAmounts.getAmountAsDouble() );
-    Assert.assertEquals( 2.99, singleAmounts.getOriginalAmountAsDouble() );
+        Assert.assertEquals("GBP", singleAmounts.getCurrencyCode());
+        Assert.assertEquals(1.49, singleAmounts.getAmountAsDouble());
+        Assert.assertEquals(2.99, singleAmounts.getOriginalAmountAsDouble());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}

@@ -36,9 +36,7 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -47,34 +45,31 @@ package ly.kite.catalogue;
  * This class defines a catalogue consumer interface.
  *
  *****************************************************/
-public interface ICatalogueConsumer
-  {
+public interface ICatalogueConsumer {
 
-  /*****************************************************
-   *
-   * Called when a request completes successfully.
-   *
-   * @param catalogue The retrieved catalogue.
-   *
-   *****************************************************/
-  public void onCatalogueSuccess( Catalogue catalogue );
+    /*****************************************************
+     *
+     * Called when a request completes successfully.
+     *
+     * @param catalogue The retrieved catalogue.
+     *
+     *****************************************************/
+    public void onCatalogueSuccess(Catalogue catalogue);
 
+    /*****************************************************
+     *
+     * Called when a load is cancelled.
+     *
+     *****************************************************/
+    public void onCatalogueCancelled();
 
-  /*****************************************************
-   *
-   * Called when a load is cancelled.
-   *
-   *****************************************************/
-  public void onCatalogueCancelled();
+    /*****************************************************
+     *
+     * Called when a request results in an error.
+     *
+     * @param exception The exception that was thrown.
+     *
+     *****************************************************/
+    public void onCatalogueError(Exception exception);
 
-
-  /*****************************************************
-   *
-   * Called when a request results in an error.
-   *
-   * @param exception The exception that was thrown.
-   *
-   *****************************************************/
-  public void onCatalogueError( Exception exception );
-
-  }
+}

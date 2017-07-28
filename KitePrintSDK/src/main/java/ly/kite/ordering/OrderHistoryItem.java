@@ -36,9 +36,7 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -54,248 +52,225 @@ import ly.kite.address.Address;
  * data manager.
  *
  *****************************************************/
-public class OrderHistoryItem
-  {
-  ////////// Static Constant(s) //////////
+public class OrderHistoryItem {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "OrderHistoryItem";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderHistoryItem";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private long mOrderId;
+    private String mDateString;
+    private String mDescription;
+    private Long mBasketIdLong;
+    private List<BasketItem> mBasketItemList;
+    private Address mShippingAddress;
+    private String mNotificationEmail;
+    private String mNotificationPhone;
+    private String mUserDataJSON;
+    private HashMap<String, String> mAdditionalParametersMap;
+    private String mPromoCode;
+    private String mPricingJSON;
+    private String mProofOfPayment;
+    private String mReceipt;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private long                    mOrderId;
-  private String                  mDateString;
-  private String                  mDescription;
-  private Long                    mBasketIdLong;
-  private List<BasketItem>        mBasketItemList;
-  private Address                 mShippingAddress;
-  private String                  mNotificationEmail;
-  private String                  mNotificationPhone;
-  private String                  mUserDataJSON;
-  private HashMap<String,String>  mAdditionalParametersMap;
-  private String                  mPromoCode;
-  private String                  mPricingJSON;
-  private String                  mProofOfPayment;
-  private String                  mReceipt;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    OrderHistoryItem(long orderId,
+                     String dateString,
+                     String description,
+                     Long basketIdLong,
+                     Address shippingAddress,
+                     String notificationEmail,
+                     String notificationPhone,
+                     String userDataJSON,
+                     HashMap<String, String> additionalParametersMap,
+                     String promoCode,
+                     String pricingJSON,
+                     String proofOfPayment,
+                     String receipt) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  OrderHistoryItem( long                   orderId,
-                    String                 dateString,
-                    String                 description,
-                    Long                   basketIdLong,
-                    Address                shippingAddress,
-                    String                 notificationEmail,
-                    String                 notificationPhone,
-                    String                 userDataJSON,
-                    HashMap<String,String> additionalParametersMap,
-                    String                 promoCode,
-                    String                 pricingJSON,
-                    String                 proofOfPayment,
-                    String                 receipt )
-    {
-    mOrderId                 = orderId;
-    mDateString              = dateString;
-    mDescription             = description;
-    mBasketIdLong            = basketIdLong;
-    mShippingAddress         = shippingAddress;
-    mNotificationEmail       = notificationEmail;
-    mNotificationPhone       = notificationPhone;
-    mUserDataJSON            = userDataJSON;
-    mAdditionalParametersMap = additionalParametersMap;
-    mPromoCode               = promoCode;
-    mPricingJSON             = pricingJSON;
-    mProofOfPayment          = proofOfPayment;
-    mReceipt                 = receipt;
+        mOrderId = orderId;
+        mDateString = dateString;
+        mDescription = description;
+        mBasketIdLong = basketIdLong;
+        mShippingAddress = shippingAddress;
+        mNotificationEmail = notificationEmail;
+        mNotificationPhone = notificationPhone;
+        mUserDataJSON = userDataJSON;
+        mAdditionalParametersMap = additionalParametersMap;
+        mPromoCode = promoCode;
+        mPricingJSON = pricingJSON;
+        mProofOfPayment = proofOfPayment;
+        mReceipt = receipt;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the order id.
+     *
+     *****************************************************/
+    public long getOrderId() {
 
-  /*****************************************************
-   *
-   * Returns the order id.
-   *
-   *****************************************************/
-  public long getOrderId()
-    {
-    return ( mOrderId );
+        return mOrderId;
     }
 
+    /*****************************************************
+     *
+     * Returns the date.
+     *
+     *****************************************************/
+    public String getDateString() {
 
-  /*****************************************************
-   *
-   * Returns the date.
-   *
-   *****************************************************/
-  public String getDateString()
-    {
-    return ( mDateString );
+        return mDateString;
     }
 
+    /*****************************************************
+     *
+     * Returns the description.
+     *
+     *****************************************************/
+    public String getDescription() {
 
-  /*****************************************************
-   *
-   * Returns the description.
-   *
-   *****************************************************/
-  public String getDescription()
-    {
-    return ( mDescription );
+        return mDescription;
     }
 
+    /*****************************************************
+     *
+     * Returns the basket id.
+     *
+     *****************************************************/
+    public Long getBasketIdLong() {
 
-  /*****************************************************
-   *
-   * Returns the basket id.
-   *
-   *****************************************************/
-  public Long getBasketIdLong()
-    {
-    return ( mBasketIdLong );
+        return mBasketIdLong;
     }
 
+    /*****************************************************
+     *
+     * Sets the basket items.
+     *
+     *****************************************************/
+    public void setBasket(List<BasketItem> basketItemList) {
 
-  /*****************************************************
-   *
-   * Sets the basket items.
-   *
-   *****************************************************/
-  public void setBasket( List<BasketItem> basketItemList )
-    {
-    mBasketItemList = basketItemList;
+        mBasketItemList = basketItemList;
     }
 
+    /*****************************************************
+     *
+     * Returns the basket items.
+     *
+     *****************************************************/
+    public List<BasketItem> getBasket() {
 
-  /*****************************************************
-   *
-   * Returns the basket items.
-   *
-   *****************************************************/
-  public List<BasketItem> getBasket()
-    {
-    return ( mBasketItemList );
+        return mBasketItemList;
     }
 
+    /*****************************************************
+     *
+     * Returns the shipping address.
+     *
+     *****************************************************/
+    public Address getShippingAddress() {
 
-  /*****************************************************
-   *
-   * Returns the shipping address.
-   *
-   *****************************************************/
-  public Address getShippingAddress()
-    {
-    return ( mShippingAddress );
+        return mShippingAddress;
     }
 
+    /*****************************************************
+     *
+     * Returns the notification email.
+     *
+     *****************************************************/
+    public String getNotificationEmail() {
 
-  /*****************************************************
-   *
-   * Returns the notification email.
-   *
-   *****************************************************/
-  public String getNotificationEmail()
-    {
-    return ( mNotificationEmail );
+        return mNotificationEmail;
     }
 
+    /*****************************************************
+     *
+     * Returns the notification phone.
+     *
+     *****************************************************/
+    public String getNotificationPhone() {
 
-  /*****************************************************
-   *
-   * Returns the notification phone.
-   *
-   *****************************************************/
-  public String getNotificationPhone()
-    {
-    return ( mNotificationPhone );
+        return mNotificationPhone;
     }
 
+    /*****************************************************
+     *
+     * Returns the user data.
+     *
+     *****************************************************/
+    public String getUserDataJSON() {
 
-  /*****************************************************
-   *
-   * Returns the user data.
-   *
-   *****************************************************/
-  public String getUserDataJSON()
-    {
-    return ( mUserDataJSON );
+        return mUserDataJSON;
     }
 
+    /*****************************************************
+     *
+     * Returns the additional parameters.
+     *
+     *****************************************************/
+    public HashMap<String, String> getAdditionalParametersMap() {
 
-  /*****************************************************
-   *
-   * Returns the additional parameters.
-   *
-   *****************************************************/
-  public HashMap<String,String> getAdditionalParametersMap()
-    {
-    return ( mAdditionalParametersMap );
+        return mAdditionalParametersMap;
     }
 
+    /*****************************************************
+     *
+     * Returns the promo code.
+     *
+     *****************************************************/
+    public String getPromoCode() {
 
-  /*****************************************************
-   *
-   * Returns the promo code.
-   *
-   *****************************************************/
-  public String getPromoCode()
-    {
-    return ( mPromoCode );
+        return mPromoCode;
     }
 
+    /*****************************************************
+     *
+     * Returns the pricing JSON.
+     *
+     *****************************************************/
+    public String getPricingJSON() {
 
-  /*****************************************************
-   *
-   * Returns the pricing JSON.
-   *
-   *****************************************************/
-  public String getPricingJSON()
-    {
-    return ( mPricingJSON );
+        return mPricingJSON;
     }
 
+    /*****************************************************
+     *
+     * Returns the proof of payment.
+     *
+     *****************************************************/
+    public String getProofOfPayment() {
 
-  /*****************************************************
-   *
-   * Returns the proof of payment.
-   *
-   *****************************************************/
-  public String getProofOfPayment()
-    {
-    return ( mProofOfPayment );
+        return mProofOfPayment;
     }
 
+    /*****************************************************
+     *
+     * Returns the receipt.
+     *
+     *****************************************************/
+    public String getReceipt() {
 
-  /*****************************************************
-   *
-   * Returns the receipt.
-   *
-   *****************************************************/
-  public String getReceipt()
-    {
-    return ( mReceipt );
+        return mReceipt;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

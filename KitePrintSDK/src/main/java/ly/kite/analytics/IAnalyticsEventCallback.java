@@ -36,11 +36,10 @@
 
 package ly.kite.analytics;
 
-
 ///// Import(s) /////
 
-import ly.kite.ordering.Order;
 import ly.kite.catalogue.Product;
+import ly.kite.ordering.Order;
 
 ///// Class Declaration /////
 
@@ -54,138 +53,121 @@ import ly.kite.catalogue.Product;
  * for an example.
  *
  *****************************************************/
-public interface IAnalyticsEventCallback
-  {
+public interface IAnalyticsEventCallback {
 
-  ////////// Method(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * This method is called at the point the SDK is launched
+     *
+     *****************************************************/
+    void onSDKLoaded(String entryPoint);
 
-  /*****************************************************
-   *
-   * This method is called at the point the SDK is launched
-   *
-   *****************************************************/
-  void onSDKLoaded( String entryPoint );
+    /*****************************************************
+     *
+     * Called when the user enters the category list screen.
+     *
+     *****************************************************/
+    void onCategoryListScreenViewed();
 
+    /*****************************************************
+     *
+     * Called when the user enters the product list screen.
+     *
+     *****************************************************/
+    void onProductListScreenViewed();
 
-  /*****************************************************
-   *
-   * Called when the user enters the category list screen.
-   *
-   *****************************************************/
-  void onCategoryListScreenViewed();
+    /*****************************************************
+     *
+     * Called when the user enters the product overview screen.
+     *
+     *****************************************************/
+    void onProductDetailsScreenViewed(Product product);
 
+    /*****************************************************
+     *
+     * Called when the user enters the photo selection screen
+     *
+     *****************************************************/
+    void onCreateProductScreenViewed(Product product);
 
-  /*****************************************************
-   *
-   * Called when the user enters the product list screen.
-   *
-   *****************************************************/
-  void onProductListScreenViewed();
+    /*****************************************************
+     *
+     * Called when the user enters the photobook edit screen
+     *
+     *****************************************************/
+    void onPhotobookEditScreenViewed();
 
+    /*****************************************************
+     *
+     * Called when the user enters an image picker screen
+     *
+     *****************************************************/
+    void onImagePickerScreenViewed();
 
-  /*****************************************************
-   *
-   * Called when the user enters the product overview screen.
-   *
-   *****************************************************/
-  void onProductDetailsScreenViewed( Product product );
+    /*****************************************************
+     *
+     * Called when the user enters the photo review screen
+     *
+     *****************************************************/
+    void onProductOrderReviewScreenViewed(Product product);
 
+    /*****************************************************
+     *
+     * Called when the user enters the basket screen
+     *
+     *****************************************************/
+    void onBasketScreenViewed();
 
-  /*****************************************************
-   *
-   * Called when the user enters the photo selection screen
-   *
-   *****************************************************/
-  void onCreateProductScreenViewed( Product product );
+    /*****************************************************
+     *
+     * Called when the user taps the continue shopping button
+     *
+     *****************************************************/
+    void onContinueShoppingButtonTapped();
 
+    /*****************************************************
+     *
+     * Called when the user enters the shipping screen.
+     *
+     *****************************************************/
+    void onShippingScreenViewed(Order printOrder, String variant, boolean showPhoneEntryField);
 
-  /*****************************************************
-   *
-   * Called when the user enters the photobook edit screen
-   *
-   *****************************************************/
-  void onPhotobookEditScreenViewed();
+    /*****************************************************
+     *
+     * Called when the user enters the address selection screen.
+     *
+     *****************************************************/
+    void onAddressSelectionScreenViewed();
 
+    /*****************************************************
+     *
+     * Called when the user enters the payment screen.
+     *
+     *****************************************************/
+    void onPaymentMethodScreenViewed(Order printOrder);
 
-  /*****************************************************
-   *
-   * Called when the user enters an image picker screen
-   *
-   *****************************************************/
-  void onImagePickerScreenViewed();
+    /*****************************************************
+     *
+     * Called when the user selects a payment method.
+     *
+     *****************************************************/
+    void onPaymentMethodSelected(String paymentMethod);
 
+    /*****************************************************
+     *
+     * Called when the user completes payment
+     *
+     *****************************************************/
+    void onPaymentCompleted(Order printOrder, String paymentMethod);
 
-  /*****************************************************
-   *
-   * Called when the user enters the photo review screen
-   *
-   *****************************************************/
-  void onProductOrderReviewScreenViewed( Product product );
+    /*****************************************************
+     *
+     * Called when the order is submitted to Kite
+     *
+     *****************************************************/
+    void onPrintOrderSubmission(Order printOrder);
 
-
-  /*****************************************************
-   *
-   * Called when the user enters the basket screen
-   *
-   *****************************************************/
-  void onBasketScreenViewed();
-
-
-  /*****************************************************
-   *
-   * Called when the user taps the continue shopping button
-   *
-   *****************************************************/
-  void onContinueShoppingButtonTapped();
-
-
-  /*****************************************************
-   *
-   * Called when the user enters the shipping screen.
-   *
-   *****************************************************/
-  void onShippingScreenViewed( Order printOrder, String variant, boolean showPhoneEntryField );
-
-
-  /*****************************************************
-   *
-   * Called when the user enters the address selection screen.
-   *
-   *****************************************************/
-  void onAddressSelectionScreenViewed();
-
-
-  /*****************************************************
-   *
-   * Called when the user enters the payment screen.
-   *
-   *****************************************************/
-  void onPaymentMethodScreenViewed( Order printOrder );
-
-
-  /*****************************************************
-   *
-   * Called when the user selects a payment method.
-   *
-   *****************************************************/
-  void onPaymentMethodSelected( String paymentMethod );
-
-
-  /*****************************************************
-   *
-   * Called when the user completes payment
-   *
-   *****************************************************/
-  void onPaymentCompleted( Order printOrder, String paymentMethod );
-
-
-  /*****************************************************
-   *
-   * Called when the order is submitted to Kite
-   *
-   *****************************************************/
-  void onPrintOrderSubmission( Order printOrder );
-
-  }
+}
 

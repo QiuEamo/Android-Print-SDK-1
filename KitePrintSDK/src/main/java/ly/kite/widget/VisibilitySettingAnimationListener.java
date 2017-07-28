@@ -36,9 +36,7 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -51,85 +49,72 @@ import android.view.animation.Animation;
  * after animation has finished.
  *
  *****************************************************/
-public class VisibilitySettingAnimationListener implements Animation.AnimationListener
-  {
-  ////////// Static Constant(s) //////////
+public class VisibilitySettingAnimationListener implements Animation.AnimationListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "VisibilitySettingAnimationListener";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "VisibilitySettingAnimationListener";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private View mView;
+    private int mVisibility;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private View mView;
-  private int   mVisibility;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public VisibilitySettingAnimationListener(View view, int visibility) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public VisibilitySettingAnimationListener( View view, int visibility )
-    {
-    mView       = view;
-    mVisibility = visibility;
+        mView = view;
+        mVisibility = visibility;
     }
 
+    ////////// Animation.AnimationListener Method(s) //////////
 
-  ////////// Animation.AnimationListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when animation starts.
-   *
-   *****************************************************/
-  @Override
-  public void onAnimationStart( Animation animation )
-    {
-    // Ignore
+    /*****************************************************
+     *
+     * Called when animation starts.
+     *
+     *****************************************************/
+    @Override
+    public void onAnimationStart(Animation animation) {
+        // Ignore
     }
 
-
-  /*****************************************************
-   *
-   * Called when animation completes.
-   *
-   *****************************************************/
-  @Override
-  public void onAnimationEnd( Animation animation )
-    {
-    // Clear the animation and set the visibility
-    mView.setAnimation( null );
-    mView.setVisibility( mVisibility );
+    /*****************************************************
+     *
+     * Called when animation completes.
+     *
+     *****************************************************/
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        // Clear the animation and set the visibility
+        mView.setAnimation(null);
+        mView.setVisibility(mVisibility);
     }
 
-
-  /*****************************************************
-   *
-   * Called when animation repeats.
-   *
-   *****************************************************/
-  @Override
-  public void onAnimationRepeat( Animation animation )
-    {
-    // Ignore
+    /*****************************************************
+     *
+     * Called when animation repeats.
+     *
+     *****************************************************/
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+        // Ignore
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

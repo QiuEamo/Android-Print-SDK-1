@@ -36,9 +36,7 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -51,14 +49,12 @@ import ly.kite.ordering.Order;
  * listener.
  *
  *****************************************************/
-public interface IOrderSubmissionProgressListener extends IOrderSubmissionResultListener
-  {
-  ////////// Static Constant(s) //////////
+public interface IOrderSubmissionProgressListener extends IOrderSubmissionResultListener {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    public void onOrderUpdate(Order order, OrderState state, int primaryProgressPercent, int secondaryProgressPercent);
 
-  public void onOrderUpdate( Order order, OrderState state, int primaryProgressPercent, int secondaryProgressPercent );
-
-  }
+}
 

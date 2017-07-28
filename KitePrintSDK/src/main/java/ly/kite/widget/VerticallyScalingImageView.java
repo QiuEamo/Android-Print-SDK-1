@@ -37,7 +37,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -46,92 +45,84 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-
 ///// Class Declaration /////
 
-public class VerticallyScalingImageView extends ImageView
-  {
-  ////////// Static Constant(s) //////////
+public class VerticallyScalingImageView extends ImageView {
+    ////////// Static Constant(s) //////////
 
-  private static final String  LOG_TAG              = "VerticallyScalingImageView";
-  private static final boolean DEBUGGING_IS_ENABLED = false;
+    private static final String LOG_TAG = "VerticallyScalingImageView";
+    private static final boolean DEBUGGING_IS_ENABLED = false;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public VerticallyScalingImageView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public VerticallyScalingImageView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public VerticallyScalingImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public VerticallyScalingImageView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public VerticallyScalingImageView( Context context, AttributeSet attrs, int defStyle )
-    {
-    super( context, attrs, defStyle );
+    public VerticallyScalingImageView(Context context, AttributeSet attrs, int defStyle) {
+
+        super(context, attrs, defStyle);
     }
 
-  ////////// ImageView Method(s) //////////
+    ////////// ImageView Method(s) //////////
 
-  /*****************************************************
-   *
-   * Sets the image drawable.
-   *
-   *****************************************************/
-  @Override
-  public void setImageBitmap( Bitmap bitmap )
-    {
-    super.setImageBitmap( bitmap );
+    /*****************************************************
+     *
+     * Sets the image drawable.
+     *
+     *****************************************************/
+    @Override
+    public void setImageBitmap(Bitmap bitmap) {
 
-    // Get the bitmap dimensions
-    float widthAsFloat  = bitmap.getWidth();
-    float heightAsFloat = bitmap.getHeight();
+        super.setImageBitmap(bitmap);
 
-    // Determine the scaled width of the bitmap
-    float scaledWidthAsFloat = getMeasuredWidth();
+        // Get the bitmap dimensions
+        float widthAsFloat = bitmap.getWidth();
+        float heightAsFloat = bitmap.getHeight();
 
+        // Determine the scaled width of the bitmap
+        float scaledWidthAsFloat = getMeasuredWidth();
 
-    // Calculate the scaled height to keep the aspect ratio
+        // Calculate the scaled height to keep the aspect ratio
 
-    if ( widthAsFloat < 1.0f ) widthAsFloat = 1.0f;
+        if (widthAsFloat < 1.0f) {
+            widthAsFloat = 1.0f;
+        }
 
-    float scaledHeightAsFloat = ( scaledWidthAsFloat / widthAsFloat ) * heightAsFloat;
+        float scaledHeightAsFloat = (scaledWidthAsFloat / widthAsFloat) * heightAsFloat;
 
+        // Now set the layout height to match the scaled height
 
-    // Now set the layout height to match the scaled height
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
 
-    ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.height = (int) scaledHeightAsFloat;
 
-    layoutParams.height = (int)scaledHeightAsFloat;
+        setLayoutParams(layoutParams);
 
-    setLayoutParams( layoutParams );
-
-    //forceLayout();
+        //forceLayout();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

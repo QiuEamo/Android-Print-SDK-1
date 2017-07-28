@@ -36,9 +36,7 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -53,106 +51,98 @@ import android.text.style.MetricAffectingSpan;
  * This class applies a custom typeface to a text span.
  *
  *****************************************************/
-public class CustomTypefaceSpan extends MetricAffectingSpan
-  {
-  ////////// Static Constant(s) //////////
+public class CustomTypefaceSpan extends MetricAffectingSpan {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "CustomTypefaceSpan";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CustomTypefaceSpan";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Typeface mTypeface;
+    private float mTextSize;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private Typeface  mTypeface;
-  private float     mTextSize;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public CustomTypefaceSpan(Context context, String typefaceAssetName, float textSize) {
 
+        if (typefaceAssetName == null || typefaceAssetName.trim().equals("")) {
+            throw (new IllegalArgumentException("No typeface asset name supplied: " + typefaceAssetName));
+        }
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public CustomTypefaceSpan( Context context, String typefaceAssetName, float textSize )
-    {
-    if ( typefaceAssetName == null || typefaceAssetName.trim().equals( "" ) )
-      {
-      throw ( new IllegalArgumentException( "No typeface asset name supplied: " + typefaceAssetName ) );
-      }
-
-    mTypeface = TypefaceCache.getTypeface( context, typefaceAssetName );
-    mTextSize = textSize;
+        mTypeface = TypefaceCache.getTypeface(context, typefaceAssetName);
+        mTextSize = textSize;
     }
 
+    public CustomTypefaceSpan(Context context, String typefaceAssetName) {
 
-  public CustomTypefaceSpan( Context context, String typefaceAssetName )
-    {
-    this( context, typefaceAssetName, 0f );
+        this(context, typefaceAssetName, 0f);
     }
 
+    ////////// MetricAffectingSpan Method(s) //////////
 
-  ////////// MetricAffectingSpan Method(s) //////////
+    @Override
+    public void updateDrawState(TextPaint textPaint) {
 
-  @Override
-  public void updateDrawState( TextPaint textPaint )
-    {
-    setTypeface( textPaint );
+        setTypeface(textPaint);
     }
 
-  @Override
-  public void updateMeasureState( TextPaint textPaint )
-    {
-    setTypeface( textPaint );
+    @Override
+    public void updateMeasureState(TextPaint textPaint) {
+
+        setTypeface(textPaint);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Applies the typeface to the paint.
+     *
+     *****************************************************/
+    private void setTypeface(Paint paint) {
 
-  /*****************************************************
-   *
-   * Applies the typeface to the paint.
-   *
-   *****************************************************/
-  private void setTypeface( Paint paint )
-    {
-    int previousStyle;
+        int previousStyle;
 
-    Typeface previousTypeface = paint.getTypeface();
+        Typeface previousTypeface = paint.getTypeface();
 
-    if ( previousTypeface == null ) previousStyle = 0;
-    else                            previousStyle = previousTypeface.getStyle();
+        if (previousTypeface == null) {
+            previousStyle = 0;
+        } else {
+            previousStyle = previousTypeface.getStyle();
+        }
 
-    Typeface newTypeface = Typeface.create( mTypeface, previousStyle );
+        Typeface newTypeface = Typeface.create(mTypeface, previousStyle);
 
-    int fake = previousStyle & ~newTypeface.getStyle();
+        int fake = previousStyle & ~newTypeface.getStyle();
 
-    if ( ( fake & Typeface.BOLD ) != 0 )
-      {
-      paint.setFakeBoldText( true );
-      }
+        if ((fake & Typeface.BOLD) != 0) {
+            paint.setFakeBoldText(true);
+        }
 
-    if ( ( fake & Typeface.ITALIC ) != 0 )
-      {
-      paint.setTextSkewX( -0.25f );
-      }
+        if ((fake & Typeface.ITALIC) != 0) {
+            paint.setTextSkewX(-0.25f);
+        }
 
-    paint.setTypeface( newTypeface );
+        paint.setTypeface(newTypeface);
 
-    if ( mTextSize >= 1f ) paint.setTextSize( mTextSize );
+        if (mTextSize >= 1f) {
+            paint.setTextSize(mTextSize);
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}

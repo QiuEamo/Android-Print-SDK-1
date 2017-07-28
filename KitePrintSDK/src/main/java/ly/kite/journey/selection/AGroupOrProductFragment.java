@@ -36,7 +36,6 @@
 
 package ly.kite.journey.selection;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -51,21 +50,17 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 import ly.kite.KiteSDK;
 import ly.kite.R;
-import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.IGroupOrProduct;
-import ly.kite.catalogue.ProductGroup;
 import ly.kite.image.ImageAgent;
 import ly.kite.image.ImageLoadRequest;
 import ly.kite.widget.AREImageView;
 import ly.kite.widget.HeaderFooterGridView;
 import ly.kite.widget.LabelledImageView;
-
 
 ///// Class Declaration /////
 
@@ -75,457 +70,428 @@ import ly.kite.widget.LabelledImageView;
  * Product fragments.
  *
  *****************************************************/
-abstract public class AGroupOrProductFragment extends AProductSelectionFragment implements AdapterView.OnItemClickListener
-  {
-  ////////// Static Constant(s) //////////
-
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                = "AGroupOrProductFragment";
-
-  static private final String  BUNDLE_KEY_PRODUCT_IDS = "productIds";
-
-
-  ////////// Static Variable(s) //////////
-
-
-  ////////// Member Variable(s) //////////
-
-  protected String[]              mProductIds;
-
-  protected HeaderFooterGridView  mGridView;
-
-  protected BaseAdapter           mGridAdaptor;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Creates common fragments arguments.
-   *
-   *****************************************************/
-  static protected Bundle addCommonArguments( AGroupOrProductFragment fragment, String... productIds )
-    {
-    Bundle arguments = new Bundle();
-
-    if ( productIds != null && productIds.length > 0 )
-      {
-      arguments.putStringArray( BUNDLE_KEY_PRODUCT_IDS, productIds );
-      }
-
-    fragment.setArguments( arguments );
-
-    return ( arguments );
-    }
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Fragment Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    // Try to get any common arguments
-
-    Bundle arguments = getArguments();
-
-    if ( arguments != null )
-      {
-      mProductIds = arguments.getStringArray( BUNDLE_KEY_PRODUCT_IDS );
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the content view for this fragment
-   *
-   *****************************************************/
-  public View onCreateView( LayoutInflater layoutInflator, int layoutResourceId, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( layoutResourceId, container, false );
-
-    mGridView = (HeaderFooterGridView)view.findViewById( R.id.grid_view );
-
-
-    setManagedAdaptorView( mGridView );
-
-
-    return ( view );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the fragment is on top.
-   *
-   *****************************************************/
-  @Override
-  public void onTop()
-    {
-    super.onTop();
-
-    requestCatalogue();
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the fragment is not on top.
-   *
-   *****************************************************/
-  @Override
-  public void onNotTop()
-    {
-    super.onNotTop();
-
-    if ( mGridView != null ) mGridView.setAdapter( null );
-
-    mGridAdaptor = null;
-    }
-
-
-  ////////// Method(s) //////////
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * This class is an adaptor for product groups or
-   * products.
-   *
-   *****************************************************/
-  public class GroupOrProductAdaptor extends BaseAdapter
-    {
+public abstract class AGroupOrProductFragment extends AProductSelectionFragment implements AdapterView.OnItemClickListener {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings( "unused" )
-    private static final String  LOG_TAG              = "GroupOrProductAdaptor";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AGroupOrProductFragment";
 
-    //private static final float   DEFAULT_ASPECT_RATIO = 1.389f;
-
+    private static final String BUNDLE_KEY_PRODUCT_IDS = "productIds";
 
     ////////// Static Variable(s) //////////
 
-
     ////////// Member Variable(s) //////////
 
-    private Context                          mContext;
-    private List<? extends IGroupOrProduct>  mGroupOrProductList;
-    private GridView                         mGridView;
-    private int                              mLayoutResourceId;
+    protected String[] mProductIds;
 
-    private int                              mActualItemCount;
-    private int                              mApparentItemCount;
+    protected HeaderFooterGridView mGridView;
 
-    private LayoutInflater                   mLayoutInflator;
-
+    protected BaseAdapter mGridAdaptor;
 
     ////////// Static Initialiser(s) //////////
 
-
     ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates common fragments arguments.
+     *
+     *****************************************************/
+    protected static Bundle addCommonArguments(AGroupOrProductFragment fragment, String... productIds) {
+
+        final Bundle arguments = new Bundle();
+
+        if (productIds != null && productIds.length > 0) {
+            arguments.putStringArray(BUNDLE_KEY_PRODUCT_IDS, productIds);
+        }
+
+        fragment.setArguments(arguments);
+
+        return arguments;
+    }
 
     ////////// Constructor(s) //////////
 
-    GroupOrProductAdaptor( Context context, List<? extends IGroupOrProduct> displayItemList, GridView gridView, int layoutResourceId )
-      {
-      mContext            = context;
-      mGroupOrProductList = displayItemList;
-      mGridView           = gridView;
-      mLayoutResourceId   = layoutResourceId;
-
-      mLayoutInflator     = LayoutInflater.from( context );
-
-      mActualItemCount    = mGroupOrProductList.size();
-      }
-
-
-    ////////// BaseAdapter Method(s) //////////
+    ////////// Fragment Method(s) //////////
 
     /*****************************************************
      *
-     * Returns the number of product items.
+     * Called when the fragment is created.
      *
      *****************************************************/
     @Override
-    public int getCount()
-      {
-      // We don't want to calculate the apparent item count in the constructor, because
-      // setting the number of columns for the GridView is requested after the layout has
-      // been inflated, and usually results in the adaptor being created before the change
-      // has taken effect.
+    public void onCreate(Bundle savedInstanceState) {
 
-      int columnCount = mGridView.getNumColumns();
+        super.onCreate(savedInstanceState);
 
-      // We always round the number of images to be a multiple of the column count, so we can display a placeholder
-      // image in any 'missing' slots.
-      mApparentItemCount = ( columnCount > 1 ? ( ( mActualItemCount + ( columnCount / 2 ) ) / columnCount ) * columnCount: mActualItemCount );
+        // Try to get any common arguments
 
-      return ( mApparentItemCount );
-      }
+        final Bundle arguments = getArguments();
 
-
-    /*****************************************************
-     *
-     * Returns the product item at the requested position.
-     *
-     *****************************************************/
-    @Override
-    public Object getItem( int position )
-      {
-      return ( position >= 0 && position < mActualItemCount ? mGroupOrProductList.get( position ) : null );
-      }
-
-
-    /*****************************************************
-     *
-     * Returns an id for the product item at the requested
-     * position.
-     *
-     *****************************************************/
-    @Override
-    public long getItemId( int position )
-      {
-      return ( 0 );
-      }
-
-
-    /*****************************************************
-     *
-     * Returns the view for the product item at the requested
-     * position.
-     *
-     *****************************************************/
-    @Override
-    public View getView( int position, View convertView, ViewGroup parent )
-      {
-      // Either re-use the convert view, or create a new one.
-
-      Object      tagObject;
-      View        view;
-      ViewHolder  viewHolder;
-
-      if ( convertView != null &&
-           ( tagObject = convertView.getTag() ) != null &&
-           ( tagObject instanceof ViewHolder ) )
-        {
-        view       = convertView;
-        viewHolder = (ViewHolder)tagObject;
+        if (arguments != null) {
+            mProductIds = arguments.getStringArray(BUNDLE_KEY_PRODUCT_IDS);
         }
-      else
-        {
-        view       = mLayoutInflator.inflate( mLayoutResourceId, null );
-        viewHolder = new ViewHolder( view );
+    }
 
-        view.setTag( viewHolder );
+    /*****************************************************
+     *
+     * Returns the content view for this fragment
+     *
+     *****************************************************/
+    public View onCreateView(LayoutInflater layoutInflator, int layoutResourceId, ViewGroup container, Bundle savedInstanceState) {
+
+        final View view = layoutInflator.inflate(layoutResourceId, container, false);
+
+        mGridView = (HeaderFooterGridView) view.findViewById(R.id.grid_view);
+
+        setManagedAdaptorView(mGridView);
+
+        return view;
+    }
+
+    /*****************************************************
+     *
+     * Called when the fragment is on top.
+     *
+     *****************************************************/
+    @Override
+    public void onTop() {
+
+        super.onTop();
+
+        requestCatalogue();
+    }
+
+    /*****************************************************
+     *
+     * Called when the fragment is not on top.
+     *
+     *****************************************************/
+    @Override
+    public void onNotTop() {
+
+        super.onNotTop();
+
+        if (mGridView != null) {
+            mGridView.setAdapter(null);
         }
 
+        mGridAdaptor = null;
+    }
 
-      // Get the item we are displaying; set the label, and request the image from the image manager.
-      // Show placeholders for any missing items.
-
-      IGroupOrProduct groupOrProduct = (IGroupOrProduct)getItem( position );
-
-      viewHolder.bind( groupOrProduct, parent );
-
-
-      return ( view );
-      }
-
+    ////////// Method(s) //////////
 
     ////////// Inner Class(es) //////////
 
     /*****************************************************
      *
-     * References to views within the layout.
+     * This class is an adaptor for product groups or
+     * products.
      *
      *****************************************************/
-    private class ViewHolder
-      {
-      LabelledImageView  labelledImageView;
-      AREImageView       areImageView;
-      TextView           placeholderTextView;
-      TextView           labelTextView;
-      TextView           descriptionTextView;
-      FrameLayout        priceOverlayFrame;
-      TextView           fromTextView;
-      TextView           priceTextView;
-      View               overlayIndicatorView;
+    public class GroupOrProductAdaptor extends BaseAdapter {
+        ////////// Static Constant(s) //////////
 
+        @SuppressWarnings("unused")
+        private static final String LOG_TAG = "GroupOrProductAdaptor";
 
-      ViewHolder( View view )
-        {
-        this.labelledImageView    = (LabelledImageView)view.findViewById( R.id.labelled_image_view );
-        this.areImageView         = (AREImageView)view.findViewById( R.id.are_image_view );
-        this.placeholderTextView  = (TextView)view.findViewById( R.id.placeholder_text_view );
-        this.labelTextView        = (TextView)view.findViewById( R.id.label_text_view );
-        this.descriptionTextView  = (TextView)view.findViewById( R.id.description_text_view );
-        this.priceOverlayFrame    = (FrameLayout)view.findViewById( R.id.price_overlay_frame );
-        this.fromTextView         = (TextView)view.findViewById( R.id.from_text_view );
-        this.priceTextView        = (TextView)view.findViewById( R.id.price_text_view );
-        this.overlayIndicatorView = view.findViewById( R.id.overlay_indicator_view );
+        //private static final float   DEFAULT_ASPECT_RATIO = 1.389f;
+
+        ////////// Static Variable(s) //////////
+
+        ////////// Member Variable(s) //////////
+
+        private Context mContext;
+        private List<? extends IGroupOrProduct> mGroupOrProductList;
+        private GridView mGridView;
+        private int mLayoutResourceId;
+
+        private int mActualItemCount;
+        private int mApparentItemCount;
+
+        private LayoutInflater mLayoutInflator;
+
+        ////////// Static Initialiser(s) //////////
+
+        ////////// Static Method(s) //////////
+
+        ////////// Constructor(s) //////////
+
+        GroupOrProductAdaptor(Context context, List<? extends IGroupOrProduct> displayItemList, GridView gridView, int layoutResourceId) {
+
+            mContext = context;
+            mGroupOrProductList = displayItemList;
+            mGridView = gridView;
+            mLayoutResourceId = layoutResourceId;
+
+            mLayoutInflator = LayoutInflater.from(context);
+
+            mActualItemCount = mGroupOrProductList.size();
         }
 
+        ////////// BaseAdapter Method(s) //////////
 
-      void bind( IGroupOrProduct groupOrProduct, ViewGroup parent )
-        {
-        // If there are only two items - set the aspect ratio so that the images
-        // fill the screen, in either orientation.
+        /*****************************************************
+         *
+         * Returns the number of product items.
+         *
+         *****************************************************/
+        @Override
+        public int getCount() {
+            // We don't want to calculate the apparent item count in the constructor, because
+            // setting the number of columns for the GridView is requested after the layout has
+            // been inflated, and usually results in the adaptor being created before the change
+            // has taken effect.
 
-        float aspectRatio;
+            final int columnCount = mGridView.getNumColumns();
 
-        if ( getCount() == 2 )
-          {
-          int orientation = mContext.getResources().getConfiguration().orientation;
+            // We always round the number of images to be a multiple of the column count, so we can display a placeholder
+            // image in any 'missing' slots.
+            mApparentItemCount = columnCount > 1 ? ((mActualItemCount + (columnCount / 2)) / columnCount) * columnCount : mActualItemCount;
 
-          if ( orientation == Configuration.ORIENTATION_LANDSCAPE )
-            {
-            aspectRatio = parent.getWidth() * 0.5f / parent.getHeight();
-            }
-          else
-            {
-            aspectRatio = parent.getWidth() / ( parent.getHeight() * 0.5f );
-            }
-
-          if ( this.labelledImageView != null ) this.labelledImageView.setImageAspectRatio( aspectRatio );
-          if ( this.areImageView      != null ) this.areImageView.setAspectRatio( aspectRatio );
-          }
-
-
-        boolean showPlaceholder = false;
-
-        Object  imageSourceObject;
-
-        if ( groupOrProduct != null )
-          {
-          ///// Group / Product image /////
-
-          // Set any theme colour
-          setThemeColour( mCatalogue.getPrimaryThemeColour(), this.labelledImageView );
-
-          if ( this.labelledImageView != null )
-            {
-            this.labelledImageView.setImageAnchorGravity( groupOrProduct.getDisplayImageAnchorGravity( mContext ) );
-            this.labelledImageView.setLabel( groupOrProduct.getDisplayLabel(), groupOrProduct.getDisplayLabelColour() );
-            }
-
-          if ( this.labelTextView != null ) this.labelTextView.setText( groupOrProduct.getDisplayLabel() );
-
-          if ( this.descriptionTextView != null ) this.descriptionTextView.setText( groupOrProduct.getDescription() );
-
-          // Populate any price overlay
-          String displayPrice = groupOrProduct.getDisplayPrice( KiteSDK.getInstance( getActivity() ).getLockedCurrencyCode() );
-
-
-          // We only display the price overlay if there's a display price. In the case of a product group
-          // this will be if there is a common currency.
-
-          if ( displayPrice != null )
-            {
-            if ( this.priceOverlayFrame != null ) this.priceOverlayFrame.setVisibility( View.VISIBLE );
-            if ( this.fromTextView      != null ) this.fromTextView.setVisibility( groupOrProduct.containsMultiplePrices() ? View.VISIBLE : View.GONE );
-            if ( this.priceTextView     != null )
-              {
-              this.priceTextView.setVisibility( View.VISIBLE );
-              this.priceTextView.setText( displayPrice );
-              }
-            }
-          else
-            {
-            if ( this.priceOverlayFrame != null ) this.priceOverlayFrame.setVisibility( View.GONE );
-            if ( this.fromTextView      != null ) this.fromTextView.setVisibility( View.GONE );
-            if ( this.priceTextView     != null ) this.priceTextView.setVisibility( View.GONE );
-            }
-
-          imageSourceObject = groupOrProduct.getDisplayImageURL();
-          }
-        else
-          {
-          ///// Placeholder image /////
-
-          if ( this.labelledImageView != null ) this.labelledImageView.setLabel( null );
-          if ( this.labelTextView     != null ) this.labelTextView.setText( null );
-
-          // No prices should be visible for a placeholder image
-          if ( this.priceOverlayFrame != null ) this.priceOverlayFrame.setVisibility( View.GONE );
-          if ( this.fromTextView      != null ) this.fromTextView.setVisibility( View.GONE );
-          if ( this.priceTextView     != null ) this.priceTextView.setVisibility( View.GONE );
-
-          imageSourceObject = Integer.valueOf( R.drawable.placeholder );
-
-          showPlaceholder = true;
-          }
-
-
-        if ( this.labelledImageView != null )
-          {
-          this.labelledImageView.requestScaledImageOnceSized( KiteSDK.IMAGE_CATEGORY_PRODUCT_ITEM, imageSourceObject );
-          }
-
-        if ( this.areImageView != null )
-          {
-          ImageAgent imageAgent = ImageAgent.with( getActivity() );
-
-          ImageLoadRequest.Builder imageLoadRequestBuilder = null;
-
-          if      ( imageSourceObject instanceof URL     ) imageLoadRequestBuilder = imageAgent.load( (URL)imageSourceObject, KiteSDK.IMAGE_CATEGORY_PRODUCT_ITEM );
-          else if ( imageSourceObject instanceof Integer ) imageLoadRequestBuilder = imageAgent.load( (Integer)imageSourceObject );
-
-          if ( imageLoadRequestBuilder != null )
-            {
-            imageLoadRequestBuilder
-                    .reduceColourSpace()
-                    .resizeForIfSized( this.areImageView )
-                    .onlyScaleDown()
-                    .into( this.areImageView, imageSourceObject );
-            }
-          }
-
-        if ( this.placeholderTextView != null )
-          {
-          this.placeholderTextView.setVisibility( showPlaceholder ? View.VISIBLE : View.GONE );
-          }
-
-        // If there is an overlay indicator view, set its visibility according to any
-        // product flag.
-
-        if ( this.overlayIndicatorView != null )
-          {
-          Object tagObject = this.overlayIndicatorView.getTag();
-
-          if ( tagObject != null &&
-               tagObject instanceof String &&
-               groupOrProduct != null &&
-               groupOrProduct.flagIsSet( tagObject.toString() ) )
-            {
-            this.overlayIndicatorView.setVisibility(  View.VISIBLE );
-            }
-          else
-            {
-            this.overlayIndicatorView.setVisibility(  View.GONE );
-            }
-          }
+            return mApparentItemCount;
         }
 
-      }
+        /*****************************************************
+         *
+         * Returns the product item at the requested position.
+         *
+         *****************************************************/
+        @Override
+        public Object getItem(int position) {
+
+            return position >= 0 && position < mActualItemCount ? mGroupOrProductList.get(position) : null;
+        }
+
+        /*****************************************************
+         *
+         * Returns an id for the product item at the requested
+         * position.
+         *
+         *****************************************************/
+        @Override
+        public long getItemId(int position) {
+
+            return 0;
+        }
+
+        /*****************************************************
+         *
+         * Returns the view for the product item at the requested
+         * position.
+         *
+         *****************************************************/
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Either re-use the convert view, or create a new one.
+
+            final Object tagObject;
+            final View view;
+            final ViewHolder viewHolder;
+
+            if (convertView != null &&
+                    (tagObject = convertView.getTag()) != null &&
+                    (tagObject instanceof ViewHolder)) {
+                view = convertView;
+                viewHolder = (ViewHolder) tagObject;
+            } else {
+                view = mLayoutInflator.inflate(mLayoutResourceId, null);
+                viewHolder = new ViewHolder(view);
+
+                view.setTag(viewHolder);
+            }
+
+            // Get the item we are displaying; set the label, and request the image from the image manager.
+            // Show placeholders for any missing items.
+
+            final IGroupOrProduct groupOrProduct = (IGroupOrProduct) getItem(position);
+
+            viewHolder.bind(groupOrProduct, parent);
+
+            return view;
+        }
+
+        ////////// Inner Class(es) //////////
+
+        /*****************************************************
+         *
+         * References to views within the layout.
+         *
+         *****************************************************/
+        private class ViewHolder {
+            LabelledImageView mLabelledImageView;
+            AREImageView mAreImageView;
+            TextView mPlaceholderTextView;
+            TextView mLabelTextView;
+            TextView mDescriptionTextView;
+            FrameLayout mPriceOverlayFrame;
+            TextView mFromTextView;
+            TextView mPriceTextView;
+            View mOverlayIndicatorView;
+
+            ViewHolder(View view) {
+
+                this.mLabelledImageView = (LabelledImageView) view.findViewById(R.id.labelled_image_view);
+                this.mAreImageView = (AREImageView) view.findViewById(R.id.are_image_view);
+                this.mPlaceholderTextView = (TextView) view.findViewById(R.id.placeholder_text_view);
+                this.mLabelTextView = (TextView) view.findViewById(R.id.label_text_view);
+                this.mDescriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
+                this.mPriceOverlayFrame = (FrameLayout) view.findViewById(R.id.price_overlay_frame);
+                this.mFromTextView = (TextView) view.findViewById(R.id.from_text_view);
+                this.mPriceTextView = (TextView) view.findViewById(R.id.price_text_view);
+                this.mOverlayIndicatorView = view.findViewById(R.id.overlay_indicator_view);
+            }
+
+            void bind(IGroupOrProduct groupOrProduct, ViewGroup parent) {
+                // If there are only two items - set the aspect ratio so that the images
+                // fill the screen, in either orientation.
+
+                final float aspectRatio;
+
+                if (getCount() == 2) {
+                    final int orientation = mContext.getResources().getConfiguration().orientation;
+
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        aspectRatio = parent.getWidth() * 0.5f / parent.getHeight();
+                    } else {
+                        aspectRatio = parent.getWidth() / (parent.getHeight() * 0.5f);
+                    }
+
+                    if (this.mLabelledImageView != null) {
+                        this.mLabelledImageView.setImageAspectRatio(aspectRatio);
+                    }
+                    if (this.mAreImageView != null) {
+                        this.mAreImageView.setAspectRatio(aspectRatio);
+                    }
+                }
+
+                boolean showPlaceholder = false;
+
+                final Object imageSourceObject;
+
+                if (groupOrProduct != null) {
+                    ///// Group / Product image /////
+
+                    // Set any theme colour
+                    setThemeColour(mCatalogue.getPrimaryThemeColour(), this.mLabelledImageView);
+
+                    if (this.mLabelledImageView != null) {
+                        this.mLabelledImageView.setImageAnchorGravity(groupOrProduct.getDisplayImageAnchorGravity(mContext));
+                        this.mLabelledImageView.setLabel(groupOrProduct.getDisplayLabel(), groupOrProduct.getDisplayLabelColour());
+                    }
+
+                    if (this.mLabelTextView != null) {
+                        this.mLabelTextView.setText(groupOrProduct.getDisplayLabel());
+                    }
+
+                    if (this.mDescriptionTextView != null) {
+                        this.mDescriptionTextView.setText(groupOrProduct.getDescription());
+                    }
+
+                    // Populate any price overlay
+                    final String displayPrice = groupOrProduct.getDisplayPrice(KiteSDK.getInstance(getActivity()).getLockedCurrencyCode());
+
+                    // We only display the price overlay if there's a display price. In the case of a product group
+                    // this will be if there is a common currency.
+
+                    if (displayPrice != null) {
+                        if (this.mPriceOverlayFrame != null) {
+                            this.mPriceOverlayFrame.setVisibility(View.VISIBLE);
+                        }
+                        if (this.mFromTextView != null) {
+                            this.mFromTextView.setVisibility(groupOrProduct.containsMultiplePrices() ? View.VISIBLE : View.GONE);
+                        }
+                        if (this.mPriceTextView != null) {
+                            this.mPriceTextView.setVisibility(View.VISIBLE);
+                            this.mPriceTextView.setText(displayPrice);
+                        }
+                    } else {
+                        if (this.mPriceOverlayFrame != null) {
+                            this.mPriceOverlayFrame.setVisibility(View.GONE);
+                        }
+                        if (this.mFromTextView != null) {
+                            this.mFromTextView.setVisibility(View.GONE);
+                        }
+                        if (this.mPriceTextView != null) {
+                            this.mPriceTextView.setVisibility(View.GONE);
+                        }
+                    }
+
+                    imageSourceObject = groupOrProduct.getDisplayImageURL();
+                } else {
+                    ///// Placeholder image /////
+
+                    if (this.mLabelledImageView != null) {
+                        this.mLabelledImageView.setLabel(null);
+                    }
+                    if (this.mLabelTextView != null) {
+                        this.mLabelTextView.setText(null);
+                    }
+
+                    // No prices should be visible for a placeholder image
+                    if (this.mPriceOverlayFrame != null) {
+                        this.mPriceOverlayFrame.setVisibility(View.GONE);
+                    }
+                    if (this.mFromTextView != null) {
+                        this.mFromTextView.setVisibility(View.GONE);
+                    }
+                    if (this.mPriceTextView != null) {
+                        this.mPriceTextView.setVisibility(View.GONE);
+                    }
+
+                    imageSourceObject = Integer.valueOf(R.drawable.placeholder);
+
+                    showPlaceholder = true;
+                }
+
+                if (this.mLabelledImageView != null) {
+                    this.mLabelledImageView.requestScaledImageOnceSized(KiteSDK.IMAGE_CATEGORY_PRODUCT_ITEM, imageSourceObject);
+                }
+
+                if (this.mAreImageView != null) {
+                    final ImageAgent imageAgent = ImageAgent.with(getActivity());
+
+                    ImageLoadRequest.Builder imageLoadRequestBuilder = null;
+
+                    if (imageSourceObject instanceof URL) {
+                        imageLoadRequestBuilder = imageAgent.load((URL) imageSourceObject, KiteSDK.IMAGE_CATEGORY_PRODUCT_ITEM);
+                    } else if (imageSourceObject instanceof Integer) {
+                        imageLoadRequestBuilder = imageAgent.load((Integer) imageSourceObject);
+                    }
+
+                    if (imageLoadRequestBuilder != null) {
+                        imageLoadRequestBuilder
+                                .reduceColourSpace()
+                                .resizeForIfSized(this.mAreImageView)
+                                .onlyScaleDown()
+                                .into(this.mAreImageView, imageSourceObject);
+                    }
+                }
+
+                if (this.mPlaceholderTextView != null) {
+                    this.mPlaceholderTextView.setVisibility(showPlaceholder ? View.VISIBLE : View.GONE);
+                }
+
+                // If there is an overlay indicator view, set its visibility according to any
+                // product flag.
+
+                if (this.mOverlayIndicatorView != null) {
+                    final Object tagObject = this.mOverlayIndicatorView.getTag();
+
+                    if (tagObject != null &&
+                            tagObject instanceof String &&
+                            groupOrProduct != null &&
+                            groupOrProduct.flagIsSet(tagObject.toString())) {
+                        this.mOverlayIndicatorView.setVisibility(View.VISIBLE);
+                    } else {
+                        this.mOverlayIndicatorView.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+        }
 
     }
 
-  }
+}
 

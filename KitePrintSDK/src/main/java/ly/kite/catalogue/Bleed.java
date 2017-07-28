@@ -36,12 +36,10 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 
 ///// Class Declaration /////
 
@@ -50,124 +48,112 @@ import android.os.Parcelable;
  * This class represents a bleed.
  *
  *****************************************************/
-public class Bleed implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class Bleed implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "Bleed";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "Bleed";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<Bleed> CREATOR =
+            new Parcelable.Creator<Bleed>() {
+                public Bleed createFromParcel(Parcel sourceParcel) {
 
-  public static final Parcelable.Creator<Bleed> CREATOR =
-    new Parcelable.Creator<Bleed>()
-      {
-      public Bleed createFromParcel( Parcel sourceParcel )
-        {
-        return ( new Bleed( sourceParcel ) );
-        }
+                    return new Bleed(sourceParcel);
+                }
 
-      public Bleed[] newArray( int size )
-        {
-        return ( new Bleed[ size ] );
-        }
-      };
+                public Bleed[] newArray(int size) {
 
+                    return new Bleed[size];
+                }
+            };
 
-  ////////// Member Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
-  final public int  topPixels;
-  final public int  leftPixels;
-  final public int  rightPixels;
-  final public int  bottomPixels;
+    public final int topPixels;
+    public final int leftPixels;
+    public final int rightPixels;
+    public final int bottomPixels;
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Method(s) //////////
+    public Bleed(int topPixels, int rightPixels, int bottomPixels, int leftPixels) {
 
-
-  ////////// Constructor(s) //////////
-
-  public Bleed( int topPixels, int rightPixels, int bottomPixels, int leftPixels )
-    {
-    this.topPixels    = topPixels;
-    this.leftPixels   = leftPixels;
-    this.rightPixels  = rightPixels;
-    this.bottomPixels = bottomPixels;
+        this.topPixels = topPixels;
+        this.leftPixels = leftPixels;
+        this.rightPixels = rightPixels;
+        this.bottomPixels = bottomPixels;
     }
 
+    // Constructor used by parcelable interface
+    private Bleed(Parcel sourceParcel) {
 
-  // Constructor used by parcelable interface
-  private Bleed( Parcel sourceParcel )
-    {
-    this.topPixels    = sourceParcel.readInt();
-    this.leftPixels   = sourceParcel.readInt();
-    this.rightPixels  = sourceParcel.readInt();
-    this.bottomPixels = sourceParcel.readInt();
+        this.topPixels = sourceParcel.readInt();
+        this.leftPixels = sourceParcel.readInt();
+        this.rightPixels = sourceParcel.readInt();
+        this.bottomPixels = sourceParcel.readInt();
     }
 
+    ////////// Parcelable Method(s) //////////
 
-  ////////// Parcelable Method(s) //////////
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
 
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
 
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeInt( this.topPixels );
-    targetParcel.writeInt( this.leftPixels );
-    targetParcel.writeInt( this.rightPixels );
-    targetParcel.writeInt( this.bottomPixels );
+        targetParcel.writeInt(this.topPixels);
+        targetParcel.writeInt(this.leftPixels);
+        targetParcel.writeInt(this.rightPixels);
+        targetParcel.writeInt(this.bottomPixels);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Creates a string representation of this bleed.
+     *
+     *****************************************************/
+    @Override
+    public String toString() {
 
-  /*****************************************************
-   *
-   * Creates a string representation of this bleed.
-   *
-   *****************************************************/
-  @Override
-  public String toString()
-    {
-    StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-    stringBuilder
-            .append( "{ topPixels = " ).append( this.topPixels )
-            .append( ", leftPixels = " ).append( this.leftPixels )
-            .append( ", rightPixels = " ).append( this.rightPixels )
-            .append( ", bottomPixels = " ).append( this.bottomPixels ).append( " }" );
+        stringBuilder
+                .append("{ topPixels = ").append(this.topPixels)
+                .append(", leftPixels = ").append(this.leftPixels)
+                .append(", rightPixels = ").append(this.rightPixels)
+                .append(", bottomPixels = ").append(this.bottomPixels).append(" }");
 
-    return ( stringBuilder.toString() );
+        return stringBuilder.toString();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

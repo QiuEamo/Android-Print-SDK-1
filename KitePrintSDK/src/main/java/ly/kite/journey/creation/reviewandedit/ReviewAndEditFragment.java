@@ -36,9 +36,7 @@
 
 package ly.kite.journey.creation.reviewandedit;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -47,14 +45,13 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import ly.kite.R;
 import ly.kite.analytics.Analytics;
-import ly.kite.journey.creation.AProductCreationFragment;
 import ly.kite.catalogue.Product;
+import ly.kite.journey.creation.AProductCreationFragment;
 import ly.kite.journey.creation.IUpdatedImageListener;
 import ly.kite.ordering.ImageSpec;
 
@@ -65,347 +62,301 @@ import ly.kite.ordering.ImageSpec;
  *
  *****************************************************/
 public class ReviewAndEditFragment extends AProductCreationFragment implements ImageSpecAdaptor.IListener,
-                                                                               View.OnClickListener,
-                                                                               IUpdatedImageListener
-  {
-  ////////// Static Constant(s) //////////
+        View.OnClickListener,
+        IUpdatedImageListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  public  static final String  TAG = "ReviewAndEditFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "ReviewAndEditFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private GridView mGridView;
+    private Parcelable mGridViewState;
+    //private TextView          mProceedOverlayTextView;
+    private TextView mForwardsTextView;
 
-  ////////// Member Variable(s) //////////
+    private ImageSpecAdaptor mImageSpecAdaptor;
 
-  private GridView          mGridView;
-  private Parcelable        mGridViewState;
-  //private TextView          mProceedOverlayTextView;
-  private TextView          mForwardsTextView;
+    ////////// Static Initialiser(s) //////////
 
-  private ImageSpecAdaptor  mImageSpecAdaptor;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates a new instance of this fragment.
+     *
+     *****************************************************/
+    public static ReviewAndEditFragment newInstance(Product product) {
 
-  ////////// Static Initialiser(s) //////////
+        ReviewAndEditFragment fragment = new ReviewAndEditFragment();
 
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
-  ////////// Static Method(s) //////////
+        fragment.setArguments(arguments);
 
-  /*****************************************************
-   *
-   * Creates a new instance of this fragment.
-   *
-   *****************************************************/
-  public static ReviewAndEditFragment newInstance( Product product )
-    {
-    ReviewAndEditFragment fragment = new ReviewAndEditFragment();
-
-    Bundle arguments = new Bundle();
-    arguments.putParcelable( BUNDLE_KEY_PRODUCT, product );
-
-    fragment.setArguments( arguments );
-
-    return ( fragment );
+        return fragment;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// AJourneyFragment Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  ////////// AJourneyFragment Method(s) //////////
+        super.onCreate(savedInstanceState);
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    if ( savedInstanceState == null )
-      {
-      Analytics.getInstance( getActivity() ).trackProductOrderReviewScreenViewed( mProduct );
-      }
+        if (savedInstanceState == null) {
+            Analytics.getInstance(getActivity()).trackProductOrderReviewScreenViewed(mProduct);
+        }
     }
 
+    /*****************************************************
+     *
+     * Returns the content view for this fragment
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Returns the content view for this fragment
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.screen_review_and_edit, container, false );
+        View view = layoutInflator.inflate(R.layout.screen_review_and_edit, container, false);
 
-    super.onViewCreated( view );
+        super.onViewCreated(view);
 
-    mGridView         = (GridView)view.findViewById( R.id.grid_view );
-    mForwardsTextView = setForwardsTextViewText( R.string.review_and_edit_proceed_button_text );
+        mGridView = (GridView) view.findViewById(R.id.grid_view);
+        mForwardsTextView = setForwardsTextViewText(R.string.review_and_edit_proceed_button_text);
 
+        setForwardsTextViewOnClickListener(this);
 
-    setForwardsTextViewOnClickListener( this );
-
-
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is top-most.
+     *
+     *****************************************************/
+    @Override
+    public void onTop() {
 
-  /*****************************************************
-   *
-   * Called when the fragment is top-most.
-   *
-   *****************************************************/
-  @Override
-  public void onTop()
-    {
-    super.onTop();
+        super.onTop();
 
-    // Create and set the adaptor
-    mImageSpecAdaptor = new ImageSpecAdaptor( mKiteActivity, mImageSpecArrayList, mProduct, this );
-    mGridView.setAdapter( mImageSpecAdaptor );
+        // Create and set the adaptor
+        mImageSpecAdaptor = new ImageSpecAdaptor(mKiteActivity, mImageSpecArrayList, mProduct, this);
+        mGridView.setAdapter(mImageSpecAdaptor);
 
-    // restore gridview state
-    if ( mGridViewState != null )
-      {
-      mGridView.onRestoreInstanceState( mGridViewState );
-      mGridViewState = null;
-      }
+        // restore gridview state
+        if (mGridViewState != null) {
+            mGridView.onRestoreInstanceState(mGridViewState);
+            mGridViewState = null;
+        }
 
-    setTitle(); // restore title
+        setTitle(); // restore title
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is not on top.
+     *
+     *****************************************************/
+    @Override
+    public void onNotTop() {
 
-  /*****************************************************
-   *
-   * Called when the fragment is not on top.
-   *
-   *****************************************************/
-  @Override
-  public void onNotTop()
-    {
-    super.onNotTop();
+        super.onNotTop();
 
+        // Clear out the stored images to reduce memory usage
+        // when not on this screen. Save state so we can return
+        // to correct scroll offset in onTop
 
-    // Clear out the stored images to reduce memory usage
-    // when not on this screen. Save state so we can return
-    // to correct scroll offset in onTop
+        if (mGridView != null) {
+            mGridViewState = mGridView.onSaveInstanceState();
 
-    if ( mGridView != null )
-      {
-      mGridViewState = mGridView.onSaveInstanceState();
+            mGridView.setAdapter(null);
+        }
 
-      mGridView.setAdapter( null );
-      }
-
-    mImageSpecAdaptor = null;
+        mImageSpecAdaptor = null;
     }
 
+    ////////// AssetAndQuantityAdaptor.IListener Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the decrease button has been pressed to
+     * take the quantity to zero.
+     *
+     *****************************************************/
+    @Override
+    public void onWantsToBeZero(int assetIndex) {
+        // Display a dialog confirming whether the user wants to
+        // delete the photo. If the user cancels - the quantity has
+        // been left at one.
 
-
-  ////////// AssetAndQuantityAdaptor.IListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the decrease button has been pressed to
-   * take the quantity to zero.
-   *
-   *****************************************************/
-  @Override
-  public void onWantsToBeZero( int assetIndex )
-    {
-    // Display a dialog confirming whether the user wants to
-    // delete the photo. If the user cancels - the quantity has
-    // been left at one.
-
-    mKiteActivity.displayModalDialog(
-      R.string.alert_dialog_title_delete_photo,
-      R.string.alert_dialog_message_delete_photo,
-      R.string.alert_dialog_delete_photo_confirm_text,
-      new DeleteAssetRunnable( assetIndex ),
-      R.string.alert_dialog_delete_photo_cancel_text,
-      null
-      );
+        mKiteActivity.displayModalDialog(
+                R.string.alert_dialog_title_delete_photo,
+                R.string.alert_dialog_message_delete_photo,
+                R.string.alert_dialog_delete_photo_confirm_text,
+                new DeleteAssetRunnable(assetIndex),
+                R.string.alert_dialog_delete_photo_cancel_text,
+                null
+        );
     }
 
+    /*****************************************************
+     *
+     * Called when the quantity of an asset changes.
+     *
+     *****************************************************/
+    @Override
+    public void onQuantityChanged(int assetIndex) {
 
-  /*****************************************************
-   *
-   * Called when the quantity of an asset changes.
-   *
-   *****************************************************/
-  @Override
-  public void onQuantityChanged( int assetIndex )
-    {
-    setTitle();
+        setTitle();
     }
 
+    /*****************************************************
+     *
+     * Called when the edit button for an asset has been
+     * clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onEdit(int assetIndex) {
+        // Launch the edit screen for the chosen asset
 
-  /*****************************************************
-   *
-   * Called when the edit button for an asset has been
-   * clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onEdit( int assetIndex )
-    {
-    // Launch the edit screen for the chosen asset
-
-    if ( mKiteActivity instanceof ICallback )
-      {
-      ( (ICallback)mKiteActivity ).reOnEdit( assetIndex );
-      }
+        if (mKiteActivity instanceof ICallback) {
+            ((ICallback) mKiteActivity).reOnEdit(assetIndex);
+        }
     }
 
+    ////////// View.OnClickListener Method(s) //////////
 
-  ////////// View.OnClickListener Method(s) //////////
+    /*****************************************************
+     *
+     * Called when a view is clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onClick(View view) {
 
-  /*****************************************************
-   *
-   * Called when a view is clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onClick( View view )
-    {
-    if ( view == mForwardsTextView )
-      {
-      ///// Confirm /////
+        if (view == mForwardsTextView) {
+            ///// Confirm /////
 
-      if ( mKiteActivity instanceof ICallback )
-        {
-        // firstly check if number of images user has selected meets expectations, if not
-        // prompt the user for confirmation to continue
+            if (mKiteActivity instanceof ICallback) {
+                // firstly check if number of images user has selected meets expectations, if not
+                // prompt the user for confirmation to continue
+                int numberOfImages = 0;
+
+                for (ImageSpec imageSpec : mImageSpecArrayList) {
+                    numberOfImages += imageSpec.getQuantity();
+                }
+
+                int quantityPerPack = mProduct.getQuantityPerSheet();
+                int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
+                int expectedNumberOfImages = numberOfPacks * quantityPerPack;
+                if (numberOfImages < expectedNumberOfImages) {
+                    displayNotFullDialog(expectedNumberOfImages, numberOfImages, new CallbackConfirmRunnable());
+                } else {
+                    ((ICallback) mKiteActivity).reOnConfirm();
+                }
+            }
+        }
+    }
+
+    ////////// IUpdatedAssetListener Method(s) //////////
+
+    /*****************************************************
+     *
+     * Updates the assets and quantity.
+     *
+     *****************************************************/
+    @Override
+    public void onImageUpdated(int imageIndex, ImageSpec imageSpec) {
+
+        if (mImageSpecAdaptor != null) {
+            mImageSpecAdaptor.notifyDataSetInvalidated();
+        }
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Updates the title.
+     *
+     *****************************************************/
+    private void setTitle() {
+        // Calculate the total number of images
+
         int numberOfImages = 0;
 
-        for ( ImageSpec imageSpec : mImageSpecArrayList )
-          {
-          numberOfImages += imageSpec.getQuantity();
-          }
+        for (ImageSpec imageSpec : mImageSpecArrayList) {
+            numberOfImages += imageSpec.getQuantity();
+        }
 
         int quantityPerPack = mProduct.getQuantityPerSheet();
-        int numberOfPacks = ( numberOfImages + ( quantityPerPack - 1 ) ) / quantityPerPack;
-        int expectedNumberOfImages = numberOfPacks * quantityPerPack;
-        if ( numberOfImages < expectedNumberOfImages )
-          {
-          displayNotFullDialog( expectedNumberOfImages, numberOfImages, new CallbackConfirmRunnable() );
-          }
-        else
-          {
-          ( (ICallback) mKiteActivity ).reOnConfirm();
-          }
+        int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
+
+        mKiteActivity.setTitle(getString(R.string.review_and_edit_title_format_string, numberOfImages, (numberOfPacks * quantityPerPack)));
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * The callback interface.
+     *
+     *****************************************************/
+    public interface ICallback {
+        public void reOnEdit(int imageIndex);
+
+        public void reOnConfirm();
+    }
+
+    /*****************************************************
+     *
+     * Calls back to the activity.
+     *
+     *****************************************************/
+    private class CallbackConfirmRunnable implements Runnable {
+        @Override
+        public void run() {
+
+            ((ICallback) mKiteActivity).reOnConfirm();
         }
-      }
     }
 
+    /*****************************************************
+     *
+     * Deletes an asset.
+     *
+     *****************************************************/
+    private class DeleteAssetRunnable implements Runnable {
+        private int mAssetIndex;
 
-  ////////// IUpdatedAssetListener Method(s) //////////
+        DeleteAssetRunnable(int assetIndex) {
 
-  /*****************************************************
-   *
-   * Updates the assets and quantity.
-   *
-   *****************************************************/
-  @Override
-  public void onImageUpdated( int imageIndex, ImageSpec imageSpec )
-    {
-    if ( mImageSpecAdaptor != null )
-      {
-      mImageSpecAdaptor.notifyDataSetInvalidated();
-      }
+            mAssetIndex = assetIndex;
+        }
+
+        @Override
+        public void run() {
+            // Remove the asset
+            mImageSpecArrayList.remove(mAssetIndex);
+
+            // Update the screen
+            mImageSpecAdaptor.notifyDataSetInvalidated();
+
+            setTitle();
+        }
     }
 
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Updates the title.
-   *
-   *****************************************************/
-  private void setTitle()
-    {
-    // Calculate the total number of images
-
-    int numberOfImages = 0;
-
-    for ( ImageSpec imageSpec : mImageSpecArrayList )
-      {
-      numberOfImages += imageSpec.getQuantity();
-      }
-
-
-    int quantityPerPack = mProduct.getQuantityPerSheet();
-    int numberOfPacks   = ( numberOfImages + ( quantityPerPack - 1 ) ) / quantityPerPack;
-
-    mKiteActivity.setTitle( getString( R.string.review_and_edit_title_format_string, numberOfImages, ( numberOfPacks * quantityPerPack ) ) );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * The callback interface.
-   *
-   *****************************************************/
-  public interface ICallback
-    {
-    public void reOnEdit( int imageIndex );
-    public void reOnConfirm();
-    }
-
-
-  /*****************************************************
-   *
-   * Calls back to the activity.
-   *
-   *****************************************************/
-  private class CallbackConfirmRunnable implements Runnable
-    {
-    @Override
-    public void run()
-      {
-      ( (ICallback)mKiteActivity ).reOnConfirm();
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Deletes an asset.
-   *
-   *****************************************************/
-  private class DeleteAssetRunnable implements Runnable
-    {
-    private int  mAssetIndex;
-
-
-    DeleteAssetRunnable( int assetIndex )
-      {
-      mAssetIndex = assetIndex;
-      }
-
-
-    @Override
-    public void run()
-      {
-      // Remove the asset
-      mImageSpecArrayList.remove( mAssetIndex );
-
-      // Update the screen
-      mImageSpecAdaptor.notifyDataSetInvalidated();
-
-      setTitle();
-      }
-    }
-
-  }
+}
 

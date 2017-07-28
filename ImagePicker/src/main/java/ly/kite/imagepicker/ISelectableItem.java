@@ -36,11 +36,9 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.os.Parcelable;
-
 
 ///// Interface Declaration /////
 
@@ -49,19 +47,18 @@ import android.os.Parcelable;
  * This interface defines a selectable item.
  *
  *****************************************************/
-public interface ISelectableItem extends Parcelable
-  {
-  /*****************************************************
-   *
-   * Returns a key for the item.
-   *
-   *****************************************************/
-  public String getKey();
+public interface ISelectableItem extends Parcelable {
+    /*****************************************************
+     *
+     * Returns a key for the item.
+     *
+     *****************************************************/
+    public String getKey();
 
-  /*****************************************************
-   *
-   * Returns the URL of the image.
-   *
-   *****************************************************/
-  public String getImageURLString();
-  }
+    /*****************************************************
+     *
+     * Returns the URL of the image.
+     *
+     *****************************************************/
+    public String getImageURLString();
+}

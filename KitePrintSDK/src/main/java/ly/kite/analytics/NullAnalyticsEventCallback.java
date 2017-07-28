@@ -39,8 +39,9 @@ package ly.kite.analytics;
 ///// Import(s) /////
 
 import android.content.Context;
-import ly.kite.ordering.Order;
+
 import ly.kite.catalogue.Product;
+import ly.kite.ordering.Order;
 
 /*****************************************************
  *
@@ -48,65 +49,96 @@ import ly.kite.catalogue.Product;
  * interface
  *
  *****************************************************/
-public class NullAnalyticsEventCallback implements IAnalyticsEventCallback
-  {
+public class NullAnalyticsEventCallback implements IAnalyticsEventCallback {
 
-  ////////// Member Variable(s) //////////
-  private final Context mContext;
+    ////////// Member Variable(s) //////////
+    private final Context mContext;
 
-  ////////// Constructor(s) //////////
-  public NullAnalyticsEventCallback( Context context )
-      {
+    ////////// Constructor(s) //////////
+    public NullAnalyticsEventCallback(Context context) {
+
         this.mContext = context;
-      }
+    }
 
-  ////////// Method(s) //////////
+    ////////// Method(s) //////////
 
-  @Override
-  public void onSDKLoaded(String entryPoint) {}
+    @Override
+    public void onSDKLoaded(String entryPoint) {
 
-  @Override
-  public void onCategoryListScreenViewed() {}
+    }
 
-  @Override
-  public void onProductListScreenViewed() {}
+    @Override
+    public void onCategoryListScreenViewed() {
 
-  @Override
-  public void onProductDetailsScreenViewed( Product product) {}
+    }
 
-  @Override
-  public void onCreateProductScreenViewed(Product product) {}
+    @Override
+    public void onProductListScreenViewed() {
 
-  @Override
-  public void onPhotobookEditScreenViewed() {}
+    }
 
-  @Override
-  public void onImagePickerScreenViewed() {}
+    @Override
+    public void onProductDetailsScreenViewed(Product product) {
 
-  @Override
-  public void onProductOrderReviewScreenViewed(Product product) {}
+    }
 
-  @Override
-  public void onBasketScreenViewed() {}
+    @Override
+    public void onCreateProductScreenViewed(Product product) {
 
-  @Override
-  public void onContinueShoppingButtonTapped() {}
+    }
 
-  @Override
-  public void onShippingScreenViewed( Order printOrder, String variant, boolean showPhoneEntryField) {}
+    @Override
+    public void onPhotobookEditScreenViewed() {
 
-  @Override
-  public void onAddressSelectionScreenViewed() {}
+    }
 
-  @Override
-  public void onPaymentMethodScreenViewed( Order printOrder ) {}
+    @Override
+    public void onImagePickerScreenViewed() {
 
-  @Override
-  public void onPaymentMethodSelected( String paymentMethod ) {}
+    }
 
-  @Override
-  public void onPaymentCompleted( Order printOrder, String paymentMethod) {}
+    @Override
+    public void onProductOrderReviewScreenViewed(Product product) {
 
-  @Override
-  public void onPrintOrderSubmission( Order printOrder) {}
-  }
+    }
+
+    @Override
+    public void onBasketScreenViewed() {
+
+    }
+
+    @Override
+    public void onContinueShoppingButtonTapped() {
+
+    }
+
+    @Override
+    public void onShippingScreenViewed(Order printOrder, String variant, boolean showPhoneEntryField) {
+
+    }
+
+    @Override
+    public void onAddressSelectionScreenViewed() {
+
+    }
+
+    @Override
+    public void onPaymentMethodScreenViewed(Order printOrder) {
+
+    }
+
+    @Override
+    public void onPaymentMethodSelected(String paymentMethod) {
+
+    }
+
+    @Override
+    public void onPaymentCompleted(Order printOrder, String paymentMethod) {
+
+    }
+
+    @Override
+    public void onPrintOrderSubmission(Order printOrder) {
+
+    }
+}

@@ -36,7 +36,6 @@
 
 package ly.kite.instagramphotopicker;
 
-
 ///// Import(s) /////
 
 import android.app.Fragment;
@@ -44,7 +43,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import java.util.List;
-
 
 ///// Class Declaration /////
 
@@ -54,67 +52,58 @@ import java.util.List;
  * functionality.
  *
  *****************************************************/
-public class InstagramPhotoPicker
-  {
-  ////////// Static Constant(s) //////////
+public class InstagramPhotoPicker {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "InstagramPhotoPicker";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "InstagramPhotoPicker";
 
-  static public  final String  EXTRA_SELECTED_PHOTOS = "ly.kite.instagramphotopicker.EXTRA_SELECTED_PHOTOS";
+    public static final String EXTRA_SELECTED_PHOTOS = "ly.kite.instagramphotopicker.EXTRA_SELECTED_PHOTOS";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Starts the Instagram photo picker.
+     *
+     *****************************************************/
+    public static void startPhotoPickerForResult(Fragment fragment, String clientId, String redirectUri, int maxImageCount, int
+            activityRequestCode) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Starts the Instagram photo picker.
-   *
-   *****************************************************/
-  static public void startPhotoPickerForResult( Fragment fragment, String clientId, String redirectUri, int maxImageCount, int activityRequestCode )
-    {
-    InstagramPhotoPickerActivity.startForResult( fragment, clientId, redirectUri, maxImageCount, activityRequestCode );
+        InstagramPhotoPickerActivity.startForResult(fragment, clientId, redirectUri, maxImageCount, activityRequestCode);
     }
 
+    /*****************************************************
+     *
+     * Returns an array of picked photos.
+     *
+     *****************************************************/
+    public static List<String> getResultPhotos(Intent data) {
 
-  /*****************************************************
-   *
-   * Returns an array of picked photos.
-   *
-   *****************************************************/
-  static public List<String> getResultPhotos( Intent data )
-    {
-    return ( InstagramPhotoPickerActivity.getImageURLListFromResult( data ) );
+        return InstagramPhotoPickerActivity.getImageURLListFromResult(data);
     }
 
+    /*****************************************************
+     *
+     * Ends a customer session.
+     *
+     *****************************************************/
+    public static void endCustomerSession(Context context) {
 
-  /*****************************************************
-   *
-   * Ends a customer session.
-   *
-   *****************************************************/
-  static public void endCustomerSession( Context context )
-    {
-    InstagramAgent.clearAccessToken( context );
+        InstagramAgent.clearAccessToken(context);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Method(s) //////////
-
-
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

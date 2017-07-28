@@ -36,13 +36,11 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-
 
 ///// Class Declaration /////
 
@@ -52,67 +50,59 @@ import android.widget.ImageView;
  * square.
  *
  *****************************************************/
-public class SquareImageView extends ImageView
-  {
-  ////////// Static Constant(s) //////////
+public class SquareImageView extends ImageView {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "SquareImageView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SquareImageView";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public SquareImageView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public SquareImageView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public SquareImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public SquareImageView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public SquareImageView( Context context, AttributeSet attrs, int defStyle )
-    {
-    super( context, attrs, defStyle );
+    public SquareImageView(Context context, AttributeSet attrs, int defStyle) {
+
+        super(context, attrs, defStyle);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the view is measured
+     *
+     *****************************************************/
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-  /*****************************************************
-   *
-   * Called when the view is measured
-   *
-   *****************************************************/
-  @Override
-  protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec )
-    {
-    super.onMeasure( widthMeasureSpec, heightMeasureSpec );
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-    setMeasuredDimension( getMeasuredWidth(), getMeasuredWidth() );
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

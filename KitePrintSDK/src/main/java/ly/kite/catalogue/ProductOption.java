@@ -36,9 +36,7 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -46,232 +44,210 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /*****************************************************
  *
  * This class represents a product option.
  *
  *****************************************************/
-public class ProductOption implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class ProductOption implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "ProductOption";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ProductOption";
 
-
-  ////////// Static Variable(s) //////////
-
-  public static final Parcelable.Creator<ProductOption> CREATOR =
-          new Parcelable.Creator<ProductOption>()
-          {
-          public ProductOption createFromParcel( Parcel sourceParcel )
-            {
-            return (new ProductOption( sourceParcel ) );
-            }
-
-          public ProductOption[] newArray( int size )
-            {
-            return (new ProductOption[ size ]);
-            }
-          };
-
-
-  ////////// Member Variable(s) //////////
-
-  final private String            mCode;
-  final private String            mName;
-
-  final private ArrayList<Value>  mValueList;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  ProductOption( String code, String name )
-    {
-    mCode      = code;
-    mName      = name;
-
-    mValueList = new ArrayList<>( 2 );
-    }
-
-
-  // Constructor used by parcelable interface
-  private ProductOption( Parcel sourceParcel )
-    {
-    mCode = sourceParcel.readString();
-    mName = sourceParcel.readString();
-
-    mValueList = new ArrayList<>( 2 );
-
-    sourceParcel.readList( mValueList, Value.class.getClassLoader() );
-    }
-
-
-  ////////// Parcelable Method(s) //////////
-
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
-    }
-
-
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeString( mCode );
-    targetParcel.writeString( mName );
-
-    targetParcel.writeList( mValueList );
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns the option code.
-   *
-   *****************************************************/
-  public String getCode()
-    {
-    return ( mCode );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the option name.
-   *
-   *****************************************************/
-  public String getName()
-    {
-    return ( mName );
-    }
-
-
-  /*****************************************************
-   *
-   * Adds a value to this option.
-   *
-   *****************************************************/
-  void addValue( String code, String name )
-    {
-    mValueList.add( new Value( code, name ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a list of values for this option.
-   *
-   *****************************************************/
-  public ArrayList<Value> getValueList()
-    {
-    return ( mValueList );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * An option value.
-   *
-   *****************************************************/
-  public static class Value implements Parcelable
-    {
     ////////// Static Variable(s) //////////
 
-    public static final Parcelable.Creator<Value> CREATOR =
-      new Parcelable.Creator<Value>()
-        {
-        public Value createFromParcel( Parcel sourceParcel )
-          {
-          return ( new Value( sourceParcel ) );
-          }
+    public static final Parcelable.Creator<ProductOption> CREATOR =
+            new Parcelable.Creator<ProductOption>() {
+                public ProductOption createFromParcel(Parcel sourceParcel) {
 
-        public Value[] newArray( int size )
-          {
-          return ( new Value[ size ] );
-          }
-        };
+                    return new ProductOption(sourceParcel);
+                }
 
+                public ProductOption[] newArray(int size) {
+
+                    return new ProductOption[size];
+                }
+            };
 
     ////////// Member Variable(s) //////////
 
-    private String  mCode;
-    private String  mName;
+    final private String mCode;
+    final private String mName;
 
+    final private ArrayList<Value> mValueList;
+
+    ////////// Static Initialiser(s) //////////
+
+    ////////// Static Method(s) //////////
 
     ////////// Constructor(s) //////////
 
-    Value( String code, String name )
-      {
-      mCode = code;
-      mName = name;
-      }
+    ProductOption(String code, String name) {
 
-    Value( Parcel sourceParcel )
-      {
-      mCode = sourceParcel.readString();
-      mName = sourceParcel.readString();
-      }
+        mCode = code;
+        mName = name;
 
+        mValueList = new ArrayList<>(2);
+    }
+
+    // Constructor used by parcelable interface
+    private ProductOption(Parcel sourceParcel) {
+
+        mCode = sourceParcel.readString();
+        mName = sourceParcel.readString();
+
+        mValueList = new ArrayList<>(2);
+
+        sourceParcel.readList(mValueList, Value.class.getClassLoader());
+    }
 
     ////////// Parcelable Method(s) //////////
 
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
     @Override
-    public int describeContents()
-      {
-      return ( 0 );
-      }
+    public int describeContents() {
 
+        return 0;
+    }
+
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
     @Override
-    public void writeToParcel( Parcel dest, int flags )
-      {
-      dest.writeString( mCode );
-      dest.writeString( mName );
-      }
+    public void writeToParcel(Parcel targetParcel, int flags) {
 
+        targetParcel.writeString(mCode);
+        targetParcel.writeString(mName);
+
+        targetParcel.writeList(mValueList);
+    }
 
     ////////// Method(s) //////////
 
-    public String getCode()
-      {
-      return ( mCode );
-      }
+    /*****************************************************
+     *
+     * Returns the option code.
+     *
+     *****************************************************/
+    public String getCode() {
 
-    public String getName()
-      {
-      return ( mName );
-      }
+        return mCode;
+    }
 
-    @Override
-    public String toString()
-      {
-      return ( mName );
-      }
+    /*****************************************************
+     *
+     * Returns the option name.
+     *
+     *****************************************************/
+    public String getName() {
+
+        return mName;
+    }
+
+    /*****************************************************
+     *
+     * Adds a value to this option.
+     *
+     *****************************************************/
+    void addValue(String code, String name) {
+
+        mValueList.add(new Value(code, name));
+    }
+
+    /*****************************************************
+     *
+     * Returns a list of values for this option.
+     *
+     *****************************************************/
+    public ArrayList<Value> getValueList() {
+
+        return mValueList;
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * An option value.
+     *
+     *****************************************************/
+    public static class Value implements Parcelable {
+        ////////// Static Variable(s) //////////
+
+        public static final Parcelable.Creator<Value> CREATOR =
+                new Parcelable.Creator<Value>() {
+                    public Value createFromParcel(Parcel sourceParcel) {
+
+                        return new Value(sourceParcel);
+                    }
+
+                    public Value[] newArray(int size) {
+
+                        return new Value[size];
+                    }
+                };
+
+        ////////// Member Variable(s) //////////
+
+        private String mCode;
+        private String mName;
+
+        ////////// Constructor(s) //////////
+
+        Value(String code, String name) {
+
+            mCode = code;
+            mName = name;
+        }
+
+        Value(Parcel sourceParcel) {
+
+            mCode = sourceParcel.readString();
+            mName = sourceParcel.readString();
+        }
+
+        ////////// Parcelable Method(s) //////////
+
+        @Override
+        public int describeContents() {
+
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
+            dest.writeString(mCode);
+            dest.writeString(mName);
+        }
+
+        ////////// Method(s) //////////
+
+        public String getCode() {
+
+            return mCode;
+        }
+
+        public String getName() {
+
+            return mName;
+        }
+
+        @Override
+        public String toString() {
+
+            return mName;
+        }
 
     }
 
-  }
+}
 

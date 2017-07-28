@@ -27,19 +27,14 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
 
-import android.app.ActionBar;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
@@ -47,7 +42,6 @@ import ly.kite.R;
 import ly.kite.journey.selection.ChooseProductGroupFragment;
 import ly.kite.journey.selection.ProductSelectionActivity;
 import ly.kite.util.AssetHelper;
-
 
 ///// Class Declaration /////
 
@@ -59,185 +53,157 @@ import ly.kite.util.AssetHelper;
  * selection / shopping journey.
  *
  *****************************************************/
-abstract public class AHomeActivity extends ProductSelectionActivity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AHomeActivity extends ProductSelectionActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private   final String LOG_TAG                      = "AHomeActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AHomeActivity";
 
-  static protected final long   OPEN_MENU_DELAY_MILLIS       = 500L;
-  static protected final long   CLOSE_MENU_DELAY_MILLIS      = 100L;
+    static protected final long OPEN_MENU_DELAY_MILLIS = 500L;
+    static protected final long CLOSE_MENU_DELAY_MILLIS = 100L;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    protected DrawerLayout mDrawerLayout;
+    protected ListView mNavigationDrawerListView;
 
-  ////////// Member Variable(s) //////////
+    protected boolean mShowMenuOnce;
+    protected Handler mHandler;
 
-  protected DrawerLayout           mDrawerLayout;
-  protected ListView               mNavigationDrawerListView;
+    ////////// Static Initialiser(s) //////////
 
-  protected boolean                mShowMenuOnce;
-  protected Handler                mHandler;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// ProductSelectionActivity Method(s) //////////
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// ProductSelectionActivity Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    // Set up the navigation drawer
-
-    mDrawerLayout             = (DrawerLayout)findViewById( R.id.drawer_layout );
-    mNavigationDrawerListView = (ListView)findViewById( R.id.navigation_drawer_list_view );
-
-
-    // On devices running older versions of Android, there is no menu icon, so the user may not
-    // know there's a menu. We want to let them know by showing a hint of the menu.
-
-    if ( savedInstanceState == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2 )
-      {
-      mHandler = new Handler();
-
-      mShowMenuOnce = true;
-      }
-
-    }
-
-
-  /*****************************************************
-   *
-   * Called when an activity result is received.
-   *
-   *****************************************************/
-  @Override
-  protected void onActivityResult( int requestCode, int resultCode, Intent data )
-    {
-    // For the custom apps, we don't want to exit the activity once check-out is
-    // complete - we want to go back to the landing page - the choose product group
-    // fragment.
-
-    if ( resultCode == ACTIVITY_RESULT_CODE_CHECKED_OUT )
-      {
-      mFragmentManager.popBackStackImmediate( ChooseProductGroupFragment.TAG, 0 );
-
-      // If we have successfully completed a check-out, then also clear out any cached
-      // assets. (This won't clear any product images).
-      AssetHelper.clearSessionAssets( this );
-
-      return;
-      }
-
-
-    super.onActivityResult( requestCode, resultCode, data );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the back key is pressed.
-   *
-   *****************************************************/
-  @Override
-  public void onBackPressed()
-    {
-    // If the drawer is open - close it
-    if ( mDrawerLayout.isDrawerOpen( Gravity.LEFT ) )
-      {
-      mDrawerLayout.closeDrawer( Gravity.LEFT );
-
-      return;
-      }
-
-    super.onBackPressed();
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * Runnable to open the menu.
-   *
-   *****************************************************/
-  private class OpenMenuRunnable implements Runnable, DrawerLayout.DrawerListener
-    {
-    public void run()
-      {
-      // Override the drawer listener so we know when it has fully opened.
-      mDrawerLayout.setDrawerListener( this );
-
-      mDrawerLayout.openDrawer( Gravity.LEFT );
-      }
-
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
     @Override
-    public void onDrawerSlide( View drawerView, float slideOffset )
-      {
-      // Ignore
-      }
+    public void onCreate(Bundle savedInstanceState) {
 
-    @Override
-    public void onDrawerOpened( View drawerView )
-      {
-      // We no longer need to listen for drawer events
-      mDrawerLayout.setDrawerListener( null );
+        super.onCreate(savedInstanceState);
 
-      mHandler.postDelayed( new CloseMenuRunnable(), CLOSE_MENU_DELAY_MILLIS );
-      }
+        // Set up the navigation drawer
 
-    @Override
-    public void onDrawerClosed( View drawerView )
-      {
-      // Ignore
-      }
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationDrawerListView = (ListView) findViewById(R.id.navigation_drawer_list_view);
 
-    @Override
-    public void onDrawerStateChanged( int newState )
-      {
-      // Ignore
-      }
+        // On devices running older versions of Android, there is no menu icon, so the user may not
+        // know there's a menu. We want to let them know by showing a hint of the menu.
+
+        if (savedInstanceState == null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            mHandler = new Handler();
+
+            mShowMenuOnce = true;
+        }
+
     }
 
+    /*****************************************************
+     *
+     * Called when an activity result is received.
+     *
+     *****************************************************/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // For the custom apps, we don't want to exit the activity once check-out is
+        // complete - we want to go back to the landing page - the choose product group
+        // fragment.
 
-  /*****************************************************
-   *
-   * Runnable to close the menu.
-   *
-   *****************************************************/
-  private class CloseMenuRunnable implements Runnable
-    {
-    public void run()
-      {
-      mDrawerLayout.closeDrawers();
-      }
+        if (resultCode == ACTIVITY_RESULT_CODE_CHECKED_OUT) {
+            mFragmentManager.popBackStackImmediate(ChooseProductGroupFragment.TAG, 0);
+
+            // If we have successfully completed a check-out, then also clear out any cached
+            // assets. (This won't clear any product images).
+            AssetHelper.clearSessionAssets(this);
+
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /*****************************************************
+     *
+     * Called when the back key is pressed.
+     *
+     *****************************************************/
+    @Override
+    public void onBackPressed() {
+        // If the drawer is open - close it
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
 
-  }
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * Runnable to open the menu.
+     *
+     *****************************************************/
+    private class OpenMenuRunnable implements Runnable, DrawerLayout.DrawerListener {
+        public void run() {
+            // Override the drawer listener so we know when it has fully opened.
+            mDrawerLayout.setDrawerListener(this);
+
+            mDrawerLayout.openDrawer(Gravity.LEFT);
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            // Ignore
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            // We no longer need to listen for drawer events
+            mDrawerLayout.setDrawerListener(null);
+
+            mHandler.postDelayed(new CloseMenuRunnable(), CLOSE_MENU_DELAY_MILLIS);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            // Ignore
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            // Ignore
+        }
+    }
+
+    /*****************************************************
+     *
+     * Runnable to close the menu.
+     *
+     *****************************************************/
+    private class CloseMenuRunnable implements Runnable {
+        public void run() {
+
+            mDrawerLayout.closeDrawers();
+        }
+    }
+
+}

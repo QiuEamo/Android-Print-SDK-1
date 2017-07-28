@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
@@ -53,7 +52,6 @@ import android.widget.ImageView;
 
 import ly.kite.R;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -61,312 +59,288 @@ import ly.kite.R;
  * This class overlays a check mark on an image view.
  *
  *****************************************************/
-public class CheckableImageContainerFrame extends AAREImageContainerFrame
-  {
-  ////////// Static Constant(s) //////////
+public class CheckableImageContainerFrame extends AAREImageContainerFrame {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                                 = "CheckableImageContainerFrame";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CheckableImageContainerFrame";
 
-  static private final long    CHECK_ANIMATION_DURATION_MILLIS         = 200L;
+    private static final long CHECK_ANIMATION_DURATION_MILLIS = 200L;
 
-  static private final int     DEFAULT_HIGHLIGHT_BORDER_SIZE_IN_PIXLES = 2;
-  static private final int     DEFAULT_HIGHLIGHT_BORDER_COLOUR         = 0xff0000ff;
+    private static final int DEFAULT_HIGHLIGHT_BORDER_SIZE_IN_PIXLES = 2;
+    private static final int DEFAULT_HIGHLIGHT_BORDER_COLOUR = 0xff0000ff;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private State mState;
+    private boolean mUncheckedStateIsVisible;
 
-  ////////// Member Variable(s) //////////
+    private ImageView mCheckImageView;
 
-  private State      mState;
-  private boolean    mUncheckedStateIsVisible;
+    private Paint mHighlightBorderPaint;
+    private int mHighlightBorderSizeInPixels;
+    private int mHighlightBorderColour;
+    private boolean mHighlightBorderShowing;
 
-  private ImageView  mCheckImageView;
+    ////////// Static Initialiser(s) //////////
 
-  private Paint      mHighlightBorderPaint;
-  private int        mHighlightBorderSizeInPixels;
-  private int        mHighlightBorderColour;
-  private boolean    mHighlightBorderShowing;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public CheckableImageContainerFrame(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public CheckableImageContainerFrame( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public CheckableImageContainerFrame( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public CheckableImageContainerFrame(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public CheckableImageContainerFrame( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public CheckableImageContainerFrame(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
     }
 
-  @TargetApi( Build.VERSION_CODES.LOLLIPOP )
-  public CheckableImageContainerFrame( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public CheckableImageContainerFrame(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    ////////// AFixableImageFrame Method(s) //////////
 
-  ////////// AFixableImageFrame Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the content view.
+     *
+     *****************************************************/
+    @Override
+    protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-  /*****************************************************
-   *
-   * Returns the content view.
-   *
-   *****************************************************/
-  @Override
-  protected View onCreateView( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    LayoutInflater layoutInflator = LayoutInflater.from( context );
+        LayoutInflater layoutInflator = LayoutInflater.from(context);
 
-    View view = layoutInflator.inflate( R.layout.checkable_image_container_frame, this, true );
+        View view = layoutInflator.inflate(R.layout.checkable_image_container_frame, this, true);
 
-    mCheckImageView = (ImageView)view.findViewById( R.id.check_image_view );
+        mCheckImageView = (ImageView) view.findViewById(R.id.check_image_view);
 
-    initialise( context );
+        initialise(context);
 
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Draws the view.
+     *
+     *****************************************************/
+    @Override
+    public void onDraw(Canvas canvas) {
 
-  /*****************************************************
-   *
-   * Draws the view.
-   *
-   *****************************************************/
-  @Override
-  public void onDraw( Canvas canvas )
-    {
-    super.onDraw( canvas );
+        super.onDraw(canvas);
 
-    // If we need to show the highlight border, include the
-    // padding when we draw it.
-    if ( mHighlightBorderShowing )
-      {
-      canvas.drawRect( getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom(), mHighlightBorderPaint );
-      }
+        // If we need to show the highlight border, include the
+        // padding when we draw it.
+        if (mHighlightBorderShowing) {
+            canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom(),
+                    mHighlightBorderPaint);
+        }
     }
 
-  ////////// Method(s) //////////
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Initialises the view.
-   *
-   *****************************************************/
-  private void initialise( Context context )
-    {
-    setState( State.UNCHECKED_INVISIBLE );
+    /*****************************************************
+     *
+     * Initialises the view.
+     *
+     *****************************************************/
+    private void initialise(Context context) {
 
+        setState(State.UNCHECKED_INVISIBLE);
 
-    mHighlightBorderPaint = new Paint();
-    mHighlightBorderPaint.setStyle( Paint.Style.STROKE );
+        mHighlightBorderPaint = new Paint();
+        mHighlightBorderPaint.setStyle(Paint.Style.STROKE);
 
-    setHighlightBorderSizePixels( DEFAULT_HIGHLIGHT_BORDER_SIZE_IN_PIXLES );
-    setHighlightBorderColour( DEFAULT_HIGHLIGHT_BORDER_COLOUR );
+        setHighlightBorderSizePixels(DEFAULT_HIGHLIGHT_BORDER_SIZE_IN_PIXLES);
+        setHighlightBorderColour(DEFAULT_HIGHLIGHT_BORDER_COLOUR);
 
-
-    // We might need to draw a highlight
-    setWillNotDraw( false );
+        // We might need to draw a highlight
+        setWillNotDraw(false);
     }
 
+    /*****************************************************
+     *
+     * Sets the state.
+     *
+     *****************************************************/
+    public State setState(State state) {
 
-  /*****************************************************
-   *
-   * Sets the state.
-   *
-   *****************************************************/
-  public State setState( State state )
-    {
-    mState = state;
+        mState = state;
 
-    switch ( state )
-      {
-      case UNCHECKED_INVISIBLE:
-        mUncheckedStateIsVisible = false;
-        mCheckImageView.setVisibility( View.INVISIBLE );
-        break;
+        switch (state) {
+            case UNCHECKED_INVISIBLE:
+                mUncheckedStateIsVisible = false;
+                mCheckImageView.setVisibility(View.INVISIBLE);
+                break;
 
-      case UNCHECKED_VISIBLE:
-        mUncheckedStateIsVisible = true;
-        mCheckImageView.setImageResource( R.drawable.check_off );
-        mCheckImageView.setVisibility( View.VISIBLE );
-        break;
+            case UNCHECKED_VISIBLE:
+                mUncheckedStateIsVisible = true;
+                mCheckImageView.setImageResource(R.drawable.check_off);
+                mCheckImageView.setVisibility(View.VISIBLE);
+                break;
 
-      case CHECKED:
-        mCheckImageView.setImageResource( R.drawable.check_on );
-        mCheckImageView.setVisibility( View.VISIBLE );
-        break;
-      }
+            case CHECKED:
+                mCheckImageView.setImageResource(R.drawable.check_on);
+                mCheckImageView.setVisibility(View.VISIBLE);
+                break;
+        }
 
-    invalidate();
+        invalidate();
 
-    return ( state );
+        return state;
     }
 
+    /*****************************************************
+     *
+     * Sets the checked state.
+     *
+     * @return The new state.
+     *
+     *****************************************************/
+    public State setChecked(boolean isChecked) {
 
-  /*****************************************************
-   *
-   * Sets the checked state.
-   *
-   * @return The new state.
-   *
-   *****************************************************/
-  public State setChecked( boolean isChecked )
-    {
-    mCheckImageView.setAnimation( null );
+        mCheckImageView.setAnimation(null);
 
-    return ( setState( testChecked( isChecked ) ) );
+        return setState(testChecked(isChecked));
     }
 
+    /*****************************************************
+     *
+     * Tests the effect of setting the checked state. Does not
+     * actually change the state.
+     *
+     * @return The new state
+     *
+     *****************************************************/
+    public State testChecked(boolean isChecked) {
 
-  /*****************************************************
-   *
-   * Tests the effect of setting the checked state. Does not
-   * actually change the state.
-   *
-   * @return The new state
-   *
-   *****************************************************/
-  public State testChecked( boolean isChecked )
-    {
-    if ( isChecked ) return ( State.CHECKED );
+        if (isChecked) {
+            return State.CHECKED;
+        }
 
-    if ( mUncheckedStateIsVisible ) return ( State.UNCHECKED_VISIBLE );
+        if (mUncheckedStateIsVisible) {
+            return State.UNCHECKED_VISIBLE;
+        }
 
-    return ( State.UNCHECKED_INVISIBLE );
+        return State.UNCHECKED_INVISIBLE;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the image is checked, false otherwise.
+     *
+     *****************************************************/
+    public boolean isChecked() {
 
-  /*****************************************************
-   *
-   * Returns true if the image is checked, false otherwise.
-   *
-   *****************************************************/
-  public boolean isChecked()
-    {
-    return ( mState == State.CHECKED );
+        return mState == State.CHECKED;
     }
 
+    /*****************************************************
+     *
+     * Sets the checked state, but animates any transition.
+     *
+     *****************************************************/
+    public void transitionChecked(boolean isChecked) {
 
-  /*****************************************************
-   *
-   * Sets the checked state, but animates any transition.
-   *
-   *****************************************************/
-  public void transitionChecked( boolean isChecked )
-    {
-    State previousState = mState;
-    State newState      = setChecked( isChecked );
+        State previousState = mState;
+        State newState = setChecked(isChecked);
 
+        // We only animate for the following transitions:
+        //   - UNCHECKED_INVISIBLE -> CHECKED
+        //   - CHECKED -> UNCHECKED_INVISIBLE
 
-    // We only animate for the following transitions:
-    //   - UNCHECKED_INVISIBLE -> CHECKED
-    //   - CHECKED -> UNCHECKED_INVISIBLE
+        Animation animation = null;
+        int finalVisibility = 0;
 
-    Animation animation       = null;
-    int       finalVisibility = 0;
+        if (previousState == State.UNCHECKED_INVISIBLE && newState == State.CHECKED) {
+            ///// Animate invisible -> checked /////
 
-    if ( previousState == State.UNCHECKED_INVISIBLE && newState == State.CHECKED )
-      {
-      ///// Animate invisible -> checked /////
+            animation = new AlphaAnimation(0f, 1f);
 
-      animation = new AlphaAnimation( 0f, 1f );
+            finalVisibility = View.VISIBLE;
+        } else if (previousState == State.CHECKED && newState == State.UNCHECKED_INVISIBLE) {
+            ///// Animate checked -> invisible /////
 
-      finalVisibility = View.VISIBLE;
-      }
-    else if ( previousState == State.CHECKED && newState == State.UNCHECKED_INVISIBLE )
-      {
-      ///// Animate checked -> invisible /////
+            animation = new AlphaAnimation(1f, 0f);
 
-      animation = new AlphaAnimation( 1f, 0f );
+            mCheckImageView.setVisibility(View.VISIBLE);
 
-      mCheckImageView.setVisibility( View.VISIBLE );
+            finalVisibility = View.GONE;
+        }
 
-      finalVisibility = View.GONE;
-      }
+        if (animation != null) {
+            animation.setDuration(CHECK_ANIMATION_DURATION_MILLIS);
+            animation.setAnimationListener(new VisibilitySettingAnimationListener(mCheckImageView, finalVisibility));
 
-
-    if ( animation != null )
-      {
-      animation.setDuration( CHECK_ANIMATION_DURATION_MILLIS );
-      animation.setAnimationListener( new VisibilitySettingAnimationListener( mCheckImageView, finalVisibility ) );
-
-      mCheckImageView.startAnimation( animation );
-      }
+            mCheckImageView.startAnimation(animation);
+        }
     }
 
+    /*****************************************************
+     *
+     * Sets the highlight border colour.
+     *
+     *****************************************************/
+    public void setHighlightBorderColour(int colour) {
 
-  /*****************************************************
-   *
-   * Sets the highlight border colour.
-   *
-   *****************************************************/
-  public void setHighlightBorderColour( int colour )
-    {
-    mHighlightBorderColour = colour;
+        mHighlightBorderColour = colour;
 
-    mHighlightBorderPaint.setColor( colour );
+        mHighlightBorderPaint.setColor(colour);
 
-    invalidate();
+        invalidate();
     }
 
+    /*****************************************************
+     *
+     * Sets the highlight border size.
+     *
+     *****************************************************/
+    public void setHighlightBorderSizePixels(int sizeInPixels) {
 
-  /*****************************************************
-   *
-   * Sets the highlight border size.
-   *
-   *****************************************************/
-  public void setHighlightBorderSizePixels( int sizeInPixels )
-    {
-    mHighlightBorderSizeInPixels = sizeInPixels;
+        mHighlightBorderSizeInPixels = sizeInPixels;
 
-    mHighlightBorderPaint.setStrokeWidth( sizeInPixels );
+        mHighlightBorderPaint.setStrokeWidth(sizeInPixels);
 
-    invalidate();
+        invalidate();
     }
 
+    /*****************************************************
+     *
+     * Sets whether the highlight border is displayed.
+     *
+     *****************************************************/
+    public void setHighlightBorderShowing(boolean showing) {
 
-  /*****************************************************
-   *
-   * Sets whether the highlight border is displayed.
-   *
-   *****************************************************/
-  public void setHighlightBorderShowing( boolean showing )
-    {
-    mHighlightBorderShowing = showing;
+        mHighlightBorderShowing = showing;
 
-    invalidate();
+        invalidate();
     }
 
+    ////////// Inner Class(es) //////////
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * Describes the state of the check.
-   *
-   *****************************************************/
-  public enum State
-    {
-    UNCHECKED_INVISIBLE,
-    UNCHECKED_VISIBLE,
-    CHECKED
+    /*****************************************************
+     *
+     * Describes the state of the check.
+     *
+     *****************************************************/
+    public enum State {
+        UNCHECKED_INVISIBLE,
+        UNCHECKED_VISIBLE,
+        CHECKED
     }
 
-  }
+}
 

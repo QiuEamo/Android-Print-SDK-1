@@ -36,7 +36,6 @@
 
 package ly.kite.photofromphone;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -47,7 +46,6 @@ import android.content.Intent;
 import ly.kite.R;
 import ly.kite.journey.AImageSource;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -55,88 +53,76 @@ import ly.kite.journey.AImageSource;
  * This class represents an upload from phone image source.
  *
  *****************************************************/
-public class FromPhoneImageSource extends AImageSource
-  {
-  ////////// Static Constant(s) //////////
+public class FromPhoneImageSource extends AImageSource {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG  = "FromPhoneImageSource";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "FromPhoneImageSource";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private PhotoFromPhoneFragment mPhotoFromPhotaFragment;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private PhotoFromPhoneFragment mPhotoFromPhotaFragment;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public FromPhoneImageSource() {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public FromPhoneImageSource()
-    {
-    super( R.color.image_source_background_from_phone,
-            R.drawable.ic_image_source_device,
-            R.string.image_source_from_phone,
-            R.id.upload_image_from_phone,
-            R.string.upload_photo_from_phone );
+        super(R.color.image_source_background_from_phone,
+                R.drawable.ic_image_source_device,
+                R.string.image_source_from_phone,
+                R.id.upload_image_from_phone,
+                R.string.upload_photo_from_phone);
     }
 
+    ////////// AImageSource Method(s) //////////
 
-  ////////// AImageSource Method(s) //////////
+    /*****************************************************
+     *
+     * Returns true, since this image source is always
+     * available.
+     *
+     *****************************************************/
+    public boolean isAvailable(Context context) {
 
-  /*****************************************************
-   *
-   * Returns true, since this image source is always
-   * available.
-   *
-   *****************************************************/
-  public boolean isAvailable( Context context )
-    {
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Called when the image source is picked to select
+     * images.
+     *
+     *****************************************************/
+    public void onPick(Fragment fragment, int maxImageCount) {
+        // Start the photo from phone fragment
 
-  /*****************************************************
-   *
-   * Called when the image source is picked to select
-   * images.
-   *
-   *****************************************************/
-  public void onPick( Fragment fragment, int maxImageCount )
-    {
-    // Start the photo from phone fragment
+        mPhotoFromPhotaFragment = new PhotoFromPhoneFragment();
 
-    mPhotoFromPhotaFragment = new PhotoFromPhoneFragment();
+        mPhotoFromPhotaFragment.setTargetFragment(fragment, 0);
 
-    mPhotoFromPhotaFragment.setTargetFragment( fragment, 0 );
-
-    mPhotoFromPhotaFragment.show( fragment.getFragmentManager(), PhotoFromPhoneFragment.TAG );
+        mPhotoFromPhotaFragment.show(fragment.getFragmentManager(), PhotoFromPhoneFragment.TAG);
     }
 
-
-  /*****************************************************
-   *
-   * Adds any picked images to the supplied list. Note that
-   * the result might either be from the built-in single image
-   * picker, or the multiple photo picker.
-   *
-   *****************************************************/
-  @Override
-  public void getAssetsFromPickerResult( Activity activity, Intent data, IAssetConsumer assetConsumer )
-    {
-    // The upload photo from phone dialog is a fragment, not an activity, so it doesn't return
-    // a result in the same way as other pickers. This method, therefore, is redundant for this
-    // picker.
+    /*****************************************************
+     *
+     * Adds any picked images to the supplied list. Note that
+     * the result might either be from the built-in single image
+     * picker, or the multiple photo picker.
+     *
+     *****************************************************/
+    @Override
+    public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
+        // The upload photo from phone dialog is a fragment, not an activity, so it doesn't return
+        // a result in the same way as other pickers. This method, therefore, is redundant for this
+        // picker.
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}

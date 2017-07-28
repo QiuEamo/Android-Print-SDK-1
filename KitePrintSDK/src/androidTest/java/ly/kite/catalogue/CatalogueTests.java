@@ -36,16 +36,12 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
-import android.os.Parcel;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.json.JSONObject;
-
 
 ///// Class Declaration /////
 
@@ -54,121 +50,112 @@ import org.json.JSONObject;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class CatalogueTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class CatalogueTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "CatalogueTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CatalogueTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Colour from string tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testColourFromString() {
 
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString(null));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString(""));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("#"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("#ZY"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("#abc"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("#aab06"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("$112233"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("0x112233"));
+        Assert.assertEquals(Catalogue.NO_COLOUR, Catalogue.colourFromString("#1122334455"));
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Colour from string tests.
-   *
-   *****************************************************/
-
-  public void testColourFromString()
-    {
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( null ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "#" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "#ZY" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "#abc" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "#aab06" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "$112233" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "0x112233" ) );
-    Assert.assertEquals( Catalogue.NO_COLOUR, Catalogue.colourFromString( "#1122334455" ) );
-
-    Assert.assertEquals( 0xff000000, Catalogue.colourFromString( "#000000" ) );
-    Assert.assertEquals( 0xffaabbcc, Catalogue.colourFromString( "#aabbcc" ) );
-    Assert.assertEquals( 0x00000000, Catalogue.colourFromString( "#00000000" ) );
-    Assert.assertEquals( 0x7aaabbcc, Catalogue.colourFromString( "#7aaabbcc" ) );
-    Assert.assertEquals( 0xa1112233, Catalogue.colourFromString( "#a1112233" ) );
-    Assert.assertEquals( 0xff7f4a3c, Catalogue.colourFromString( "#ff7f4a3c" ) );
-    Assert.assertEquals( 0xffffffff, Catalogue.colourFromString( "#ffffffff" ) );
+        Assert.assertEquals(0xff000000, Catalogue.colourFromString("#000000"));
+        Assert.assertEquals(0xffaabbcc, Catalogue.colourFromString("#aabbcc"));
+        Assert.assertEquals(0x00000000, Catalogue.colourFromString("#00000000"));
+        Assert.assertEquals(0x7aaabbcc, Catalogue.colourFromString("#7aaabbcc"));
+        Assert.assertEquals(0xa1112233, Catalogue.colourFromString("#a1112233"));
+        Assert.assertEquals(0xff7f4a3c, Catalogue.colourFromString("#ff7f4a3c"));
+        Assert.assertEquals(0xffffffff, Catalogue.colourFromString("#ffffffff"));
     }
 
+    /*****************************************************
+     *
+     * Theme colour tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Theme colour tests.
-   *
-   *****************************************************/
+    public void testThemeColours1() {
 
-  public void testThemeColours1()
-    {
-    Catalogue catalogue = new Catalogue();
+        Catalogue catalogue = new Catalogue();
 
-    Assert.assertEquals( Catalogue.NO_COLOUR, catalogue.getPrimaryThemeColour() );
-    Assert.assertEquals( Catalogue.NO_COLOUR, catalogue.getSecondaryThemeColour() );
+        Assert.assertEquals(Catalogue.NO_COLOUR, catalogue.getPrimaryThemeColour());
+        Assert.assertEquals(Catalogue.NO_COLOUR, catalogue.getSecondaryThemeColour());
     }
 
-  public void testThemeColours2() throws Exception
-    {
-    Catalogue catalogue = new Catalogue();
+    public void testThemeColours2() throws Exception {
 
-    JSONObject userConfigData = new JSONObject();
-    userConfigData.put( Catalogue.JSON_NAME_THEME_COLOUR_PRIMARY, "#112233" );
+        Catalogue catalogue = new Catalogue();
 
-    catalogue.setUserConfigData( userConfigData );
+        JSONObject userConfigData = new JSONObject();
+        userConfigData.put(Catalogue.JSON_NAME_THEME_COLOUR_PRIMARY, "#112233");
 
-    Assert.assertEquals( 0xff112233, catalogue.getPrimaryThemeColour() );
-    Assert.assertEquals( Catalogue.NO_COLOUR, catalogue.getSecondaryThemeColour() );
+        catalogue.setUserConfigData(userConfigData);
+
+        Assert.assertEquals(0xff112233, catalogue.getPrimaryThemeColour());
+        Assert.assertEquals(Catalogue.NO_COLOUR, catalogue.getSecondaryThemeColour());
     }
 
-  public void testThemeColours3() throws Exception
-    {
-    Catalogue catalogue = new Catalogue();
+    public void testThemeColours3() throws Exception {
 
-    JSONObject userConfigData = new JSONObject();
-    userConfigData.put( Catalogue.JSON_NAME_THEME_COLOUR_SECONDARY, "#a1112233" );
+        Catalogue catalogue = new Catalogue();
 
-    catalogue.setUserConfigData( userConfigData );
+        JSONObject userConfigData = new JSONObject();
+        userConfigData.put(Catalogue.JSON_NAME_THEME_COLOUR_SECONDARY, "#a1112233");
 
-    Assert.assertEquals( Catalogue.NO_COLOUR, catalogue.getPrimaryThemeColour() );
-    Assert.assertEquals( 0xa1112233, catalogue.getSecondaryThemeColour() );
+        catalogue.setUserConfigData(userConfigData);
+
+        Assert.assertEquals(Catalogue.NO_COLOUR, catalogue.getPrimaryThemeColour());
+        Assert.assertEquals(0xa1112233, catalogue.getSecondaryThemeColour());
     }
 
-  public void testThemeColours4() throws Exception
-    {
-    Catalogue catalogue = new Catalogue();
+    public void testThemeColours4() throws Exception {
 
-    JSONObject userConfigData = new JSONObject();
-    userConfigData.put( Catalogue.JSON_NAME_THEME_COLOUR_PRIMARY,   "#4477fe" );
-    userConfigData.put( Catalogue.JSON_NAME_THEME_COLOUR_SECONDARY, "#a1112233" );
+        Catalogue catalogue = new Catalogue();
 
-    catalogue.setUserConfigData( userConfigData );
+        JSONObject userConfigData = new JSONObject();
+        userConfigData.put(Catalogue.JSON_NAME_THEME_COLOUR_PRIMARY, "#4477fe");
+        userConfigData.put(Catalogue.JSON_NAME_THEME_COLOUR_SECONDARY, "#a1112233");
 
-    Assert.assertEquals( 0xff4477fe, catalogue.getPrimaryThemeColour() );
-    Assert.assertEquals( 0xa1112233, catalogue.getSecondaryThemeColour() );
+        catalogue.setUserConfigData(userConfigData);
+
+        Assert.assertEquals(0xff4477fe, catalogue.getPrimaryThemeColour());
+        Assert.assertEquals(0xa1112233, catalogue.getSecondaryThemeColour());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

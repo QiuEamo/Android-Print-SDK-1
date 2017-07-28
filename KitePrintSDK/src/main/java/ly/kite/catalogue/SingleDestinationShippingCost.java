@@ -36,7 +36,6 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -46,7 +45,6 @@ import android.os.Parcelable;
 import ly.kite.R;
 import ly.kite.address.Country;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -55,147 +53,138 @@ import ly.kite.address.Country;
  * a single destination.
  *
  *****************************************************/
-public class SingleDestinationShippingCost implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class SingleDestinationShippingCost implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG                        = "SingleDestinationShippingCost";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SingleDestinationShippingCost";
 
-  public  static final String  DESTINATION_CODE_EUROPE        = "europe";
-  public  static final String  DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
+    public static final String DESTINATION_CODE_EUROPE = "europe";
+    public static final String DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<SingleDestinationShippingCost> CREATOR =
+            new Parcelable.Creator<SingleDestinationShippingCost>() {
+                public SingleDestinationShippingCost createFromParcel(Parcel sourceParcel) {
 
-  public static final Parcelable.Creator<SingleDestinationShippingCost> CREATOR =
-    new Parcelable.Creator<SingleDestinationShippingCost>()
-      {
-      public SingleDestinationShippingCost createFromParcel( Parcel sourceParcel )
-        {
-        return ( new SingleDestinationShippingCost( sourceParcel ) );
+                    return new SingleDestinationShippingCost(sourceParcel);
+                }
+
+                public SingleDestinationShippingCost[] newArray(int size) {
+
+                    return new SingleDestinationShippingCost[size];
+                }
+            };
+
+    ////////// Member Variable(s) //////////
+
+    private String mDestinationCode;
+    private MultipleCurrencyAmounts mCost;
+
+    ////////// Static Initialiser(s) //////////
+
+    ////////// Static Method(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    SingleDestinationShippingCost(String destinationCode, MultipleCurrencyAmounts cost) {
+
+        mDestinationCode = destinationCode;
+        mCost = cost;
+    }
+
+    // Constructor used by parcelable interface
+    private SingleDestinationShippingCost(Parcel sourceParcel) {
+
+        mDestinationCode = sourceParcel.readString();
+        mCost = (MultipleCurrencyAmounts) sourceParcel.readParcelable(MultipleCurrencyAmounts.class.getClassLoader());
+    }
+
+    ////////// Parcelable Method(s) //////////
+
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
+
+        return 0;
+    }
+
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
+
+        targetParcel.writeString(mDestinationCode);
+        targetParcel.writeParcelable(mCost, flags);
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns the destination code.
+     *
+     *****************************************************/
+    public String getDestinationCode() {
+
+        return mDestinationCode;
+    }
+
+    /*****************************************************
+     *
+     * Returns a displayable description for the the destination.
+     *
+     *****************************************************/
+    public String getDestinationDescription(Context context) {
+
+        if (Country.UK.usesISOCode(mDestinationCode)) {
+            return context.getString(R.string.destination_description_gbr);
+        }
+        if (DESTINATION_CODE_EUROPE.equals(mDestinationCode)) {
+            return context.getString(R.string.destination_description_europe);
+        }
+        if (DESTINATION_CODE_REST_OF_WORLD.equals(mDestinationCode)) {
+            return context.getString(R.string.destination_description_rest_of_world);
         }
 
-      public SingleDestinationShippingCost[] newArray( int size )
-        {
-        return ( new SingleDestinationShippingCost[ size ] );
-        }
-      };
-
-
-  ////////// Member Variable(s) //////////
-
-  private String                mDestinationCode;
-  private MultipleCurrencyAmounts mCost;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  SingleDestinationShippingCost( String destinationCode, MultipleCurrencyAmounts cost )
-    {
-    mDestinationCode = destinationCode;
-    mCost            = cost;
+        return mDestinationCode;
     }
 
+    /*****************************************************
+     *
+     * Returns the cost.
+     *
+     *****************************************************/
+    public MultipleCurrencyAmounts getCost() {
 
-  // Constructor used by parcelable interface
-  private SingleDestinationShippingCost( Parcel sourceParcel )
-    {
-    mDestinationCode = sourceParcel.readString();
-    mCost            = (MultipleCurrencyAmounts)sourceParcel.readParcelable( MultipleCurrencyAmounts.class.getClassLoader() );
+        return mCost;
     }
 
+    /*****************************************************
+     *
+     * Returns the cost in a currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getCost(String currencyCode) {
 
-  ////////// Parcelable Method(s) //////////
-
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return mCost.get(currencyCode);
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeString( mDestinationCode );
-    targetParcel.writeParcelable( mCost, flags );
-    }
+    /*****************************************************
+     *
+     * Returns the shipping costs as a list.
+     *
+     *****************************************************/
 
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns the destination code.
-   *
-   *****************************************************/
-  public String getDestinationCode()
-    {
-    return ( mDestinationCode );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a displayable description for the the destination.
-   *
-   *****************************************************/
-  public String getDestinationDescription( Context context )
-    {
-    if ( Country.UK.usesISOCode( mDestinationCode )                   ) return ( context.getString( R.string.destination_description_gbr ) );
-    if ( DESTINATION_CODE_EUROPE.equals( mDestinationCode )        ) return ( context.getString( R.string.destination_description_europe ) );
-    if ( DESTINATION_CODE_REST_OF_WORLD.equals( mDestinationCode ) ) return ( context.getString( R.string.destination_description_rest_of_world ) );
-
-    return ( mDestinationCode );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the cost.
-   *
-   *****************************************************/
-  public MultipleCurrencyAmounts getCost()
-    {
-    return ( mCost );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the cost in a currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getCost( String currencyCode )
-    {
-    return ( mCost.get( currencyCode ) );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * Returns the shipping costs as a list.
-   *
-   *****************************************************/
-
-  }
+}
 

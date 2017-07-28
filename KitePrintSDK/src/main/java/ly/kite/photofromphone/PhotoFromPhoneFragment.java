@@ -36,12 +36,10 @@
 
 package ly.kite.photofromphone;
 
-
 ///// Import(s) /////
 
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,7 +47,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,9 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import ly.kite.KiteSDK;
 import ly.kite.R;
-import ly.kite.image.ImageAgent;
 import ly.kite.journey.AImageSource;
 import ly.kite.util.Asset;
 import ly.kite.util.AssetHelper;
@@ -74,9 +69,7 @@ import ly.kite.util.HTTPJSONRequest;
 import ly.kite.util.HTTPRequest;
 import ly.kite.widget.QRCodeView;
 
-
 ///// Class Declaration /////
-
 
 /*****************************************************
  *
@@ -86,243 +79,216 @@ import ly.kite.widget.QRCodeView;
  * for the photo.
  *
  *****************************************************/
-public class PhotoFromPhoneFragment extends DialogFragment
-  {
-  ////////// Static Constant(s) //////////
+public class PhotoFromPhoneFragment extends DialogFragment {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String    TAG                        = "PhotoFromPhoneFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "PhotoFromPhoneFragment";
 
-  static private final boolean  DEBUGGING_ENABLED          = true;
+    private static final boolean DEBUGGING_ENABLED = true;
 
-  static private final String   UPLOAD_URL_FORMAT_STRING      = "http://api.kite.ly/public_upload/%s";
-  static private final String   DOWNLOAD_URL_FORMAT_STRING    = "https://s3-eu-west-1.amazonaws.com/co.oceanlabs.ps/kiosk/%s.jpeg";
-  static private final String   SHORTEN_REQUEST_FORMAT_STRING = "https://is.gd/create.php?format=json&url=%s";
+    private static final String UPLOAD_URL_FORMAT_STRING = "http://api.kite.ly/public_upload/%s";
+    private static final String DOWNLOAD_URL_FORMAT_STRING = "https://s3-eu-west-1.amazonaws.com/co.oceanlabs.ps/kiosk/%s.jpeg";
+    private static final String SHORTEN_REQUEST_FORMAT_STRING = "https://is.gd/create.php?format=json&url=%s";
 
-  static private final long     POLLING_INTERVAL           = 5000L;  // 5s
+    private static final long POLLING_INTERVAL = 5000L;  // 5s
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private boolean mRunAsNormal;
 
-  ////////// Member Variable(s) //////////
+    private URL mImageUploadURL;
+    private URL mImageDownloadURL;
+    private URL mShortenRequestURL;
 
-  private boolean      mRunAsNormal;
+    private String mShortenedURLString;
 
-  private URL          mImageUploadURL;
-  private URL          mImageDownloadURL;
-  private URL          mShortenRequestURL;
+    private Asset mAsset;
 
-  private String       mShortenedURLString;
+    private QRCodeView mQRCodeView;
+    private TextView mURLTextView;
+    private ProgressBar mProgressSpinner;
 
-  private Asset        mAsset;
+    private Handler mHandler;
 
-  private QRCodeView   mQRCodeView;
-  private TextView     mURLTextView;
-  private ProgressBar  mProgressSpinner;
+    ////////// Static Initialiser(s) //////////
 
-  private Handler      mHandler;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// DialogFragment Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    mRunAsNormal = true;
-
-
-    // Create the upload / download URLs
-
-    String uuid = UUID.randomUUID().toString();
-
-    try
-      {
-      mImageUploadURL    = new URL( String.format( UPLOAD_URL_FORMAT_STRING, uuid ) );
-      mImageDownloadURL  = new URL( String.format( DOWNLOAD_URL_FORMAT_STRING, uuid ) );
-      mShortenRequestURL = new URL( String.format( SHORTEN_REQUEST_FORMAT_STRING, mImageUploadURL.toExternalForm() ) );
-
-      // Start the request for the shortened URL
-      new HTTPJSONRequest( getActivity(), HTTPRequest.HttpMethod.GET, mShortenRequestURL.toExternalForm(), null, null ).start( new ShortResponseListener() );
-
-
-      // Start polling for the download image
-
-      mHandler = new Handler();
-
-      new CheckForPhotoRunnable( mImageDownloadURL ).post();
-      }
-    catch ( MalformedURLException mue )
-      {
-      Log.d( TAG, "Unable to create URLs", mue );
-      }
-
-
-    setRetainInstance( true );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a view for the dialog.
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.dialog_photo_from_phone, container, false );
-
-    mQRCodeView      = (QRCodeView)view.findViewById( R.id.qr_code_view );
-    mURLTextView     = (TextView)view.findViewById( R.id.url_text_view );
-    mProgressSpinner = (ProgressBar)view.findViewById( R.id.progress_spinner );
-
-    if ( mImageUploadURL != null )
-      {
-      mQRCodeView.setURL( mImageUploadURL );
-      }
-
-
-    if ( mShortenedURLString == null )
-      {
-      // Display the progress spinner
-      mProgressSpinner.setVisibility( View.VISIBLE );
-      }
-
-
-    tryToDisplayShortURL();
-
-    return ( view );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the view is destroyed.
-   *
-   *****************************************************/
-  @Override
-  public void onDestroyView()
-    {
-    // This is a work-around to stop the dialog being dismissed
-    // on orientation change.
-
-    if ( getDialog() != null && getRetainInstance() )
-      {
-      getDialog().setDismissMessage( null );
-      }
-
-    super.onDestroyView();
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the fragment is dismissed.
-   *
-   *****************************************************/
-  @Override
-  public void onDismiss( DialogInterface dialogInterface )
-    {
-    super.onDismiss( dialogInterface );
-
-    // Cancel any processing
-    mRunAsNormal = false;
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Sets the QR code string if we have both the text view and
-   * the code itself.
-   *
-   *****************************************************/
-  private void tryToDisplayShortURL()
-    {
-    if ( mShortenedURLString != null && mURLTextView != null )
-      {
-      mURLTextView.setText( mShortenedURLString );
-      }
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * QR short API response listener.
-   *
-   *****************************************************/
-  private class ShortResponseListener implements HTTPJSONRequest.IJSONResponseListener
-    {
-    //private String mDownloadURLString;
-
+    ////////// DialogFragment Method(s) //////////
 
     /*****************************************************
      *
-     * Called when the shorten request succeeds.
+     * Called when the fragment is created.
      *
      *****************************************************/
     @Override
-    public void onSuccess( int httpStatusCode, JSONObject json )
-      {
-      if ( DEBUGGING_ENABLED ) Log.d( TAG, "onSuccess( httpStatusCode = " + httpStatusCode + ", json = " + json.toString() + " )" );
+    public void onCreate(Bundle savedInstanceState) {
 
-      // Hide the progress spinner
-      mProgressSpinner.setVisibility( View.GONE );
+        super.onCreate(savedInstanceState);
 
-      if ( ! mRunAsNormal ) return;
+        mRunAsNormal = true;
 
-      if ( json != null )
-        {
-        // If we found a short URL - display it
+        // Create the upload / download URLs
 
-        mShortenedURLString = json.optString( "shorturl" );
+        String uuid = UUID.randomUUID().toString();
 
-        if ( mShortenedURLString != null )
-          {
-          tryToDisplayShortURL();
-          }
+        try {
+            mImageUploadURL = new URL(String.format(UPLOAD_URL_FORMAT_STRING, uuid));
+            mImageDownloadURL = new URL(String.format(DOWNLOAD_URL_FORMAT_STRING, uuid));
+            mShortenRequestURL = new URL(String.format(SHORTEN_REQUEST_FORMAT_STRING, mImageUploadURL.toExternalForm()));
+
+            // Start the request for the shortened URL
+            new HTTPJSONRequest(getActivity(), HTTPRequest.HttpMethod.GET, mShortenRequestURL.toExternalForm(), null, null).start(new
+                    ShortResponseListener());
+
+            // Start polling for the download image
+
+            mHandler = new Handler();
+
+            new CheckForPhotoRunnable(mImageDownloadURL).post();
+        } catch (MalformedURLException mue) {
+            Log.d(TAG, "Unable to create URLs", mue);
         }
-      }
 
+        setRetainInstance(true);
+    }
 
     /*****************************************************
      *
-     * Called when the QR request fails.
+     * Returns a view for the dialog.
      *
      *****************************************************/
     @Override
-    public void onError( Exception exception )
-      {
-      String message = "Unable to get shortened URL: " + exception.getMessage();
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-      Log.e( TAG, message, exception );
+        View view = layoutInflator.inflate(R.layout.dialog_photo_from_phone, container, false);
 
-      Toast.makeText( getActivity(), message, Toast.LENGTH_LONG ).show();
+        mQRCodeView = (QRCodeView) view.findViewById(R.id.qr_code_view);
+        mURLTextView = (TextView) view.findViewById(R.id.url_text_view);
+        mProgressSpinner = (ProgressBar) view.findViewById(R.id.progress_spinner);
 
-      dismiss();
-      }
+        if (mImageUploadURL != null) {
+            mQRCodeView.setURL(mImageUploadURL);
+        }
+
+        if (mShortenedURLString == null) {
+            // Display the progress spinner
+            mProgressSpinner.setVisibility(View.VISIBLE);
+        }
+
+        tryToDisplayShortURL();
+
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Called when the view is destroyed.
+     *
+     *****************************************************/
+    @Override
+    public void onDestroyView() {
+        // This is a work-around to stop the dialog being dismissed
+        // on orientation change.
+
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
+
+        super.onDestroyView();
+    }
+
+    /*****************************************************
+     *
+     * Called when the fragment is dismissed.
+     *
+     *****************************************************/
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+
+        super.onDismiss(dialogInterface);
+
+        // Cancel any processing
+        mRunAsNormal = false;
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Sets the QR code string if we have both the text view and
+     * the code itself.
+     *
+     *****************************************************/
+    private void tryToDisplayShortURL() {
+
+        if (mShortenedURLString != null && mURLTextView != null) {
+            mURLTextView.setText(mShortenedURLString);
+        }
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * QR short API response listener.
+     *
+     *****************************************************/
+    private class ShortResponseListener implements HTTPJSONRequest.IJSONResponseListener {
+        //private String mDownloadURLString;
+
+        /*****************************************************
+         *
+         * Called when the shorten request succeeds.
+         *
+         *****************************************************/
+        @Override
+        public void onSuccess(int httpStatusCode, JSONObject json) {
+
+            if (DEBUGGING_ENABLED) {
+                Log.d(TAG, "onSuccess( httpStatusCode = " + httpStatusCode + ", json = " + json.toString() + " )");
+            }
+
+            // Hide the progress spinner
+            mProgressSpinner.setVisibility(View.GONE);
+
+            if (!mRunAsNormal) {
+                return;
+            }
+
+            if (json != null) {
+                // If we found a short URL - display it
+
+                mShortenedURLString = json.optString("shorturl");
+
+                if (mShortenedURLString != null) {
+                    tryToDisplayShortURL();
+                }
+            }
+        }
+
+        /*****************************************************
+         *
+         * Called when the QR request fails.
+         *
+         *****************************************************/
+        @Override
+        public void onError(Exception exception) {
+
+            String message = "Unable to get shortened URL: " + exception.getMessage();
+
+            Log.e(TAG, message, exception);
+
+            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+            dismiss();
+        }
+    }
 
 //  /*****************************************************
 //   *
@@ -388,81 +354,71 @@ public class PhotoFromPhoneFragment extends DialogFragment
 //
 //    }
 
+    /*****************************************************
+     *
+     * A runnable that checks for the uploaded photo.
+     *
+     *****************************************************/
+    private class CheckForPhotoRunnable implements Runnable, FileDownloader.ICallback {
+        private URL mDownloadURL;
 
-  /*****************************************************
-   *
-   * A runnable that checks for the uploaded photo.
-   *
-   *****************************************************/
-  private class CheckForPhotoRunnable implements Runnable, FileDownloader.ICallback
-    {
-    private URL    mDownloadURL;
+        CheckForPhotoRunnable(URL downloadURL) {
 
-
-    CheckForPhotoRunnable( URL downloadURL )
-      {
-      mDownloadURL = downloadURL;
-      }
-
-
-    @Override
-    public void run()
-      {
-      if ( ! mRunAsNormal ) return;
-
-
-      // Create a placeholder asset for the photo
-      mAsset = AssetHelper.createAsSessionAsset( getActivity(), Asset.MIMEType.JPEG );
-
-
-      // Try to download the photo
-
-      File file = mAsset.getImageFile();
-
-      FileDownloader.getInstance( getActivity() ).requestFileDownload( mDownloadURL, file.getParentFile(), file, this );
-      }
-
-
-    @Override
-    public void onDownloadSuccess( URL sourceURL, File targetDirectory, File targetFile )
-      {
-      // If we successfully downloaded the photo, call back to the target fragment with the
-      // image wrapped in an asset.
-
-      Fragment targetFragment = getTargetFragment();
-
-      if ( targetFragment != null && targetFragment instanceof AImageSource.IAssetConsumer )
-        {
-        List<Asset> assetList = new ArrayList<>( 1 );
-
-        assetList.add( mAsset);
-
-        ( (AImageSource.IAssetConsumer)targetFragment ).isacOnAssets( assetList );
-        }
-      else
-        {
-        Log.e( TAG, "Invalid target fragment for callback: " + targetFragment );
+            mDownloadURL = downloadURL;
         }
 
+        @Override
+        public void run() {
 
-      dismiss();
-      }
+            if (!mRunAsNormal) {
+                return;
+            }
 
+            // Create a placeholder asset for the photo
+            mAsset = AssetHelper.createAsSessionAsset(getActivity(), Asset.MIMEType.JPEG);
 
-    @Override
-    public void onDownloadFailure( URL sourceURL, Exception exception )
-      {
-      if ( ! mRunAsNormal ) return;
+            // Try to download the photo
 
-      post();
-      }
+            File file = mAsset.getImageFile();
 
+            FileDownloader.getInstance(getActivity()).requestFileDownload(mDownloadURL, file.getParentFile(), file, this);
+        }
 
-    void post()
-      {
-      mHandler.postDelayed( this, POLLING_INTERVAL );
-      }
+        @Override
+        public void onDownloadSuccess(URL sourceURL, File targetDirectory, File targetFile) {
+            // If we successfully downloaded the photo, call back to the target fragment with the
+            // image wrapped in an asset.
+
+            Fragment targetFragment = getTargetFragment();
+
+            if (targetFragment != null && targetFragment instanceof AImageSource.IAssetConsumer) {
+                List<Asset> assetList = new ArrayList<>(1);
+
+                assetList.add(mAsset);
+
+                ((AImageSource.IAssetConsumer) targetFragment).isacOnAssets(assetList);
+            } else {
+                Log.e(TAG, "Invalid target fragment for callback: " + targetFragment);
+            }
+
+            dismiss();
+        }
+
+        @Override
+        public void onDownloadFailure(URL sourceURL, Exception exception) {
+
+            if (!mRunAsNormal) {
+                return;
+            }
+
+            post();
+        }
+
+        void post() {
+
+            mHandler.postDelayed(this, POLLING_INTERVAL);
+        }
     }
 
-  }
+}
 

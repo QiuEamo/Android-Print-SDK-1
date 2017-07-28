@@ -36,13 +36,11 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.widget.EditText;
 
 import java.util.List;
-
 
 ///// Class Declaration /////
 
@@ -52,62 +50,51 @@ import java.util.List;
  * to a valid year.
  *
  *****************************************************/
-public class YearEditTextEnforcer extends ALimitedRangeEditTextEnforcer
-  {
-  ////////// Static Constant(s) //////////
+public class YearEditTextEnforcer extends ALimitedRangeEditTextEnforcer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "YearEditTextEnforcer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "YearEditTextEnforcer";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String[] mValidStrings;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private String[]   mValidStrings;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public YearEditTextEnforcer(EditText editText, int firstYear, int lastYear, ICallback callback) {
 
+        super(editText, callback);
 
-  ////////// Static Method(s) //////////
+        // Generate an array of valid years based on the range given
 
+        mValidStrings = new String[lastYear - firstYear + 1];
 
-  ////////// Constructor(s) //////////
-
-  public YearEditTextEnforcer( EditText editText, int firstYear, int lastYear, ICallback callback )
-    {
-    super( editText, callback );
-
-
-    // Generate an array of valid years based on the range given
-
-    mValidStrings = new String[ lastYear - firstYear + 1 ];
-
-    for ( int year = firstYear; year <= lastYear; year ++ )
-      {
-      mValidStrings[ year - firstYear ] = String.valueOf( year );
-      }
+        for (int year = firstYear; year <= lastYear; year++) {
+            mValidStrings[year - firstYear] = String.valueOf(year);
+        }
     }
 
+    ////////// AFixedRangeEditTextEnforcer Method(s) //////////
 
-  ////////// AFixedRangeEditTextEnforcer Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a list of all the valid strings that contain the
+     * supplied (sub)string.
+     *
+     *****************************************************/
+    @Override
+    protected List<String> getValidStringsContaining(String searchString) {
 
-  /*****************************************************
-   *
-   * Returns a list of all the valid strings that contain the
-   * supplied (sub)string.
-   *
-   *****************************************************/
-  @Override
-  protected List<String> getValidStringsContaining( String searchString )
-    {
-    return ( getValidStrings( mValidStrings, searchString ) );
+        return getValidStrings(mValidStrings, searchString);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-
-  }
+}

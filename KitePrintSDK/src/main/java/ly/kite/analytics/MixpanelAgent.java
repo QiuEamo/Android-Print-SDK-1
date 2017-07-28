@@ -36,7 +36,6 @@
 
 package ly.kite.analytics;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -53,7 +52,6 @@ import java.net.URLConnection;
 
 import ly.kite.util.HTTPJSONRequest;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -62,171 +60,144 @@ import ly.kite.util.HTTPJSONRequest;
  * API.
  *
  *****************************************************/
-public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener
-  {
-  ////////// Static Constant(s) //////////
+public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG             = "MixpanelAgent";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MixpanelAgent";
 
-  private static final String  ENDPOINT_URL_STRING = "https://api.mixpanel.com/track/";
-  public  static final String  API_TOKEN           = "cdf64507670dd359c43aa8895fb87676";  // Live
-  //public  static final String  API_TOKEN           = "e08854f70bc6a97b9f14457cbbb29b24";  // JL Test
+    private static final String ENDPOINT_URL_STRING = "https://api.mixpanel.com/track/";
+    public static final String API_TOKEN = "cdf64507670dd359c43aa8895fb87676";  // Live
+    //public  static final String  API_TOKEN           = "e08854f70bc6a97b9f14457cbbb29b24";  // JL Test
 
-  ////////// Static Variable(s) //////////
+    ////////// Static Variable(s) //////////
 
-  private static MixpanelAgent  sMixpanelAgent;
+    private static MixpanelAgent sMixpanelAgent;
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    private Context mContext;
 
-  private Context  mContext;
+    ////////// Static Initialiser(s) //////////
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    /*****************************************************
+     *
+     * Returns a singleton instance of this class.
+     *
+     *****************************************************/
+    public static MixpanelAgent getInstance(Context context) {
 
+        if (sMixpanelAgent == null) {
+            sMixpanelAgent = new MixpanelAgent(context);
+        }
 
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns a singleton instance of this class.
-   *
-   *****************************************************/
-  public static MixpanelAgent getInstance( Context context )
-    {
-    if ( sMixpanelAgent == null )
-      {
-      sMixpanelAgent = new MixpanelAgent( context );
-      }
-
-    return ( sMixpanelAgent );
+        return sMixpanelAgent;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    private MixpanelAgent(Context context) {
 
-  private MixpanelAgent( Context context )
-    {
-    mContext = context;
+        mContext = context;
     }
 
+    ////////// BaseRequest.BaseRequestListener Method(s) //////////
 
-  ////////// BaseRequest.BaseRequestListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when a request succeeds.
-   *
-   *****************************************************/
-  @Override
-  public void onSuccess( int httpStatusCode, JSONObject json )
-    {
-    // Ignore
-    }
-
-
-  /*****************************************************
-   *
-   * Called when a request fails.
-   *
-   *****************************************************/
-  @Override
-  public void onError( Exception exception )
-    {
-    Log.e( LOG_TAG, "Mixpanel request failed", exception );
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Tracks an event.
-   *
-   *****************************************************/
-  public void trackEvent( JSONObject eventJSONObject )
-    {
-    // The JSON needs to be encoded as Base64
-
-    byte[] jsonBytes = eventJSONObject.toString().getBytes();
-
-    //Log.d( TAG, "JSON request:\n" + eventJSONObject.toString() );
-
-    String base64EncodedJSON = Base64.encodeToString( jsonBytes, Base64.NO_WRAP | Base64.URL_SAFE );
-
-
-    // Perform the HTTP request
-
-    String requestURLString = ENDPOINT_URL_STRING + "?ip=1&data=" + base64EncodedJSON;
-
-    try
-      {
-      URL requestURL = new URL( requestURLString );
-
-      new Thread( new HTTPRequest( requestURL ) ).start();
-      }
-    catch ( MalformedURLException mue )
-      {
-      Log.e( LOG_TAG, "Invalid URL: " + requestURLString, mue );
-      }
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * Makes an HTTP request.
-   *
-   *****************************************************/
-  private class HTTPRequest implements Runnable
-    {
-    private URL  mURL;
-
-
-    HTTPRequest( URL url )
-      {
-      mURL = url;
-      }
-
-
+    /*****************************************************
+     *
+     * Called when a request succeeds.
+     *
+     *****************************************************/
     @Override
-    public void run()
-      {
-      // Open a connection to the URL
+    public void onSuccess(int httpStatusCode, JSONObject json) {
+        // Ignore
+    }
 
-      try
-        {
-        URLConnection urlConnection = mURL.openConnection();
+    /*****************************************************
+     *
+     * Called when a request fails.
+     *
+     *****************************************************/
+    @Override
+    public void onError(Exception exception) {
 
-        if ( urlConnection instanceof HttpURLConnection )
-          {
-          HttpURLConnection httpURLConnection = (HttpURLConnection)urlConnection;
+        Log.e(LOG_TAG, "Mixpanel request failed", exception);
+    }
 
-          //httpURLConnection.setRequestMethod( HttpURLConnection.HTTP_GET );
+    ////////// Method(s) //////////
 
-          int statusCode = httpURLConnection.getResponseCode();
+    /*****************************************************
+     *
+     * Tracks an event.
+     *
+     *****************************************************/
+    public void trackEvent(JSONObject eventJSONObject) {
+        // The JSON needs to be encoded as Base64
 
-          if ( statusCode != 200 )
-            {
-            Log.e( LOG_TAG, "Invalid response code: " + statusCode );
+        byte[] jsonBytes = eventJSONObject.toString().getBytes();
+
+        //Log.d( TAG, "JSON request:\n" + eventJSONObject.toString() );
+
+        String base64EncodedJSON = Base64.encodeToString(jsonBytes, Base64.NO_WRAP | Base64.URL_SAFE);
+
+        // Perform the HTTP request
+
+        String requestURLString = ENDPOINT_URL_STRING + "?ip=1&data=" + base64EncodedJSON;
+
+        try {
+            URL requestURL = new URL(requestURLString);
+
+            new Thread(new HTTPRequest(requestURL)).start();
+        } catch (MalformedURLException mue) {
+            Log.e(LOG_TAG, "Invalid URL: " + requestURLString, mue);
+        }
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * Makes an HTTP request.
+     *
+     *****************************************************/
+    private class HTTPRequest implements Runnable {
+        private URL mURL;
+
+        HTTPRequest(URL url) {
+
+            mURL = url;
+        }
+
+        @Override
+        public void run() {
+            // Open a connection to the URL
+
+            try {
+                URLConnection urlConnection = mURL.openConnection();
+
+                if (urlConnection instanceof HttpURLConnection) {
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+
+                    //httpURLConnection.setRequestMethod( HttpURLConnection.HTTP_GET );
+
+                    int statusCode = httpURLConnection.getResponseCode();
+
+                    if (statusCode != 200) {
+                        Log.e(LOG_TAG, "Invalid response code: " + statusCode);
+                    }
+
+                    httpURLConnection.disconnect();
+                } else {
+                    Log.e(LOG_TAG, "Invalid connection type: " + urlConnection + ", expected HttpURLConnection");
+                }
+            } catch (IOException ioe) {
+                Log.e(LOG_TAG, "Unable to open connection to " + mURL.toString(), ioe);
             }
 
-          httpURLConnection.disconnect();
-          }
-        else
-          {
-          Log.e( LOG_TAG, "Invalid connection type: " + urlConnection + ", expected HttpURLConnection" );
-          }
         }
-      catch ( IOException ioe )
-        {
-        Log.e( LOG_TAG, "Unable to open connection to " + mURL.toString(), ioe );
-        }
-
-      }
     }
 
-  }
+}
 

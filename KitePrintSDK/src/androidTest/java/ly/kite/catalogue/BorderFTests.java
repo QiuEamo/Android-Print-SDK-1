@@ -36,14 +36,12 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 
 ///// Class Declaration /////
 
@@ -52,82 +50,73 @@ import junit.framework.TestCase;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class BorderFTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class BorderFTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BorderFTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BorderFTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Constructor tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testConstructor1() {
 
+        BorderF borderF = new BorderF(1f, 2f, 3f, 4f);
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Constructor tests.
-   *
-   *****************************************************/
-
-  public void testConstructor1()
-    {
-    BorderF borderF = new BorderF( 1f, 2f, 3f, 4f );
-
-    Assert.assertEquals( 1f, borderF.top );
-    Assert.assertEquals( 2f, borderF.right );
-    Assert.assertEquals( 3f, borderF.bottom );
-    Assert.assertEquals( 4f, borderF.left );
+        Assert.assertEquals(1f, borderF.top);
+        Assert.assertEquals(2f, borderF.right);
+        Assert.assertEquals(3f, borderF.bottom);
+        Assert.assertEquals(4f, borderF.left);
     }
 
+    /*****************************************************
+     *
+     * Parcel tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Parcel tests.
-   *
-   *****************************************************/
+    public void testParcel1() {
 
-  public void testParcel1()
-    {
-    BorderF originalBorderF = new BorderF( 10f, 11f, 12f, 13f );
+        BorderF originalBorderF = new BorderF(10f, 11f, 12f, 13f);
 
-    Parcel parcel = Parcel.obtain();
+        Parcel parcel = Parcel.obtain();
 
-    originalBorderF.writeToParcel( parcel, 0 );
+        originalBorderF.writeToParcel(parcel, 0);
 
-    parcel.setDataPosition( 0 );
+        parcel.setDataPosition(0);
 
-    BorderF readBorderF = BorderF.CREATOR.createFromParcel( parcel );
+        BorderF readBorderF = BorderF.CREATOR.createFromParcel(parcel);
 
-    Assert.assertEquals( 10f, readBorderF.top );
-    Assert.assertEquals( 11f, readBorderF.right );
-    Assert.assertEquals( 12f, readBorderF.bottom );
-    Assert.assertEquals( 13f, readBorderF.left );
+        Assert.assertEquals(10f, readBorderF.top);
+        Assert.assertEquals(11f, readBorderF.right);
+        Assert.assertEquals(12f, readBorderF.bottom);
+        Assert.assertEquals(13f, readBorderF.left);
 
-    parcel.recycle();
+        parcel.recycle();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

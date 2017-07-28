@@ -36,14 +36,12 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import ly.kite.KiteSDK;
-
 
 ///// Class Declaration /////
 
@@ -52,149 +50,135 @@ import ly.kite.KiteSDK;
  * This class represents a size in a length unit.
  *
  *****************************************************/
-public class SingleUnitSize implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class SingleUnitSize implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG              = "SingleUnitSize";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SingleUnitSize";
 
-  public  static final float   DEFAULT_ASPECT_RATIO = 1.0f;
+    public static final float DEFAULT_ASPECT_RATIO = 1.0f;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<SingleUnitSize> CREATOR =
+            new Parcelable.Creator<SingleUnitSize>() {
+                public SingleUnitSize createFromParcel(Parcel sourceParcel) {
 
-  public static final Parcelable.Creator<SingleUnitSize> CREATOR =
-    new Parcelable.Creator<SingleUnitSize>()
-      {
-      public SingleUnitSize createFromParcel( Parcel sourceParcel )
-        {
-        return ( new SingleUnitSize( sourceParcel ) );
+                    return new SingleUnitSize(sourceParcel);
+                }
+
+                public SingleUnitSize[] newArray(int size) {
+
+                    return new SingleUnitSize[size];
+                }
+            };
+
+    ////////// Member Variable(s) //////////
+
+    private UnitOfLength mUnit;
+    private float mWidth;
+    private float mHeight;
+
+    ////////// Static Initialiser(s) //////////
+
+    ////////// Static Method(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public SingleUnitSize(UnitOfLength unit, float width, float height) {
+
+        mUnit = unit;
+        mWidth = width;
+        mHeight = height;
+    }
+
+    // Constructor used by parcelable interface
+    private SingleUnitSize(Parcel sourceParcel) {
+
+        mUnit = UnitOfLength.valueOf(sourceParcel.readString());
+        mWidth = sourceParcel.readFloat();
+        mHeight = sourceParcel.readFloat();
+    }
+
+    ////////// Parcelable Method(s) //////////
+
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
+
+        return 0;
+    }
+
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
+
+        targetParcel.writeString(mUnit.name());
+        targetParcel.writeFloat(mWidth);
+        targetParcel.writeFloat(mHeight);
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns the unit.
+     *
+     *****************************************************/
+    public UnitOfLength getUnit() {
+
+        return mUnit;
+    }
+
+    /*****************************************************
+     *
+     * Returns the width.
+     *
+     *****************************************************/
+    public float getWidth() {
+
+        return mWidth;
+    }
+
+    /*****************************************************
+     *
+     * Returns the height.
+     *
+     *****************************************************/
+    public float getHeight() {
+
+        return mHeight;
+    }
+
+    /*****************************************************
+     *
+     * Returns the aspect ratio.
+     *
+     *****************************************************/
+    public float getAspectRatio() {
+        // Avoid divide by zero
+        if (mHeight >= KiteSDK.FLOAT_ZERO_THRESHOLD) {
+            return mWidth / mHeight;
         }
 
-      public SingleUnitSize[] newArray( int size )
-        {
-        return ( new SingleUnitSize[ size ] );
-        }
-      };
-
-
-  ////////// Member Variable(s) //////////
-
-  private UnitOfLength  mUnit;
-  private float         mWidth;
-  private float         mHeight;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public SingleUnitSize( UnitOfLength unit, float width, float height )
-    {
-    mUnit   = unit;
-    mWidth  = width;
-    mHeight = height;
+        return DEFAULT_ASPECT_RATIO;
     }
 
+    ////////// Inner Class(es) //////////
 
-  // Constructor used by parcelable interface
-  private SingleUnitSize( Parcel sourceParcel )
-    {
-    mUnit   = UnitOfLength.valueOf( sourceParcel.readString() );
-    mWidth  = sourceParcel.readFloat();
-    mHeight = sourceParcel.readFloat();
-    }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Parcelable Method(s) //////////
-
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
-    }
-
-
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeString( mUnit.name() );
-    targetParcel.writeFloat( mWidth );
-    targetParcel.writeFloat( mHeight );
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns the unit.
-   *
-   *****************************************************/
-  public UnitOfLength getUnit()
-    {
-    return ( mUnit );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the width.
-   *
-   *****************************************************/
-  public float getWidth()
-    {
-    return ( mWidth );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the height.
-   *
-   *****************************************************/
-  public float getHeight()
-    {
-    return ( mHeight );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the aspect ratio.
-   *
-   *****************************************************/
-  public float getAspectRatio()
-    {
-    // Avoid divide by zero
-    if ( mHeight >= KiteSDK.FLOAT_ZERO_THRESHOLD ) return ( mWidth / mHeight );
-
-    return ( DEFAULT_ASPECT_RATIO );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

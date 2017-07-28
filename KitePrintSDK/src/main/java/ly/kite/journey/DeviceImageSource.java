@@ -36,13 +36,7 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.Manifest;
 import android.app.Activity;
@@ -51,11 +45,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import ly.kite.R;
 import ly.kite.devicephotopicker.DevicePhotoPicker;
-import ly.kite.instagramphotopicker.InstagramPhotoPicker;
 import ly.kite.util.Asset;
-
 
 ///// Class Declaration /////
 
@@ -64,179 +61,157 @@ import ly.kite.util.Asset;
  * This class represents a local device image source.
  *
  *****************************************************/
-public class DeviceImageSource extends AImageSource
-  {
-  ////////// Static Constant(s) //////////
+public class DeviceImageSource extends AImageSource {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG  = "DeviceImageSource";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "DeviceImageSource";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns any selected images as a list of assets.
+     *
+     *****************************************************/
+    public static ArrayList<Asset> getAssets(Intent data) {
 
-  ////////// Static Initialiser(s) //////////
+        ArrayList<Asset> assetList = new ArrayList<>();
 
+        List<String> photoURLStringList = DevicePhotoPicker.getResultPhotos(data);
 
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns any selected images as a list of assets.
-   *
-   *****************************************************/
-  static public ArrayList<Asset> getAssets( Intent data )
-    {
-    ArrayList<Asset> assetList = new ArrayList<>();
-
-    List<String> photoURLStringList = DevicePhotoPicker.getResultPhotos( data );
-
-    if ( photoURLStringList != null )
-      {
-      for ( String urlString : photoURLStringList )
-        {
-        try
-          {
-          assetList.add( Asset.create( new URL( urlString ) ) );
-          }
-        catch ( MalformedURLException mue )
-          {
-          Log.e( LOG_TAG, "Unable to create asset from device photo URL: " + urlString, mue );
-          }
+        if (photoURLStringList != null) {
+            for (String urlString : photoURLStringList) {
+                try {
+                    assetList.add(Asset.create(new URL(urlString)));
+                } catch (MalformedURLException mue) {
+                    Log.e(LOG_TAG, "Unable to create asset from device photo URL: " + urlString, mue);
+                }
+            }
         }
-      }
 
-    return ( assetList );
+        return assetList;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public DeviceImageSource() {
 
-  public DeviceImageSource()
-    {
-    super( R.color.image_source_background_device,
-           R.drawable.ic_image_source_device,
-           R.string.image_source_device,
-           R.id.add_image_from_device,
-           R.string.select_photo_from_device );
+        super(R.color.image_source_background_device,
+                R.drawable.ic_image_source_device,
+                R.string.image_source_device,
+                R.id.add_image_from_device,
+                R.string.select_photo_from_device);
     }
 
+    protected DeviceImageSource(int horizontalBackgroundColourResourceId,
+                                int verticalBackgroundColourResourceId,
+                                int horizontalLayoutIconResourceId,
+                                int verticalLayoutIconResourceId,
+                                int labelResourceId,
+                                int menuItemId,
+                                int menuItemTitleResourceId) {
 
-  protected DeviceImageSource( int horizontalBackgroundColourResourceId,
-                                  int verticalBackgroundColourResourceId,
-                                  int horizontalLayoutIconResourceId,
-                                  int verticalLayoutIconResourceId,
-                                  int labelResourceId,
-                                  int menuItemId,
-                                  int menuItemTitleResourceId )
-    {
-    super( horizontalBackgroundColourResourceId,
-            verticalBackgroundColourResourceId,
-            horizontalLayoutIconResourceId,
-            verticalLayoutIconResourceId,
-            labelResourceId,
-            menuItemId,
-            menuItemTitleResourceId );
+        super(horizontalBackgroundColourResourceId,
+                verticalBackgroundColourResourceId,
+                horizontalLayoutIconResourceId,
+                verticalLayoutIconResourceId,
+                labelResourceId,
+                menuItemId,
+                menuItemTitleResourceId);
     }
 
+    ////////// AImageSource Method(s) //////////
 
-  ////////// AImageSource Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true, since this image source is always
-   * available.
-   *
-   *****************************************************/
-  @Override
-  public boolean isAvailable( Context context )
-    {
-    return ( true );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the layout resource id to be used to display
-   * this image source for the supplied layout type.
-   *
-   *****************************************************/
-  @Override
-  public int getLayoutResource( LayoutType layoutType )
-    {
-    switch ( layoutType )
-      {
-      case HORIZONTAL:
-
-        return ( R.layout.grid_item_image_source_device_horizontal );
-
-      case VERTICAL:
-
-        return ( R.layout.grid_item_image_source_device_vertical );
-      }
-
-    return ( 0 );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the image source is picked to select
-   * images.
-   *
-   *****************************************************/
-  @Override
-  public void onPick( Fragment fragment, int maxImageCount )
-    {
-    requestPermission( Manifest.permission.READ_EXTERNAL_STORAGE, new StartPickerRunnable( fragment, maxImageCount ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns picked photos as assets.
-   *
-   *****************************************************/
-  @Override
-  public void getAssetsFromPickerResult( Activity activity, Intent data, IAssetConsumer assetConsumer )
-    {
-    ArrayList<Asset> assetList = getAssets( data );
-
-    if ( assetList.size() > 0 )
-      {
-      assetConsumer.isacOnAssets( assetList );
-      }
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * A runnable that simply calls the onPick method. Used
-   * to call the method once permissions have been granted.
-   *
-   *****************************************************/
-  private class StartPickerRunnable extends AStartPickerRunnable
-    {
-    StartPickerRunnable( Fragment fragment, int maxImageCount )
-      {
-      super( fragment, maxImageCount );
-      }
-
-
+    /*****************************************************
+     *
+     * Returns true, since this image source is always
+     * available.
+     *
+     *****************************************************/
     @Override
-    public void run()
-      {
-      // There seems to be a bug with determining the orientation of URI-based images on
-      // (e.g.) Samsung S6, so we need to always use the photo picker (which returns file
-      // paths) rather than the built-in gallery picker (which returns URIs).
+    public boolean isAvailable(Context context) {
 
-      DevicePhotoPicker.startPhotoPickerForResult( mFragment, mMaxImageCount, getActivityRequestCode() );
-      }
+        return true;
     }
 
-  }
+    /*****************************************************
+     *
+     * Returns the layout resource id to be used to display
+     * this image source for the supplied layout type.
+     *
+     *****************************************************/
+    @Override
+    public int getLayoutResource(LayoutType layoutType) {
+
+        switch (layoutType) {
+            case HORIZONTAL:
+
+                return R.layout.grid_item_image_source_device_horizontal;
+
+            case VERTICAL:
+
+                return R.layout.grid_item_image_source_device_vertical;
+        }
+
+        return 0;
+    }
+
+    /*****************************************************
+     *
+     * Called when the image source is picked to select
+     * images.
+     *
+     *****************************************************/
+    @Override
+    public void onPick(Fragment fragment, int maxImageCount) {
+
+        requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, new StartPickerRunnable(fragment, maxImageCount));
+    }
+
+    /*****************************************************
+     *
+     * Returns picked photos as assets.
+     *
+     *****************************************************/
+    @Override
+    public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
+
+        ArrayList<Asset> assetList = getAssets(data);
+
+        if (assetList.size() > 0) {
+            assetConsumer.isacOnAssets(assetList);
+        }
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * A runnable that simply calls the onPick method. Used
+     * to call the method once permissions have been granted.
+     *
+     *****************************************************/
+    private class StartPickerRunnable extends AStartPickerRunnable {
+        StartPickerRunnable(Fragment fragment, int maxImageCount) {
+
+            super(fragment, maxImageCount);
+        }
+
+        @Override
+        public void run() {
+            // There seems to be a bug with determining the orientation of URI-based images on
+            // (e.g.) Samsung S6, so we need to always use the photo picker (which returns file
+            // paths) rather than the built-in gallery picker (which returns URIs).
+
+            DevicePhotoPicker.startPhotoPickerForResult(mFragment, mMaxImageCount, getActivityRequestCode());
+        }
+    }
+
+}

@@ -36,9 +36,7 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -49,14 +47,13 @@ import android.graphics.Bitmap;
  * This interface defines an image transformer.
  *
  *****************************************************/
-public interface IImageTransformer
-  {
-  /*****************************************************
-   *
-   * Returns a transformed bitmap from the supplied
-   * original. This method will usually be called from
-   * a background thread, *not* the UI thread.
-   *
-   *****************************************************/
-  public Bitmap getTransformedBitmap( Bitmap originalBitmap );
-  }
+public interface IImageTransformer {
+    /*****************************************************
+     *
+     * Returns a transformed bitmap from the supplied
+     * original. This method will usually be called from
+     * a background thread, *not* the UI thread.
+     *
+     *****************************************************/
+    public Bitmap getTransformedBitmap(Bitmap originalBitmap);
+}

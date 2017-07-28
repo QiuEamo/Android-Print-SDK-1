@@ -36,7 +36,6 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
@@ -46,7 +45,6 @@ import java.net.URL;
 
 import ly.kite.KiteTestCase;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -54,65 +52,54 @@ import ly.kite.KiteTestCase;
  * This class tests the network utilities class.
  *
  *****************************************************/
-public class NetUtilsTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class NetUtilsTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "NetUtilsTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "NetUtilsTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Tests
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void test1() {
 
+        URL url1 = null;
+        URL url2 = null;
+        URL url3 = null;
 
-  ////////// Constructor(s) //////////
+        try {
+            url1 = new URL("http://kite.ly/non-existent-path");
+            url2 = new URL("http://kite.ly/contact");
+            url3 = new URL("http://kite.ly/non-existent-path");
+        } catch (MalformedURLException mue) {
+            Assert.fail();
+        }
 
+        Assert.assertTrue(NetUtils.areBothNullOrEqual(null, null));
+        Assert.assertFalse(NetUtils.areBothNullOrEqual(url1, null));
+        Assert.assertFalse(NetUtils.areBothNullOrEqual(null, url2));
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Tests
-   *
-   *****************************************************/
-
-  public void test1()
-    {
-    URL url1 = null;
-    URL url2 = null;
-    URL url3 = null;
-
-    try
-      {
-      url1 = new URL( "http://kite.ly/non-existent-path" );
-      url2 = new URL( "http://kite.ly/contact" );
-      url3 = new URL( "http://kite.ly/non-existent-path" );
-      }
-    catch ( MalformedURLException mue )
-      {
-      Assert.fail();
-      }
-
-    Assert.assertTrue( NetUtils.areBothNullOrEqual( null, null ) );
-    Assert.assertFalse( NetUtils.areBothNullOrEqual( url1, null ) );
-    Assert.assertFalse( NetUtils.areBothNullOrEqual( null, url2 ) );
-
-    Assert.assertFalse( NetUtils.areBothNullOrEqual( url1, url2 ) );
-    Assert.assertFalse( NetUtils.areBothNullOrEqual( url2, url3 ) );
-    Assert.assertTrue( NetUtils.areBothNullOrEqual( url1, url3 ) );
+        Assert.assertFalse(NetUtils.areBothNullOrEqual(url1, url2));
+        Assert.assertFalse(NetUtils.areBothNullOrEqual(url2, url3));
+        Assert.assertTrue(NetUtils.areBothNullOrEqual(url1, url3));
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

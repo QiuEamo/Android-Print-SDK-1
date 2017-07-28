@@ -36,7 +36,6 @@
 
 package ly.kite.journey.selection;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -52,7 +51,6 @@ import ly.kite.R;
 import ly.kite.image.ImageAgent;
 import ly.kite.widget.LabelledImageView;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -61,127 +59,113 @@ import ly.kite.widget.LabelledImageView;
  * and a pager view.
  *
  *****************************************************/
-public class ProductImagePagerAdaptor extends PagerAdapter
-  {
-  ////////// Static Constant(s) //////////
+public class ProductImagePagerAdaptor extends PagerAdapter {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG              = "ProductImageAdaptor";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ProductImageAdaptor";
 
-  private static final String  IMAGE_CLASS_STRING   = "product_image";
+    private static final String IMAGE_CLASS_STRING = "product_image";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
+    private List<URL> mImageURLList;
+    private View.OnClickListener mOnClickListener;
 
-  ////////// Member Variable(s) //////////
+    private LayoutInflater mLayoutInflator;
+    private ImageAgent mImageAgent;
 
-  private Context               mContext;
-  private List<URL>             mImageURLList;
-  private View.OnClickListener  mOnClickListener;
+    ////////// Static Initialiser(s) //////////
 
-  private LayoutInflater        mLayoutInflator;
-  private ImageAgent            mImageAgent;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public ProductImagePagerAdaptor(Context context, List<URL> imageURLList, View.OnClickListener onClickListener) {
 
+        mContext = context;
+        mImageURLList = imageURLList;
+        mOnClickListener = onClickListener;
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public ProductImagePagerAdaptor( Context context, List<URL> imageURLList, View.OnClickListener onClickListener )
-    {
-    mContext         = context;
-    mImageURLList    = imageURLList;
-    mOnClickListener = onClickListener;
-
-    mLayoutInflator  = LayoutInflater.from( context );
-    mImageAgent      = ImageAgent.getInstance( context );
+        mLayoutInflator = LayoutInflater.from(context);
+        mImageAgent = ImageAgent.getInstance(context);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the number of images.
+     *
+     *****************************************************/
+    @Override
+    public int getCount() {
 
-  /*****************************************************
-   *
-   * Returns the number of images.
-   *
-   *****************************************************/
-  @Override
-  public int getCount()
-    {
-    return ( mImageURLList.size() );
+        return mImageURLList.size();
     }
 
+    /*****************************************************
+     *
+     * Creates a new page for the given position.
+     *
+     *****************************************************/
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        // Get the image URL for the position
+        URL imageURL = mImageURLList.get(position);
 
-  /*****************************************************
-   *
-   * Creates a new page for the given position.
-   *
-   *****************************************************/
-  @Override
-  public Object instantiateItem( ViewGroup container, int position )
-    {
-    // Get the image URL for the position
-    URL imageURL = mImageURLList.get( position );
+        // Inflate the view
 
+        View view = mLayoutInflator.inflate(R.layout.pager_item_product_overview_image, container, false);
 
-    // Inflate the view
+        container.addView(view);
 
-    View view = mLayoutInflator.inflate( R.layout.pager_item_product_overview_image, container, false );
+        // Set up the view
 
-    container.addView( view );
+        LabelledImageView labelledImageView = (LabelledImageView) view.findViewById(R.id.labelled_image_view);
 
+        labelledImageView.setOnClickListener(mOnClickListener);  // The view pager won't respond to click events, so we need to add them
+        // to each page
 
-    // Set up the view
+        labelledImageView.requestScaledImageOnceSized(IMAGE_CLASS_STRING, imageURL);
 
-    LabelledImageView labelledImageView = (LabelledImageView)view.findViewById( R.id.labelled_image_view );
-
-    labelledImageView.setOnClickListener( mOnClickListener );  // The view pager won't respond to click events, so we need to add them to each page
-
-    labelledImageView.requestScaledImageOnceSized( IMAGE_CLASS_STRING, imageURL );
-
-
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the view is associated with the object.
+     * Since we return the view anyway, this is true if the
+     * view and the object are the same object.
+     *
+     *****************************************************/
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
 
-  /*****************************************************
-   *
-   * Returns true if the view is associated with the object.
-   * Since we return the view anyway, this is true if the
-   * view and the object are the same object.
-   *
-   *****************************************************/
-  @Override
-  public boolean isViewFromObject( View view, Object object )
-    {
-    return ( view == object );
+        return view == object;
     }
 
+    /*****************************************************
+     *
+     * Destroys an item.
+     *
+     *****************************************************/
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
 
-  /*****************************************************
-   *
-   * Destroys an item.
-   *
-   *****************************************************/
-  @Override
-  public void destroyItem( ViewGroup container, int position, Object object )
-    {
-    container.removeView( (View)object );
+        container.removeView((View) object);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

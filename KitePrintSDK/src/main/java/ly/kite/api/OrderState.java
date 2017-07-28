@@ -36,60 +36,51 @@
 
 package ly.kite.api;
 
-
 ///// Import(s) /////
 
-
 ///// Class Declaration /////
-
-import java.util.HashMap;
 
 /*****************************************************
  *
  * This enum describes the state of an order.
  *
  *****************************************************/
-public enum OrderState
-  {
-  UPLOADING,                   // The images are being uploaded
-  POSTED,                      // The order has been posted, and we have had an order id back
-  RECEIVED   ( "Received"  ),  // The order status has been polled as received
-  ACCEPTED   ( "Accepted"  ),  // The order status has been polled as accepted
-  VALIDATED  ( "Validated" ),  // The order status has been polled as validated
-  PROCESSED  ( "Processed" ),  // The order status has been polled as processed
-  CANCELLED  ( "Cancelled" );  // The order has been cancelled (probably manually)
+public enum OrderState {
+    UPLOADING,                   // The images are being uploaded
+    POSTED,                      // The order has been posted, and we have had an order id back
+    RECEIVED("Received"),  // The order status has been polled as received
+    ACCEPTED("Accepted"),  // The order status has been polled as accepted
+    VALIDATED("Validated"),  // The order status has been polled as validated
+    PROCESSED("Processed"),  // The order status has been polled as processed
+    CANCELLED("Cancelled");  // The order has been cancelled (probably manually)
 
+    private String mJSONValue;
 
-  private String  mJSONValue;
+    public static OrderState fromJSONValue(String jsonValue) {
 
+        for (OrderState candidateOrderState : values()) {
+            String candidateJSONValue = candidateOrderState.jsonValue();
 
-  static public OrderState fromJSONValue( String jsonValue )
-    {
-    for ( OrderState candidateOrderState : values() )
-      {
-      String candidateJSONValue = candidateOrderState.jsonValue();
+            if (candidateJSONValue != null && candidateJSONValue.equalsIgnoreCase(jsonValue)) {
+                return candidateOrderState;
+            }
+        }
 
-      if ( candidateJSONValue != null && candidateJSONValue.equalsIgnoreCase( jsonValue ) ) return ( candidateOrderState );
-      }
-
-    return ( null );
+        return null;
     }
 
+    private OrderState(String jsonValue) {
 
-  private OrderState( String jsonValue )
-    {
-    mJSONValue = jsonValue;
+        mJSONValue = jsonValue;
     }
 
+    private OrderState() {
 
-  private OrderState()
-    {
-    this( null );
+        this(null);
     }
 
+    String jsonValue() {
 
-  String jsonValue()
-    {
-    return ( mJSONValue );
+        return mJSONValue;
     }
-  }
+}

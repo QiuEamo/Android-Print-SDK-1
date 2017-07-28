@@ -36,7 +36,6 @@
 
 package ly.kite.journey.creation.phonecase;
 
-
 ///// Import(s) /////
 
 import android.annotation.SuppressLint;
@@ -50,10 +49,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ly.kite.R;
-import ly.kite.journey.creation.AEditImageFragment;
 import ly.kite.catalogue.Product;
+import ly.kite.journey.creation.AEditImageFragment;
 import ly.kite.util.AssetFragment;
-
 
 ///// Class Declaration /////
 
@@ -63,183 +61,163 @@ import ly.kite.util.AssetFragment;
  * case design using an image.
  *
  *****************************************************/
-public class PhoneCaseFragment extends AEditImageFragment
-  {
-  ////////// Static Constant(s) //////////
+public class PhoneCaseFragment extends AEditImageFragment {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String  TAG = "PhoneCaseFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "PhoneCaseFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates a new instance of this fragment.
+     *
+     *****************************************************/
+    public static PhoneCaseFragment newInstance(Product product) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Creates a new instance of this fragment.
-   *
-   *****************************************************/
-  public static PhoneCaseFragment newInstance( Product product )
-    {
-    return ( new PhoneCaseFragment( product ) );
+        return new PhoneCaseFragment(product);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public PhoneCaseFragment() {
 
-  public PhoneCaseFragment()
-    {
     }
 
+    @SuppressLint("ValidFragment")
+    private PhoneCaseFragment(Product product) {
 
-  @SuppressLint("ValidFragment")
-  private PhoneCaseFragment( Product product )
-    {
-    super( product );
+        super(product);
     }
 
+    ////////// AEditImageFragment Method(s) //////////
 
-  ////////// AEditImageFragment Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
 
-    setHasOptionsMenu( true );
+        setHasOptionsMenu(true);
     }
 
+    /*****************************************************
+     *
+     * Called the first time the options menu is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflator) {
 
-  /*****************************************************
-   *
-   * Called the first time the options menu is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreateOptionsMenu( Menu menu, MenuInflater menuInflator )
-    {
-    onCreateOptionsMenu( menu, menuInflator, R.menu.phone_case );
+        onCreateOptionsMenu(menu, menuInflator, R.menu.phone_case);
     }
 
+    /*****************************************************
+     *
+     * Returns the content view for this fragment
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Returns the content view for this fragment
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = super.onCreateView( layoutInflator, container, savedInstanceState );
+        View view = super.onCreateView(layoutInflator, container, savedInstanceState);
 
-    setBackwardsTextViewVisibility( View.GONE );
+        setBackwardsTextViewVisibility(View.GONE);
 
-    setForwardsTextViewVisibility( View.VISIBLE );
-    setForwardsTextViewText( R.string.phone_case_proceed_button_text );
+        setForwardsTextViewVisibility(View.VISIBLE);
+        setForwardsTextViewText(R.string.phone_case_proceed_button_text);
 
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Called after the activity is created.
+     *
+     *****************************************************/
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called after the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onActivityCreated( Bundle savedInstanceState )
-    {
-    super.onActivityCreated( savedInstanceState );
+        super.onActivityCreated(savedInstanceState);
 
+        // If we haven't already got an image asset - look in the asset list. Always use the
+        // last one in the list - the most recently selected.
 
-    // If we haven't already got an image asset - look in the asset list. Always use the
-    // last one in the list - the most recently selected.
+        if (mUnmodifiedImageAssetFragment == null) {
+            int imageSpecCount = (mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0);
 
-    if ( mUnmodifiedImageAssetFragment == null )
-      {
-      int imageSpecCount = ( mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0 );
-
-      if ( imageSpecCount > 0 )
-        {
-        mUnmodifiedImageAssetFragment = mImageSpecArrayList.get( imageSpecCount - 1 ).getAssetFragment();
+            if (imageSpecCount > 0) {
+                mUnmodifiedImageAssetFragment = mImageSpecArrayList.get(imageSpecCount - 1).getAssetFragment();
+            }
         }
-      }
 
+        if (mEditableImageContainerFrame != null) {
+            Resources resources = getResources();
 
-    if ( mEditableImageContainerFrame != null )
-      {
-      Resources resources = getResources();
+            TypedValue anchorPointValue = new TypedValue();
 
-      TypedValue anchorPointValue = new TypedValue();
+            resources.getValue(R.dimen.edit_phone_case_anchor_point, anchorPointValue, true);
 
-      resources.getValue( R.dimen.edit_phone_case_anchor_point, anchorPointValue, true );
-
-      mEditableImageContainerFrame
-              .setImage( mUnmodifiedImageAssetFragment )
-              .setMask( mProduct.getMaskURL(), mProduct.getMaskBleed() )
-              .setUnderImages( mProduct.getUnderImageURLList() )
-              .setOverImages( mProduct.getOverImageURLList() )
-              .setAnchorPoint( anchorPointValue.getFloat() );
-      }
+            mEditableImageContainerFrame
+                    .setImage(mUnmodifiedImageAssetFragment)
+                    .setMask(mProduct.getMaskURL(), mProduct.getMaskBleed())
+                    .setUnderImages(mProduct.getUnderImageURLList())
+                    .setOverImages(mProduct.getOverImageURLList())
+                    .setAnchorPoint(anchorPointValue.getFloat());
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is top-most.
+     *
+     *****************************************************/
+    @Override
+    public void onTop() {
 
-  /*****************************************************
-   *
-   * Called when the fragment is top-most.
-   *
-   *****************************************************/
-  @Override
-  public void onTop()
-    {
-    super.onTop();
+        super.onTop();
 
-    if ( mProduct != null ) mKiteActivity.setTitle( mProduct.getName() );
+        if (mProduct != null) {
+            mKiteActivity.setTitle(mProduct.getName());
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when an edited asset is returned.
+     *
+     *****************************************************/
+    @Override
+    protected void onEditingComplete(AssetFragment assetFragment) {
 
-  /*****************************************************
-   *
-   * Called when an edited asset is returned.
-   *
-   *****************************************************/
-  @Override
-  protected void onEditingComplete( AssetFragment assetFragment )
-    {
-    if ( assetFragment != null && mKiteActivity instanceof ICallback )
-      {
-      ( (ICallback)mKiteActivity ).pcOnCreated( assetFragment );
-      }
+        if (assetFragment != null && mKiteActivity instanceof ICallback) {
+            ((ICallback) mKiteActivity).pcOnCreated(assetFragment);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    ////////// Inner Class(es) //////////
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * A callback interface.
-   *
-   *****************************************************/
-  public interface ICallback
-    {
-    public void pcOnCreated( AssetFragment assetFragment );
+    /*****************************************************
+     *
+     * A callback interface.
+     *
+     *****************************************************/
+    public interface ICallback {
+        public void pcOnCreated(AssetFragment assetFragment);
     }
 
-  }
+}
 

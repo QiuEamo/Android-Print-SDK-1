@@ -36,12 +36,10 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 
 ///// Class Declaration /////
 
@@ -50,146 +48,132 @@ import junit.framework.TestCase;
  * This class tests the abstract cache class.
  *
  *****************************************************/
-public class ACacheTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class ACacheTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ACacheTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ACacheTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testEmpty() {
 
+        Cache cache = new Cache();
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Tests.
-   *
-   *****************************************************/
-
-  public void testEmpty()
-    {
-    Cache cache = new Cache();
-
-    Assert.assertEquals( null, cache.getCachedValue( "key" ) );
+        Assert.assertEquals(null, cache.getCachedValue("key"));
     }
 
-  public void testRegistration()
-    {
-    Cache cache = new Cache();
+    public void testRegistration() {
 
-    Assert.assertEquals( false, cache.registerForValue( "key", new Consumer() ) );
-    Assert.assertEquals( true, cache.registerForValue( "key", new Consumer() ) );
+        Cache cache = new Cache();
+
+        Assert.assertEquals(false, cache.registerForValue("key", new Consumer()));
+        Assert.assertEquals(true, cache.registerForValue("key", new Consumer()));
     }
 
-  public void testDeliver1()
-    {
-    Cache cache = new Cache();
+    public void testDeliver1() {
 
-    Consumer consumer1 = new Consumer();
-    Consumer consumer2 = new Consumer();
+        Cache cache = new Cache();
 
-    Assert.assertEquals( false, cache.registerForValue( "key", consumer1 ) );
-    Assert.assertEquals( true, cache.registerForValue( "key", consumer2 ) );
+        Consumer consumer1 = new Consumer();
+        Consumer consumer2 = new Consumer();
 
+        Assert.assertEquals(false, cache.registerForValue("key", consumer1));
+        Assert.assertEquals(true, cache.registerForValue("key", consumer2));
 
-    cache.saveAndDistributeValue( "wrong_key", "wrong_value" );
+        cache.saveAndDistributeValue("wrong_key", "wrong_value");
 
-    Assert.assertEquals( null, consumer1.value );
-    Assert.assertEquals( null, consumer2.value );
+        Assert.assertEquals(null, consumer1.value);
+        Assert.assertEquals(null, consumer2.value);
 
-    Assert.assertEquals( null, cache.getCachedValue( "key" ) );
+        Assert.assertEquals(null, cache.getCachedValue("key"));
 
+        cache.saveAndDistributeValue("key", "right_value");
 
-    cache.saveAndDistributeValue( "key", "right_value" );
+        Assert.assertEquals("right_value", consumer1.value);
+        Assert.assertEquals("right_value", consumer2.value);
 
-    Assert.assertEquals( "right_value", consumer1.value );
-    Assert.assertEquals( "right_value", consumer2.value );
-
-    Assert.assertEquals( "right_value", cache.getCachedValue( "key" ) );
+        Assert.assertEquals("right_value", cache.getCachedValue("key"));
     }
 
-  public void testDeliver2()
-    {
-    Cache cache = new Cache();
+    public void testDeliver2() {
 
-    Consumer consumer1 = new Consumer();
-    Consumer consumer2 = new Consumer();
+        Cache cache = new Cache();
 
-    Assert.assertEquals( false, cache.registerForValue( "key", consumer1 ) );
-    Assert.assertEquals( true, cache.registerForValue( "key", consumer2 ) );
+        Consumer consumer1 = new Consumer();
+        Consumer consumer2 = new Consumer();
 
+        Assert.assertEquals(false, cache.registerForValue("key", consumer1));
+        Assert.assertEquals(true, cache.registerForValue("key", consumer2));
 
-    Exception exception = new Exception( "exception_message" );
+        Exception exception = new Exception("exception_message");
 
-    cache.onError( "key", exception );
+        cache.onError("key", exception);
 
-    Assert.assertEquals( null, consumer1.value );
-    Assert.assertEquals( null, consumer2.value );
+        Assert.assertEquals(null, consumer1.value);
+        Assert.assertEquals(null, consumer2.value);
 
-    Assert.assertEquals( exception, consumer1.exception );
-    Assert.assertEquals( exception, consumer2.exception );
+        Assert.assertEquals(exception, consumer1.exception);
+        Assert.assertEquals(exception, consumer2.exception);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * Consumer implementation.
+     *
+     *****************************************************/
+    private class Consumer {
+        String value;
+        Exception exception;
 
-  /*****************************************************
-   *
-   * Consumer implementation.
-   *
-   *****************************************************/
-  private class Consumer
-    {
-    String     value;
-    Exception  exception;
+        protected void onValue(String value) {
 
-    protected void onValue( String value )
-      {
-      this.value = value;
-      }
+            this.value = value;
+        }
 
-    protected void onError( Exception exception )
-      {
-      this.exception = exception;
-      }
+        protected void onError(Exception exception) {
+
+            this.exception = exception;
+        }
     }
 
+    /*****************************************************
+     *
+     * Cache implementation.
+     *
+     *****************************************************/
+    private class Cache extends ACache<String, String, Consumer> {
+        @Override
+        protected void onValueAvailable(String value, Consumer consumer) {
 
-  /*****************************************************
-   *
-   * Cache implementation.
-   *
-   *****************************************************/
-  private class Cache extends ACache<String,String,Consumer>
-    {
-    @Override
-    protected void onValueAvailable( String value, Consumer consumer )
-      {
-      consumer.onValue( value );
-      }
+            consumer.onValue(value);
+        }
 
-    @Override
-    protected void onError( Exception exception, Consumer consumer )
-      {
-      consumer.onError( exception );
-      }
+        @Override
+        protected void onError(Exception exception, Consumer consumer) {
+
+            consumer.onError(exception);
+        }
 
     }
 
-  }
+}
 

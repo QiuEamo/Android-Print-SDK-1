@@ -23,12 +23,10 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.appcompat.R;
 import android.util.Log;
 
 import java.lang.annotation.Retention;
@@ -38,251 +36,247 @@ import java.lang.annotation.RetentionPolicy;
  * This is a drawable that can be used as a menu indicator. It is supplied to resources -
  * a 'burger'-style menu icon and an arrow, and will animate between them.
  */
-public class CustomDrawerIndicator extends Drawable
-  {
-  static private final String  LOG_TAG           = "DrawerIndicator";
+public class CustomDrawerIndicator extends Drawable {
+    private static final String LOG_TAG = "DrawerIndicator";
 
-  static private final boolean DEBUGGING_ENABLED = false;
+    private static final boolean DEBUGGING_ENABLED = false;
 
-  /**
-   * Direction to make the arrow point towards the left.
-   */
-  public static final int ARROW_DIRECTION_LEFT = 0;
+    /**
+     * Direction to make the arrow point towards the left.
+     */
+    public static final int ARROW_DIRECTION_LEFT = 0;
 
-  /**
-   * Direction to make the arrow point towards the right.
-   */
-  public static final int ARROW_DIRECTION_RIGHT = 1;
+    /**
+     * Direction to make the arrow point towards the right.
+     */
+    public static final int ARROW_DIRECTION_RIGHT = 1;
 
-  /**
-   * Direction to make the arrow point towards the start.
-   */
-  public static final int ARROW_DIRECTION_START = 2;
+    /**
+     * Direction to make the arrow point towards the start.
+     */
+    public static final int ARROW_DIRECTION_START = 2;
 
-  /**
-   * Direction to make the arrow point to the end.
-   */
-  public static final int ARROW_DIRECTION_END = 3;
+    /**
+     * Direction to make the arrow point to the end.
+     */
+    public static final int ARROW_DIRECTION_END = 3;
 
-
-  /** @hide */
-  @IntDef({ ARROW_DIRECTION_LEFT, ARROW_DIRECTION_RIGHT,
-          ARROW_DIRECTION_START, ARROW_DIRECTION_END })
-  @Retention(RetentionPolicy.SOURCE)
-  public @interface ArrowDirection
-    {
+    /**
+     * @hide
+     */
+    @IntDef({ARROW_DIRECTION_LEFT, ARROW_DIRECTION_RIGHT,
+            ARROW_DIRECTION_START, ARROW_DIRECTION_END})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ArrowDirection {
     }
 
-  private final Drawable mShowDrawable;
-  private final Drawable mHideDrawable;
+    private final Drawable mShowDrawable;
+    private final Drawable mHideDrawable;
 
-  // Whether we should mirror animation when animation is reversed.
-  private boolean mVerticalMirror = false;
+    // Whether we should mirror animation when animation is reversed.
+    private boolean mVerticalMirror = false;
 
-  // The interpolated version of the original progress
-  private float mProgress;
+    // The interpolated version of the original progress
+    private float mProgress;
 
-  // The arrow direction
-  private int mDirection = ARROW_DIRECTION_START;
+    // The arrow direction
+    private int mDirection = ARROW_DIRECTION_START;
 
+    /**
+     * @param context used to get the configuration for the drawable from
+     */
+    public CustomDrawerIndicator(Context context, int showDrawableResourceId, int hideDrawableResourceId) {
 
-  /**
-   * @param context used to get the configuration for the drawable from
-   */
-  public CustomDrawerIndicator( Context context, int showDrawableResourceId, int hideDrawableResourceId )
-    {
-    Resources resources = context.getResources();
+        Resources resources = context.getResources();
 
-    mShowDrawable = resources.getDrawable( showDrawableResourceId );
-    mHideDrawable = resources.getDrawable( hideDrawableResourceId );
+        mShowDrawable = resources.getDrawable(showDrawableResourceId);
+        mHideDrawable = resources.getDrawable(hideDrawableResourceId);
     }
 
+    public void setPosition(float position) {
 
-  public void setPosition( float position )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "setPosition( position = " + position + " )" );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "setPosition( position = " + position + " )");
+        }
 
-    if ( position == 1f )
-      {
-      setVerticalMirror( true );
-      }
-    else if ( position == 0f )
-      {
-      setVerticalMirror( false );
-      }
+        if (position == 1f) {
+            setVerticalMirror(true);
+        } else if (position == 0f) {
+            setVerticalMirror(false);
+        }
 
-    setProgress( position );
+        setProgress(position);
     }
 
-  public float getPosition()
-    {
-    return getProgress();
+    public float getPosition() {
+
+        return getProgress();
     }
 
+    /**
+     * Set the arrow direction.
+     */
+    public void setDirection(@ArrowDirection int direction) {
 
-  /**
-   * Set the arrow direction.
-   */
-  public void setDirection( @ArrowDirection int direction )
-    {
-    if ( direction != mDirection )
-      {
-      mDirection = direction;
+        if (direction != mDirection) {
+            mDirection = direction;
 
-      invalidateSelf();
-      }
+            invalidateSelf();
+        }
     }
 
-  /**
-   * Returns the arrow direction.
-   */
-  @ArrowDirection
-  public int getDirection()
-    {
-    return mDirection;
+    /**
+     * Returns the arrow direction.
+     */
+    @ArrowDirection
+    public int getDirection() {
+
+        return mDirection;
     }
 
-  /**
-   * If set, canvas is flipped when progress reached to end and going back to start.
-   */
-  public void setVerticalMirror( boolean verticalMirror )
-    {
-    if ( mVerticalMirror != verticalMirror )
-      {
-      mVerticalMirror = verticalMirror;
+    /**
+     * If set, canvas is flipped when progress reached to end and going back to start.
+     */
+    public void setVerticalMirror(boolean verticalMirror) {
 
-      invalidateSelf();
-      }
+        if (mVerticalMirror != verticalMirror) {
+            mVerticalMirror = verticalMirror;
+
+            invalidateSelf();
+        }
     }
 
-  @Override
-  public void draw( Canvas canvas )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "draw( canvas = " + canvas + " )" );
+    @Override
+    public void draw(Canvas canvas) {
 
-    Rect bounds = getBounds();
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "draw( canvas = " + canvas + " )");
+        }
 
-    final boolean flipToPointRight;
-    switch ( mDirection )
-      {
-      case ARROW_DIRECTION_LEFT:
-        flipToPointRight = false;
-        break;
-      case ARROW_DIRECTION_RIGHT:
-        flipToPointRight = true;
-        break;
-      case ARROW_DIRECTION_END:
-        flipToPointRight = DrawableCompat.getLayoutDirection( this )
-                == ViewCompat.LAYOUT_DIRECTION_LTR;
-        break;
-      case ARROW_DIRECTION_START:
-      default:
-        flipToPointRight = DrawableCompat.getLayoutDirection( this )
-                == ViewCompat.LAYOUT_DIRECTION_RTL;
-        break;
-      }
+        Rect bounds = getBounds();
+
+        final boolean flipToPointRight;
+        switch (mDirection) {
+            case ARROW_DIRECTION_LEFT:
+                flipToPointRight = false;
+                break;
+            case ARROW_DIRECTION_RIGHT:
+                flipToPointRight = true;
+                break;
+            case ARROW_DIRECTION_END:
+                flipToPointRight = DrawableCompat.getLayoutDirection(this)
+                        == ViewCompat.LAYOUT_DIRECTION_LTR;
+                break;
+            case ARROW_DIRECTION_START:
+            default:
+                flipToPointRight = DrawableCompat.getLayoutDirection(this)
+                        == ViewCompat.LAYOUT_DIRECTION_RTL;
+                break;
+        }
 
 // The whole canvas rotates as the transition happens
-    final float canvasRotate = lerp(
-            flipToPointRight ? 0 : -180,
-            flipToPointRight ? 180 : 0,
-            mProgress );
+        final float canvasRotate = lerp(
+                flipToPointRight ? 0 : -180,
+                flipToPointRight ? 180 : 0,
+                mProgress);
 
-    int centerX = bounds.centerX();
-    int centerY = bounds.centerY();
+        int centerX = bounds.centerX();
+        int centerY = bounds.centerY();
 
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "  mVerticalMirror = " + mVerticalMirror + ", flipToPointRight = " + flipToPointRight + ", canvasRotate = " + canvasRotate );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "  mVerticalMirror = " + mVerticalMirror + ", flipToPointRight = " + flipToPointRight + ", canvasRotate = " +
+                    canvasRotate);
+        }
 
-    float canvasRotationForHideDrawable = 0f;
+        float canvasRotationForHideDrawable = 0f;
 
-      canvasRotationForHideDrawable = canvasRotate * ( ( mVerticalMirror ^ flipToPointRight ) ? -1 : 1 );
+        canvasRotationForHideDrawable = canvasRotate * ((mVerticalMirror ^ flipToPointRight) ? -1 : 1);
 
-    float canvasRotationForShowDrawable = canvasRotationForHideDrawable + 180;
+        float canvasRotationForShowDrawable = canvasRotationForHideDrawable + 180;
 
+        canvas.save();
 
-    canvas.save();
+        canvas.rotate(canvasRotationForShowDrawable, centerX, centerY);
 
-    canvas.rotate( canvasRotationForShowDrawable, centerX, centerY );
+        mShowDrawable.setBounds(bounds);
+        mShowDrawable.setAlpha((int) ((1f - mProgress) * 255));
+        mShowDrawable.draw(canvas);
 
-    mShowDrawable.setBounds( bounds );
-    mShowDrawable.setAlpha( (int)( ( 1f - mProgress ) * 255 ) );
-    mShowDrawable.draw( canvas );
+        canvas.restore();
 
-    canvas.restore();
+        canvas.save();
 
+        canvas.rotate(canvasRotationForHideDrawable, centerX, centerY);
 
-    canvas.save();
+        mHideDrawable.setBounds(bounds);
+        mHideDrawable.setAlpha((int) (mProgress * 255));
+        mHideDrawable.draw(canvas);
 
-    canvas.rotate( canvasRotationForHideDrawable, centerX, centerY );
-
-    mHideDrawable.setBounds( bounds );
-    mHideDrawable.setAlpha( (int)( mProgress * 255 ) );
-    mHideDrawable.draw( canvas );
-
-    canvas.restore();
+        canvas.restore();
     }
 
-  @Override
-  public void setAlpha( int alpha )
-    {
+    @Override
+    public void setAlpha(int alpha) {
+
     }
 
-  @Override
-  public void setColorFilter( ColorFilter colorFilter )
-    {
+    @Override
+    public void setColorFilter(ColorFilter colorFilter) {
+
     }
 
-  @Override
-  public int getIntrinsicHeight()
-    {
-    return ( Math.max( mShowDrawable.getIntrinsicHeight(), mHideDrawable.getIntrinsicHeight() ) );
+    @Override
+    public int getIntrinsicHeight() {
+
+        return Math.max(mShowDrawable.getIntrinsicHeight(), mHideDrawable.getIntrinsicHeight());
     }
 
-  @Override
-  public int getIntrinsicWidth()
-    {
-    return ( Math.max( mShowDrawable.getIntrinsicWidth(), mHideDrawable.getIntrinsicWidth() ) );
+    @Override
+    public int getIntrinsicWidth() {
+
+        return Math.max(mShowDrawable.getIntrinsicWidth(), mHideDrawable.getIntrinsicWidth());
     }
 
-  @Override
-  public int getOpacity()
-    {
-    return PixelFormat.TRANSLUCENT;
+    @Override
+    public int getOpacity() {
+
+        return PixelFormat.TRANSLUCENT;
     }
 
-  /**
-   * Returns the current progress of the arrow.
-   */
-  @FloatRange(from = 0.0, to = 1.0)
-  public float getProgress()
-    {
-    return mProgress;
+    /**
+     * Returns the current progress of the arrow.
+     */
+    @FloatRange(from = 0.0, to = 1.0)
+    public float getProgress() {
+
+        return mProgress;
     }
 
-  /**
-   * Set the progress of the arrow.
-   *
-   * <p>A value of {@code 0.0} indicates that the arrow should be drawn in it's starting
-   * position. A value of {@code 1.0} indicates that the arrow should be drawn in it's ending
-   * position.</p>
-   */
-  public void setProgress( @FloatRange(from = 0.0, to = 1.0) float progress )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "setProgress( progress = " + progress + " )" );
+    /**
+     * Set the progress of the arrow.
+     * <p>
+     * <p>A value of {@code 0.0} indicates that the arrow should be drawn in it's starting
+     * position. A value of {@code 1.0} indicates that the arrow should be drawn in it's ending
+     * position.</p>
+     */
+    public void setProgress(@FloatRange(from = 0.0, to = 1.0) float progress) {
 
-    if ( mProgress != progress )
-      {
-      mProgress = progress;
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "setProgress( progress = " + progress + " )");
+        }
 
-      invalidateSelf();
-      }
+        if (mProgress != progress) {
+            mProgress = progress;
+
+            invalidateSelf();
+        }
     }
 
-  /**
-   * Linear interpolate between a and b with parameter t.
-   */
-  private static float lerp( float a, float b, float t )
-    {
-    return a + ( b - a ) * t;
+    /**
+     * Linear interpolate between a and b with parameter t.
+     */
+    private static float lerp(float a, float b, float t) {
+
+        return a + (b - a) * t;
     }
-  }
+}

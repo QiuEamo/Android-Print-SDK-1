@@ -7,15 +7,14 @@ import android.app.Application;
 /**
  * Created by dbotha on 23/12/2015.
  */
-public class SampleAppApplication extends Application
-  {
+public class SampleAppApplication extends Application {
 
-  @Override
-  public void onCreate()
-    {
-    super.onCreate();
+    @Override
+    public void onCreate() {
 
-    //LeakCanary.install( this );
+        super.onCreate();
+
+        //LeakCanary.install( this );
     }
 
-  }
+}

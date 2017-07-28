@@ -36,11 +36,7 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
-
-import android.graphics.Bitmap;
-
 
 ///// Class Declaration /////
 
@@ -49,23 +45,21 @@ import android.graphics.Bitmap;
  * This interface defines an image size consumer. This
  *
  *****************************************************/
-public interface IImageSizeConsumer
-  {
-  ////////// Method(s) //////////
+public interface IImageSizeConsumer {
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Called when the image size is available.
-   *
-   *****************************************************/
-  public void onImageSizeAvailable( int width, int height );
+    /*****************************************************
+     *
+     * Called when the image size is available.
+     *
+     *****************************************************/
+    public void onImageSizeAvailable(int width, int height);
 
-
-  /*****************************************************
-   *
-   * Called when an image could not be loaded. An exception
-   * may or may not be additionally returned.
-   *
-   *****************************************************/
-  public void onImageSizeUnavailable( Exception exception );
-  }
+    /*****************************************************
+     *
+     * Called when an image could not be loaded. An exception
+     * may or may not be additionally returned.
+     *
+     *****************************************************/
+    public void onImageSizeUnavailable(Exception exception);
+}

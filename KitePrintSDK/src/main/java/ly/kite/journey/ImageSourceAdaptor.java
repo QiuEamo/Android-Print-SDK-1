@@ -36,7 +36,6 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -52,7 +51,6 @@ import java.util.List;
 
 import ly.kite.R;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -60,175 +58,161 @@ import ly.kite.R;
  * An adaptor for the image sources.
  *
  *****************************************************/
-public class ImageSourceAdaptor extends BaseAdapter
-  {
-  ////////// Static Constant(s) //////////
+public class ImageSourceAdaptor extends BaseAdapter {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ImageSourceAdaptor";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageSourceAdaptor";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
+    private List<AImageSource> mImageSourceList;
+    private AImageSource.LayoutType mLayoutType;
 
-  ////////// Member Variable(s) //////////
+    private LayoutInflater mLayoutInflator;
 
-  private Context                  mContext;
-  private List<AImageSource>       mImageSourceList;
-  private AImageSource.LayoutType  mLayoutType;
+    ////////// Static Initialiser(s) //////////
 
-  private LayoutInflater           mLayoutInflator;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public ImageSourceAdaptor(Context context, AImageSource.LayoutType layoutType) {
 
+        mContext = context;
+        mLayoutType = layoutType;
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public ImageSourceAdaptor( Context context, AImageSource.LayoutType layoutType )
-    {
-    mContext        = context;
-    mLayoutType     = layoutType;
-
-    mLayoutInflator = LayoutInflater.from( context );
+        mLayoutInflator = LayoutInflater.from(context);
     }
 
+    public ImageSourceAdaptor(Context context, AImageSource.LayoutType layoutType, List<AImageSource> imageSourceList) {
 
-  public ImageSourceAdaptor( Context context, AImageSource.LayoutType layoutType, List<AImageSource> imageSourceList )
-    {
-    this( context, layoutType );
+        this(context, layoutType);
 
-    mImageSourceList = imageSourceList;
+        mImageSourceList = imageSourceList;
     }
 
+    public ImageSourceAdaptor(Context context, AImageSource.LayoutType layoutType, AImageSource... imageSources) {
 
-  public ImageSourceAdaptor( Context context, AImageSource.LayoutType layoutType, AImageSource... imageSources )
-    {
-    this( context, layoutType );
+        this(context, layoutType);
 
-    mImageSourceList = new ArrayList<>();
+        mImageSourceList = new ArrayList<>();
 
-    if ( imageSources != null )
-      {
-      for ( AImageSource imageSource : imageSources ) mImageSourceList.add( imageSource );
-      }
+        if (imageSources != null) {
+            for (AImageSource imageSource : imageSources) {
+                mImageSourceList.add(imageSource);
+            }
+        }
     }
 
+    ////////// BaseAdapter Method(s) //////////
 
-  ////////// BaseAdapter Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the number of product items.
+     *
+     *****************************************************/
+    @Override
+    public int getCount() {
 
-  /*****************************************************
-   *
-   * Returns the number of product items.
-   *
-   *****************************************************/
-  @Override
-  public int getCount()
-    {
-    return ( mImageSourceList.size() );
+        return mImageSourceList.size();
     }
 
+    /*****************************************************
+     *
+     * Returns the product item at the requested position.
+     *
+     *****************************************************/
+    @Override
+    public Object getItem(int position) {
 
-  /*****************************************************
-   *
-   * Returns the product item at the requested position.
-   *
-   *****************************************************/
-  @Override
-  public Object getItem( int position )
-    {
-    return ( mImageSourceList.get( position ) );
+        return mImageSourceList.get(position);
     }
 
+    /*****************************************************
+     *
+     * Returns an id for the product item at the requested
+     * position.
+     *
+     *****************************************************/
+    @Override
+    public long getItemId(int position) {
 
-  /*****************************************************
-   *
-   * Returns an id for the product item at the requested
-   * position.
-   *
-   *****************************************************/
-  @Override
-  public long getItemId( int position )
-    {
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Returns the view for the product item at the requested
+     * position.
+     *
+     *****************************************************/
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-  /*****************************************************
-   *
-   * Returns the view for the product item at the requested
-   * position.
-   *
-   *****************************************************/
-  @Override
-  public View getView( int position, View convertView, ViewGroup parent )
-    {
-    AImageSource imageSource = (AImageSource)getItem( position );
+        AImageSource imageSource = (AImageSource) getItem(position);
 
+        // Either re-use the convert view, or create a new one.
 
-    // Either re-use the convert view, or create a new one.
+        Object tagObject;
+        View view;
+        ViewHolder viewHolder;
 
-    Object          tagObject;
-    View            view;
-    ViewHolder viewHolder;
+        if (convertView != null &&
+                (tagObject = convertView.getTag()) != null &&
+                (tagObject instanceof ViewHolder)) {
+            view = convertView;
+            viewHolder = (ViewHolder) tagObject;
+        } else {
+            view = mLayoutInflator.inflate(imageSource.getLayoutResource(mLayoutType), parent, false);
+            viewHolder = new ViewHolder(view);
 
-    if ( convertView != null &&
-            ( tagObject = convertView.getTag() ) != null &&
-            ( tagObject instanceof ViewHolder ) )
-      {
-      view       = convertView;
-      viewHolder = (ViewHolder)tagObject;
-      }
-    else
-      {
-      view       = mLayoutInflator.inflate( imageSource.getLayoutResource( mLayoutType ), parent, false );
-      viewHolder = new ViewHolder( view );
+            view.setTag(viewHolder);
+        }
 
-      view.setTag( viewHolder );
-      }
+        viewHolder.bind(imageSource);
 
-
-    viewHolder.bind( imageSource );
-
-
-    return ( view );
+        return view;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * References to views within the layout.
+     *
+     *****************************************************/
+    private class ViewHolder {
+        View view;
+        View backgroundView;
+        ImageView iconImageView;
+        TextView labelTextView;
 
-  /*****************************************************
-   *
-   * References to views within the layout.
-   *
-   *****************************************************/
-  private class ViewHolder
-    {
-    View       view;
-    View       backgroundView;
-    ImageView  iconImageView;
-    TextView   labelTextView;
+        ViewHolder(View view) {
 
+            this.view = view;
+            this.backgroundView = view.findViewById(R.id.background_view);
+            this.iconImageView = (ImageView) view.findViewById(R.id.icon_image_view);
+            this.labelTextView = (TextView) view.findViewById(R.id.label_text_view);
+        }
 
-    ViewHolder( View view )
-      {
-      this.view           = view;
-      this.backgroundView = view.findViewById( R.id.background_view );
-      this.iconImageView  = (ImageView)view.findViewById( R.id.icon_image_view );
-      this.labelTextView  = (TextView)view.findViewById( R.id.label_text_view );
-      }
+        void bind(AImageSource imageSource) {
 
-
-    void bind( AImageSource imageSource )
-      {
-      if ( this.backgroundView != null ) this.backgroundView.setBackgroundColor( mContext.getResources().getColor( imageSource.getBackgroundColourResourceId( mLayoutType ) ) );
-      if ( this.iconImageView  != null ) this.iconImageView.setImageResource( imageSource.getIconResourceId( mLayoutType ) );
-      if ( this.labelTextView  != null ) this.labelTextView.setText( imageSource.getLabelResourceId() );
-      }
+            if (this.backgroundView != null) {
+                this.backgroundView.setBackgroundColor(mContext.getResources().getColor(imageSource.getBackgroundColourResourceId
+                        (mLayoutType)));
+            }
+            if (this.iconImageView != null) {
+                this.iconImageView.setImageResource(imageSource.getIconResourceId(mLayoutType));
+            }
+            if (this.labelTextView != null) {
+                this.labelTextView.setText(imageSource.getLabelResourceId());
+            }
+        }
     }
 
-  }
+}
 

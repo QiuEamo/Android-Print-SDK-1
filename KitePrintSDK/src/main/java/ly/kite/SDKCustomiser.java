@@ -36,7 +36,6 @@
 
 package ly.kite;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -48,7 +47,6 @@ import ly.kite.checkout.APaymentFragment;
 import ly.kite.checkout.AShippingActivity;
 import ly.kite.checkout.DefaultPaymentFragment;
 import ly.kite.checkout.ICreditCardAgent;
-import ly.kite.checkout.IOrderSubmissionResultListener;
 import ly.kite.checkout.ShippingActivity;
 import ly.kite.checkout.StripeCreditCardAgent;
 import ly.kite.instagramphotopicker.InstagramImageSource;
@@ -56,8 +54,6 @@ import ly.kite.journey.AImageSource;
 import ly.kite.journey.DeviceImageSource;
 import ly.kite.journey.creation.ICustomImageEditorAgent;
 import ly.kite.ordering.IOrderSubmissionSuccessListener;
-import ly.kite.ordering.Order;
-
 
 ///// Class Declaration /////
 
@@ -69,223 +65,200 @@ import ly.kite.ordering.Order;
  * that they wish to change.
  *
  *****************************************************/
-public class SDKCustomiser
-  {
-  ////////// Static Constant(s) //////////
+public class SDKCustomiser {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "SDKCustomiser";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SDKCustomiser";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private Context  mContext;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Sets the context.
+     *
+     *****************************************************/
+    final void setContext(Context context) {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Sets the context.
-   *
-   *****************************************************/
-  final void setContext( Context context )
-    {
-    mContext = context;
+        mContext = context;
     }
 
+    /*****************************************************
+     *
+     * Returns the context.
+     *
+     *****************************************************/
+    protected final Context getContext() {
 
-  /*****************************************************
-   *
-   * Returns the context.
-   *
-   *****************************************************/
-  final protected Context getContext()
-    {
-    return ( mContext );
+        return mContext;
     }
 
+    /*****************************************************
+     *
+     * Returns the analytics event callback.
+     *
+     *****************************************************/
+    public IAnalyticsEventCallback getAnalyticsEventCallback(Context context) {
 
-  /*****************************************************
-   *
-   * Returns the analytics event callback.
-   *
-   *****************************************************/
-  public IAnalyticsEventCallback getAnalyticsEventCallback( Context context )
-    {
-    return ( new NullAnalyticsEventCallback( context ) );
+        return new NullAnalyticsEventCallback(context);
     }
 
+    /*****************************************************
+     *
+     * Returns true if the inactivity timer is enabled,
+     * false otherwise.
+     *
+     *****************************************************/
+    public boolean inactivityTimerEnabled() {
 
-  /*****************************************************
-   *
-   * Returns true if the inactivity timer is enabled,
-   * false otherwise.
-   *
-   *****************************************************/
-  public boolean inactivityTimerEnabled()
-    {
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Returns the scale type to be used for product images.
+     *
+     *****************************************************/
+    public int getChooseProductImageAnchorGravity(String productId) {
 
-  /*****************************************************
-   *
-   * Returns the scale type to be used for product images.
-   *
-   *****************************************************/
-  public int getChooseProductImageAnchorGravity( String productId )
-    {
-    return ( Gravity.NO_GRAVITY );
+        return Gravity.NO_GRAVITY;
     }
 
+    /*****************************************************
+     *
+     * Returns the layout resource to use for the choose product
+     * screen.
+     *
+     *****************************************************/
+    public int getChooseProductLayoutResourceId() {
 
-  /*****************************************************
-   *
-   * Returns the layout resource to use for the choose product
-   * screen.
-   *
-   *****************************************************/
-  public int getChooseProductLayoutResourceId()
-    {
-    return ( R.layout.screen_choose_product );
+        return R.layout.screen_choose_product;
     }
 
+    /*****************************************************
+     *
+     * Returns the layout resource to use for the choose product
+     * screen grid footer, or 0 if there is no footer.
+     *
+     *****************************************************/
+    public int getChooseProductGridFooterLayoutResourceId() {
 
-  /*****************************************************
-   *
-   * Returns the layout resource to use for the choose product
-   * screen grid footer, or 0 if there is no footer.
-   *
-   *****************************************************/
-  public int getChooseProductGridFooterLayoutResourceId()
-    {
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Returns the image sources.
+     *
+     *****************************************************/
+    public AImageSource[] getImageSources() {
 
-  /*****************************************************
-   *
-   * Returns the image sources.
-   *
-   *****************************************************/
-  public AImageSource[] getImageSources()
-    {
-    return ( new AImageSource[] { new DeviceImageSource(), new InstagramImageSource() } );
+        return new AImageSource[]{new DeviceImageSource(), new InstagramImageSource()};
     }
 
+    /*****************************************************
+     *
+     * Returns true if the photobook cover page is a summary
+     * of photos in the content pages.
+     *
+     *****************************************************/
+    public boolean photobookFrontCoverIsSummary() {
 
-  /*****************************************************
-   *
-   * Returns true if the photobook cover page is a summary
-   * of photos in the content pages.
-   *
-   *****************************************************/
-  public boolean photobookFrontCoverIsSummary()
-    {
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Returns the custom image editor agent.
+     *
+     *****************************************************/
+    public ICustomImageEditorAgent getCustomImageEditorAgent() {
 
-  /*****************************************************
-   *
-   * Returns the custom image editor agent.
-   *
-   *****************************************************/
-  public ICustomImageEditorAgent getCustomImageEditorAgent()
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns the class that implements the shipping activity.
+     *
+     *****************************************************/
+    public Class<? extends AShippingActivity> getShippingActivityClass() {
 
-  /*****************************************************
-   *
-   * Returns the class that implements the shipping activity.
-   *
-   *****************************************************/
-  public Class<? extends AShippingActivity> getShippingActivityClass()
-    {
-    return ( ShippingActivity.class );
+        return ShippingActivity.class;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the user's phone number should be
+     * entered on the shipping screen.
+     *
+     *****************************************************/
+    public boolean requestPhoneNumber() {
 
-  /*****************************************************
-   *
-   * Returns true if the user's phone number should be
-   * entered on the shipping screen.
-   *
-   *****************************************************/
-  public boolean requestPhoneNumber()
-    {
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the address book is enabled.
+     *
+     *****************************************************/
+    public boolean addressBookEnabled() {
 
-  /*****************************************************
-   *
-   * Returns true if the address book is enabled.
-   *
-   *****************************************************/
-  public boolean addressBookEnabled()
-    {
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Returns the payment fragment.
+     *
+     *****************************************************/
+    public APaymentFragment getPaymentFragment() {
 
-  /*****************************************************
-   *
-   * Returns the payment fragment.
-   *
-   *****************************************************/
-  public APaymentFragment getPaymentFragment()
-    {
-    return ( new DefaultPaymentFragment() );
+        return new DefaultPaymentFragment();
     }
 
+    /*****************************************************
+     *
+     * Returns the credit card agent. The default is now
+     * the Stripe credit card agent.
+     *
+     *****************************************************/
+    public ICreditCardAgent getCreditCardAgent() {
 
-  /*****************************************************
-   *
-   * Returns the credit card agent. The default is now
-   * the Stripe credit card agent.
-   *
-   *****************************************************/
-  public ICreditCardAgent getCreditCardAgent()
-    {
-    return ( new StripeCreditCardAgent() );
+        return new StripeCreditCardAgent();
     }
 
+    /*****************************************************
+     *
+     * Returns a callback for successful order submission.
+     * The default is null, i.e. there is no listener.
+     *
+     *****************************************************/
+    public IOrderSubmissionSuccessListener getOrderSubmissionSuccessListener() {
 
-  /*****************************************************
-   *
-   * Returns a callback for successful order submission.
-   * The default is null, i.e. there is no listener.
-   *
-   *****************************************************/
-  public IOrderSubmissionSuccessListener getOrderSubmissionSuccessListener()
-    {
-    return ( null );
+        return null;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

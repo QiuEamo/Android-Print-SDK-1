@@ -36,14 +36,9 @@
 
 package ly.kite.journey.selection;
 
-
 ///// Import(s) /////
 
-import java.util.ArrayList;
-
-import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.ICatalogueConsumer;
-
 
 ///// Class Declaration /////
 
@@ -52,28 +47,25 @@ import ly.kite.catalogue.ICatalogueConsumer;
  * This interface defines a holder for a catalogue.
  *
  *****************************************************/
-public interface ICatalogueHolder
-  {
-  ////////// Static Constant(s) //////////
+public interface ICatalogueHolder {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a catalogue to the supplied consumer.
+     *
+     *****************************************************/
+    public void requestCatalogue(ICatalogueConsumer consumer);
 
-  /*****************************************************
-   *
-   * Returns a catalogue to the supplied consumer.
-   *
-   *****************************************************/
-  public void requestCatalogue( ICatalogueConsumer consumer );
+    ////////// Inner Class(es) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

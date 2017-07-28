@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
 
 import java.util.Random;
 
@@ -22,8 +21,7 @@ import ly.kite.address.Country;
 import ly.kite.ordering.Order;
 import ly.kite.ordering.OrderingDatabaseAgent;
 
-public class EncryptionTest extends AndroidTestCase{
-
+public class EncryptionTest extends AndroidTestCase {
 
     String ENCRYPTION_KEY = KiteSDK.ENCRYPTION_KEY;//"5743h4j5bjhb34h5bhg3463";//random encryption key
 
@@ -34,48 +32,55 @@ public class EncryptionTest extends AndroidTestCase{
 
     //created for testing the encryption/decryption with multiple string combinations
     public static String randomTextGenerator() {
+
         StringBuilder text = new StringBuilder();
         Random random = new Random();
         char temp;
         int randomLength = random.nextInt(30);
 
         //generate string no smaller that 3 characters but no bigger that 30 characters
-        while( randomLength < 3 )
+        while (randomLength < 3) {
             randomLength = random.nextInt(30);
+        }
 
-        for (int i = 0; i < randomLength; i++){
+        for (int i = 0; i < randomLength; i++) {
             temp = (char) (random.nextInt(96) + 32);
             text.append(temp);
         }
         return text.toString();
     }
 
-     /**************************************************************************
+    /**************************************************************************
      *                                                                         *
      *           Test if encryption input is different from output             *
      *                                                                         *
      **************************************************************************/
-    public void testEncryption1() { Assert.assertNotSame(test_text,encryptedText); }
+    public void testEncryption1() {
 
-     /**************************************************************************
+        Assert.assertNotSame(test_text, encryptedText);
+    }
+
+    /**************************************************************************
      *                                                                         *
      *          Test if decryption outputs the correct information             *
      *                                                                         *
      **************************************************************************/
-    public void testEncryption2() { Assert.assertEquals(test_text, decryptedText); }
+    public void testEncryption2() {
 
+        Assert.assertEquals(test_text, decryptedText);
+    }
 
-     /**************************************************************************
+    /**************************************************************************
      *                                                                         *
      *         Test newOrder(OrderingDatabaseAgent) database encryption        *
      *                                                                         *
      **************************************************************************/
 
-    public void testNewOrder()
-    {
+    public void testNewOrder() {
+
         int noOfRuns = 10;
 
-        while(noOfRuns > 0) {
+        while (noOfRuns > 0) {
             getContext().deleteDatabase("ordering.db");//delete test database in case of old/corrupted data
 
             OrderingDatabaseAgent databaseAgent = new OrderingDatabaseAgent(getContext(), null);
@@ -116,7 +121,6 @@ public class EncryptionTest extends AndroidTestCase{
 
             //open the database
             SQLiteDatabase database = SQLiteDatabase.openDatabase("/data/data/ly.kite.test/databases/ordering.db", null, 0);
-
 
             cursor = database.rawQuery("SELECT * FROM Address", null);
 
@@ -188,22 +192,21 @@ public class EncryptionTest extends AndroidTestCase{
         }
     }
 
-     /**************************************************************************
+    /**************************************************************************
      *                                                                         *
      *  Test insertSuccessfulOrder (OrderingDatabaseAgent) database encryption *
      *                                                                         *
      **************************************************************************/
 
-    public void testInsertSuccessfulOrder()
-    {
+    public void testInsertSuccessfulOrder() {
+
         int noOfRuns = 10;
 
-        while(noOfRuns > 0) {
+        while (noOfRuns > 0) {
             getContext().deleteDatabase("ordering.db");//delete test database in case of old/corrupted data
 
             OrderingDatabaseAgent databaseAgent = new OrderingDatabaseAgent(getContext(), null);
             //OrderingDatabaseAgent.setEncryptionKey(ENCRYPTION_KEY);
-
 
             String description = randomTextGenerator();
             String receipt = randomTextGenerator();
@@ -239,20 +242,18 @@ public class EncryptionTest extends AndroidTestCase{
 
     }
 
-     /**************************************************************************
+    /**************************************************************************
      *                                                                         *
      *      Test encryption and decryption of SharedPreferences files          *
      *                                                                         *
      **************************************************************************/
 
-    public void testSharedPreferencesEncryption()
-    {
+    public void testSharedPreferencesEncryption() {
 
         int noOfRuns = 10;
 
-        while(noOfRuns>0) {
+        while (noOfRuns > 0) {
             Context context = getContext();
-
 
             SharedPreferences prefs_app = context.getSharedPreferences("kite_app_session_shared_prefs", Context.MODE_PRIVATE);
             SharedPreferences prefs_permanent = context.getSharedPreferences("kite_permanent_shared_prefs.xml", Context.MODE_PRIVATE);
@@ -285,7 +286,7 @@ public class EncryptionTest extends AndroidTestCase{
             adr.setCity(randomTextGenerator());
             adr.setZipOrPostalCode(randomTextGenerator());
 
-             /****************************************************
+            /****************************************************
              * test kite_app_session_shared_prefs.xml encryption *
              ****************************************************/
 
@@ -305,7 +306,7 @@ public class EncryptionTest extends AndroidTestCase{
             Assert.assertEquals("App_session: Address values not decrypted correctly",
                     sdk.getAddressAppParameter(KiteSDK.Scope.APP_SESSION, key3), adr);
 
-             /*********************************************************
+            /*********************************************************
              * test kite_customer_session_shared_prefs.xml encryption *
              *********************************************************/
 
@@ -325,7 +326,7 @@ public class EncryptionTest extends AndroidTestCase{
             Assert.assertEquals("Customer_session: Address values not decrypted correctly",
                     sdk.getAddressAppParameter(KiteSDK.Scope.CUSTOMER_SESSION, key3), adr);
 
-             /**************************************************
+            /**************************************************
              * test kite_permanent_shared_prefs.xml encryption *
              **************************************************/
 
@@ -388,18 +389,17 @@ public class EncryptionTest extends AndroidTestCase{
     * Test encryption and decryption with multiple randomly generated strings *
     *                                                                         *
     **************************************************************************/
+    public void testRawEncryption() {
 
-    public  void testRawEncryption()
-    {
         int noOfRuns = 10000;
 
-        while(noOfRuns > 0) {
+        while (noOfRuns > 0) {
             String text = randomTextGenerator();
             String encryptedText = pref.encrypt(text);
             String decryptedText = pref.decrypt(encryptedText);
 
-            Assert.assertNotSame("Encryption failed",text, encryptedText);
-            Assert.assertEquals( "Decryption failed",text, decryptedText);
+            Assert.assertNotSame("Encryption failed", text, encryptedText);
+            Assert.assertEquals("Decryption failed", text, decryptedText);
 
             noOfRuns--;
         }

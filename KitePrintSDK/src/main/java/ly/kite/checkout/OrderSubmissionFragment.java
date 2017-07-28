@@ -36,7 +36,6 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -51,7 +50,6 @@ import ly.kite.app.ARetainedDialogFragment;
 import ly.kite.app.RetainedFragmentHelper;
 import ly.kite.ordering.Order;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -60,268 +58,243 @@ import ly.kite.ordering.Order;
  * order.
  *
  *****************************************************/
-public class OrderSubmissionFragment extends ARetainedDialogFragment implements IOrderSubmissionProgressListener
-  {
-  ////////// Static Constant(s) //////////
+public class OrderSubmissionFragment extends ARetainedDialogFragment implements IOrderSubmissionProgressListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String  TAG = "OrderSubmissionFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "OrderSubmissionFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private OrderSubmitter mOrderSubmitter;
 
-  ////////// Member Variable(s) //////////
+    private ProgressDialog mProgressDialog;
 
-  private OrderSubmitter  mOrderSubmitter;
+    ////////// Static Initialiser(s) //////////
 
-  private ProgressDialog  mProgressDialog;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Attaches this fragment to the activity, and then
+     * submits the order.
+     *
+     *****************************************************/
+    public static OrderSubmissionFragment start(Activity activity, Order order) {
 
-  ////////// Static Initialiser(s) //////////
+        OrderSubmissionFragment orderSubmissionFragment = new OrderSubmissionFragment();
 
+        orderSubmissionFragment.show(activity.getFragmentManager(), TAG);
 
-  ////////// Static Method(s) //////////
+        orderSubmissionFragment.submit(activity, order);
 
-  /*****************************************************
-   *
-   * Attaches this fragment to the activity, and then
-   * submits the order.
-   *
-   *****************************************************/
-  static public OrderSubmissionFragment start( Activity activity, Order order )
-    {
-    OrderSubmissionFragment orderSubmissionFragment = new OrderSubmissionFragment();
-
-    orderSubmissionFragment.show( activity.getFragmentManager(), TAG );
-
-    orderSubmissionFragment.submit( activity, order );
-
-    return ( orderSubmissionFragment );
+        return orderSubmissionFragment;
     }
 
+    /*****************************************************
+     *
+     * Tries to find this fragment, and returns it.
+     *
+     *****************************************************/
+    public static OrderSubmissionFragment findFragment(Activity activity) {
 
-  /*****************************************************
-   *
-   * Tries to find this fragment, and returns it.
-   *
-   *****************************************************/
-  static public OrderSubmissionFragment findFragment( Activity activity )
-    {
-    return ( (OrderSubmissionFragment) find( activity, TAG, OrderSubmissionFragment.class ) );
+        return (OrderSubmissionFragment) find(activity, TAG, OrderSubmissionFragment.class);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public OrderSubmissionFragment() {
 
-  public OrderSubmissionFragment()
-    {
-    super( IOrderSubmissionResultListener.class );
+        super(IOrderSubmissionResultListener.class);
     }
 
+    ////////// DialogFragment Method(s) //////////
 
-  ////////// DialogFragment Method(s) //////////
+    /*****************************************************
+     *
+     * Called to create a dialog.
+     *
+     *****************************************************/
+    @Override
+    public AlertDialog onCreateDialog(Bundle savedInstanceState) {
+        // If there isn't already a progress dialog - create one now
 
-  /*****************************************************
-   *
-   * Called to create a dialog.
-   *
-   *****************************************************/
-  @Override
-  public AlertDialog onCreateDialog( Bundle savedInstanceState )
-    {
-    // If there isn't already a progress dialog - create one now
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
 
-    if ( mProgressDialog == null )
-      {
-      mProgressDialog = new ProgressDialog( getActivity() );
-
-      mProgressDialog.setIndeterminate( false );
-      mProgressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
-      mProgressDialog.setProgressNumberFormat( null );   // Don't display the "N/100" text
-      mProgressDialog.setTitle( R.string.alert_dialog_title_processing );
-      mProgressDialog.setMessage( getString( R.string.alert_dialog_message_processing ) );
-      mProgressDialog.setMax( 100 );
-      }
-
-    setCancelable( false );
-
-    return ( mProgressDialog );
-    }
-
-
-  ////////// IOrderSubmissionProgressListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called with order submission progress.
-   *
-   *****************************************************/
-  @Override
-  public void onOrderUpdate( Order order, OrderState state, int primaryProgressPercent, int secondaryProgressPercent )
-    {
-    // Determine what the order state is, and set the progress dialog accordingly
-
-    ProgressDialog progressDialog = (ProgressDialog)getDialog();
-    
-    if ( progressDialog == null ) return;
-
-    switch ( state )
-      {
-      case UPLOADING:
-        progressDialog.setIndeterminate( false );
-        progressDialog.setProgress( primaryProgressPercent );
-        progressDialog.setSecondaryProgress( secondaryProgressPercent );
-        progressDialog.setMessage( getString( R.string.order_submission_message_uploading ) );
-        break;
-
-      // The progress bar becomes indeterminate once the images have been uploaded
-
-      case POSTED:
-        progressDialog.setIndeterminate( true );
-        progressDialog.setProgressPercentFormat( null );
-        progressDialog.setMessage( getString( R.string.order_submission_message_posted ) );
-        break;
-
-      case RECEIVED:
-        progressDialog.setIndeterminate( true );
-        progressDialog.setProgressPercentFormat( null );
-        progressDialog.setMessage( getString( R.string.order_submission_message_received ) );
-        break;
-
-      case ACCEPTED:
-        progressDialog.setIndeterminate( true );
-        progressDialog.setProgressPercentFormat( null );
-        progressDialog.setMessage( getString( R.string.order_submission_message_accepted ) );
-        break;
-
-      // We shouldn't get any other states, but if we do - display its name
-      default:
-        progressDialog.setIndeterminate( true );
-        progressDialog.setProgressPercentFormat( null );
-        progressDialog.setMessage( state.name() );
-        break;
-      }
-    }
-
-
-  // These methods are implemented by IOrderSubmissionResultListener, which
-  // is extended by IOrderSubmissionProgressListener.
-
-  /*****************************************************
-   *
-   * Called when an order submission has completed.
-   *
-   *****************************************************/
-  @Override
-  public void onOrderComplete( final Order order, final OrderState state )
-    {
-    // The call-back might get called when we are not attached to an activity,
-    // and there is no target fragment. The callback will therefore get re-notified
-    // when we are attached or a target fragment is set.
-
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object callback )
-        {
-        ( (IOrderSubmissionResultListener)callback ).onOrderComplete( order, state );
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setProgressNumberFormat(null);   // Don't display the "N/100" text
+            mProgressDialog.setTitle(R.string.alert_dialog_title_processing);
+            mProgressDialog.setMessage(getString(R.string.alert_dialog_message_processing));
+            mProgressDialog.setMax(100);
         }
-      } );
+
+        setCancelable(false);
+
+        return mProgressDialog;
     }
 
+    ////////// IOrderSubmissionProgressListener Method(s) //////////
 
-  /*****************************************************
-   *
-   * Called when an order submission has timed out.
-   *
-   *****************************************************/
-  @Override
-  public void onOrderTimeout( final Order order )
-    {
-    // The call-back might get called when we are not attached to an activity,
-    // and there is no target fragment. The callback will therefore get re-notified
-    // when we are attached or a target fragment is set.
+    /*****************************************************
+     *
+     * Called with order submission progress.
+     *
+     *****************************************************/
+    @Override
+    public void onOrderUpdate(Order order, OrderState state, int primaryProgressPercent, int secondaryProgressPercent) {
+        // Determine what the order state is, and set the progress dialog accordingly
 
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object callbackObject )
-        {
-        ( (IOrderSubmissionResultListener)callbackObject ).onOrderTimeout( order );
+        ProgressDialog progressDialog = (ProgressDialog) getDialog();
+
+        if (progressDialog == null) {
+            return;
         }
-      } );
-    }
 
+        switch (state) {
+            case UPLOADING:
+                progressDialog.setIndeterminate(false);
+                progressDialog.setProgress(primaryProgressPercent);
+                progressDialog.setSecondaryProgress(secondaryProgressPercent);
+                progressDialog.setMessage(getString(R.string.order_submission_message_uploading));
+                break;
 
-  /*****************************************************
-   *
-   * Called when an order submission returns an error.
-   *
-   *****************************************************/
-  @Override
-  public void onOrderError( final Order order, final Exception exception )
-    {
-    // The call-back might get called when we are not attached to an activity,
-    // and there is no target fragment. The callback will therefore get re-notified
-    // when we are attached or a target fragment is set.
+            // The progress bar becomes indeterminate once the images have been uploaded
 
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object callbackObject )
-        {
-        ( (IOrderSubmissionResultListener)callbackObject ).onOrderError( order, exception );
+            case POSTED:
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressPercentFormat(null);
+                progressDialog.setMessage(getString(R.string.order_submission_message_posted));
+                break;
+
+            case RECEIVED:
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressPercentFormat(null);
+                progressDialog.setMessage(getString(R.string.order_submission_message_received));
+                break;
+
+            case ACCEPTED:
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressPercentFormat(null);
+                progressDialog.setMessage(getString(R.string.order_submission_message_accepted));
+                break;
+
+            // We shouldn't get any other states, but if we do - display its name
+            default:
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressPercentFormat(null);
+                progressDialog.setMessage(state.name());
+                break;
         }
-      } );
     }
 
+    // These methods are implemented by IOrderSubmissionResultListener, which
+    // is extended by IOrderSubmissionProgressListener.
 
-  /*****************************************************
-   *
-   * Called when an order submission is a suplicate.
-   *
-   *****************************************************/
-  @Override
-  public void onOrderDuplicate( final Order order, final String originalOrderId )
-    {
-    // The call-back might get called when we are not attached to an activity,
-    // and there is no target fragment. The callback will therefore get re-notified
-    // when we are attached or a target fragment is set.
+    /*****************************************************
+     *
+     * Called when an order submission has completed.
+     *
+     *****************************************************/
+    @Override
+    public void onOrderComplete(final Order order, final OrderState state) {
+        // The call-back might get called when we are not attached to an activity,
+        // and there is no target fragment. The callback will therefore get re-notified
+        // when we are attached or a target fragment is set.
 
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object callbackObject )
-        {
-        ( (IOrderSubmissionResultListener)callbackObject ).onOrderDuplicate( order, originalOrderId );
-        }
-      } );
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object callback) {
+
+                ((IOrderSubmissionResultListener) callback).onOrderComplete(order, state);
+            }
+        });
     }
 
+    /*****************************************************
+     *
+     * Called when an order submission has timed out.
+     *
+     *****************************************************/
+    @Override
+    public void onOrderTimeout(final Order order) {
+        // The call-back might get called when we are not attached to an activity,
+        // and there is no target fragment. The callback will therefore get re-notified
+        // when we are attached or a target fragment is set.
 
-  ////////// Method(s) //////////
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object callbackObject) {
 
-  /*****************************************************
-   *
-   * Submits an order for processing.
-   *
-   *****************************************************/
-  public void submit( Context context, Order order )
-    {
-    mOrderSubmitter = new OrderSubmitter( context, order, this );
-
-    mOrderSubmitter.submit();
+                ((IOrderSubmissionResultListener) callbackObject).onOrderTimeout(order);
+            }
+        });
     }
 
+    /*****************************************************
+     *
+     * Called when an order submission returns an error.
+     *
+     *****************************************************/
+    @Override
+    public void onOrderError(final Order order, final Exception exception) {
+        // The call-back might get called when we are not attached to an activity,
+        // and there is no target fragment. The callback will therefore get re-notified
+        // when we are attached or a target fragment is set.
 
-  ////////// Inner Class(es) //////////
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object callbackObject) {
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+                ((IOrderSubmissionResultListener) callbackObject).onOrderError(order, exception);
+            }
+        });
+    }
 
-  }
+    /*****************************************************
+     *
+     * Called when an order submission is a suplicate.
+     *
+     *****************************************************/
+    @Override
+    public void onOrderDuplicate(final Order order, final String originalOrderId) {
+        // The call-back might get called when we are not attached to an activity,
+        // and there is no target fragment. The callback will therefore get re-notified
+        // when we are attached or a target fragment is set.
+
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object callbackObject) {
+
+                ((IOrderSubmissionResultListener) callbackObject).onOrderDuplicate(order, originalOrderId);
+            }
+        });
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Submits an order for processing.
+     *
+     *****************************************************/
+    public void submit(Context context, Order order) {
+
+        mOrderSubmitter = new OrderSubmitter(context, order, this);
+
+        mOrderSubmitter.submit();
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+}
 

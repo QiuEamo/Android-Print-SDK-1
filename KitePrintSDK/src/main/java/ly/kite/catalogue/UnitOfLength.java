@@ -36,13 +36,11 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
 
 import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -51,32 +49,28 @@ import ly.kite.R;
  * This class defines units of length.
  *
  *****************************************************/
-public enum UnitOfLength
-  {
-  CENTIMETERS ( R.string.unit_centimeters, R.string.unit_centimeters_short ),
-  INCHES      ( R.string.unit_inches,      R.string.unit_inches_short      ),
-  PIXELS      ( R.string.unit_pixels,      R.string.unit_pixels_short      );
+public enum UnitOfLength {
+    CENTIMETERS(R.string.unit_centimeters, R.string.unit_centimeters_short),
+    INCHES(R.string.unit_inches, R.string.unit_inches_short),
+    PIXELS(R.string.unit_pixels, R.string.unit_pixels_short);
 
+    private int mPluralResourceId;
+    private int mShortResourceId;
 
-  private int  mPluralResourceId;
-  private int  mShortResourceId;
+    private UnitOfLength(int pluralResourceId, int shortResourceId) {
 
-
-  private UnitOfLength( int pluralResourceId, int shortResourceId )
-    {
-    mPluralResourceId = pluralResourceId;
-    mShortResourceId  = shortResourceId;
+        mPluralResourceId = pluralResourceId;
+        mShortResourceId = shortResourceId;
     }
 
+    public String pluralString(Context context) {
 
-  public String pluralString( Context context )
-    {
-    return ( context.getString( mPluralResourceId ) );
+        return context.getString(mPluralResourceId);
     }
 
-  public String shortString( Context context )
-    {
-    return ( context.getString( mShortResourceId ) );
+    public String shortString(Context context) {
+
+        return context.getString(mShortResourceId);
     }
 
-  }
+}

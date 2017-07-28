@@ -36,18 +36,15 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import ly.kite.KiteTestCase;
-
 
 ///// Class Declaration /////
 
@@ -56,119 +53,110 @@ import ly.kite.KiteTestCase;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class CatalogueLoaderTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class CatalogueLoaderTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "CatalogueLoaderTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CatalogueLoaderTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Parse products test.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testParseProducts1() {
 
+        Catalogue catalogue = new Catalogue();
 
-  ////////// Constructor(s) //////////
+        JSONTokener tokener = new JSONTokener(
+                "[" +
+                        "{" +
+                        "active:true," +
+                        "product_active:true," +
+                        "template_id:product1," +
+                        "name:\"Product 1\"," +
+                        "description:\"This is product 1\"," +
+                        "product_category:\"category1\"," +
+                        "images_per_page:1," +  // Optional
+                        "grid_count_x:1," +  // Optional
+                        "grid_count_y:1," +  // Optional
+                        "cost:[" +
+                        "{currency:\"GBP\",amount:2.00,formatted:\"£2.00\"}," +
+                        "{currency:\"EUR\",amount:2.50,formatted:\"€2.50\"}" +
+                        "]," +
+                        "print_in_store:false," +  // Optional
+                        "shipping_regions:{" +
+                        "UK:{" +
+                        "shipping_classes:[" +
+                        "{" +
+                        "costs:[" +
+                        "{ currency:\"GBP\" , \"amount\":\"3.64\" }" +
+                        "]" +
+                        "}" +
+                        "]" +
+                        "}" +
+                        "}," +
 
+                        "country_to_region_mapping:{" +
+                        "GBR: \"UK\"" +
+                        "}," +
 
-  ////////// Method(s) //////////
+                        "product:{" +
+                        "ios_sdk_class_photo:\"https://d2ilj0z99kr04x.cloudfront" +
+                        ".net/static/homepage/images/how_it_works2.bc40a551a141.png\"," +
+                        "ios_sdk_label_color:[255,100,100]," +
+                        "ios_sdk_product_class:\"Product group 1\"," +
+                        "ios_sdk_product_shots:[\"https://d2ilj0z99kr04x.cloudfront" +
+                        ".net/static/homepage/images/how_it_works2.bc40a551a141.png\"]," +
+                        "ios_sdk_product_type:\"print\"," +
+                        "ios_sdk_ui_class:RECTANGLE," +
+                        "product_code:\"product1\"," +
+                        "size:{" +
+                        "cm:{width:25.4,height:25.4}," +
+                        "inch:{width:10,height:10}" +
+                        "}," +
+                        "image_aspect_ratio:1.0," +
+                        "supports_text_on_border:false," +  // Optional
+                        "cover_photo_variants:[ { variant_id:\"default\", url:\"https://d2ilj0z99kr04x.cloudfront" +
+                        ".net/static/homepage/images/how_it_works2.bc40a551a141.png\" } ]," +
+                        "mask_url: \"https://d2ilj0z99kr04x.cloudfront.net/static/homepage/images/how_it_works2.bc40a551a141.png\"," +
+                        "mask_bleed: [ 1, 1, 1, 1 ]," +
+                        "image_border: [ 0.1, 0.1, 0.1, 0.1 ]" +
+                        "}" +
+                        "}" +
+                        "]");
 
-  /*****************************************************
-   *
-   * Parse products test.
-   *
-   *****************************************************/
+        try {
+            JSONArray productsJSONArray = new JSONArray(tokener);
 
-  public void testParseProducts1()
-    {
-    Catalogue catalogue = new Catalogue();
+            CatalogueLoader.parseProducts(productsJSONArray, catalogue);
+        } catch (JSONException je) {
+            Assert.fail(je.getMessage());
+        }
 
-    JSONTokener tokener = new JSONTokener(
-            "[" +
-                    "{" +
-                    "active:true," +
-                    "product_active:true," +
-                    "template_id:product1," +
-                    "name:\"Product 1\"," +
-                    "description:\"This is product 1\"," +
-                    "product_category:\"category1\","+
-                    "images_per_page:1," +  // Optional
-                    "grid_count_x:1," +  // Optional
-                    "grid_count_y:1," +  // Optional
-                    "cost:[" +
-                         "{currency:\"GBP\",amount:2.00,formatted:\"£2.00\"}," +
-                         "{currency:\"EUR\",amount:2.50,formatted:\"€2.50\"}" +
-                         "]," +
-                    "print_in_store:false," +  // Optional
-                    "shipping_regions:{" +
-                                   "UK:{" +
-                                    "shipping_classes:["+
-                                      "{" +
-                                      "costs:[" +
-                                        "{ currency:\"GBP\" , \"amount\":\"3.64\" }" +
-                                      "]" +
-                                      "}" +
-                                    "]" +
-                                   "}" +
-                    "}," +
-
-                    "country_to_region_mapping:{" +
-                                    "GBR: \"UK\"" +
-                                    "},"+
-
-              "product:{" +
-                            "ios_sdk_class_photo:\"https://d2ilj0z99kr04x.cloudfront.net/static/homepage/images/how_it_works2.bc40a551a141.png\"," +
-                            "ios_sdk_label_color:[255,100,100]," +
-                            "ios_sdk_product_class:\"Product group 1\"," +
-                            "ios_sdk_product_shots:[\"https://d2ilj0z99kr04x.cloudfront.net/static/homepage/images/how_it_works2.bc40a551a141.png\"]," +
-                            "ios_sdk_product_type:\"print\"," +
-                            "ios_sdk_ui_class:RECTANGLE," +
-                            "product_code:\"product1\"," +
-                            "size:{" +
-                                 "cm:{width:25.4,height:25.4}," +
-                                 "inch:{width:10,height:10}" +
-                                 "}," +
-                            "image_aspect_ratio:1.0," +
-                            "supports_text_on_border:false," +  // Optional
-                            "cover_photo_variants:[ { variant_id:\"default\", url:\"https://d2ilj0z99kr04x.cloudfront.net/static/homepage/images/how_it_works2.bc40a551a141.png\" } ]," +
-                            "mask_url: \"https://d2ilj0z99kr04x.cloudfront.net/static/homepage/images/how_it_works2.bc40a551a141.png\"," +
-                            "mask_bleed: [ 1, 1, 1, 1 ]," +
-                            "image_border: [ 0.1, 0.1, 0.1, 0.1 ]" +
-                            "}" +
-                    "}" +
-            "]" );
-
-    try
-      {
-      JSONArray productsJSONArray = new JSONArray( tokener );
-
-      CatalogueLoader.parseProducts( productsJSONArray, catalogue );
-      }
-    catch ( JSONException je )
-      {
-      Assert.fail( je.getMessage() );
-      }
-
-    Assert.assertEquals( 1, catalogue.getProductCount() );
+        Assert.assertEquals(1, catalogue.getProductCount());
     }
 
+    ////////// Inner Class(es) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

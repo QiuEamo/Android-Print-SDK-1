@@ -36,10 +36,7 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
-
-import android.test.AndroidTestCase;
 
 import junit.framework.Assert;
 
@@ -52,7 +49,6 @@ import ly.kite.catalogue.Product;
 import ly.kite.journey.UserJourneyType;
 import ly.kite.util.Asset;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -60,136 +56,117 @@ import ly.kite.util.Asset;
  * This class tests the ordering data agent class.
  *
  *****************************************************/
-public class OrderingDataAgentTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class OrderingDataAgentTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "OrderingDataAgentTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderingDataAgentTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// AndroidTestCase Method(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Clear basket tests.
+     *
+     *****************************************************/
 
+    public void testClear1() {
 
-  ////////// Constructor(s) //////////
+        OrderingDataAgent dataAgent = OrderingDataAgent.getInstance(getContext());
 
+        dataAgent.clearDefaultBasket();
 
-  ////////// AndroidTestCase Method(s) //////////
+        List<BasketItem> basketItemList = dataAgent.getAllItems(null);
 
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Clear basket tests.
-   *
-   *****************************************************/
-
-  public void testClear1()
-    {
-    OrderingDataAgent dataAgent = OrderingDataAgent.getInstance( getContext() );
-
-
-    dataAgent.clearDefaultBasket();
-
-    List<BasketItem> basketItemList = dataAgent.getAllItems( null );
-
-    Assert.assertEquals( 0, basketItemList.size() );
+        Assert.assertEquals(0, basketItemList.size());
     }
 
+    /*****************************************************
+     *
+     * Add to basket tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Add to basket tests.
-   *
-   *****************************************************/
+    public void testAdd1() {
 
-  public void testAdd1()
-    {
-    OrderingDataAgent dataAgent = OrderingDataAgent.getInstance( getContext() );
+        OrderingDataAgent dataAgent = OrderingDataAgent.getInstance(getContext());
 
+        dataAgent.clearDefaultBasket();
 
-    dataAgent.clearDefaultBasket();
+        List<BasketItem> basketItemList = dataAgent.getAllItems(null);
 
-    List<BasketItem> basketItemList = dataAgent.getAllItems( null );
+        Assert.assertEquals(0, basketItemList.size());
 
-    Assert.assertEquals( 0, basketItemList.size() );
+        Product product = new Product("product_id", "product_code", "Rectangular Product", "Product type", 0xff000000, UserJourneyType
+                .RECTANGLE, 2);
 
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("group_label", null, product);
 
-    Product product = new Product( "product_id", "product_code", "Rectangular Product", "Product type", 0xff000000, UserJourneyType.RECTANGLE, 2 );
+        List<ImageSpec> imageSpecList = new ArrayList<>();
+        imageSpecList.add(new ImageSpec(new Asset("/tmp/image1.jpg")));
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "group_label", null, product );
+        dataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, null, imageSpecList, 1, 123);
 
-    List<ImageSpec> imageSpecList = new ArrayList<>();
-    imageSpecList.add( new ImageSpec( new Asset( "/tmp/image1.jpg" ) ) );
+        basketItemList = dataAgent.getAllItems(catalogue);
 
+        Assert.assertEquals(1, basketItemList.size());
 
-    dataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, null, imageSpecList, 1, 123 );
+        dataAgent.clearDefaultBasket();
 
+        basketItemList = dataAgent.getAllItems(null);
 
-    basketItemList = dataAgent.getAllItems( catalogue );
-
-    Assert.assertEquals( 1, basketItemList.size() );
-
-
-    dataAgent.clearDefaultBasket();
-
-    basketItemList = dataAgent.getAllItems( null );
-
-    Assert.assertEquals( 0, basketItemList.size() );
+        Assert.assertEquals(0, basketItemList.size());
     }
 
-  public void testAdd2()
-    {
-    OrderingDataAgent dataAgent = OrderingDataAgent.getInstance( getContext() );
+    public void testAdd2() {
 
+        OrderingDataAgent dataAgent = OrderingDataAgent.getInstance(getContext());
 
-    dataAgent.clearDefaultBasket();
+        dataAgent.clearDefaultBasket();
 
+        Product product = new Product("product_id", "product_code", "Rectangular Product", "Product type", 0xff000000, UserJourneyType
+                .RECTANGLE, 2);
 
-    Product product = new Product( "product_id", "product_code", "Rectangular Product", "Product type", 0xff000000, UserJourneyType.RECTANGLE, 2 );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("group_label", null, product);
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "group_label", null, product );
+        List<ImageSpec> imageSpecList = new ArrayList<>();
+        Asset asset = createSessionAssetFile();
+        imageSpecList.add(new ImageSpec(asset));
 
-    List<ImageSpec> imageSpecList = new ArrayList<>();
-    Asset asset = createSessionAssetFile();
-    imageSpecList.add( new ImageSpec( asset ) );
+        dataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, null, imageSpecList, 1, 123);
 
+        List<BasketItem> basketItemList = dataAgent.getAllItems(catalogue);
 
-    dataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, null, imageSpecList, 1, 123 );
+        Assert.assertEquals(1, basketItemList.size());
 
+        BasketItem basketItem = basketItemList.get(0);
 
-    List<BasketItem>basketItemList = dataAgent.getAllItems( catalogue );
+        Assert.assertEquals("product_id", basketItem.getProduct().getId());
+        Assert.assertEquals(null, basketItem.getOptionsMap());
+        Assert.assertEquals(1, basketItem.getOrderQuantity());
 
-    Assert.assertEquals( 1, basketItemList.size() );
+        imageSpecList = basketItem.getImageSpecList();
 
+        Assert.assertEquals(1, imageSpecList.size());
 
-    BasketItem basketItem = basketItemList.get( 0 );
-
-    Assert.assertEquals( "product_id", basketItem.getProduct().getId() );
-    Assert.assertEquals( null, basketItem.getOptionsMap() );
-    Assert.assertEquals( 1, basketItem.getOrderQuantity() );
-
-    imageSpecList = basketItem.getImageSpecList();
-
-    Assert.assertEquals( 1, imageSpecList.size() );
-
-    ImageSpec imageSpec = imageSpecList.get( 0 );
-    assertProperties( imageSpec, null, null, 1 );
+        ImageSpec imageSpec = imageSpecList.get(0);
+        assertProperties(imageSpec, null, null, 1);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}

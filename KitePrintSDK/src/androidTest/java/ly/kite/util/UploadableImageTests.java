@@ -36,7 +36,6 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
@@ -46,7 +45,6 @@ import java.util.List;
 
 import ly.kite.KiteTestCase;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -54,152 +52,141 @@ import ly.kite.KiteTestCase;
  * This class tests the string utils class.
  *
  *****************************************************/
-public class UploadableImageTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class UploadableImageTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "UploadableImageTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "UploadableImageTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Are both null or equal tests
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testAreBothNullOrEqual1() {
 
+        Asset asset1 = Asset.create("/temp/image1.jpg");
+        Asset asset2 = Asset.create("/temp/image2.jpg");
+        Asset asset3 = Asset.create("/temp/image1.jpg");
 
-  ////////// Constructor(s) //////////
+        UploadableImage uploadableImage1 = new UploadableImage(asset1);
+        UploadableImage uploadableImage2 = new UploadableImage(asset2);
+        UploadableImage uploadableImage3 = new UploadableImage(asset3);
 
+        Assert.assertTrue(UploadableImage.areBothNullOrEqual((UploadableImage) null, (UploadableImage) null));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual((UploadableImage) null, uploadableImage1));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImage2, (UploadableImage) null));
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Are both null or equal tests
-   *
-   *****************************************************/
-
-  public void testAreBothNullOrEqual1()
-    {
-    Asset asset1 = Asset.create( "/temp/image1.jpg" );
-    Asset asset2 = Asset.create( "/temp/image2.jpg" );
-    Asset asset3 = Asset.create( "/temp/image1.jpg" );
-
-    UploadableImage uploadableImage1 = new UploadableImage( asset1 );
-    UploadableImage uploadableImage2 = new UploadableImage( asset2 );
-    UploadableImage uploadableImage3 = new UploadableImage( asset3 );
-
-    Assert.assertTrue( UploadableImage.areBothNullOrEqual( (UploadableImage)null, (UploadableImage)null ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( (UploadableImage)null, uploadableImage1 ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImage2, (UploadableImage)null ) );
-
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImage1, uploadableImage2 ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImage2, uploadableImage3 ) );
-    Assert.assertTrue( UploadableImage.areBothNullOrEqual( uploadableImage1, uploadableImage3 ) );
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImage1, uploadableImage2));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImage2, uploadableImage3));
+        Assert.assertTrue(UploadableImage.areBothNullOrEqual(uploadableImage1, uploadableImage3));
     }
 
-  public void testAreBothNullOrEqual2()
-    {
-    Asset asset1 = Asset.create( "/temp/image1.jpg" );
-    Asset asset2 = Asset.create( "/temp/image2.jpg" );
-    Asset asset3 = Asset.create( "/temp/image1.jpg" );
+    public void testAreBothNullOrEqual2() {
 
-    UploadableImage uploadableImage1 = new UploadableImage( asset1 );
-    UploadableImage uploadableImage2 = new UploadableImage( asset2 );
-    UploadableImage uploadableImage3 = new UploadableImage( asset3 );
+        Asset asset1 = Asset.create("/temp/image1.jpg");
+        Asset asset2 = Asset.create("/temp/image2.jpg");
+        Asset asset3 = Asset.create("/temp/image1.jpg");
 
-    List<UploadableImage> uploadableImageList1 = new ArrayList<>();
+        UploadableImage uploadableImage1 = new UploadableImage(asset1);
+        UploadableImage uploadableImage2 = new UploadableImage(asset2);
+        UploadableImage uploadableImage3 = new UploadableImage(asset3);
 
-    List<UploadableImage> uploadableImageList2 = new ArrayList<>();
-    uploadableImageList2.add( uploadableImage1 );
+        List<UploadableImage> uploadableImageList1 = new ArrayList<>();
 
-    List<UploadableImage> uploadableImageList3 = new ArrayList<>();
-    uploadableImageList3.add( uploadableImage2 );
-    uploadableImageList3.add( uploadableImage3 );
+        List<UploadableImage> uploadableImageList2 = new ArrayList<>();
+        uploadableImageList2.add(uploadableImage1);
 
-    List<UploadableImage> uploadableImageList4 = new ArrayList<>();
-    uploadableImageList4.add( uploadableImage1 );
-    uploadableImageList4.add( uploadableImage3 );
+        List<UploadableImage> uploadableImageList3 = new ArrayList<>();
+        uploadableImageList3.add(uploadableImage2);
+        uploadableImageList3.add(uploadableImage3);
 
-    List<UploadableImage> uploadableImageList5 = new ArrayList<>();
-    uploadableImageList5.add( uploadableImage3 );
-    uploadableImageList5.add( uploadableImage1 );
+        List<UploadableImage> uploadableImageList4 = new ArrayList<>();
+        uploadableImageList4.add(uploadableImage1);
+        uploadableImageList4.add(uploadableImage3);
 
-    List<UploadableImage> uploadableImageList6 = new ArrayList<>();
-    uploadableImageList6.add( uploadableImage1 );
-    uploadableImageList6.add( null );
-    uploadableImageList6.add( uploadableImage3 );
+        List<UploadableImage> uploadableImageList5 = new ArrayList<>();
+        uploadableImageList5.add(uploadableImage3);
+        uploadableImageList5.add(uploadableImage1);
 
-    List<UploadableImage> uploadableImageList7 = new ArrayList<>();
-    uploadableImageList7.add( uploadableImage3 );
-    uploadableImageList7.add( null );
-    uploadableImageList7.add( uploadableImage1 );
+        List<UploadableImage> uploadableImageList6 = new ArrayList<>();
+        uploadableImageList6.add(uploadableImage1);
+        uploadableImageList6.add(null);
+        uploadableImageList6.add(uploadableImage3);
 
+        List<UploadableImage> uploadableImageList7 = new ArrayList<>();
+        uploadableImageList7.add(uploadableImage3);
+        uploadableImageList7.add(null);
+        uploadableImageList7.add(uploadableImage1);
 
-    Assert.assertTrue( UploadableImage.areBothNullOrEqual( (List<UploadableImage>)null, (List<UploadableImage>)null ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImageList1, (List<UploadableImage>)null ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImageList2, (List<UploadableImage>)null ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( (List<UploadableImage>)null, uploadableImageList3 ) );
+        Assert.assertTrue(UploadableImage.areBothNullOrEqual((List<UploadableImage>) null, (List<UploadableImage>) null));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImageList1, (List<UploadableImage>) null));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImageList2, (List<UploadableImage>) null));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual((List<UploadableImage>) null, uploadableImageList3));
 
-    Assert.assertTrue( UploadableImage.areBothNullOrEqual( uploadableImageList4, uploadableImageList5 ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImageList3, uploadableImageList4 ) );
-    Assert.assertFalse( UploadableImage.areBothNullOrEqual( uploadableImageList5, uploadableImageList6 ) );
-    Assert.assertTrue( UploadableImage.areBothNullOrEqual( uploadableImageList6, uploadableImageList7 ) );
+        Assert.assertTrue(UploadableImage.areBothNullOrEqual(uploadableImageList4, uploadableImageList5));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImageList3, uploadableImageList4));
+        Assert.assertFalse(UploadableImage.areBothNullOrEqual(uploadableImageList5, uploadableImageList6));
+        Assert.assertTrue(UploadableImage.areBothNullOrEqual(uploadableImageList6, uploadableImageList7));
     }
 
+    /*****************************************************
+     *
+     * Misc tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Misc tests
-   *
-   *****************************************************/
+    public void testMarkAsUploaded() {
 
-  public void testMarkAsUploaded()
-    {
-    Asset asset = Asset.create( "/temp/image1.jpg" );
+        Asset asset = Asset.create("/temp/image1.jpg");
 
-    UploadableImage uploadableImage = new UploadableImage( asset );
+        UploadableImage uploadableImage = new UploadableImage(asset);
 
-    Assert.assertFalse( uploadableImage.hasBeenUploaded() );
+        Assert.assertFalse(uploadableImage.hasBeenUploaded());
 
-    uploadableImage.markAsUploaded( 267834L, null );
+        uploadableImage.markAsUploaded(267834L, null);
 
-    Assert.assertTrue( uploadableImage.hasBeenUploaded() );
-    Assert.assertEquals( 267834L, uploadableImage.getUploadedAssetId() );
-    Assert.assertEquals( null, uploadableImage.getPreviewURL() );
+        Assert.assertTrue(uploadableImage.hasBeenUploaded());
+        Assert.assertEquals(267834L, uploadableImage.getUploadedAssetId());
+        Assert.assertEquals(null, uploadableImage.getPreviewURL());
     }
 
+    public void testEquals() {
 
-  public void testEquals()
-    {
-    Asset asset1 = Asset.create( "/temp/image1.jpg" );
-    Asset asset2 = Asset.create( "http://www.kite.ly/no-image.jpg" );
-    Asset asset3 = Asset.create( "/temp/image1.jpg" );
+        Asset asset1 = Asset.create("/temp/image1.jpg");
+        Asset asset2 = Asset.create("http://www.kite.ly/no-image.jpg");
+        Asset asset3 = Asset.create("/temp/image1.jpg");
 
-    UploadableImage uploadableImage1 = new UploadableImage( asset1 );
-    UploadableImage uploadableImage2 = new UploadableImage( asset2 );
-    UploadableImage uploadableImage3 = new UploadableImage( asset3 );
+        UploadableImage uploadableImage1 = new UploadableImage(asset1);
+        UploadableImage uploadableImage2 = new UploadableImage(asset2);
+        UploadableImage uploadableImage3 = new UploadableImage(asset3);
 
-    Assert.assertFalse( uploadableImage1.equals( uploadableImage2 ) );
-    Assert.assertTrue( uploadableImage1.equals( uploadableImage3 ) );
+        Assert.assertFalse(uploadableImage1.equals(uploadableImage2));
+        Assert.assertTrue(uploadableImage1.equals(uploadableImage3));
 
-    uploadableImage1.markAsUploaded( 267834L, null );
+        uploadableImage1.markAsUploaded(267834L, null);
 
-    Assert.assertFalse( uploadableImage1.equals( uploadableImage3 ) );
+        Assert.assertFalse(uploadableImage1.equals(uploadableImage3));
 
-    uploadableImage3.markAsUploaded( 267834L, null );
+        uploadableImage3.markAsUploaded(267834L, null);
 
-    Assert.assertTrue( uploadableImage1.equals( uploadableImage3 ) );
+        Assert.assertTrue(uploadableImage1.equals(uploadableImage3));
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

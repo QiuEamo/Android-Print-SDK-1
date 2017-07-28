@@ -36,7 +36,6 @@
 
 package ly.kite.sample;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -51,11 +50,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ly.kite.R;
-import ly.kite.facebookphotopicker.FacebookAgent;
-import ly.kite.util.Asset;
 import ly.kite.facebookphotopicker.FacebookPhotoPicker;
 import ly.kite.journey.AImageSource;
-
+import ly.kite.util.Asset;
 
 ///// Class Declaration /////
 
@@ -64,109 +61,93 @@ import ly.kite.journey.AImageSource;
  * This class represents a local device image source.
  *
  *****************************************************/
-public class FacebookImageSource extends AImageSource
-  {
-  ////////// Static Constant(s) //////////
+public class FacebookImageSource extends AImageSource {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "FacebookImageSource";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "FacebookImageSource";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public FacebookImageSource() {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public FacebookImageSource()
-    {
-    super( R.color.image_source_background_facebook,
-            R.drawable.ic_add_facebook_white,
-            R.string.image_source_facebook,
-            R.id.add_image_from_facebook,
-            R.string.select_photo_from_facebook );
+        super(R.color.image_source_background_facebook,
+                R.drawable.ic_add_facebook_white,
+                R.string.image_source_facebook,
+                R.id.add_image_from_facebook,
+                R.string.select_photo_from_facebook);
     }
 
+    ////////// AImageSource Method(s) //////////
 
-  ////////// AImageSource Method(s) //////////
+    /*****************************************************
+     *
+     * Returns true if this source is available.
+     *
+     *****************************************************/
+    public boolean isAvailable(Context context) {
 
-  /*****************************************************
-   *
-   * Returns true if this source is available.
-   *
-   *****************************************************/
-  public boolean isAvailable( Context context )
-    {
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Called when the image source is picked to select
+     * images.
+     *
+     *****************************************************/
+    public void onPick(Fragment fragment, int maxImageCount) {
 
-  /*****************************************************
-   *
-   * Called when the image source is picked to select
-   * images.
-   *
-   *****************************************************/
-  public void onPick( Fragment fragment, int maxImageCount )
-    {
-    FacebookPhotoPicker.startPhotoPickerForResult( fragment, maxImageCount, getActivityRequestCode() );
+        FacebookPhotoPicker.startPhotoPickerForResult(fragment, maxImageCount, getActivityRequestCode());
     }
 
+    /*****************************************************
+     *
+     * Calls back with any picked images.
+     *
+     *****************************************************/
+    @Override
+    public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
 
-  /*****************************************************
-   *
-   * Calls back with any picked images.
-   *
-   *****************************************************/
-  @Override
-  public void getAssetsFromPickerResult( Activity activity, Intent data, IAssetConsumer assetConsumer )
-    {
-    List<String> photoURLStringList = FacebookPhotoPicker.getResultPhotos( data );
+        List<String> photoURLStringList = FacebookPhotoPicker.getResultPhotos(data);
 
-    if ( photoURLStringList != null )
-      {
-      // Create an asset list, populate it, and call back to the consumer immediately.
+        if (photoURLStringList != null) {
+            // Create an asset list, populate it, and call back to the consumer immediately.
 
-      List<Asset> assetList = new ArrayList<>( photoURLStringList.size() );
+            List<Asset> assetList = new ArrayList<>(photoURLStringList.size());
 
-      for ( String urlString : photoURLStringList )
-        {
-        try
-          {
-          assetList.add( new Asset( new URL( urlString ) ) );
-          }
-        catch ( MalformedURLException mue )
-          {
-          Log.e( LOG_TAG, "Unable to create asset from Facebook photo URL: " + urlString, mue );
-          }
+            for (String urlString : photoURLStringList) {
+                try {
+                    assetList.add(new Asset(new URL(urlString)));
+                } catch (MalformedURLException mue) {
+                    Log.e(LOG_TAG, "Unable to create asset from Facebook photo URL: " + urlString, mue);
+                }
+            }
+
+            assetConsumer.isacOnAssets(assetList);
         }
-
-      assetConsumer.isacOnAssets( assetList );
-      }
     }
 
+    /*****************************************************
+     *
+     * Called to end the customer session.
+     *
+     *****************************************************/
+    @Override
+    public void endCustomerSession(Context context) {
 
-  /*****************************************************
-   *
-   * Called to end the customer session.
-   *
-   *****************************************************/
-  @Override
-  public void endCustomerSession( Context context )
-    {
-    FacebookPhotoPicker.endCustomerSession();
+        FacebookPhotoPicker.endCustomerSession();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

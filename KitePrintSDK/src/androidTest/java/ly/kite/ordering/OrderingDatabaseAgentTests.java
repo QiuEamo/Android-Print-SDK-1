@@ -36,11 +36,9 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
 
 import android.graphics.RectF;
-import android.test.AndroidTestCase;
 
 import junit.framework.Assert;
 
@@ -53,7 +51,6 @@ import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.Product;
 import ly.kite.journey.UserJourneyType;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -61,137 +58,116 @@ import ly.kite.journey.UserJourneyType;
  * This class tests the ordering database agent.
  *
  *****************************************************/
-public class OrderingDatabaseAgentTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class OrderingDatabaseAgentTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "OrderingDatabaseAgentTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderingDatabaseAgentTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// AndroidTestCase Method(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    // TODO: Re-write these tests now that we have a different database structure
 
+    /*****************************************************
+     *
+     * Asset list job tests
+     *
+     *****************************************************/
 
-  ////////// Constructor(s) //////////
+    public void testSaveClearSaveBasket() {
 
+        OrderingDatabaseAgent databaseAgent = new OrderingDatabaseAgent(getContext(), null);
 
-  ////////// AndroidTestCase Method(s) //////////
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .RECTANGLE, 1);
 
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-  ////////// Method(s) //////////
+        databaseAgent.clearBasket(OrderingDataAgent.BASKET_ID_DEFAULT);
 
-  // TODO: Re-write these tests now that we have a different database structure
+        long itemId = OrderingDataAgent.CREATE_NEW_ITEM_ID;
 
-  /*****************************************************
-   *
-   * Asset list job tests
-   *
-   *****************************************************/
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-  public void testSaveClearSaveBasket()
-    {
-    OrderingDatabaseAgent databaseAgent = new OrderingDatabaseAgent( getContext(), null );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.RECTANGLE, 1 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, "First border text", 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(originalImageSpec2);
 
+        databaseAgent.saveDefaultBasketItem(itemId, product, optionsMap, originalImageSpecList, 1, 123);
 
-    databaseAgent.clearBasket( OrderingDataAgent.BASKET_ID_DEFAULT );
+        List<BasketItem> basketItemList = databaseAgent.loadDefaultBasket(getContext(), catalogue);
 
+        Assert.assertEquals(1, basketItemList.size());
 
-    long itemId = OrderingDataAgent.CREATE_NEW_ITEM_ID;
+        BasketItem basketItem = basketItemList.get(0);
 
+        List<ImageSpec> imageSpecList = basketItem.getImageSpecList();
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        Assert.assertEquals(2, imageSpecList.size());
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        ImageSpec imageSpec1 = imageSpecList.get(0);
+        Assert.assertEquals("First border text", imageSpec1.getBorderText());
+        Assert.assertEquals(1, imageSpec1.getQuantity());
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, "First border text", 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec imageSpec2 = imageSpecList.get(1);
+        Assert.assertEquals("Second border text", imageSpec2.getBorderText());
+        Assert.assertEquals(2, imageSpec2.getQuantity());
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( originalImageSpec2 );
+        databaseAgent.clearBasket(OrderingDataAgent.BASKET_ID_DEFAULT);
 
+        basketItemList = databaseAgent.loadDefaultBasket(getContext(), catalogue);
 
-    databaseAgent.saveDefaultBasketItem( itemId, product, optionsMap, originalImageSpecList, 1, 123 );
+        Assert.assertEquals(0, basketItemList.size());
 
+        originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Third border text", 1);
 
-    List<BasketItem> basketItemList = databaseAgent.loadDefaultBasket( getContext(), catalogue );
+        originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(originalImageSpec2);
 
+        databaseAgent.saveDefaultBasketItem(itemId, product, optionsMap, originalImageSpecList, 1, 123);
 
-    Assert.assertEquals( 1, basketItemList.size() );
+        basketItemList = databaseAgent.loadDefaultBasket(getContext(), catalogue);
 
-    BasketItem basketItem = basketItemList.get( 0 );
+        Assert.assertEquals(1, basketItemList.size());
 
-    List<ImageSpec> imageSpecList = basketItem.getImageSpecList();
+        basketItem = basketItemList.get(0);
 
-    Assert.assertEquals( 2, imageSpecList.size() );
+        imageSpecList = basketItem.getImageSpecList();
 
-    ImageSpec imageSpec1 = imageSpecList.get( 0 );
-    Assert.assertEquals( "First border text", imageSpec1.getBorderText() );
-    Assert.assertEquals( 1, imageSpec1.getQuantity() );
+        Assert.assertEquals(2, imageSpecList.size());
 
-    ImageSpec imageSpec2 = imageSpecList.get( 1 );
-    Assert.assertEquals( "Second border text", imageSpec2.getBorderText() );
-    Assert.assertEquals( 2, imageSpec2.getQuantity() );
+        imageSpec1 = imageSpecList.get(0);
+        Assert.assertEquals(null, imageSpec1.getBorderText());
+        Assert.assertEquals(1, imageSpec1.getQuantity());
 
-
-    databaseAgent.clearBasket( OrderingDataAgent.BASKET_ID_DEFAULT );
-
-    basketItemList = databaseAgent.loadDefaultBasket( getContext(), catalogue );
-
-    Assert.assertEquals( 0, basketItemList.size() );
-
-
-    originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Third border text", 1 );
-
-    originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( originalImageSpec2 );
-
-
-    databaseAgent.saveDefaultBasketItem( itemId, product, optionsMap, originalImageSpecList, 1, 123 );
-
-
-    basketItemList = databaseAgent.loadDefaultBasket( getContext(), catalogue );
-
-
-    Assert.assertEquals( 1, basketItemList.size() );
-
-    basketItem = basketItemList.get( 0 );
-
-    imageSpecList = basketItem.getImageSpecList();
-
-    Assert.assertEquals( 2, imageSpecList.size() );
-
-    imageSpec1 = imageSpecList.get( 0 );
-    Assert.assertEquals( null, imageSpec1.getBorderText() );
-    Assert.assertEquals( 1, imageSpec1.getQuantity() );
-
-    imageSpec2 = imageSpecList.get( 1 );
-    Assert.assertEquals( "Third border text", imageSpec2.getBorderText() );
-    Assert.assertEquals( 1, imageSpec2.getQuantity() );
+        imageSpec2 = imageSpecList.get(1);
+        Assert.assertEquals("Third border text", imageSpec2.getBorderText());
+        Assert.assertEquals(1, imageSpec2.getQuantity());
     }
 
+    ////////// Inner Class(es) //////////
 
-
-
-  ////////// Inner Class(es) //////////
-
-  }
+}

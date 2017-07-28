@@ -36,140 +36,132 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
-
 ///// Class Declaration /////
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*****************************************************
  *
  * This class provides methods for use with Strings.
  *
  *****************************************************/
-public class StringUtils
-  {
-  ////////// Static Constant(s) //////////
+public class StringUtils {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "StringUtils";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "StringUtils";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns true if the string is null or blank.
+     *
+     *****************************************************/
+    public static boolean isNullOrBlank(String string) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the string is null or blank.
-   *
-   *****************************************************/
-  static public boolean isNullOrBlank( String string )
-    {
-    if ( string == null || string.trim().equals( "" ) ) return ( true );
-
-    return ( false );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns true if the two strings are either both null,
-   * or equal.
-   *
-   *****************************************************/
-  static public boolean isNeitherNullNorBlank( String string )
-    {
-    return ( ! isNullOrBlank( string  ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns true if the two strings are either both null,
-   * or equal.
-   *
-   *****************************************************/
-  static public boolean areBothNullOrEqual( String string1, String string2 )
-    {
-    if ( string1 == null && string2 == null ) return ( true );
-    if ( string1 == null || string2 == null ) return ( false );
-
-    return ( string1.equals( string2 ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Extracts just the digits from a string.
-   *
-   *****************************************************/
-  static public String getDigitString( String source )
-    {
-    if ( source == null ) return ( "" );
-
-    StringBuilder stringBuilder = new StringBuilder( source.length() );
-
-    for ( char c : source.toCharArray() )
-      {
-      if ( Character.isDigit( c ) ) stringBuilder.append( c );
-      }
-
-    return ( stringBuilder.toString() );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns true if the supplied value consists of just
-   * digits, and at least one.
-   *
-   *****************************************************/
-  static public boolean isDigitString( String value )
-    {
-    if ( isNullOrBlank( value ) ) return ( false );
-
-    for ( char c : value.toCharArray() )
-      {
-      if ( ! Character.isDigit( c ) )
-        {
-        return ( false );
+        if (string == null || string.trim().equals("")) {
+            return true;
         }
-      }
 
-    return ( true );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the two strings are either both null,
+     * or equal.
+     *
+     *****************************************************/
+    public static boolean isNeitherNullNorBlank(String string) {
 
-  ////////// Constructor(s) //////////
+        return !isNullOrBlank(string);
+    }
 
+    /*****************************************************
+     *
+     * Returns true if the two strings are either both null,
+     * or equal.
+     *
+     *****************************************************/
+    public static boolean areBothNullOrEqual(String string1, String string2) {
 
-  ////////// Method(s) //////////
+        if (string1 == null && string2 == null) {
+            return true;
+        }
+        if (string1 == null || string2 == null) {
+            return false;
+        }
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+        return string1.equals(string2);
+    }
 
+    /*****************************************************
+     *
+     * Extracts just the digits from a string.
+     *
+     *****************************************************/
+    public static String getDigitString(String source) {
 
-  ////////// Inner Class(es) //////////
+        if (source == null) {
+            return "";
+        }
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+        StringBuilder stringBuilder = new StringBuilder(source.length());
 
-  }
+        for (char c : source.toCharArray()) {
+            if (Character.isDigit(c)) {
+                stringBuilder.append(c);
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /*****************************************************
+     *
+     * Returns true if the supplied value consists of just
+     * digits, and at least one.
+     *
+     *****************************************************/
+    public static boolean isDigitString(String value) {
+
+        if (isNullOrBlank(value)) {
+            return false;
+        }
+
+        for (char c : value.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    ////////// Constructor(s) //////////
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+}
 

@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
@@ -49,7 +48,6 @@ import android.view.View;
 import ly.kite.R;
 import ly.kite.catalogue.Border;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -57,127 +55,114 @@ import ly.kite.catalogue.Border;
  * This class overlays a frame on a standard image view.
  *
  *****************************************************/
-public class FramedImageView extends AAREImageContainerFrame
-  {
-  ////////// Static Constant(s) //////////
+public class FramedImageView extends AAREImageContainerFrame {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG                         = "FramedImageView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "FramedImageView";
 
-  private static final long    CHECK_ANIMATION_DURATION_MILLIS = 200L;
+    private static final long CHECK_ANIMATION_DURATION_MILLIS = 200L;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private StencilImageView mStencilImageView;
 
-  ////////// Member Variable(s) //////////
+    private Object mExpectedKey;
 
-  private StencilImageView  mStencilImageView;
+    ////////// Static Initialiser(s) //////////
 
-  private Object            mExpectedKey;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public FramedImageView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public FramedImageView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public FramedImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public FramedImageView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public FramedImageView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public FramedImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
     }
 
-  @TargetApi( Build.VERSION_CODES.LOLLIPOP )
-  public FramedImageView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FramedImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    ////////// AFixableImageFrame Method(s) //////////
 
-  ////////// AFixableImageFrame Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the content view.
+     *
+     *****************************************************/
+    @Override
+    protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-  /*****************************************************
-   *
-   * Returns the content view.
-   *
-   *****************************************************/
-  @Override
-  protected View onCreateView( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    LayoutInflater layoutInflator = LayoutInflater.from( context );
+        LayoutInflater layoutInflator = LayoutInflater.from(context);
 
-    View view = layoutInflator.inflate( R.layout.framed_image_view, this, true );
+        View view = layoutInflator.inflate(R.layout.framed_image_view, this, true);
 
-    mStencilImageView = (StencilImageView)view.findViewById( R.id.image_view );
+        mStencilImageView = (StencilImageView) view.findViewById(R.id.image_view);
 
-
-    return ( view );
+        return view;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets a frame border around the image by setting the
+     * padding.
+     *
+     *****************************************************/
+    public void setBorder(int width) {
 
-  /*****************************************************
-   *
-   * Sets a frame border around the image by setting the
-   * padding.
-   *
-   *****************************************************/
-  public void setBorder( int width )
-    {
-    setPadding( width, width, width, width );
+        setPadding(width, width, width, width);
     }
 
+    /*****************************************************
+     *
+     * Sets a frame border around the image by setting the
+     * padding.
+     *
+     *****************************************************/
+    public void setBorder(int left, int top, int right, int bottom) {
 
-  /*****************************************************
-   *
-   * Sets a frame border around the image by setting the
-   * padding.
-   *
-   *****************************************************/
-  public void setBorder( int left, int top, int right, int bottom )
-    {
-    setPadding( left, top, right, bottom );
+        setPadding(left, top, right, bottom);
     }
 
+    /*****************************************************
+     *
+     * Sets a frame border around the image by setting the
+     * padding.
+     *
+     *****************************************************/
+    public void setBorder(Border border) {
 
-  /*****************************************************
-   *
-   * Sets a frame border around the image by setting the
-   * padding.
-   *
-   *****************************************************/
-  public void setBorder( Border border )
-    {
-    setBorder( border.leftPixels, border.topPixels, border.rightPixels, border.bottomPixels );
+        setBorder(border.leftPixels, border.topPixels, border.rightPixels, border.bottomPixels);
     }
 
+    /*****************************************************
+     *
+     * Sets the stencil window.
+     *
+     *****************************************************/
+    public void setStencil(int stencilDrawableResourceId) {
 
-  /*****************************************************
-   *
-   * Sets the stencil window.
-   *
-   *****************************************************/
-  public void setStencil( int stencilDrawableResourceId )
-    {
-    mStencilImageView.setStencil( stencilDrawableResourceId );
+        mStencilImageView.setStencil(stencilDrawableResourceId);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

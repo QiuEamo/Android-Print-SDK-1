@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
@@ -54,7 +53,6 @@ import android.widget.ImageView;
 
 import ly.kite.image.ImageAgent;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -63,96 +61,87 @@ import ly.kite.image.ImageAgent;
  * acting as a window.
  *
  *****************************************************/
-public class StencilImageView extends ImageView
-  {
-  ////////// Static Constant(s) //////////
+public class StencilImageView extends ImageView {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG                         = "StencilImageView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "StencilImageView";
 
-  private static final long    CHECK_ANIMATION_DURATION_MILLIS = 200L;
+    private static final long CHECK_ANIMATION_DURATION_MILLIS = 200L;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Bitmap mOriginalImageBitmap;
+    private Drawable mStencilDrawable;
 
-  ////////// Member Variable(s) //////////
+    private int mViewWidth;
+    private int mViewHeight;
 
-  private Bitmap     mOriginalImageBitmap;
-  private Drawable   mStencilDrawable;
+    ////////// Static Initialiser(s) //////////
 
-  private int        mViewWidth;
-  private int        mViewHeight;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public StencilImageView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public StencilImageView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public StencilImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public StencilImageView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public StencilImageView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public StencilImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
     }
 
-  @TargetApi( Build.VERSION_CODES.LOLLIPOP )
-  public StencilImageView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public StencilImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    ////////// ImageView Method(s) //////////
 
-  ////////// ImageView Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the image bitmap.
+     *
+     *****************************************************/
+    @Override
+    public void setImageBitmap(Bitmap bitmap) {
 
-  /*****************************************************
-   *
-   * Sets the image bitmap.
-   *
-   *****************************************************/
-  @Override
-  public void setImageBitmap( Bitmap bitmap )
-    {
-    mOriginalImageBitmap = bitmap;
+        mOriginalImageBitmap = bitmap;
 
-    createStencilledImage();
+        createStencilledImage();
     }
 
+    /*****************************************************
+     *
+     * Called when the view size changes.
+     *
+     *****************************************************/
+    @Override
+    public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
 
-  /*****************************************************
-   *
-   * Called when the view size changes.
-   *
-   *****************************************************/
-  @Override
-  public void onSizeChanged( int width, int height, int oldWidth, int oldHeight )
-    {
-    super.onSizeChanged( width, height, oldWidth, oldHeight );
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
 
-    mViewWidth  = width;
-    mViewHeight = height;
+        mViewWidth = width;
+        mViewHeight = height;
 
-    createStencilledImage();
+        createStencilledImage();
     }
 
-
-  /*****************************************************
-   *
-   * Draws the image view.
-   *
-   *****************************************************/
+    /*****************************************************
+     *
+     * Draws the image view.
+     *
+     *****************************************************/
 //  @Override
 //  public void onDraw( Canvas canvas )
 //    {
@@ -161,83 +150,74 @@ public class StencilImageView extends ImageView
 //    imageDrawable.draw( canvas );
 //    }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the stencil window.
+     *
+     *****************************************************/
+    public void setStencil(Drawable stencilDrawable) {
 
-  /*****************************************************
-   *
-   * Sets the stencil window.
-   *
-   *****************************************************/
-  public void setStencil( Drawable stencilDrawable )
-    {
-    mStencilDrawable = stencilDrawable;
+        mStencilDrawable = stencilDrawable;
 
-    createStencilledImage();
+        createStencilledImage();
     }
 
+    /*****************************************************
+     *
+     * Sets the stencil window.
+     *
+     *****************************************************/
+    public void setStencil(int stencilResourceId) {
 
-  /*****************************************************
-   *
-   * Sets the stencil window.
-   *
-   *****************************************************/
-  public void setStencil( int stencilResourceId )
-    {
-    setStencil( getResources().getDrawable( stencilResourceId ) );
+        setStencil(getResources().getDrawable(stencilResourceId));
     }
 
+    /*****************************************************
+     *
+     * Creates the bitmap to be drawn.
+     *
+     *****************************************************/
+    private void createStencilledImage() {
+        // If we don't have everything we need - just draw the
+        // original image.
 
-  /*****************************************************
-   *
-   * Creates the bitmap to be drawn.
-   *
-   *****************************************************/
-  private void createStencilledImage()
-    {
-    // If we don't have everything we need - just draw the
-    // original image.
+        if (mViewWidth <= 0 || mViewHeight <= 0 ||
+                mStencilDrawable == null ||
+                mOriginalImageBitmap == null) {
+            super.setImageBitmap(mOriginalImageBitmap);
 
-    if ( mViewWidth <= 0 || mViewHeight <= 0 ||
-         mStencilDrawable     == null ||
-         mOriginalImageBitmap == null )
-      {
-      super.setImageBitmap( mOriginalImageBitmap );
+            return;
+        }
 
-      return;
-      }
+        // Create a bitmap and canvas for drawing the stencilled image
 
+        Bitmap blendedBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
+        Canvas blendCanvas = new Canvas(blendedBitmap);
 
-    // Create a bitmap and canvas for drawing the stencilled image
+        blendCanvas.drawColor(0x00000000);
 
-    Bitmap blendedBitmap = Bitmap.createBitmap( mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888 );
-    Canvas blendCanvas   = new Canvas( blendedBitmap );
+        // Draw the stencil to the canvas
+        mStencilDrawable.setBounds(0, 0, mViewWidth, mViewHeight);
+        mStencilDrawable.draw(blendCanvas);
 
-    blendCanvas.drawColor( 0x00000000 );
+        // Draw the bitmap on the canvas using the stencil alpha. Make sure the bitmap maintains its aspect
+        // ratio, but is cropped if necessary.
 
+        Paint paint = new Paint();
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
 
-    // Draw the stencil to the canvas
-    mStencilDrawable.setBounds( 0, 0, mViewWidth, mViewHeight );
-    mStencilDrawable.draw( blendCanvas );
+        Rect sourceRect = ImageAgent.getCropRectangle(mOriginalImageBitmap.getWidth(), mOriginalImageBitmap.getHeight(), (float)
+                mViewWidth / (float) mViewHeight);
+        Rect targetRect = new Rect(0, 0, mViewWidth, mViewHeight);
 
+        blendCanvas.drawBitmap(mOriginalImageBitmap, sourceRect, targetRect, paint);
 
-    // Draw the bitmap on the canvas using the stencil alpha. Make sure the bitmap maintains its aspect
-    // ratio, but is cropped if necessary.
-
-    Paint paint = new Paint();
-    paint.setXfermode( new PorterDuffXfermode( PorterDuff.Mode.SRC_ATOP ) );
-
-    Rect sourceRect = ImageAgent.getCropRectangle( mOriginalImageBitmap.getWidth(), mOriginalImageBitmap.getHeight(), (float)mViewWidth / (float)mViewHeight );
-    Rect targetRect = new Rect( 0, 0, mViewWidth, mViewHeight );
-
-    blendCanvas.drawBitmap( mOriginalImageBitmap, sourceRect, targetRect, paint );
-
-
-    super.setImageBitmap( blendedBitmap );
+        super.setImageBitmap(blendedBitmap);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

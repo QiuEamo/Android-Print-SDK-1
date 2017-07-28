@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
@@ -51,10 +50,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
-import ly.kite.image.IImageConsumer;
-
 import ly.kite.R;
-
+import ly.kite.image.IImageConsumer;
 
 ///// Class Declaration /////
 
@@ -65,291 +62,260 @@ import ly.kite.R;
  * stage, fading them in where appropriate.
  *
  *****************************************************/
-public class LabelledImageView extends AAREImageContainerFrame implements IImageConsumer, Animation.AnimationListener
-  {
-  ////////// Static Constant(s) //////////
+public class LabelledImageView extends AAREImageContainerFrame implements IImageConsumer, Animation.AnimationListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG                      = "LabelledImageView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "LabelledImageView";
 
-  private static final int     IMAGE_ANCHOR_GRAVITY_NONE    = 0;
-  private static final int     IMAGE_ANCHOR_GRAVITY_LEFT    = 1;
-  private static final int     IMAGE_ANCHOR_GRAVITY_TOP     = 2;
-  private static final int     IMAGE_ANCHOR_GRAVITY_RIGHT   = 3;
-  private static final int     IMAGE_ANCHOR_GRAVITY_BOTTOM  = 4;
+    private static final int IMAGE_ANCHOR_GRAVITY_NONE = 0;
+    private static final int IMAGE_ANCHOR_GRAVITY_LEFT = 1;
+    private static final int IMAGE_ANCHOR_GRAVITY_TOP = 2;
+    private static final int IMAGE_ANCHOR_GRAVITY_RIGHT = 3;
+    private static final int IMAGE_ANCHOR_GRAVITY_BOTTOM = 4;
 
-  private static final int     NO_FORCED_LABEL_COLOUR       = 0x00000000;
+    private static final int NO_FORCED_LABEL_COLOUR = 0x00000000;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private ImageView mEmptyFrameImageView;
+    private ImageView mImageView;
+    private OverlayLabel mOverlayLabel;
 
-  ////////// Member Variable(s) //////////
+    private int mForcedLabelColour;
 
-  private ImageView            mEmptyFrameImageView;
-  private ImageView            mImageView;
-  private OverlayLabel         mOverlayLabel;
+    private ImageView.ScaleType mImageViewScaleType;
+    private int mImageViewAnchorGravity;
 
-  private int                  mForcedLabelColour;
+    ////////// Static Initialiser(s) //////////
 
-  private ImageView.ScaleType  mImageViewScaleType;
-  private int                  mImageViewAnchorGravity;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public LabelledImageView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public LabelledImageView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public LabelledImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public LabelledImageView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public LabelledImageView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public LabelledImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
     }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public LabelledImageView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public LabelledImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    ////////// AFixableImageFrame Method(s) //////////
 
-  ////////// AFixableImageFrame Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the content view.
+     *
+     *****************************************************/
+    @Override
+    protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
+        // Inflate the layout and attach it to this view
 
-  /*****************************************************
-   *
-   * Returns the content view.
-   *
-   *****************************************************/
-  @Override
-  protected View onCreateView( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    // Inflate the layout and attach it to this view
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-    LayoutInflater layoutInflater = LayoutInflater.from( context );
+        View view = layoutInflater.inflate(R.layout.labelled_image_view, this, true);
 
-    View view = layoutInflater.inflate( R.layout.labelled_image_view, this, true );
+        // Save references to the child views
+        mEmptyFrameImageView = (ImageView) view.findViewById(R.id.empty_frame_image_view);
+        mImageView = (ImageView) view.findViewById(R.id.image_view);
+        mOverlayLabel = (OverlayLabel) view.findViewById(R.id.overlay_label);
 
-
-    // Save references to the child views
-    mEmptyFrameImageView = (ImageView)view.findViewById( R.id.empty_frame_image_view );
-    mImageView           = (ImageView)view.findViewById( R.id.image_view );
-    mOverlayLabel        = (OverlayLabel)view.findViewById( R.id.overlay_label );
-
-    // Apply any scale type
-    if ( mImageViewScaleType != null && mImageView != null )
-      {
-      mImageView.setScaleType( mImageViewScaleType );
-      }
-
-
-    // Set up the overlay label
-
-    Resources resources = context.getResources();
-
-    mOverlayLabel.setCornerRadius( resources.getDimension( R.dimen.labelled_image_label_corner_radius ) );
-    mOverlayLabel.setBackgroundShadow(
-            resources.getColor( R.color.labelled_image_label_shadow ),
-            resources.getDimension( R.dimen.labelled_image_label_shadow_blur_radius ),
-            resources.getDimension( R.dimen.labelled_image_label_shadow_y_offset ) );
-
-
-    // Check the XML attributes
-
-    if ( attributeSet != null )
-      {
-      TypedArray typedArray = context.obtainStyledAttributes( attributeSet, R.styleable.LabelledImageView, defaultStyle, defaultStyle );
-
-
-      if ( mImageView != null && mImageView instanceof AnchorableImageView )
-        {
-        AnchorableImageView anchorableImageView = (AnchorableImageView)mImageView;
-
-
-        // See if there is an image anchor gravity. The SDK customiser overrides any XML defined value.
-
-        if ( mImageViewAnchorGravity != Gravity.NO_GRAVITY )
-          {
-          anchorableImageView.setAnchorGravity( mImageViewAnchorGravity );
-          }
-        else
-          {
-          int imageAnchorGravity = typedArray.getInt( R.styleable.LabelledImageView_imageAnchorGravity, IMAGE_ANCHOR_GRAVITY_NONE );
-
-          switch ( imageAnchorGravity )
-            {
-            case IMAGE_ANCHOR_GRAVITY_LEFT:
-              anchorableImageView.setAnchorGravity( Gravity.LEFT );
-              break;
-            case IMAGE_ANCHOR_GRAVITY_TOP:
-              anchorableImageView.setAnchorGravity( Gravity.TOP );
-              break;
-            case IMAGE_ANCHOR_GRAVITY_RIGHT:
-              anchorableImageView.setAnchorGravity( Gravity.RIGHT );
-              break;
-            case IMAGE_ANCHOR_GRAVITY_BOTTOM:
-              anchorableImageView.setAnchorGravity( Gravity.BOTTOM );
-              break;
-            }
-          }
-
-
-        // Check the image anchor point
-
-        float imageAnchorPoint = typedArray.getFloat( R.styleable.LabelledImageView_imageAnchorPoint, 0f );
-
-        anchorableImageView.setAnchorPoint( imageAnchorPoint );
+        // Apply any scale type
+        if (mImageViewScaleType != null && mImageView != null) {
+            mImageView.setScaleType(mImageViewScaleType);
         }
 
+        // Set up the overlay label
 
-      // See if there is a forced label colour
-      mForcedLabelColour = typedArray.getColor( R.styleable.LabelledImageView_forcedLabelColour, NO_FORCED_LABEL_COLOUR );
+        Resources resources = context.getResources();
 
-      // Check for label opacity
-      mOverlayLabel.setLabelOpacity( typedArray.getFloat( R.styleable.LabelledImageView_labelOpacity, 1f ) );
+        mOverlayLabel.setCornerRadius(resources.getDimension(R.dimen.labelled_image_label_corner_radius));
+        mOverlayLabel.setBackgroundShadow(
+                resources.getColor(R.color.labelled_image_label_shadow),
+                resources.getDimension(R.dimen.labelled_image_label_shadow_blur_radius),
+                resources.getDimension(R.dimen.labelled_image_label_shadow_y_offset));
 
-      // See if the label shadow should be hidden
-      mOverlayLabel.setHideLabelShadow( typedArray.getBoolean( R.styleable.LabelledImageView_hideLabelShadow, false ) );
+        // Check the XML attributes
 
-      typedArray.recycle();
-      }
+        if (attributeSet != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.LabelledImageView, defaultStyle, defaultStyle);
 
+            if (mImageView != null && mImageView instanceof AnchorableImageView) {
+                AnchorableImageView anchorableImageView = (AnchorableImageView) mImageView;
 
-    return ( view );
+                // See if there is an image anchor gravity. The SDK customiser overrides any XML defined value.
+
+                if (mImageViewAnchorGravity != Gravity.NO_GRAVITY) {
+                    anchorableImageView.setAnchorGravity(mImageViewAnchorGravity);
+                } else {
+                    int imageAnchorGravity = typedArray.getInt(R.styleable.LabelledImageView_imageAnchorGravity, IMAGE_ANCHOR_GRAVITY_NONE);
+
+                    switch (imageAnchorGravity) {
+                        case IMAGE_ANCHOR_GRAVITY_LEFT:
+                            anchorableImageView.setAnchorGravity(Gravity.LEFT);
+                            break;
+                        case IMAGE_ANCHOR_GRAVITY_TOP:
+                            anchorableImageView.setAnchorGravity(Gravity.TOP);
+                            break;
+                        case IMAGE_ANCHOR_GRAVITY_RIGHT:
+                            anchorableImageView.setAnchorGravity(Gravity.RIGHT);
+                            break;
+                        case IMAGE_ANCHOR_GRAVITY_BOTTOM:
+                            anchorableImageView.setAnchorGravity(Gravity.BOTTOM);
+                            break;
+                    }
+                }
+
+                // Check the image anchor point
+
+                float imageAnchorPoint = typedArray.getFloat(R.styleable.LabelledImageView_imageAnchorPoint, 0f);
+
+                anchorableImageView.setAnchorPoint(imageAnchorPoint);
+            }
+
+            // See if there is a forced label colour
+            mForcedLabelColour = typedArray.getColor(R.styleable.LabelledImageView_forcedLabelColour, NO_FORCED_LABEL_COLOUR);
+
+            // Check for label opacity
+            mOverlayLabel.setLabelOpacity(typedArray.getFloat(R.styleable.LabelledImageView_labelOpacity, 1f));
+
+            // See if the label shadow should be hidden
+            mOverlayLabel.setHideLabelShadow(typedArray.getBoolean(R.styleable.LabelledImageView_hideLabelShadow, false));
+
+            typedArray.recycle();
+        }
+
+        return view;
     }
 
+    ////////// IImageConsumer Method(s) //////////
 
-  ////////// IImageConsumer Method(s) //////////
+    /*****************************************************
+     *
+     * Indicates that the image is being downloaded.
+     *
+     *****************************************************/
+    @Override
+    public void onImageDownloading(Object key) {
 
-  /*****************************************************
-   *
-   * Indicates that the image is being downloaded.
-   *
-   *****************************************************/
-  @Override
-  public void onImageDownloading( Object key )
-    {
-    super.onImageDownloading( key );
+        super.onImageDownloading(key);
 
-    mEmptyFrameImageView.setVisibility( View.VISIBLE );
-    mImageView.setVisibility( View.INVISIBLE );
+        mEmptyFrameImageView.setVisibility(View.VISIBLE);
+        mImageView.setVisibility(View.INVISIBLE);
 
-    showProgressSpinner();
+        showProgressSpinner();
     }
 
+    ////////// Animation.AnimationListener Method(s) //////////
 
-  ////////// Animation.AnimationListener Method(s) //////////
+    /*****************************************************
+     *
+     * Called when an animation completes.
+     *
+     *****************************************************/
+    @Override
+    public void onAnimationEnd(Animation animation) {
 
-  /*****************************************************
-   *
-   * Called when an animation completes.
-   *
-   *****************************************************/
-  @Override
-  public void onAnimationEnd( Animation animation )
-    {
-    super.onAnimationEnd( animation );
+        super.onAnimationEnd(animation);
 
-    // We want to make the empty frame invisible after the
-    // photo image fade in has finished.
-    if ( animation == mFadeInAnimation )
-      {
-      mEmptyFrameImageView.setVisibility( View.GONE );
-      }
+        // We want to make the empty frame invisible after the
+        // photo image fade in has finished.
+        if (animation == mFadeInAnimation) {
+            mEmptyFrameImageView.setVisibility(View.GONE);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the scale type of the image view.
+     *
+     *****************************************************/
+    public void setImageScaleType(ImageView.ScaleType scaleType) {
 
-  /*****************************************************
-   *
-   * Sets the scale type of the image view.
-   *
-   *****************************************************/
-  public void setImageScaleType( ImageView.ScaleType scaleType )
-    {
-    mImageViewScaleType = scaleType;
+        mImageViewScaleType = scaleType;
 
-    if ( scaleType != null && mImageView != null ) mImageView.setScaleType( scaleType );
+        if (scaleType != null && mImageView != null) {
+            mImageView.setScaleType(scaleType);
+        }
     }
 
+    /*****************************************************
+     *
+     * Sets the anchor point of the image view.
+     *
+     *****************************************************/
+    public void setImageAnchorGravity(int gravity) {
 
-  /*****************************************************
-   *
-   * Sets the anchor point of the image view.
-   *
-   *****************************************************/
-  public void setImageAnchorGravity( int gravity )
-    {
-    mImageViewAnchorGravity = gravity;
+        mImageViewAnchorGravity = gravity;
 
-    if ( gravity != Gravity.NO_GRAVITY && mImageView != null && mImageView instanceof AnchorableImageView )
-      {
-      ( (AnchorableImageView)mImageView ).setAnchorGravity( gravity );
-      }
+        if (gravity != Gravity.NO_GRAVITY && mImageView != null && mImageView instanceof AnchorableImageView) {
+            ((AnchorableImageView) mImageView).setAnchorGravity(gravity);
+        }
     }
 
+    /*****************************************************
+     *
+     * Forces the label background colour.
+     *
+     *****************************************************/
+    public void setForcedLabelColour(int colour) {
 
-  /*****************************************************
-   *
-   * Forces the label background colour.
-   *
-   *****************************************************/
-  public void setForcedLabelColour( int colour )
-    {
-    mForcedLabelColour = colour;
+        mForcedLabelColour = colour;
 
-    mOverlayLabel.setBackgroundColor( colour );
+        mOverlayLabel.setBackgroundColor(colour);
     }
 
+    /*****************************************************
+     *
+     * Sets the label text.
+     *
+     *****************************************************/
+    public void setLabel(String label) {
 
-  /*****************************************************
-   *
-   * Sets the label text.
-   *
-   *****************************************************/
-  public void setLabel( String label )
-    {
-    mOverlayLabel.setText( label );
+        mOverlayLabel.setText(label);
 
-    mOverlayLabel.setVisibility( label != null ? View.VISIBLE : View.INVISIBLE );
+        mOverlayLabel.setVisibility(label != null ? View.VISIBLE : View.INVISIBLE);
     }
 
+    /*****************************************************
+     *
+     * Sets the label text and colour.
+     *
+     *****************************************************/
+    public void setLabel(String label, int colour) {
 
-  /*****************************************************
-   *
-   * Sets the label text and colour.
-   *
-   *****************************************************/
-  public void setLabel( String label, int colour )
-    {
-    setLabel( label );
+        setLabel(label);
 
-    // Set the background colour. If we have a forced colour then use that instead of the
-    // supplied one.
-    mOverlayLabel.setBackgroundColor( mForcedLabelColour != NO_FORCED_LABEL_COLOUR ? mForcedLabelColour : colour );
+        // Set the background colour. If we have a forced colour then use that instead of the
+        // supplied one.
+        mOverlayLabel.setBackgroundColor(mForcedLabelColour != NO_FORCED_LABEL_COLOUR ? mForcedLabelColour : colour);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

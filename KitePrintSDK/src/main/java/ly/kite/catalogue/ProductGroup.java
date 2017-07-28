@@ -36,7 +36,6 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -48,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -59,296 +57,272 @@ import java.util.Locale;
  * are too big and cause transaction errors.
  *
  *****************************************************/
-public class ProductGroup implements IGroupOrProduct
-  {
-  ////////// Static Constant(s) //////////
+public class ProductGroup implements IGroupOrProduct {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ProductGroup";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ProductGroup";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String mLabel;
+    private int mLabelColour;
+    private URL mImageURL;
 
-  ////////// Member Variable(s) //////////
+    private ArrayList<Product> mProductList;
 
-  private String              mLabel;
-  private int                 mLabelColour;
-  private URL                 mImageURL;
+    ////////// Static Initialiser(s) //////////
 
-  private ArrayList<Product>  mProductList;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ProductGroup(String label, int labelColour, URL imageURL) {
 
+        mLabel = label;
+        mLabelColour = labelColour;
+        mImageURL = imageURL;
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  ProductGroup( String label, int labelColour, URL imageURL )
-    {
-    mLabel       = label;
-    mLabelColour = labelColour;
-    mImageURL    = imageURL;
-
-    mProductList = new ArrayList<>();
+        mProductList = new ArrayList<>();
     }
 
+    ////////// IGroupOrProduct Method(s) //////////
 
-  ////////// IGroupOrProduct Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the display image URL.
+     *
+     *****************************************************/
+    @Override
+    public URL getDisplayImageURL() {
 
-  /*****************************************************
-   *
-   * Returns the display image URL.
-   *
-   *****************************************************/
-  @Override
-  public URL getDisplayImageURL()
-    {
-    return ( mImageURL );
+        return mImageURL;
     }
 
+    /*****************************************************
+     *
+     * Returns the gravity for the display image.
+     *
+     *****************************************************/
+    @Override
+    public int getDisplayImageAnchorGravity(Context context) {
 
-  /*****************************************************
-   *
-   * Returns the gravity for the display image.
-   *
-   *****************************************************/
-  @Override
-  public int getDisplayImageAnchorGravity( Context context )
-    {
-    return ( Gravity.NO_GRAVITY );
+        return Gravity.NO_GRAVITY;
     }
 
+    /*****************************************************
+     *
+     * Returns the display label.
+     *
+     *****************************************************/
+    @Override
+    public String getDisplayLabel() {
 
-  /*****************************************************
-   *
-   * Returns the display label.
-   *
-   *****************************************************/
-  @Override
-  public String getDisplayLabel()
-    {
-    return ( mLabel );
+        return mLabel;
     }
 
+    /*****************************************************
+     *
+     * Returns the display label colour.
+     *
+     *****************************************************/
+    @Override
+    public int getDisplayLabelColour() {
 
-  /*****************************************************
-   *
-   * Returns the display label colour.
-   *
-   *****************************************************/
-  @Override
-  public int getDisplayLabelColour()
-    {
-    return ( mLabelColour );
+        return mLabelColour;
     }
 
+    /*****************************************************
+     *
+     * Returns true if this group contains more than one
+     * product, false otherwise.
+     *
+     *****************************************************/
+    public boolean containsMultiplePrices() {
 
-  /*****************************************************
-   *
-   * Returns true if this group contains more than one
-   * product, false otherwise.
-   *
-   *****************************************************/
-  public boolean containsMultiplePrices()
-    {
-    return ( mProductList != null && mProductList.size() > 1 );
+        return mProductList != null && mProductList.size() > 1;
     }
 
+    /*****************************************************
+     *
+     * Returns a display price. For product groups, this is
+     * the lowest price of any of the products in the group.
+     *
+     * Thus it may be used as a "from" price.
+     *
+     *****************************************************/
+    @Override
+    public String getDisplayPrice(String preferredCurrency) {
+        // We don't want to mess around with trying to compare prices in different
+        // currencies, so we first need to find a currency that all prices are listed
+        // in.
 
-  /*****************************************************
-   *
-   * Returns a display price. For product groups, this is
-   * the lowest price of any of the products in the group.
-   *
-   * Thus it may be used as a "from" price.
-   *
-   *****************************************************/
-  @Override
-  public String getDisplayPrice( String preferredCurrency )
-    {
-    // We don't want to mess around with trying to compare prices in different
-    // currencies, so we first need to find a currency that all prices are listed
-    // in.
+        Locale locale = Locale.getDefault();
+        String currencyCode = chooseBestCurrency(preferredCurrency);
 
-    Locale locale       = Locale.getDefault();
-    String currencyCode = chooseBestCurrency( preferredCurrency );
+        if (currencyCode == null) {
+            Log.e(LOG_TAG, "No currency is supported across all products");
 
-    if ( currencyCode == null )
-      {
-      Log.e( LOG_TAG, "No currency is supported across all products" );
-
-      return ( null );
-      }
-
-
-    SingleCurrencyAmounts lowestSingleCurrencyCost = null;
-
-    for ( Product product : mProductList )
-      {
-      MultipleCurrencyAmounts candidateCost               = product.getCost();
-      SingleCurrencyAmounts candidateSingleCurrencyCost = candidateCost.get( currencyCode );
-
-      // See if this is the lowest cost
-      if ( candidateSingleCurrencyCost != null &&
-              ( lowestSingleCurrencyCost == null ||
-                      candidateSingleCurrencyCost.getAmount().compareTo( lowestSingleCurrencyCost.getAmount() ) < 0 ) )
-        {
-        lowestSingleCurrencyCost = candidateSingleCurrencyCost;
+            return null;
         }
-      }
 
+        SingleCurrencyAmounts lowestSingleCurrencyCost = null;
 
-    // If we found a low price - return it as a string formatted for the current locale
-    if ( lowestSingleCurrencyCost != null ) return ( lowestSingleCurrencyCost.getDisplayAmountForLocale( locale ) );
+        for (Product product : mProductList) {
+            MultipleCurrencyAmounts candidateCost = product.getCost();
+            SingleCurrencyAmounts candidateSingleCurrencyCost = candidateCost.get(currencyCode);
 
-    return ( null );
+            // See if this is the lowest cost
+            if (candidateSingleCurrencyCost != null &&
+                    (lowestSingleCurrencyCost == null ||
+                            candidateSingleCurrencyCost.getAmount().compareTo(lowestSingleCurrencyCost.getAmount()) < 0)) {
+                lowestSingleCurrencyCost = candidateSingleCurrencyCost;
+            }
+        }
+
+        // If we found a low price - return it as a string formatted for the current locale
+        if (lowestSingleCurrencyCost != null) {
+            return lowestSingleCurrencyCost.getDisplayAmountForLocale(locale);
+        }
+
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns a description, or null if there is no
+     * description.
+     *
+     *****************************************************/
+    public String getDescription() {
 
-  /*****************************************************
-   *
-   * Returns a description, or null if there is no
-   * description.
-   *
-   *****************************************************/
-  public String getDescription()
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns true or false according to whether a flag is
+     * set.
+     *
+     *****************************************************/
+    @Override
+    public boolean flagIsSet(String tag) {
 
-  /*****************************************************
-   *
-   * Returns true or false according to whether a flag is
-   * set.
-   *
-   *****************************************************/
-  @Override
-  public boolean flagIsSet( String tag )
-    {
-    return ( false );
+        return false;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Appends all the product images used by this product,
+     * to the supplied list.
+     *
+     *****************************************************/
+    public void appendAllImages(List<URL> targetURLList) {
 
-  /*****************************************************
-   *
-   * Appends all the product images used by this product,
-   * to the supplied list.
-   *
-   *****************************************************/
-  public void appendAllImages( List<URL> targetURLList )
-    {
-    if ( mImageURL != null ) targetURLList.add( mImageURL );
+        if (mImageURL != null) {
+            targetURLList.add(mImageURL);
+        }
     }
 
+    /*****************************************************
+     *
+     * Returns the best currency code that is supported across
+     * all products (i.e. all products have a cost in that
+     * currency).
+     *
+     *****************************************************/
+    public String chooseBestCurrency(String preferredCurrencyCode) {
+        // Check if the preferred currency is supported
 
-  /*****************************************************
-   *
-   * Returns the best currency code that is supported across
-   * all products (i.e. all products have a cost in that
-   * currency).
-   *
-   *****************************************************/
-  public String chooseBestCurrency( String preferredCurrencyCode )
-    {
-    // Check if the preferred currency is supported
+        if (preferredCurrencyCode != null &&
+                currencyIsSupportedByAllProducts(preferredCurrencyCode)) {
+            return preferredCurrencyCode;
+        }
 
-    if ( preferredCurrencyCode != null &&
-         currencyIsSupportedByAllProducts( preferredCurrencyCode ) )
-      {
-      return ( preferredCurrencyCode );
-      }
+        // Try the fallback currencies
 
+        for (String fallbackCurrencyCode : MultipleCurrencyAmounts.FALLBACK_CURRENCY_CODES) {
+            if (currencyIsSupportedByAllProducts(fallbackCurrencyCode)) {
+                return fallbackCurrencyCode;
+            }
+        }
 
-    // Try the fallback currencies
-
-    for ( String fallbackCurrencyCode : MultipleCurrencyAmounts.FALLBACK_CURRENCY_CODES )
-      {
-      if ( currencyIsSupportedByAllProducts( fallbackCurrencyCode ) ) return ( fallbackCurrencyCode );
-      }
-
-
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns true if every product in this group as a price
+     * available in the supplied currency code.
+     *
+     *****************************************************/
+    public boolean currencyIsSupportedByAllProducts(String currencyCode) {
 
-  /*****************************************************
-   *
-   * Returns true if every product in this group as a price
-   * available in the supplied currency code.
-   *
-   *****************************************************/
-  public boolean currencyIsSupportedByAllProducts( String currencyCode )
-    {
-    if ( currencyCode == null || currencyCode.trim().equals( "" ) ) return ( false );
+        if (currencyCode == null || currencyCode.trim().equals("")) {
+            return false;
+        }
 
-    for ( Product product : mProductList )
-      {
-      MultipleCurrencyAmounts multipleCurrencyCost = product.getCost();
+        for (Product product : mProductList) {
+            MultipleCurrencyAmounts multipleCurrencyCost = product.getCost();
 
-      if ( multipleCurrencyCost.get( currencyCode ) == null ) return ( false );
-      }
+            if (multipleCurrencyCost.get(currencyCode) == null) {
+                return false;
+            }
+        }
 
-    return ( true );
+        return true;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Adds a product to this group.
+     *
+     *****************************************************/
+    void add(Product product) {
 
-  /*****************************************************
-   *
-   * Adds a product to this group.
-   *
-   *****************************************************/
-  void add( Product product )
-    {
-    mProductList.add( product );
+        mProductList.add(product);
     }
 
+    /*****************************************************
+     *
+     * Returns the product list.
+     *
+     *****************************************************/
+    public ArrayList<Product> getProductList() {
 
-  /*****************************************************
-   *
-   * Returns the product list.
-   *
-   *****************************************************/
-  public ArrayList<Product> getProductList()
-    {
-    return ( mProductList );
+        return mProductList;
     }
 
+    /*****************************************************
+     *
+     * Returns a log-displayable string representing this
+     * product group.
+     *
+     *****************************************************/
+    public String toLogString() {
 
-  /*****************************************************
-   *
-   * Returns a log-displayable string representing this
-   * product group.
-   *
-   *****************************************************/
-  public String toLogString()
-    {
-    StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-    stringBuilder.append( "Label        : " ).append( mLabel ).append( "\n" );
-    stringBuilder.append( "Label Colour : 0x" ).append( Integer.toHexString( mLabelColour ) ).append( "\n" );
-    stringBuilder.append( "Image URL    : " ).append( mImageURL.toString() ).append( "\n" );
+        stringBuilder.append("Label        : ").append(mLabel).append("\n");
+        stringBuilder.append("Label Colour : 0x").append(Integer.toHexString(mLabelColour)).append("\n");
+        stringBuilder.append("Image URL    : ").append(mImageURL.toString()).append("\n");
 
-    return ( stringBuilder.toString() );
+        return stringBuilder.toString();
     }
 
+    ////////// Inner Class(es) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

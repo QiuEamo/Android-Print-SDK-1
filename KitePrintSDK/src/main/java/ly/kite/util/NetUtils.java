@@ -36,9 +36,7 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -49,59 +47,55 @@ import java.net.URL;
  * This class provides network helper methods.
  *
  *****************************************************/
-public class NetUtils
-  {
-  ////////// Static Constant(s) //////////
+public class NetUtils {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "NetUtils";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "NetUtils";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns true if the two URLs are either both null,
+     * or equal.
+     *
+     *****************************************************/
+    public static boolean areBothNullOrEqual(URL url1, URL url2) {
 
-  ////////// Static Initialiser(s) //////////
+        if (url1 == null && url2 == null) {
+            return true;
+        }
+        if (url1 == null || url2 == null) {
+            return false;
+        }
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the two URLs are either both null,
-   * or equal.
-   *
-   *****************************************************/
-  static public boolean areBothNullOrEqual( URL url1, URL url2 )
-    {
-    if ( url1 == null && url2 == null ) return ( true );
-    if ( url1 == null || url2 == null ) return ( false );
-
-    return ( url1.equals( url2 ) );
+        return url1.equals(url2);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Method(s) //////////
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

@@ -36,10 +36,8 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
 
@@ -51,7 +49,6 @@ import ly.kite.address.Address;
 import ly.kite.journey.AKiteActivity;
 import ly.kite.ordering.Order;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -59,188 +56,172 @@ import ly.kite.ordering.Order;
  * This class is the parent of shipping activities.
  *
  *****************************************************/
-abstract public class AShippingActivity extends AKiteActivity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AShippingActivity extends AKiteActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "AShippingActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AShippingActivity";
 
-  static public  final String  KEY_ORDER                       = "ly.kite.order";
-  static public  final String  KEY_SHIPPING_ADDRESS            = "ly.kite.shippingaddress";
-  static public  final String  KEY_EMAIL                       = "ly.kite.email";
-  static public  final String  KEY_PHONE                       = "ly.kite.phone";
-  static public  final String  KEY_ADDITIONAL_PARAMETERS       = "ly.kite.additionalparameters";
+    public static final String KEY_ORDER = "ly.kite.order";
+    public static final String KEY_SHIPPING_ADDRESS = "ly.kite.shippingaddress";
+    public static final String KEY_EMAIL = "ly.kite.email";
+    public static final String KEY_PHONE = "ly.kite.phone";
+    public static final String KEY_ADDITIONAL_PARAMETERS = "ly.kite.additionalparameters";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Adds a shipping address as an extra to the intent.
+     *
+     *****************************************************/
+    public static void addShippingAddress(Address shippingAddress, Intent intent) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Adds a shipping address as an extra to the intent.
-   *
-   *****************************************************/
-  static public void addShippingAddress( Address shippingAddress, Intent intent )
-    {
-    if ( shippingAddress != null ) intent.putExtra( KEY_SHIPPING_ADDRESS, (Parcelable)shippingAddress );
+        if (shippingAddress != null) {
+            intent.putExtra(KEY_SHIPPING_ADDRESS, (Parcelable) shippingAddress);
+        }
     }
 
+    /*****************************************************
+     *
+     * Adds an email address as an extra to the intent.
+     *
+     *****************************************************/
+    public static void addEmail(String email, Intent intent) {
 
-  /*****************************************************
-   *
-   * Adds an email address as an extra to the intent.
-   *
-   *****************************************************/
-  static public void addEmail( String email, Intent intent )
-    {
-    if ( email != null ) intent.putExtra( KEY_EMAIL, email );
+        if (email != null) {
+            intent.putExtra(KEY_EMAIL, email);
+        }
     }
 
+    /*****************************************************
+     *
+     * Adds the order and contact details as extras to the
+     * intent.
+     *
+     *****************************************************/
+    public static void addExtras(Order order, Intent intent) {
 
-  /*****************************************************
-   *
-   * Adds the order and contact details as extras to the
-   * intent.
-   *
-   *****************************************************/
-  static public void addExtras( Order order, Intent intent )
-    {
-    if ( order != null )
-      {
-      // We need to pass the order to the activity for analytics
-      intent.putExtra( KEY_ORDER, order );
+        if (order != null) {
+            // We need to pass the order to the activity for analytics
+            intent.putExtra(KEY_ORDER, order);
 
+            // Put any shipping address, email, and phone number from the order into the intent.
 
-      // Put any shipping address, email, and phone number from the order into the intent.
+            addShippingAddress(order.getShippingAddress(), intent);
 
-      addShippingAddress( order.getShippingAddress(), intent );
+            JSONObject userData = order.getUserData();
 
-      JSONObject userData = order.getUserData();
+            if (userData != null) {
+                addEmail(userData.optString("email"), intent);
+                intent.putExtra(KEY_PHONE, userData.optString("phone"));
+            }
 
-      if ( userData != null )
-        {
-        addEmail( userData.optString( "email" ), intent );
-        intent.putExtra( KEY_PHONE, userData.optString( "phone" ) );
+            // Add any additional parameters
+
+            HashMap<String, String> additionalParametersMap = order.getAdditionalParameters();
+
+            if (additionalParametersMap != null) {
+                intent.putExtra(KEY_ADDITIONAL_PARAMETERS, additionalParametersMap);
+            }
+        }
+    }
+
+    /*****************************************************
+     *
+     * Returns an order from the intent.
+     *
+     *****************************************************/
+    public static Order getOrder(Intent intent) {
+
+        if (intent == null) {
+            return null;
         }
 
+        return intent.getParcelableExtra(KEY_ORDER);
+    }
 
-      // Add any additional parameters
+    /*****************************************************
+     *
+     * Returns the shipping address from an intent.
+     *
+     *****************************************************/
+    public static Address getShippingAddress(Intent data) {
 
-      HashMap<String,String> additionalParametersMap = order.getAdditionalParameters();
+        return data.getParcelableExtra(KEY_SHIPPING_ADDRESS);
+    }
 
-      if ( additionalParametersMap != null )
-        {
-        intent.putExtra( KEY_ADDITIONAL_PARAMETERS, additionalParametersMap );
+    /*****************************************************
+     *
+     * Returns the email from an intent.
+     *
+     *****************************************************/
+    public static String getEmail(Intent data) {
+
+        return data.getStringExtra(KEY_EMAIL);
+    }
+
+    /*****************************************************
+     *
+     * Returns the phone number from an intent.
+     *
+     *****************************************************/
+    public static String getPhone(Intent data) {
+
+        return data.getStringExtra(KEY_PHONE);
+    }
+
+    /*****************************************************
+     *
+     * Returns the additional parameters from an intent.
+     *
+     *****************************************************/
+    public static HashMap<String, String> getAdditionalParameters(Intent data) {
+
+        return (HashMap<String, String>) data.getSerializableExtra(KEY_ADDITIONAL_PARAMETERS);
+    }
+
+    /*****************************************************
+     *
+     * Sets an additional parameter in an intent.
+     *
+     *****************************************************/
+    public static void setAdditionalParameter(String name, String value, Intent data) {
+
+        HashMap<String, String> additionalParameterMap = getAdditionalParameters(data);
+
+        if (additionalParameterMap == null) {
+            additionalParameterMap = new HashMap<>();
+
+            data.putExtra(KEY_ADDITIONAL_PARAMETERS, additionalParameterMap);
         }
-      }
+
+        additionalParameterMap.put(name, value);
     }
 
+    ////////// Constructor(s) //////////
 
-  /*****************************************************
-   *
-   * Returns an order from the intent.
-   *
-   *****************************************************/
-  static public Order getOrder( Intent intent )
-    {
-    if ( intent == null ) return ( null );
+    ////////// Method(s) //////////
 
-    return ( intent.getParcelableExtra( KEY_ORDER ) );
-    }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Returns the shipping address from an intent.
-   *
-   *****************************************************/
-  static public Address getShippingAddress( Intent data )
-    {
-    return ( data.getParcelableExtra( KEY_SHIPPING_ADDRESS ) );
-    }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  /*****************************************************
-   *
-   * Returns the email from an intent.
-   *
-   *****************************************************/
-  static public String getEmail( Intent data )
-    {
-    return ( data.getStringExtra( KEY_EMAIL ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the phone number from an intent.
-   *
-   *****************************************************/
-  static public String getPhone( Intent data )
-    {
-    return ( data.getStringExtra( KEY_PHONE ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the additional parameters from an intent.
-   *
-   *****************************************************/
-  static public HashMap<String,String> getAdditionalParameters( Intent data )
-    {
-    return ( (HashMap<String,String>)data.getSerializableExtra( KEY_ADDITIONAL_PARAMETERS ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Sets an additional parameter in an intent.
-   *
-   *****************************************************/
-  static public void setAdditionalParameter( String name, String value, Intent data )
-    {
-    HashMap<String,String> additionalParameterMap = getAdditionalParameters( data );
-
-    if ( additionalParameterMap == null )
-      {
-      additionalParameterMap = new HashMap<>();
-
-      data.putExtra( KEY_ADDITIONAL_PARAMETERS, additionalParameterMap );
-      }
-
-    additionalParameterMap.put( name, value );
-    }
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

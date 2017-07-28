@@ -10,38 +10,39 @@ public enum ProductType {
     SQUARES("squares", "Square Prints"),
     MINI_SQUARES("squares_mini", "Mini Square Prints"),
     MAGNETS("magnets", "Magnets"),
-    SQUARE_STICKERS("stickers_square","Square Stickers"),
-    CIRCLE_STICKERS("stickers_circle","Circle Stickers"),
-    GREETINGS_CARDS("greeting_cards","Circle Greeting Cards"),
+    SQUARE_STICKERS("stickers_square", "Square Stickers"),
+    CIRCLE_STICKERS("stickers_circle", "Circle Stickers"),
+    GREETINGS_CARDS("greeting_cards", "Circle Greeting Cards"),
 
     /* Frames */
-    FRAMES_1X1_20CM("frames_20cm","Frame 20cm"),
-    FRAMES_1X1_30CM("frames_30cm","Frame 30cm"),
-    FRAMES_1X1_50CM("frames_50cm","Frame 50cm"),
+    FRAMES_1X1_20CM("frames_20cm", "Frame 20cm"),
+    FRAMES_1X1_30CM("frames_30cm", "Frame 30cm"),
+    FRAMES_1X1_50CM("frames_50cm", "Frame 50cm"),
 
-    FRAMES_2x2_20CM("frames_20cm_2x2","Frame 20cm (2x2)"),
-    FRAMES_2x2_30CM("frames_30cm_2x2","Frame 30cm (2x2)"),
-    FRAMES_2x2_50CM("frames_50cm_2x2","Frame 50cm (2x2)"),
+    FRAMES_2x2_20CM("frames_20cm_2x2", "Frame 20cm (2x2)"),
+    FRAMES_2x2_30CM("frames_30cm_2x2", "Frame 30cm (2x2)"),
+    FRAMES_2x2_50CM("frames_50cm_2x2", "Frame 50cm (2x2)"),
 
-    FRAMES_3x3_30CM("frames_30cm_3x3","Frame 30cm (3x3)"),
-    FRAMES_3x3_50CM("frames_50cm_3x3","Frame 30cm (3x3)"),
+    FRAMES_3x3_30CM("frames_30cm_3x3", "Frame 30cm (3x3)"),
+    FRAMES_3x3_50CM("frames_50cm_3x3", "Frame 30cm (3x3)"),
 
-    FRAMES_4x4_50CM("frames_50cm_4x4","Frame 30cm (4x4)"),
+    FRAMES_4x4_50CM("frames_50cm_4x4", "Frame 30cm (4x4)"),
 
     /* Legacy Frames */
-    FRAMES_2x2("frames_2x2","2x2 Frame"),
+    FRAMES_2x2("frames_2x2", "2x2 Frame"),
 
-    PHOTOS_4x6("photos_4x6","Circle Greeting Cards"),
-    POSTER_A1("a1_poster","A1 Collage (54)"),
-    POSTER_A1_35CM("a1_poster_35","A1 Collage (54)"),
-    POSTER_A1_54CM("a1_poster_54","A1 Collage (54)"),
-    POSTER_A1_70CM("a1_poster_70","A1 Collage (70)"),
-    POSTER_A2("a2_poster","A1 Collage (54)"),
-    POSTER_A2_35("a2_poster_35","A2 Collage (35)"),
-    POSTER_A2_54("a2_poster_54","A2 Collage (54)"),
-    POSTER_A2_70("a2_poster_70","A2 Collage (70)");
+    PHOTOS_4x6("photos_4x6", "Circle Greeting Cards"),
+    POSTER_A1("a1_poster", "A1 Collage (54)"),
+    POSTER_A1_35CM("a1_poster_35", "A1 Collage (54)"),
+    POSTER_A1_54CM("a1_poster_54", "A1 Collage (54)"),
+    POSTER_A1_70CM("a1_poster_70", "A1 Collage (70)"),
+    POSTER_A2("a2_poster", "A1 Collage (54)"),
+    POSTER_A2_35("a2_poster_35", "A2 Collage (35)"),
+    POSTER_A2_54("a2_poster_54", "A2 Collage (54)"),
+    POSTER_A2_70("a2_poster_70", "A2 Collage (70)");
 
     public String getDefaultTemplate() {
+
         return defaultTemplate;
     }
 
@@ -49,11 +50,13 @@ public enum ProductType {
     private final String productName; // TODO: don't do this in final public API.
 
     private ProductType(String defaultTemplate, String productName) {
+
         this.defaultTemplate = defaultTemplate;
         this.productName = productName;
     }
 
     public static ProductType productTypeFromTemplate(String template) {
+
         if (template.equals(POSTCARD.defaultTemplate)) {
             return POSTCARD;
         } else if (template.equals(POLAROIDS.defaultTemplate)) {
@@ -116,10 +119,13 @@ public enum ProductType {
     }
 
     public String getProductName() {
+
         return productName;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
+
         return getProductName();
     }
 }

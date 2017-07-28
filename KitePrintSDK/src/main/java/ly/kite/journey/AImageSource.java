@@ -36,10 +36,7 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
-
-import java.util.List;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -47,9 +44,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 
+import java.util.List;
+
 import ly.kite.R;
 import ly.kite.util.Asset;
-
 
 ///// Class Declaration /////
 
@@ -58,337 +56,306 @@ import ly.kite.util.Asset;
  * An image source.
  *
  *****************************************************/
-abstract public class AImageSource
-  {
-  ///// Static Constant(s) /////
+abstract public class AImageSource {
+    ///// Static Constant(s) /////
 
-  static private final String  LOG_TAG          = "AImageSource";
+    private static final String LOG_TAG = "AImageSource";
 
-  static public  final int     UNLIMITED_IMAGES = 0;
-  static public  final int     SINGLE_IMAGE     = 1;
+    public static final int UNLIMITED_IMAGES = 0;
+    public static final int SINGLE_IMAGE = 1;
 
+    ///// Member Variable(s) /////
 
-  ///// Member Variable(s) /////
+    private int mHorizontalBackgroundColourResourceId;
+    private int mVerticalBackgroundColourResourceId;
 
-  private int  mHorizontalBackgroundColourResourceId;
-  private int  mVerticalBackgroundColourResourceId;
+    private int mHorizontalLayoutIconResourceId;
+    private int mVerticalLayoutIconResourceId;
 
-  private int  mHorizontalLayoutIconResourceId;
-  private int  mVerticalLayoutIconResourceId;
+    private int mLabelResourceId;
 
-  private int  mLabelResourceId;
+    private int mMenuItemId;
+    private int mMenuItemTitleResourceId;
 
-  private int  mMenuItemId;
-  private int  mMenuItemTitleResourceId;
+    private int mActivityRequestCode;
 
-  private int  mActivityRequestCode;
+    ///// Static Method(s) /////
 
+    ///// Constructor(s) /////
 
-  ///// Static Method(s) /////
+    protected AImageSource(int horizontalBackgroundColourResourceId,
+                           int verticalBackgroundColourResourceId,
+                           int horizontalLayoutIconResourceId,
+                           int verticalLayoutIconResourceId,
+                           int labelResourceId,
+                           int menuItemId,
+                           int menuItemTitleResourceId) {
 
-
-  ///// Constructor(s) /////
-
-  protected AImageSource( int horizontalBackgroundColourResourceId,
-                          int verticalBackgroundColourResourceId,
-                          int horizontalLayoutIconResourceId,
-                          int verticalLayoutIconResourceId,
-                          int labelResourceId,
-                          int menuItemId,
-                          int menuItemTitleResourceId )
-    {
-    mHorizontalBackgroundColourResourceId = horizontalBackgroundColourResourceId;
-    mVerticalBackgroundColourResourceId   = verticalBackgroundColourResourceId;
-    mHorizontalLayoutIconResourceId       = horizontalLayoutIconResourceId;
-    mVerticalLayoutIconResourceId         = verticalLayoutIconResourceId;
-    mLabelResourceId                      = labelResourceId;
-    mMenuItemId                           = menuItemId;
-    mMenuItemTitleResourceId              = menuItemTitleResourceId;
+        mHorizontalBackgroundColourResourceId = horizontalBackgroundColourResourceId;
+        mVerticalBackgroundColourResourceId = verticalBackgroundColourResourceId;
+        mHorizontalLayoutIconResourceId = horizontalLayoutIconResourceId;
+        mVerticalLayoutIconResourceId = verticalLayoutIconResourceId;
+        mLabelResourceId = labelResourceId;
+        mMenuItemId = menuItemId;
+        mMenuItemTitleResourceId = menuItemTitleResourceId;
     }
 
+    protected AImageSource(int backgroundColourResourceId,
+                           int iconResourceId,
+                           int labelResourceId,
+                           int menuItemId,
+                           int menuItemTitleResourceId) {
 
-  protected AImageSource( int backgroundColourResourceId,
-                          int iconResourceId,
-                          int labelResourceId,
-                          int menuItemId,
-                          int menuItemTitleResourceId )
-    {
-    this( backgroundColourResourceId,
-          backgroundColourResourceId,
-          iconResourceId,
-          iconResourceId,
-          labelResourceId,
-          menuItemId,
-          menuItemTitleResourceId );
+        this(backgroundColourResourceId,
+                backgroundColourResourceId,
+                iconResourceId,
+                iconResourceId,
+                labelResourceId,
+                menuItemId,
+                menuItemTitleResourceId);
     }
 
+    /*****************************************************
+     *
+     * Returns the resource id of the background colour that
+     * represents this image source.
+     *
+     *****************************************************/
+    int getBackgroundColourResourceId(LayoutType layoutType) {
 
-  /*****************************************************
-   *
-   * Returns the resource id of the background colour that
-   * represents this image source.
-   *
-   *****************************************************/
-  int getBackgroundColourResourceId( LayoutType layoutType )
-    {
-    switch ( layoutType )
-      {
-      case HORIZONTAL:
+        switch (layoutType) {
+            case HORIZONTAL:
 
-        return ( mHorizontalBackgroundColourResourceId );
+                return mHorizontalBackgroundColourResourceId;
 
-      case VERTICAL:
+            case VERTICAL:
 
-        return ( mVerticalBackgroundColourResourceId );
-      }
+                return mVerticalBackgroundColourResourceId;
+        }
 
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Returns the resource id of the icon that represents
+     * this image source.
+     *
+     *****************************************************/
+    int getIconResourceId(LayoutType layoutType) {
 
-  /*****************************************************
-   *
-   * Returns the resource id of the icon that represents
-   * this image source.
-   *
-   *****************************************************/
-  int getIconResourceId( LayoutType layoutType )
-    {
-    switch ( layoutType )
-      {
-      case HORIZONTAL:
+        switch (layoutType) {
+            case HORIZONTAL:
 
-        return ( mHorizontalLayoutIconResourceId );
+                return mHorizontalLayoutIconResourceId;
 
-      case VERTICAL:
+            case VERTICAL:
 
-        return ( mVerticalLayoutIconResourceId );
-      }
+                return mVerticalLayoutIconResourceId;
+        }
 
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Returns the resource id of the label string that
+     * represents this image source.
+     *
+     *****************************************************/
+    int getLabelResourceId() {
 
-  /*****************************************************
-   *
-   * Returns the resource id of the label string that
-   * represents this image source.
-   *
-   *****************************************************/
-  int getLabelResourceId()
-    {
-    return ( mLabelResourceId );
+        return mLabelResourceId;
     }
 
+    /*****************************************************
+     *
+     * Returns the id of the menu item for this image source.
+     *
+     *****************************************************/
+    public int getMenuItemId() {
 
-  /*****************************************************
-   *
-   * Returns the id of the menu item for this image source.
-   *
-   *****************************************************/
-  public int getMenuItemId()
-    {
-    return ( mMenuItemId );
+        return mMenuItemId;
     }
 
+    /*****************************************************
+     *
+     * Adds this image source as a menu item. The order is
+     * the same as the request code.
+     *
+     *****************************************************/
+    public void addAsMenuItem(Menu menu) {
 
-  /*****************************************************
-   *
-   * Adds this image source as a menu item. The order is
-   * the same as the request code.
-   *
-   *****************************************************/
-  public void addAsMenuItem( Menu menu )
-    {
-    menu.add( 0, mMenuItemId, mActivityRequestCode, mMenuItemTitleResourceId );
+        menu.add(0, mMenuItemId, mActivityRequestCode, mMenuItemTitleResourceId);
     }
 
+    /*****************************************************
+     *
+     * Sets the activity request code. This should not be used
+     * by the app; the the Kite SDK assigns request codes to the
+     * image sources automatically.
+     *
+     *****************************************************/
+    public void setActivityRequestCode(int requestCode) {
 
-  /*****************************************************
-   *
-   * Sets the activity request code. This should not be used
-   * by the app; the the Kite SDK assigns request codes to the
-   * image sources automatically.
-   *
-   *****************************************************/
-  public void setActivityRequestCode( int requestCode )
-    {
-    mActivityRequestCode = requestCode;
+        mActivityRequestCode = requestCode;
     }
 
+    /*****************************************************
+     *
+     * Returns the activity request code.
+     *
+     *****************************************************/
+    public int getActivityRequestCode() {
 
-  /*****************************************************
-   *
-   * Returns the activity request code.
-   *
-   *****************************************************/
-  public int getActivityRequestCode()
-    {
-    return ( mActivityRequestCode );
+        return mActivityRequestCode;
     }
 
+    /*****************************************************
+     *
+     * Returns true if this image source is available.
+     *
+     *****************************************************/
+    abstract public boolean isAvailable(Context context);
 
-  /*****************************************************
-   *
-   * Returns true if this image source is available.
-   *
-   *****************************************************/
-  abstract public boolean isAvailable( Context context );
+    /*****************************************************
+     *
+     * Returns the layout resource id to be used to display
+     * this image source for the supplied layout type.
+     *
+     *****************************************************/
+    public int getLayoutResource(LayoutType layoutType) {
 
+        switch (layoutType) {
+            case HORIZONTAL:
 
-  /*****************************************************
-   *
-   * Returns the layout resource id to be used to display
-   * this image source for the supplied layout type.
-   *
-   *****************************************************/
-  public int getLayoutResource( LayoutType layoutType )
-    {
-    switch ( layoutType )
-      {
-      case HORIZONTAL:
+                return R.layout.grid_item_image_source_horizontal;
 
-        return ( R.layout.grid_item_image_source_horizontal );
+            case VERTICAL:
 
-      case VERTICAL:
+                return R.layout.grid_item_image_source_vertical;
+        }
 
-        return ( R.layout.grid_item_image_source_vertical );
-      }
-
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Called when this image source is clicked.
+     *
+     *****************************************************/
+    abstract public void onPick(Fragment fragment, int maxImageCount);
 
-  /*****************************************************
-   *
-   * Called when this image source is clicked.
-   *
-   *****************************************************/
-  abstract public void onPick( Fragment fragment, int maxImageCount );
+    /*****************************************************
+     *
+     * Called when this image source is clicked.
+     *
+     *****************************************************/
+    public void onPick(Fragment fragment) {
 
-
-  /*****************************************************
-   *
-   * Called when this image source is clicked.
-   *
-   *****************************************************/
-  public void onPick( Fragment fragment )
-    {
-    onPick( fragment, UNLIMITED_IMAGES );
+        onPick(fragment, UNLIMITED_IMAGES);
     }
 
+    /*****************************************************
+     *
+     * Called when this image source is clicked.
+     *
+     *****************************************************/
+    public void onPick(Fragment fragment, boolean selectSingleImage) {
 
-  /*****************************************************
-   *
-   * Called when this image source is clicked.
-   *
-   *****************************************************/
-  public void onPick( Fragment fragment, boolean selectSingleImage )
-    {
-    onPick( fragment, ( selectSingleImage ? 1 : UNLIMITED_IMAGES ) );
+        onPick(fragment, (selectSingleImage ? 1 : UNLIMITED_IMAGES));
     }
 
+    /*****************************************************
+     *
+     * Calls the runnable once the supplied permissions
+     * have been granted.
+     *
+     *****************************************************/
+    protected void requestPermissions(String[] permissions, AStartPickerRunnable runnable) {
 
-  /*****************************************************
-   *
-   * Calls the runnable once the supplied permissions
-   * have been granted.
-   *
-   *****************************************************/
-  protected void requestPermissions( String[] permissions, AStartPickerRunnable runnable )
-    {
-    Activity activity = runnable.getActivity();
+        Activity activity = runnable.getActivity();
 
-    if ( activity instanceof AKiteActivity )
-      {
-      ( (AKiteActivity)activity ).callRunnableWithPermissions( permissions, runnable );
-      }
+        if (activity instanceof AKiteActivity) {
+            ((AKiteActivity) activity).callRunnableWithPermissions(permissions, runnable);
+        }
     }
 
+    /*****************************************************
+     *
+     * Calls the runnable once the supplied permission
+     * have been granted.
+     *
+     *****************************************************/
+    protected void requestPermission(String permission, AStartPickerRunnable runnable) {
 
-  /*****************************************************
-   *
-   * Calls the runnable once the supplied permission
-   * have been granted.
-   *
-   *****************************************************/
-  protected void requestPermission( String permission, AStartPickerRunnable runnable )
-    {
-    final String[] permissions = new String[]{ permission };
+        final String[] permissions = new String[]{permission};
 
-    requestPermissions( permissions, runnable );
+        requestPermissions(permissions, runnable);
     }
 
+    /*****************************************************
+     *
+     * Returns picked photos as assets. May call back to the
+     * consumer asynchronously or synchronously (i.e. from
+     * within this method).
+     *
+     *****************************************************/
+    abstract public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer);
 
-  /*****************************************************
-   *
-   * Returns picked photos as assets. May call back to the
-   * consumer asynchronously or synchronously (i.e. from
-   * within this method).
-   *
-   *****************************************************/
-  abstract public void getAssetsFromPickerResult( Activity activity, Intent data, IAssetConsumer assetConsumer );
+    /*****************************************************
+     *
+     * Called to end the customer session. May be used to
+     * log out of any social networks.
+     *
+     *****************************************************/
+    public void endCustomerSession(Context context) {
 
-
-  /*****************************************************
-   *
-   * Called to end the customer session. May be used to
-   * log out of any social networks.
-   *
-   *****************************************************/
-  public void endCustomerSession( Context context )
-    {
     }
 
+    ///// Inner class(es) /////
 
-  ///// Inner class(es) /////
-
-  /*****************************************************
-   *
-   * Images sources can be displayed in various different
-   * screens. This enum defines the type of layout that
-   * may be required.
-   *
-   *****************************************************/
-  public enum LayoutType
-    {
-    VERTICAL,
-    HORIZONTAL
+    /*****************************************************
+     *
+     * Images sources can be displayed in various different
+     * screens. This enum defines the type of layout that
+     * may be required.
+     *
+     *****************************************************/
+    public enum LayoutType {
+        VERTICAL,
+        HORIZONTAL
     }
 
-
-  /*****************************************************
-   *
-   * An asset consumer.
-   *
-   *****************************************************/
-  public interface IAssetConsumer
-    {
-    public void isacOnAssets( List<Asset> assetList );
+    /*****************************************************
+     *
+     * An asset consumer.
+     *
+     *****************************************************/
+    public interface IAssetConsumer {
+        public void isacOnAssets(List<Asset> assetList);
     }
 
+    /*****************************************************
+     *
+     * A runnable that simply calls the onPick method. Used
+     * to call the method once permissions have been granted.
+     *
+     *****************************************************/
+    protected abstract class AStartPickerRunnable implements Runnable {
+        protected Fragment mFragment;
+        protected int mMaxImageCount;
 
-  /*****************************************************
-   *
-   * A runnable that simply calls the onPick method. Used
-   * to call the method once permissions have been granted.
-   *
-   *****************************************************/
-  protected abstract class AStartPickerRunnable implements Runnable
-    {
-    protected Fragment  mFragment;
-    protected int       mMaxImageCount;
+        AStartPickerRunnable(Fragment fragment, int maxImageCount) {
 
-    AStartPickerRunnable( Fragment fragment, int maxImageCount )
-      {
-      mFragment      = fragment;
-      mMaxImageCount = maxImageCount;
-      }
+            mFragment = fragment;
+            mMaxImageCount = maxImageCount;
+        }
 
-    Activity getActivity()
-      {
-      return ( mFragment.getActivity() );
-      }
+        Activity getActivity() {
+
+            return mFragment.getActivity();
+        }
     }
 
-  }
+}

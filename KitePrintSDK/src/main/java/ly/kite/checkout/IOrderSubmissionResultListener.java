@@ -36,12 +36,10 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import ly.kite.api.OrderState;
 import ly.kite.ordering.Order;
-
 
 ///// Interface Declaration /////
 
@@ -51,17 +49,18 @@ import ly.kite.ordering.Order;
  * listener.
  *
  *****************************************************/
-public interface IOrderSubmissionResultListener
-  {
-  ////////// Static Constant(s) //////////
+public interface IOrderSubmissionResultListener {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    public void onOrderComplete(Order order, OrderState state);
 
-  public void onOrderComplete( Order order, OrderState state );
-  public void onOrderTimeout( Order order );
-  public void onOrderError( Order order, Exception exception );
-  public void onOrderDuplicate( Order order, String originalOrderId );
+    public void onOrderTimeout(Order order);
 
-  }
+    public void onOrderError(Order order, Exception exception);
+
+    public void onOrderDuplicate(Order order, String originalOrderId);
+
+}
 

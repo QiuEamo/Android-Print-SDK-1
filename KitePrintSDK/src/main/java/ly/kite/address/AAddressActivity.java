@@ -36,9 +36,7 @@
 
 package ly.kite.address;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -53,115 +51,111 @@ import ly.kite.journey.AKiteActivity;
  * This class is the parent class of address activities.
  *
  *****************************************************/
-abstract public class AAddressActivity extends AKiteActivity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AAddressActivity extends AKiteActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG           = "AddressActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AddressActivity";
 
-  static public  final String  KEY_ADDRESS       = "ly.kite.address";
-  static public  final String  KEY_EMAIL_ADDRESS = "ly.kite.emailaddress";
+    public static final String KEY_ADDRESS = "ly.kite.address";
+    public static final String KEY_EMAIL_ADDRESS = "ly.kite.emailaddress";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns an address bundled as an extra within an intent.
+     *
+     *****************************************************/
+    public static Address getAddress(Intent data) {
 
-  ////////// Static Initialiser(s) //////////
+        if (data == null) {
+            return null;
+        }
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns an address bundled as an extra within an intent.
-   *
-   *****************************************************/
-  static public Address getAddress( Intent data )
-    {
-    if ( data == null ) return ( null );
-
-    return ( data.getParcelableExtra( KEY_ADDRESS ) );
+        return data.getParcelableExtra(KEY_ADDRESS);
     }
 
+    /*****************************************************
+     *
+     * Returns an email address bundled as an extra within an intent.
+     *
+     *****************************************************/
+    public static String getEmailAddress(Intent data) {
 
-  /*****************************************************
-   *
-   * Returns an email address bundled as an extra within an intent.
-   *
-   *****************************************************/
-  static public String getEmailAddress( Intent data )
-    {
-    if ( data == null ) return ( null );
+        if (data == null) {
+            return null;
+        }
 
-    return ( data.getStringExtra( KEY_EMAIL_ADDRESS ) );
+        return data.getStringExtra(KEY_EMAIL_ADDRESS);
     }
 
+    /*****************************************************
+     *
+     * Adds an address to an intent.
+     *
+     *****************************************************/
+    public static void addAddressIfNotNull(Address address, Intent intent) {
 
-  /*****************************************************
-   *
-   * Adds an address to an intent.
-   *
-   *****************************************************/
-  static public void addAddressIfNotNull( Address address, Intent intent )
-    {
-    if ( address != null ) intent.putExtra( KEY_ADDRESS, (Parcelable)address );
+        if (address != null) {
+            intent.putExtra(KEY_ADDRESS, (Parcelable) address);
+        }
     }
 
+    /*****************************************************
+     *
+     * Adds an email address to an intent.
+     *
+     *****************************************************/
+    public static void addEmailAddressIfNotNull(String emailAddress, Intent intent) {
 
-  /*****************************************************
-   *
-   * Adds an email address to an intent.
-   *
-   *****************************************************/
-  static public void addEmailAddressIfNotNull( String emailAddress, Intent intent )
-    {
-    if ( emailAddress != null ) intent.putExtra( KEY_EMAIL_ADDRESS, emailAddress );
+        if (emailAddress != null) {
+            intent.putExtra(KEY_EMAIL_ADDRESS, emailAddress);
+        }
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns an address result.
+     *
+     *****************************************************/
+    public void returnResult(Address address, String emailAddress) {
 
-  ////////// Method(s) //////////
+        Intent data = new Intent();
 
-  /*****************************************************
-   *
-   * Returns an address result.
-   *
-   *****************************************************/
-  public void returnResult( Address address, String emailAddress )
-    {
-    Intent data = new Intent();
+        addAddressIfNotNull(address, data);
+        addEmailAddressIfNotNull(emailAddress, data);
 
-    addAddressIfNotNull( address, data );
-    addEmailAddressIfNotNull( emailAddress, data );
-
-    setResult( Activity.RESULT_OK, data );
+        setResult(Activity.RESULT_OK, data);
     }
 
+    /*****************************************************
+     *
+     * Returns an address result.
+     *
+     *****************************************************/
+    public void returnResult(Address address) {
 
-  /*****************************************************
-   *
-   * Returns an address result.
-   *
-   *****************************************************/
-  public void returnResult( Address address )
-    {
-    returnResult( address, null );
+        returnResult(address, null);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

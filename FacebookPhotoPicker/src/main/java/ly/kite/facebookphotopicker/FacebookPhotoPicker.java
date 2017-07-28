@@ -36,17 +36,12 @@
 
 package ly.kite.facebookphotopicker;
 
-
 ///// Import(s) /////
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.os.Parcelable;
 
 import java.util.List;
-
-import ly.kite.imagepicker.AImagePickerActivity;
-
 
 ///// Class Declaration /////
 
@@ -56,67 +51,57 @@ import ly.kite.imagepicker.AImagePickerActivity;
  * functionality.
  *
  *****************************************************/
-public class FacebookPhotoPicker
-  {
-  ////////// Static Constant(s) //////////
+public class FacebookPhotoPicker {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "FacebookPhotoPicker";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "FacebookPhotoPicker";
 
-  static public  final String  EXTRA_SELECTED_PHOTOS = "ly.kite.facebookphotopicker.EXTRA_SELECTED_PHOTOS";
+    public static final String EXTRA_SELECTED_PHOTOS = "ly.kite.facebookphotopicker.EXTRA_SELECTED_PHOTOS";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Starts the Facebook photo picker.
+     *
+     *****************************************************/
+    public static void startPhotoPickerForResult(Fragment fragment, int maxImageCount, int activityRequestCode) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Starts the Facebook photo picker.
-   *
-   *****************************************************/
-  static public void startPhotoPickerForResult( Fragment fragment, int maxImageCount, int activityRequestCode )
-    {
-    FacebookPhotoPickerActivity.startForResult( fragment, maxImageCount, activityRequestCode );
+        FacebookPhotoPickerActivity.startForResult(fragment, maxImageCount, activityRequestCode);
     }
 
+    /*****************************************************
+     *
+     * Returns an array of picked photos.
+     *
+     *****************************************************/
+    public static List<String> getResultPhotos(Intent data) {
 
-  /*****************************************************
-   *
-   * Returns an array of picked photos.
-   *
-   *****************************************************/
-  static public List<String> getResultPhotos( Intent data )
-    {
-    return ( FacebookPhotoPickerActivity.getImageURLListFromResult( data ) );
+        return FacebookPhotoPickerActivity.getImageURLListFromResult(data);
     }
 
+    /*****************************************************
+     *
+     * Ends a customer session.
+     *
+     *****************************************************/
+    public static void endCustomerSession() {
 
-  /*****************************************************
-   *
-   * Ends a customer session.
-   *
-   *****************************************************/
-  static public void endCustomerSession()
-    {
-    FacebookAgent.logOut();
+        FacebookAgent.logOut();
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Method(s) //////////
-
-
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

@@ -36,24 +36,18 @@
 
 package ly.kite.app;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import ly.kite.journey.AKiteActivity;
 import ly.kite.util.StringUtils;
-
 
 ///// Class Declaration /////
 
@@ -62,146 +56,125 @@ import ly.kite.util.StringUtils;
  * This is a parent for activities that request permissions.
  *
  *****************************************************/
-abstract public class APermissionsRequestingActivity extends Activity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class APermissionsRequestingActivity extends Activity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                             = "APermissionsRequestingActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "APermissionsRequestingActivity";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private int mPermissionsRequestCode;
+    private String[] mPermissions;
+    private Runnable mPermissionsRunnable;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private   int                   mPermissionsRequestCode;
-  private   String[]              mPermissions;
-  private   Runnable              mPermissionsRunnable;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Activity Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called with any granted permissions.
+     *
+     *****************************************************/
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-  ////////// Static Method(s) //////////
+        if (requestCode == mPermissionsRequestCode) {
+            if (permissions != null &&
+                    grantResults != null &&
+                    permissions.length == mPermissions.length &&
+                    permissions.length == grantResults.length) {
+                // Make sure we have all the requested permissions
 
+                int permissionIndex = 0;
 
-  ////////// Constructor(s) //////////
+                for (String permission : permissions) {
+                    if (!StringUtils.areBothNullOrEqual(permission, mPermissions[permissionIndex]) ||
+                            grantResults[permissionIndex] != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
 
+                    permissionIndex++;
+                }
 
-  ////////// Activity Method(s) //////////
+                // We have all the permissions, so call the runnable
+                if (mPermissionsRunnable != null) {
+                    mPermissionsRunnable.run();
+                }
 
-  /*****************************************************
-   *
-   * Called with any granted permissions.
-   *
-   *****************************************************/
-  public void onRequestPermissionsResult( int requestCode, String[] permissions, int[] grantResults )
-    {
-    if ( requestCode == mPermissionsRequestCode )
-      {
-      if ( permissions  != null &&
-              grantResults != null &&
-              permissions.length == mPermissions.length &&
-              permissions.length == grantResults.length )
-        {
-        // Make sure we have all the requested permissions
-
-        int permissionIndex = 0;
-
-        for ( String permission : permissions )
-          {
-          if ( ! StringUtils.areBothNullOrEqual( permission, mPermissions[ permissionIndex] ) ||
-                  grantResults[ permissionIndex ] != PackageManager.PERMISSION_GRANTED )
-            {
-            return;
+                mPermissionsRequestCode = -1;
+                mPermissions = null;
+                mPermissionsRunnable = null;
             }
-
-          permissionIndex ++;
-          }
-
-
-        // We have all the permissions, so call the runnable
-        if ( mPermissionsRunnable != null ) mPermissionsRunnable.run();
-
-        mPermissionsRequestCode = -1;
-        mPermissions            = null;
-        mPermissionsRunnable    = null;
         }
-      }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Requests permission(s), and calls a runnable when
+     * they are granted.
+     *
+     *****************************************************/
+    public void callRunnableWithPermissions(String[] permissions, Runnable runnable) {
+        // If we are running on a pre-Marshmallow device, we already have the permissions
+        // we need (because they were all granted at install time).
 
-  /*****************************************************
-   *
-   * Requests permission(s), and calls a runnable when
-   * they are granted.
-   *
-   *****************************************************/
-  public void callRunnableWithPermissions( String[] permissions, Runnable runnable )
-    {
-    // If we are running on a pre-Marshmallow device, we already have the permissions
-    // we need (because they were all granted at install time).
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            runnable.run();
 
-    if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.M )
-      {
-      runnable.run();
-
-      return;
-      }
-
-
-    // We are running Marshmallow onwards
-
-
-    // Create a list of the permissions we need
-
-    ArrayList<String> requiredPermissionList = new ArrayList<>( permissions.length );
-
-    for ( String permission: permissions )
-      {
-      if ( ContextCompat.checkSelfPermission( this, permission ) != PackageManager.PERMISSION_GRANTED )
-        {
-        requiredPermissionList.add( permission );
+            return;
         }
-      }
 
+        // We are running Marshmallow onwards
 
-    // See if we already have the permissions we need
+        // Create a list of the permissions we need
 
-    int requiredPermissionCount = requiredPermissionList.size();
+        ArrayList<String> requiredPermissionList = new ArrayList<>(permissions.length);
 
-    if ( requiredPermissionCount < 1 )
-      {
-      runnable.run();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                requiredPermissionList.add(permission);
+            }
+        }
 
-      return;
-      }
+        // See if we already have the permissions we need
 
+        int requiredPermissionCount = requiredPermissionList.size();
 
-    // Request the permissions we need
+        if (requiredPermissionCount < 1) {
+            runnable.run();
 
-    String[] requiredPermissions = new String[ requiredPermissionCount ];
+            return;
+        }
 
-    requiredPermissionList.toArray( requiredPermissions );
+        // Request the permissions we need
 
-    mPermissionsRequestCode = new Random().nextInt( 16384 );  // Must not be negative!
-    mPermissions            = requiredPermissions;
-    mPermissionsRunnable    = runnable;
+        String[] requiredPermissions = new String[requiredPermissionCount];
 
-    ActivityCompat.requestPermissions( this, mPermissions, mPermissionsRequestCode );
+        requiredPermissionList.toArray(requiredPermissions);
+
+        mPermissionsRequestCode = new Random().nextInt(16384);  // Must not be negative!
+        mPermissions = requiredPermissions;
+        mPermissionsRunnable = runnable;
+
+        ActivityCompat.requestPermissions(this, mPermissions, mPermissionsRequestCode);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

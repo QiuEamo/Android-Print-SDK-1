@@ -36,11 +36,9 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
 
 import android.graphics.Bitmap;
-
 
 ///// Class Declaration /////
 
@@ -51,32 +49,29 @@ import android.graphics.Bitmap;
  * and is used to return the image to the consumer.
  *
  *****************************************************/
-public interface IImageConsumer
-  {
-  ////////// Method(s) //////////
+public interface IImageConsumer {
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Called for remote images when they are not available
-   * locally, and will thus be downloaded.
-   *
-   *****************************************************/
-  public void onImageDownloading( Object key );
+    /*****************************************************
+     *
+     * Called for remote images when they are not available
+     * locally, and will thus be downloaded.
+     *
+     *****************************************************/
+    public void onImageDownloading(Object key);
 
+    /*****************************************************
+     *
+     * Called when an image is available.
+     *
+     *****************************************************/
+    public void onImageAvailable(Object key, Bitmap bitmap);
 
-  /*****************************************************
-   *
-   * Called when an image is available.
-   *
-   *****************************************************/
-  public void onImageAvailable( Object key, Bitmap bitmap );
-
-
-  /*****************************************************
-   *
-   * Called when an image could not be loaded. An exception
-   * may or may not be additionally returned.
-   *
-   *****************************************************/
-  public void onImageUnavailable( Object key, Exception exception );
-  }
+    /*****************************************************
+     *
+     * Called when an image could not be loaded. An exception
+     * may or may not be additionally returned.
+     *
+     *****************************************************/
+    public void onImageUnavailable(Object key, Exception exception);
+}

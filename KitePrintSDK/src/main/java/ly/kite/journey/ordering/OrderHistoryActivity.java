@@ -36,18 +36,14 @@
 
 package ly.kite.journey.ordering;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import ly.kite.R;
-import ly.kite.checkout.OrderSubmissionFragment;
 import ly.kite.journey.AKiteActivity;
-
 
 ///// Class Declaration /////
 
@@ -59,89 +55,79 @@ import ly.kite.journey.AKiteActivity;
  * orders in a fragment or activity.
  *
  *****************************************************/
-public class OrderHistoryActivity extends AKiteActivity implements OrderHistoryFragment.ICancelListener
-  {
-  ////////// Static Constant(s) //////////
+public class OrderHistoryActivity extends AKiteActivity implements OrderHistoryFragment.ICancelListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "OrderHistoryActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderHistoryActivity";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Starts this activity.
+     *
+     *****************************************************/
+    public static void start(Activity activity) {
 
-  ////////// Static Initialiser(s) //////////
+        final Intent intent = new Intent(activity, OrderHistoryActivity.class);
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Starts this activity.
-   *
-   *****************************************************/
-  static public void start( Activity activity )
-    {
-    Intent intent = new Intent( activity, OrderHistoryActivity.class );
-
-    activity.startActivity( intent );
+        activity.startActivity(intent);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// AKiteActivity Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  ////////// AKiteActivity Method(s) //////////
+        super.onCreate(savedInstanceState);
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
+        setContentView(R.layout.screen_general_fragment_container);
 
-    setContentView( R.layout.screen_general_fragment_container );
-
-    if ( savedInstanceState == null )
-      {
-      getFragmentManager()
-        .beginTransaction()
-          .add( R.id.fragment_container, new OrderHistoryFragment() )
-          .addToBackStack( OrderHistoryFragment.TAG )
-        .commit();
-      }
+        if (savedInstanceState == null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, new OrderHistoryFragment())
+                    .addToBackStack(OrderHistoryFragment.TAG)
+                    .commit();
+        }
     }
 
+    ////////// AKiteActivity Method(s) //////////
 
-  ////////// AKiteActivity Method(s) //////////
+    /*****************************************************
+     *
+     * Called if the catalogue load is cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void onLoadCancelled() {
 
-  /*****************************************************
-   *
-   * Called if the catalogue load is cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void onLoadCancelled()
-    {
-    popFragment();
+        popFragment();
 
-    finish();
+        finish();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

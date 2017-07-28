@@ -36,18 +36,13 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.TextView;
-
-import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -57,78 +52,70 @@ import ly.kite.R;
  * be customised.
  *
  *****************************************************/
-public class CustomTypefaceTextView extends TextView
-  {
-  ////////// Static Constant(s) //////////
+public class CustomTypefaceTextView extends TextView {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "CustomTypefaceTextView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CustomTypefaceTextView";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public CustomTypefaceTextView(Context context) {
 
+        super(context);
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public CustomTypefaceTextView( Context context )
-    {
-    super( context );
-
-    initialise( context, null, 0 );
+        initialise(context, null, 0);
     }
 
-  public CustomTypefaceTextView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public CustomTypefaceTextView(Context context, AttributeSet attrs) {
 
-    initialise( context, attrs, 0 );
+        super(context, attrs);
+
+        initialise(context, attrs, 0);
     }
 
-  public CustomTypefaceTextView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public CustomTypefaceTextView(Context context, AttributeSet attrs, int defStyleAttr) {
 
-    initialise( context, attrs, 0 );
+        super(context, attrs, defStyleAttr);
+
+        initialise(context, attrs, 0);
     }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public CustomTypefaceTextView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public CustomTypefaceTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
-    initialise( context, attrs, defStyleAttr );
+        super(context, attrs, defStyleAttr, defStyleRes);
+
+        initialise(context, attrs, defStyleAttr);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Initialises this widget.
+     *
+     *****************************************************/
+    private void initialise(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-  /*****************************************************
-   *
-   * Initialises this widget.
-   *
-   *****************************************************/
-  private void initialise( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    CustomTypefaceSetter.setTypeface( context, this, attributeSet, defaultStyle );
+        CustomTypefaceSetter.setTypeface(context, this, attributeSet, defaultStyle);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

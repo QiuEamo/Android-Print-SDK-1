@@ -36,9 +36,7 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -50,91 +48,84 @@ import java.util.List;
  * This class provides methods for use with booleans.
  *
  *****************************************************/
-public class BooleanUtils
-  {
-  ////////// Static Constant(s) //////////
+public class BooleanUtils {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BooleanUtils";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BooleanUtils";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Converts a list of Boolean objects into an array of
+     * native booleans. Any null objects will be converted
+     * to false.
+     *
+     *****************************************************/
+    public static boolean[] arrayFrom(List<Boolean> booleanList) {
 
-  ////////// Static Initialiser(s) //////////
+        if (booleanList == null) {
+            return null;
+        }
 
+        boolean[] booleanArray = new boolean[booleanList.size()];
 
-  ////////// Static Method(s) //////////
+        int index = 0;
 
-  /*****************************************************
-   *
-   * Converts a list of Boolean objects into an array of
-   * native booleans. Any null objects will be converted
-   * to false.
-   *
-   *****************************************************/
-  static public boolean[] arrayFrom( List<Boolean> booleanList )
-    {
-    if ( booleanList == null ) return ( null );
+        for (Boolean booleanObject : booleanList) {
+            booleanArray[index] = (booleanObject != null ? booleanObject : false);  // Unboxing
 
-    boolean[] booleanArray = new boolean[ booleanList.size() ];
+            index++;
+        }
 
-    int index = 0;
-
-    for ( Boolean booleanObject : booleanList )
-      {
-      booleanArray[ index ] = ( booleanObject != null ? booleanObject : false );  // Unboxing
-
-      index ++;
-      }
-
-    return ( booleanArray );
+        return booleanArray;
     }
 
+    /*****************************************************
+     *
+     * Converts an array of native boooeans to a list of
+     * Boolean objects.
+     *
+     *****************************************************/
+    public static ArrayList<Boolean> arrayListFrom(boolean[] booleanArray) {
 
-  /*****************************************************
-   *
-   * Converts an array of native boooeans to a list of
-   * Boolean objects.
-   *
-   *****************************************************/
-  static public ArrayList<Boolean> arrayListFrom( boolean[] booleanArray )
-    {
-    if ( booleanArray == null ) return ( null );
+        if (booleanArray == null) {
+            return null;
+        }
 
-    ArrayList<Boolean> booleanList = new ArrayList<>( booleanArray.length );
+        ArrayList<Boolean> booleanList = new ArrayList<>(booleanArray.length);
 
-    for ( boolean booleanValue : booleanArray )
-      {
-      booleanList.add( booleanValue );  // Boxing
-      }
+        for (boolean booleanValue : booleanArray) {
+            booleanList.add(booleanValue);  // Boxing
+        }
 
-    return ( booleanList );
+        return booleanList;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Method(s) //////////
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

@@ -36,9 +36,7 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -47,83 +45,78 @@ package ly.kite.util;
  * This class is used to build a delimited string.
  *
  *****************************************************/
-public class DelimitedStringBuilder
-  {
-  ////////// Static Constant(s) //////////
+public class DelimitedStringBuilder {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "DelimitedStringBuilder";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "DelimitedStringBuilder";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String mDelimiter;
 
-  ////////// Member Variable(s) //////////
+    private StringBuilder mStringBuilder;
+    private boolean mPrependDelimiter;
 
-  private String         mDelimiter;
+    ////////// Static Initialiser(s) //////////
 
-  private StringBuilder  mStringBuilder;
-  private boolean        mPrependDelimiter;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public DelimitedStringBuilder(String delimiter) {
 
+        if (delimiter == null || delimiter.length() < 1) {
+            throw new IllegalArgumentException("Non empty delimited must be supplied");
+        }
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public DelimitedStringBuilder( String delimiter )
-    {
-    if ( delimiter == null || delimiter.length() < 1 )
-      {
-      throw ( new IllegalArgumentException( "Non empty delimited must be supplied" ) );
-      }
-
-    mDelimiter        = delimiter;
-    mStringBuilder    = new StringBuilder();
-    mPrependDelimiter = false;
+        mDelimiter = delimiter;
+        mStringBuilder = new StringBuilder();
+        mPrependDelimiter = false;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Appends a string. A null is equivalent to an empty string.
+     *
+     *****************************************************/
+    public DelimitedStringBuilder append(String string) {
 
-  /*****************************************************
-   *
-   * Appends a string. A null is equivalent to an empty string.
-   *
-   *****************************************************/
-  public DelimitedStringBuilder append( String string )
-    {
-    if ( mPrependDelimiter ) mStringBuilder.append( mDelimiter );
-    else                     mPrependDelimiter = true;
+        if (mPrependDelimiter) {
+            mStringBuilder.append(mDelimiter);
+        } else {
+            mPrependDelimiter = true;
+        }
 
-    if ( string != null ) mStringBuilder.append( string );
+        if (string != null) {
+            mStringBuilder.append(string);
+        }
 
-    return ( this );
+        return this;
     }
 
+    /*****************************************************
+     *
+     * Returns the built string.
+     *
+     *****************************************************/
+    @Override
+    public String toString() {
 
-  /*****************************************************
-   *
-   * Returns the built string.
-   *
-   *****************************************************/
-  @Override
-  public String toString()
-    {
-    return ( mStringBuilder.toString() );
+        return mStringBuilder.toString();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

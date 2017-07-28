@@ -36,9 +36,7 @@
 
 package ly.kite.app;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -56,229 +54,217 @@ import ly.kite.KiteSDK;
  * both standard and dialog.
  *
  *****************************************************/
-public class RetainedFragmentHelper
-  {
-  ////////// Static Constant(s) //////////
+public class RetainedFragmentHelper {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "RetainedFragmentHelper";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "RetainedFragmentHelper";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Fragment mRetainedFragment;
+    private Class<?> mCallbackClass;
 
-  ////////// Member Variable(s) //////////
+    private AStateNotifier mStateNotifier;
 
-  private Fragment        mRetainedFragment;
-  private Class<?>        mCallbackClass;
+    ////////// Static Initialiser(s) //////////
 
-  private AStateNotifier  mStateNotifier;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
+    RetainedFragmentHelper(Fragment retainedFragment, Class<?> callbackClass) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  RetainedFragmentHelper( Fragment retainedFragment, Class<?> callbackClass )
-    {
-    mRetainedFragment = retainedFragment;
-    mCallbackClass    = callbackClass;
+        mRetainedFragment = retainedFragment;
+        mCallbackClass = callbackClass;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  public void onCreate( Bundle savedInstanceState )
-    {
-    // Make sure we are retained even if the activity is destroyed, e.g. during
-    // orientation changes.
-    mRetainedFragment.setRetainInstance( true );
+    /*****************************************************
+     *
+     * Called when the fragment is created.
+     *
+     *****************************************************/
+    public void onCreate(Bundle savedInstanceState) {
+        // Make sure we are retained even if the activity is destroyed, e.g. during
+        // orientation changes.
+        mRetainedFragment.setRetainInstance(true);
     }
 
+    /*****************************************************
+     *
+     * Adds the fragment to the activity.
+     *
+     *****************************************************/
+    public void addTo(Activity activity, String tag) {
 
-  /*****************************************************
-   *
-   * Adds the fragment to the activity.
-   *
-   *****************************************************/
-  public void addTo( Activity activity, String tag )
-    {
-    FragmentManager fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
 
-    if ( fragmentManager != null )
-      {
-      fragmentManager
-        .beginTransaction()
-          .add( mRetainedFragment, tag )
-        .commit();
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the fragment is attached to an activity.
-   *
-   *****************************************************/
-  public void onAttach( Activity activity )
-    {
-    if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "onAttach( activity = " + activity + " )" );
-
-    checkNotifyState();
-    }
-
-
-  /*****************************************************
-   *
-   * Called when a target fragment is set.
-   *
-   *****************************************************/
-  public void onSetTargetFragment( Fragment fragment, int requestCode )
-    {
-    if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "setTargetFragment( fragment = " + fragment + ", requestCode = " + requestCode + " )" );
-
-    checkNotifyState();
-    }
-
-
-  /*****************************************************
-   *
-   * Checks for any previous update, and re-runs it.
-   *
-   *****************************************************/
-  private void checkNotifyState()
-    {
-    if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "checkNotifyState() mStateNotifier = " + mStateNotifier );
-
-    if ( mStateNotifier != null )
-      {
-      // If we are attached to an activity that is the correct callback type -
-      // notify it of the current state.
-
-      Object callbackActivity = getCallbackActivity();
-
-      if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "  callbackActivity = " + callbackActivity );
-
-      if ( callbackActivity != null ) mStateNotifier.notify( callbackActivity );
-
-
-      // If we have a target fragment that is the correct callback type -
-      // notify it of the current state.
-
-      Object callbackFragment = getCallbackFragment();
-
-      if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "  callbackFragment = " + callbackFragment );
-
-      if ( callbackFragment != null ) mStateNotifier.notify( callbackFragment );
-      }
-
-
-    // We don't clear the state; the callback will get re-notified as many times as
-    // we are re-attached.
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the supplied object, if it is non-null, and
-   * can be cast to the callback class.
-   *
-   *****************************************************/
-  private Object getCallbackObject( Object candidateObject )
-    {
-    if ( candidateObject != null )
-      {
-      if ( mCallbackClass.isAssignableFrom( candidateObject.getClass() ) )
-        {
-        return ( candidateObject );
+        if (fragmentManager != null) {
+            fragmentManager
+                    .beginTransaction()
+                    .add(mRetainedFragment, tag)
+                    .commit();
         }
-      }
-
-
-    return ( null );
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is attached to an activity.
+     *
+     *****************************************************/
+    public void onAttach(Activity activity) {
 
-  /*****************************************************
-   *
-   * Returns the activity if it is assignable to the callback
-   * class.
-   *
-   *****************************************************/
-  private Object getCallbackActivity()
-    {
-    return ( getCallbackObject( mRetainedFragment.getActivity() ) );
+        if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+            Log.d(LOG_TAG, "onAttach( activity = " + activity + " )");
+        }
+
+        checkNotifyState();
     }
 
+    /*****************************************************
+     *
+     * Called when a target fragment is set.
+     *
+     *****************************************************/
+    public void onSetTargetFragment(Fragment fragment, int requestCode) {
 
-  /*****************************************************
-   *
-   * Returns any target fragment cast to the callback type
-   *
-   *****************************************************/
-  private Object getCallbackFragment()
-    {
-    return ( getCallbackObject( mRetainedFragment.getTargetFragment() ) );
+        if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+            Log.d(LOG_TAG, "setTargetFragment( fragment = " + fragment + ", requestCode = " + requestCode + " )");
+        }
+
+        checkNotifyState();
     }
 
+    /*****************************************************
+     *
+     * Checks for any previous update, and re-runs it.
+     *
+     *****************************************************/
+    private void checkNotifyState() {
 
-  /*****************************************************
-   *
-   * Sets the current state notifier. The notifier may
-   * get called twice, if there is both an attached activity
-   * and a target fragment of the correct callback type.
-   *
-   *****************************************************/
-  protected void setState( AStateNotifier stateNotifier )
-    {
-    if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( LOG_TAG, "setStateNotifier( stateNotifier = " + stateNotifier + " )" );
+        if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+            Log.d(LOG_TAG, "checkNotifyState() mStateNotifier = " + mStateNotifier);
+        }
 
-    mStateNotifier = stateNotifier;
+        if (mStateNotifier != null) {
+            // If we are attached to an activity that is the correct callback type -
+            // notify it of the current state.
 
-    checkNotifyState();
+            Object callbackActivity = getCallbackActivity();
+
+            if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+                Log.d(LOG_TAG, "  callbackActivity = " + callbackActivity);
+            }
+
+            if (callbackActivity != null) {
+                mStateNotifier.notify(callbackActivity);
+            }
+
+            // If we have a target fragment that is the correct callback type -
+            // notify it of the current state.
+
+            Object callbackFragment = getCallbackFragment();
+
+            if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+                Log.d(LOG_TAG, "  callbackFragment = " + callbackFragment);
+            }
+
+            if (callbackFragment != null) {
+                mStateNotifier.notify(callbackFragment);
+            }
+        }
+
+        // We don't clear the state; the callback will get re-notified as many times as
+        // we are re-attached.
     }
 
+    /*****************************************************
+     *
+     * Returns the supplied object, if it is non-null, and
+     * can be cast to the callback class.
+     *
+     *****************************************************/
+    private Object getCallbackObject(Object candidateObject) {
 
-  /*****************************************************
-   *
-   * Removes the fragment from the activity.
-   *
-   *****************************************************/
-  public void removeFrom( Activity activity )
-    {
-    FragmentManager fragmentManager = activity.getFragmentManager();
+        if (candidateObject != null) {
+            if (mCallbackClass.isAssignableFrom(candidateObject.getClass())) {
+                return candidateObject;
+            }
+        }
 
-    if ( fragmentManager != null )
-      {
-      fragmentManager
-        .beginTransaction()
-          .remove( mRetainedFragment )
-        .commitAllowingStateLoss();
-      }
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns the activity if it is assignable to the callback
+     * class.
+     *
+     *****************************************************/
+    private Object getCallbackActivity() {
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * An interface for state notification.
-   *
-   *****************************************************/
-  public interface AStateNotifier
-    {
-    public void notify( Object callback );
+        return getCallbackObject(mRetainedFragment.getActivity());
     }
 
-  }
+    /*****************************************************
+     *
+     * Returns any target fragment cast to the callback type
+     *
+     *****************************************************/
+    private Object getCallbackFragment() {
+
+        return getCallbackObject(mRetainedFragment.getTargetFragment());
+    }
+
+    /*****************************************************
+     *
+     * Sets the current state notifier. The notifier may
+     * get called twice, if there is both an attached activity
+     * and a target fragment of the correct callback type.
+     *
+     *****************************************************/
+    protected void setState(AStateNotifier stateNotifier) {
+
+        if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+            Log.d(LOG_TAG, "setStateNotifier( stateNotifier = " + stateNotifier + " )");
+        }
+
+        mStateNotifier = stateNotifier;
+
+        checkNotifyState();
+    }
+
+    /*****************************************************
+     *
+     * Removes the fragment from the activity.
+     *
+     *****************************************************/
+    public void removeFrom(Activity activity) {
+
+        FragmentManager fragmentManager = activity.getFragmentManager();
+
+        if (fragmentManager != null) {
+            fragmentManager
+                    .beginTransaction()
+                    .remove(mRetainedFragment)
+                    .commitAllowingStateLoss();
+        }
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * An interface for state notification.
+     *
+     *****************************************************/
+    public interface AStateNotifier {
+        public void notify(Object callback);
+    }
+
+}
 

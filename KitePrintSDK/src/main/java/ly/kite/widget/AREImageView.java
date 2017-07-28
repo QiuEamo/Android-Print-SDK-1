@@ -36,16 +36,13 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-
 
 ///// Class Declaration /////
 
@@ -54,107 +51,97 @@ import android.widget.ImageView;
  * This class is an aspect ratio enforced frame layout.
  *
  *****************************************************/
-public class AREImageView extends ImageView
-  {
-  ////////// Static Constant(s) //////////
+public class AREImageView extends ImageView {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "AREImageView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AREImageView";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private AspectRatioEnforcer mAspectRatioEnforcer;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private AspectRatioEnforcer  mAspectRatioEnforcer;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public AREImageView(Context context) {
 
+        super(context);
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public AREImageView( Context context )
-    {
-    super( context );
-
-    initialise( context, null, 0 );
+        initialise(context, null, 0);
     }
 
-  public AREImageView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public AREImageView(Context context, AttributeSet attrs) {
 
-    initialise( context, attrs, 0 );
+        super(context, attrs);
+
+        initialise(context, attrs, 0);
     }
 
-  public AREImageView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public AREImageView(Context context, AttributeSet attrs, int defStyleAttr) {
 
-    initialise( context, attrs, defStyleAttr );
+        super(context, attrs, defStyleAttr);
+
+        initialise(context, attrs, defStyleAttr);
     }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public AREImageView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public AREImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
-    initialise( context, attrs, defStyleAttr );
+        super(context, attrs, defStyleAttr, defStyleRes);
+
+        initialise(context, attrs, defStyleAttr);
     }
 
+    ////////// View Method(s) //////////
 
-  ////////// View Method(s) //////////
+    /*****************************************************
+     *
+     * Called to measure the view.
+     *
+     *****************************************************/
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-  /*****************************************************
-   *
-   * Called to measure the view.
-   *
-   *****************************************************/
-  @Override
-  protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec )
-    {
-    mAspectRatioEnforcer.onMeasure( this, widthMeasureSpec, heightMeasureSpec );
+        mAspectRatioEnforcer.onMeasure(this, widthMeasureSpec, heightMeasureSpec);
 
-    super.onMeasure( mAspectRatioEnforcer.getWidthMeasureSpec(), mAspectRatioEnforcer.getHeightMeasureSpec() );
+        super.onMeasure(mAspectRatioEnforcer.getWidthMeasureSpec(), mAspectRatioEnforcer.getHeightMeasureSpec());
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Initialises this view.
+     *
+     *****************************************************/
+    private void initialise(Context context, AttributeSet attrs, int defStyleAttr) {
 
-  /*****************************************************
-   *
-   * Initialises this view.
-   *
-   *****************************************************/
-  private void initialise( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    mAspectRatioEnforcer = new AspectRatioEnforcer( context, attrs, defStyleAttr );
+        mAspectRatioEnforcer = new AspectRatioEnforcer(context, attrs, defStyleAttr);
     }
 
+    /*****************************************************
+     *
+     * Sets the aspect ratio.
+     *
+     *****************************************************/
+    public void setAspectRatio(float aspectRatio) {
 
-  /*****************************************************
-   *
-   * Sets the aspect ratio.
-   *
-   *****************************************************/
-  public void setAspectRatio( float aspectRatio )
-    {
-    mAspectRatioEnforcer.setAspectRatio( aspectRatio );
+        mAspectRatioEnforcer.setAspectRatio(aspectRatio);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

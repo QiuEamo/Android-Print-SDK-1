@@ -36,7 +36,6 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -44,7 +43,6 @@ import android.content.Intent;
 
 import ly.kite.catalogue.SingleCurrencyAmounts;
 import ly.kite.ordering.Order;
-
 
 ///// Interface Declaration /////
 
@@ -54,33 +52,30 @@ import ly.kite.ordering.Order;
  * collect and process credit cards for payment.
  *
  *****************************************************/
-public interface ICreditCardAgent
-  {
-  ////////// Method(s) //////////
+public interface ICreditCardAgent {
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Returns true if the agent uses PayPal to process
-   * credit card payments.
-   *
-   *****************************************************/
-  public boolean usesPayPal();
+    /*****************************************************
+     *
+     * Returns true if the agent uses PayPal to process
+     * credit card payments.
+     *
+     *****************************************************/
+    public boolean usesPayPal();
 
+    /*****************************************************
+     *
+     * Notifies the agent that the user has clicked on the
+     * credit card payment button.
+     *
+     *****************************************************/
+    public void onPayClicked(Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount);
 
-  /*****************************************************
-   *
-   * Notifies the agent that the user has clicked on the
-   * credit card payment button.
-   *
-   *****************************************************/
-  public void onPayClicked( Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount );
+    /*****************************************************
+     *
+     * Passes an activity result to the agent.
+     *
+     *****************************************************/
+    public void onActivityResult(int requestCode, int resultCode, Intent data);
 
-
-  /*****************************************************
-   *
-   * Passes an activity result to the agent.
-   *
-   *****************************************************/
-  public void onActivityResult( int requestCode, int resultCode, Intent data );
-
-  }
+}

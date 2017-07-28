@@ -36,18 +36,13 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.EditText;
-
-import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -57,78 +52,70 @@ import ly.kite.R;
  * be customised.
  *
  *****************************************************/
-public class CustomTypefaceEditText extends EditText
-  {
-  ////////// Static Constant(s) //////////
+public class CustomTypefaceEditText extends EditText {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "CustomTypefaceEditText";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CustomTypefaceEditText";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public CustomTypefaceEditText(Context context) {
 
+        super(context);
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public CustomTypefaceEditText( Context context )
-    {
-    super( context );
-
-    initialise( context, null, 0 );
+        initialise(context, null, 0);
     }
 
-  public CustomTypefaceEditText( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public CustomTypefaceEditText(Context context, AttributeSet attrs) {
 
-    initialise( context, attrs, 0 );
+        super(context, attrs);
+
+        initialise(context, attrs, 0);
     }
 
-  public CustomTypefaceEditText( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public CustomTypefaceEditText(Context context, AttributeSet attrs, int defStyleAttr) {
 
-    initialise( context, attrs, defStyleAttr );
+        super(context, attrs, defStyleAttr);
+
+        initialise(context, attrs, defStyleAttr);
     }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public CustomTypefaceEditText( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
-    {
-    super( context, attrs, defStyleAttr, defStyleRes );
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public CustomTypefaceEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
-    initialise( context, attrs, defStyleAttr );
+        super(context, attrs, defStyleAttr, defStyleRes);
+
+        initialise(context, attrs, defStyleAttr);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Initialises this widget.
+     *
+     *****************************************************/
+    private void initialise(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-  /*****************************************************
-   *
-   * Initialises this widget.
-   *
-   *****************************************************/
-  private void initialise( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    CustomTypefaceSetter.setTypeface( context, this, attributeSet, defaultStyle );
+        CustomTypefaceSetter.setTypeface(context, this, attributeSet, defaultStyle);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

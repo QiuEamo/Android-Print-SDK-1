@@ -36,14 +36,12 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
 
 import android.graphics.Bitmap;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-
 
 ///// Class Declaration /////
 
@@ -53,264 +51,243 @@ import java.util.LinkedList;
  * may be used as an intermediary image consumer.
  *
  *****************************************************/
-public class ImageCache implements IImageConsumer
-  {
-  ////////// Static Constant(s) //////////
+public class ImageCache implements IImageConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ImageCache";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageCache";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private int mCapacityInBytes;
 
-  ////////// Member Variable(s) //////////
+    private HashMap<Object, Holder> mHolderTable;
+    private LinkedList<Holder> mHolderList;
+    private int mSizeInBytes;
 
-  private int                           mCapacityInBytes;
+    private HashMap<Object, PendingImage> mPendingTable;
 
-  private HashMap<Object,Holder>        mHolderTable;
-  private LinkedList<Holder>            mHolderList;
-  private int                           mSizeInBytes;
+    ////////// Static Initialiser(s) //////////
 
-  private HashMap<Object,PendingImage>  mPendingTable;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public ImageCache(int capacityInBytes) {
 
+        mCapacityInBytes = capacityInBytes;
 
-  ////////// Static Method(s) //////////
+        mHolderTable = new HashMap<>();
+        mHolderList = new LinkedList<>();
+        mSizeInBytes = 0;
 
-
-  ////////// Constructor(s) //////////
-
-  public ImageCache( int capacityInBytes )
-    {
-    mCapacityInBytes = capacityInBytes;
-
-    mHolderTable     = new HashMap<>();
-    mHolderList      = new LinkedList<>();
-    mSizeInBytes     = 0;
-
-    mPendingTable    = new HashMap<>();
+        mPendingTable = new HashMap<>();
     }
 
+    ////////// IImageConsumer Method(s) //////////
 
-  ////////// IImageConsumer Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the image is being downloaded.
+     *
+     * Passes the notification on to any consumer waiting for
+     * the image.
+     *
+     *****************************************************/
+    @Override
+    public void onImageDownloading(Object key) {
+        // Find the corresponding pending image
 
-  /*****************************************************
-   *
-   * Called when the image is being downloaded.
-   *
-   * Passes the notification on to any consumer waiting for
-   * the image.
-   *
-   *****************************************************/
-  @Override
-  public void onImageDownloading( Object key )
-    {
-    // Find the corresponding pending image
+        PendingImage pendingImage = mPendingTable.remove(key);
 
-    PendingImage pendingImage = mPendingTable.remove( key );
+        if (pendingImage == null) {
+            return;
+        }
 
-    if ( pendingImage == null ) return;
-
-
-    // Notify the end consumer
-    pendingImage.consumer.onImageDownloading( key );
+        // Notify the end consumer
+        pendingImage.consumer.onImageDownloading(key);
     }
 
+    /*****************************************************
+     *
+     * Called when the image is available. Override this
+     * in a child class if we want to do anything with
+     * the image before caching it, but remember that it
+     * is on the UI thread.
+     *
+     * Stores the image in the cache and then passes it on
+     * to any consumer waiting for it.
+     *
+     *****************************************************/
+    @Override
+    public void onImageAvailable(Object key, Bitmap bitmap) {
+        // Find the corresponding pending image
 
-  /*****************************************************
-   *
-   * Called when the image is available. Override this
-   * in a child class if we want to do anything with
-   * the image before caching it, but remember that it
-   * is on the UI thread.
-   *
-   * Stores the image in the cache and then passes it on
-   * to any consumer waiting for it.
-   *
-   *****************************************************/
-  @Override
-  public void onImageAvailable( Object key, Bitmap bitmap )
-    {
-    // Find the corresponding pending image
+        PendingImage pendingImage = mPendingTable.remove(key);
 
-    PendingImage pendingImage = mPendingTable.remove( key );
+        if (pendingImage == null) {
+            return;
+        }
 
-    if ( pendingImage == null ) return;
+        // Store the image
+        addImage(key, bitmap);
 
-
-    // Store the image
-    addImage( key, bitmap );
-
-
-    // Pass the image to the end consumer
-    pendingImage.consumer.onImageAvailable( key, bitmap );
+        // Pass the image to the end consumer
+        pendingImage.consumer.onImageAvailable(key, bitmap);
     }
 
+    /*****************************************************
+     *
+     * Called when an image could not be loaded.
+     *
+     * Passes the error on to any consumer waiting for the
+     * image.
+     *
+     *****************************************************/
+    @Override
+    public void onImageUnavailable(Object key, Exception exception) {
+        // Find the corresponding pending image
 
-  /*****************************************************
-   *
-   * Called when an image could not be loaded.
-   *
-   * Passes the error on to any consumer waiting for the
-   * image.
-   *
-   *****************************************************/
-  @Override
-  public void onImageUnavailable( Object key, Exception exception )
-    {
-    // Find the corresponding pending image
+        PendingImage pendingImage = mPendingTable.remove(key);
 
-    PendingImage pendingImage = mPendingTable.remove( key );
+        if (pendingImage == null) {
+            return;
+        }
 
-    if ( pendingImage == null ) return;
-
-
-    // Notify the end consumer
-    pendingImage.consumer.onImageUnavailable( key, exception );
+        // Notify the end consumer
+        pendingImage.consumer.onImageUnavailable(key, exception);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns an image from the cache.
+     *
+     * @param key The key object used to identify the image, such
+     *            as a URL or URI, or string file path.
+     *
+     * @return The cached bitmap, if it is in the cache,
+     *         null otherwise.
+     *
+     *****************************************************/
+    public Bitmap getImage(Object key) {
+        // Try and find the image
 
-  /*****************************************************
-   *
-   * Returns an image from the cache.
-   *
-   * @param key The key object used to identify the image, such
-   *            as a URL or URI, or string file path.
-   *
-   * @return The cached bitmap, if it is in the cache,
-   *         null otherwise.
-   *
-   *****************************************************/
-  public Bitmap getImage( Object key )
-    {
-    // Try and find the image
+        Holder holder = mHolderTable.get(key);
 
-    Holder holder = mHolderTable.get( key );
+        if (holder == null) {
+            return null;
+        }
 
-    if ( holder == null ) return ( null );
+        // Move the image to the front of the MRU-LRU list before
+        // we return the bitmap.
 
+        mHolderList.remove(holder);
+        mHolderList.addFirst(holder);
 
-    // Move the image to the front of the MRU-LRU list before
-    // we return the bitmap.
-
-    mHolderList.remove( holder );
-    mHolderList.addFirst( holder );
-
-    return ( holder.bitmap );
+        return holder.bitmap;
     }
 
+    /*****************************************************
+     *
+     * Stores a pending request.
+     *
+     * @param key The key object used to identify the image.
+     *
+     * @param consumer The end consumer that is waiting for the
+     *                 image. The cache will store the image once
+     *                 it has been loaded, and then pass it on
+     *                 to the consumer.
+     *
+     *****************************************************/
+    public void addPendingImage(Object key, IImageConsumer consumer) {
 
-  /*****************************************************
-   *
-   * Stores a pending request.
-   *
-   * @param key The key object used to identify the image.
-   *
-   * @param consumer The end consumer that is waiting for the
-   *                 image. The cache will store the image once
-   *                 it has been loaded, and then pass it on
-   *                 to the consumer.
-   *
-   *****************************************************/
-  public void addPendingImage( Object key, IImageConsumer consumer )
-    {
-    mPendingTable.put( key, new PendingImage( key, consumer ) );
+        mPendingTable.put(key, new PendingImage(key, consumer));
     }
 
+    /*****************************************************
+     *
+     * Adds an image to the cache.
+     *
+     * @param key The key object used to identify the image.
+     *
+     * @param bitmap The bitmap to be stored. Note that the
+     *               bitmap is only added to the cache; any
+     *               consumer will not be notified.
+     *
+     *****************************************************/
+    public void addImage(Object key, Bitmap bitmap) {
+        // Create a new holder for the image
+        Holder newHolder = new Holder(key, bitmap);
 
-  /*****************************************************
-   *
-   * Adds an image to the cache.
-   *
-   * @param key The key object used to identify the image.
-   *
-   * @param bitmap The bitmap to be stored. Note that the
-   *               bitmap is only added to the cache; any
-   *               consumer will not be notified.
-   *
-   *****************************************************/
-  public void addImage( Object key, Bitmap bitmap )
-    {
-    // Create a new holder for the image
-    Holder newHolder = new Holder( key, bitmap );
+        // Store the holder in the table and at the front of the list
+        mHolderTable.put(key, newHolder);
+        mHolderList.addFirst(newHolder);
 
-    // Store the holder in the table and at the front of the list
-    mHolderTable.put( key, newHolder );
-    mHolderList.addFirst( newHolder );
+        // Calculate the new size after the image has been added. If the size
+        // exceeds the capacity, then remove images from the end until we get
+        // back down within the capacity.
 
+        mSizeInBytes += newHolder.approximateSizeInBytes;
 
-    // Calculate the new size after the image has been added. If the size
-    // exceeds the capacity, then remove images from the end until we get
-    // back down within the capacity.
+        while (mSizeInBytes > mCapacityInBytes) {
+            // Get the least recently used image and remove it
 
-    mSizeInBytes += newHolder.approximateSizeInBytes;
+            Holder lruHolder = mHolderList.removeLast();
 
-    while ( mSizeInBytes > mCapacityInBytes )
-      {
-      // Get the least recently used image and remove it
+            if (lruHolder == null) {
+                break;
+            }
 
-      Holder lruHolder = mHolderList.removeLast();
+            mHolderTable.remove(lruHolder.key);
 
-      if ( lruHolder == null ) break;
-
-      mHolderTable.remove( lruHolder.key );
-
-      mSizeInBytes -= lruHolder.approximateSizeInBytes;
-      }
+            mSizeInBytes -= lruHolder.approximateSizeInBytes;
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
+    /*****************************************************
+     *
+     * Holds an image, together with its key and approximate
+     * size.
+     *
+     *****************************************************/
+    private class Holder {
+        Object key;
+        Bitmap bitmap;
+        int approximateSizeInBytes;
 
-  ////////// Inner Class(es) //////////
+        Holder(Object key, Bitmap bitmap) {
 
-  /*****************************************************
-   *
-   * Holds an image, together with its key and approximate
-   * size.
-   *
-   *****************************************************/
-  private class Holder
-    {
-    Object  key;
-    Bitmap  bitmap;
-    int     approximateSizeInBytes;
+            this.key = key;
+            this.bitmap = bitmap;
 
-
-    Holder( Object key, Bitmap bitmap )
-      {
-      this.key                    = key;
-      this.bitmap                 = bitmap;
-
-      // Calculate the approximate size in bytes. This only works if
-      // the bitmap is not reconfigured.
-      this.approximateSizeInBytes = bitmap.getByteCount();
-      }
+            // Calculate the approximate size in bytes. This only works if
+            // the bitmap is not reconfigured.
+            this.approximateSizeInBytes = bitmap.getByteCount();
+        }
     }
 
+    /*****************************************************
+     *
+     * A pending image request.
+     *
+     *****************************************************/
+    private class PendingImage {
+        Object key;
+        IImageConsumer consumer;
 
-  /*****************************************************
-   *
-   * A pending image request.
-   *
-   *****************************************************/
-  private class PendingImage
-    {
-    Object          key;
-    IImageConsumer  consumer;
+        PendingImage(Object key, IImageConsumer consumer) {
 
-
-    PendingImage( Object key, IImageConsumer consumer )
-      {
-      this.key      = key;
-      this.consumer = consumer;
-      }
+            this.key = key;
+            this.consumer = consumer;
+        }
 
     }
 
-  }
+}
 

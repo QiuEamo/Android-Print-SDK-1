@@ -36,13 +36,11 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.widget.EditText;
 
 import java.util.List;
-
 
 ///// Class Declaration /////
 
@@ -52,69 +50,62 @@ import java.util.List;
  * to a valid month of the year.
  *
  *****************************************************/
-public class MonthEditTextEnforcer extends ALimitedRangeEditTextEnforcer
-  {
-  ////////// Static Constant(s) //////////
+public class MonthEditTextEnforcer extends ALimitedRangeEditTextEnforcer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "MonthEditTextEnforcer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MonthEditTextEnforcer";
 
-  static public final String[] VALID_STRINGS =
-    {
-    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
-    };
+    public static final String[] VALID_STRINGS =
+            {
+                    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
+            };
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public MonthEditTextEnforcer(EditText editText, ICallback callback) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public MonthEditTextEnforcer( EditText editText, ICallback callback )
-    {
-    super( editText, callback );
+        super(editText, callback);
     }
 
+    ////////// AFixedRangeEditTextEnforcer Method(s) //////////
 
-  ////////// AFixedRangeEditTextEnforcer Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a valid string for a single entered character,
+     * or null if no shortcut should be available.
+     *
+     *****************************************************/
+    @Override
+    protected String getShortcutString(char character) {
 
-  /*****************************************************
-   *
-   * Returns a valid string for a single entered character,
-   * or null if no shortcut should be available.
-   *
-   *****************************************************/
-  @Override
-  protected String getShortcutString( char character )
-    {
-    if ( character >= '2' && character <= '9' ) return ( "0" + character );
+        if (character >= '2' && character <= '9') {
+            return "0" + character;
+        }
 
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns a list of all the valid strings that contain the
+     * supplied (sub)string.
+     *
+     *****************************************************/
+    @Override
+    protected List<String> getValidStringsContaining(String searchString) {
 
-  /*****************************************************
-   *
-   * Returns a list of all the valid strings that contain the
-   * supplied (sub)string.
-   *
-   *****************************************************/
-  @Override
-  protected List<String> getValidStringsContaining( String searchString )
-    {
-    return ( getValidStrings( VALID_STRINGS, searchString ) );
+        return getValidStrings(VALID_STRINGS, searchString);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}

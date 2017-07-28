@@ -36,14 +36,12 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
-
-import java.util.LinkedList;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
+import java.util.LinkedList;
 
 ///// Class Declaration /////
 
@@ -52,167 +50,146 @@ import android.os.AsyncTask;
  * This class processes image requests.
  *
  *****************************************************/
-public class ImageRequestProcessor
-  {
-  ////////// Static Constant(s) //////////
+public class ImageRequestProcessor {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG              = "ImageRequestProcessor";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageRequestProcessor";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    private static ImageRequestProcessor sImageLoader;
 
-  static private ImageRequestProcessor sImageLoader;
+    ////////// Member Variable(s) //////////
 
+    private Context mApplicationContext;
 
-  ////////// Member Variable(s) //////////
+    private LinkedList<ImageLoadRequest> mRequestQueue;
 
-  private Context                   mApplicationContext;
+    private LoaderTask mLoaderTask;
 
-  private LinkedList<ImageLoadRequest>  mRequestQueue;
+    ////////// Static Initialiser(s) //////////
 
-  private LoaderTask                mLoaderTask;
+    ////////// Constructor(s) //////////
 
+    private ImageRequestProcessor(Context context) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns an instance of the image manager.
-   *
-   *****************************************************/
-  static public ImageRequestProcessor getInstance( Context context )
-    {
-    if ( sImageLoader == null )
-      {
-      sImageLoader = new ImageRequestProcessor( context );
-      }
-
-    return ( sImageLoader );
+        mApplicationContext = context.getApplicationContext();
+        mRequestQueue = new LinkedList<>();
     }
 
-
-  ////////// Constructor(s) //////////
-
-  private ImageRequestProcessor( Context context )
-    {
-    mApplicationContext = context.getApplicationContext();
-    mRequestQueue       = new LinkedList<>();
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Clears the request queue.
-   *
-   *****************************************************/
-  public void clearPendingRequests()
-    {
-    synchronized ( mRequestQueue )
-      {
-      mRequestQueue.clear();
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Adds an image request to the process queue.
-   *
-   * Must be called on the UI thread.
-   *
-   *****************************************************/
-  void process( ImageLoadRequest request )
-    {
-    synchronized ( mRequestQueue )
-      {
-      // Add the request to the queue
-      mRequestQueue.addFirst( request );
-
-      // If the downloader task is already running - do nothing more
-      if ( mLoaderTask != null ) return;
-      }
-
-
-    // Create and start a new downloader task
-
-    mLoaderTask = new LoaderTask();
-
-    mLoaderTask.executeOnExecutor( AsyncTask.SERIAL_EXECUTOR );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * The loader task.
-   *
-   *****************************************************/
-  private class LoaderTask extends AsyncTask<Void,ImageLoadRequest,Void>
-    {
+    ////////// Static Method(s) //////////
 
     /*****************************************************
      *
-     * Entry point for background thread.
+     * Returns an instance of the image manager.
      *
      *****************************************************/
-    @Override
-    protected Void doInBackground( Void... params )
-      {
-      // Keep going until we run out of requests
+    public static ImageRequestProcessor getInstance(Context context) {
 
-      while ( true )
-        {
-        ImageLoadRequest request = null;
+        if (sImageLoader == null) {
+            sImageLoader = new ImageRequestProcessor(context);
+        }
 
-        synchronized ( mRequestQueue )
-          {
-          request = mRequestQueue.poll();
+        return sImageLoader;
+    }
 
-          if ( request == null )
-            {
-            mLoaderTask = null;
+    ////////// Method(s) //////////
 
-            return ( null );
+    /*****************************************************
+     *
+     * Clears the request queue.
+     *
+     *****************************************************/
+    public void clearPendingRequests() {
+
+        synchronized (mRequestQueue) {
+            mRequestQueue.clear();
+        }
+    }
+
+    /*****************************************************
+     *
+     * Adds an image request to the process queue.
+     *
+     * Must be called on the UI thread.
+     *
+     *****************************************************/
+    void process(ImageLoadRequest request) {
+
+        synchronized (mRequestQueue) {
+            // Add the request to the queue
+            mRequestQueue.addFirst(request);
+
+            // If the downloader task is already running - do nothing more
+            if (mLoaderTask != null) {
+                return;
             }
-          }
-
-
-        // Process the request. If we get true back, do something with it on
-        // the UI thread.
-
-        if ( request.processInBackground() )
-          {
-          publishProgress( request );
-          }
         }
-      }
 
+        // Create and start a new downloader task
+
+        mLoaderTask = new LoaderTask();
+
+        mLoaderTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+    }
+
+    ////////// Inner Class(es) //////////
 
     /*****************************************************
      *
-     * Called after each request is complete.
+     * The loader task.
      *
      *****************************************************/
-    @Override
-    protected void onProgressUpdate( ImageLoadRequest... requests )
-      {
-      if ( requests != null )
-        {
-        for ( ImageLoadRequest request : requests )
-          {
-          request.onProcessingComplete();
-          }
+    private class LoaderTask extends AsyncTask<Void, ImageLoadRequest, Void> {
+
+        /*****************************************************
+         *
+         * Entry point for background thread.
+         *
+         *****************************************************/
+        @Override
+        protected Void doInBackground(Void... params) {
+            // Keep going until we run out of requests
+
+            while (true) {
+                ImageLoadRequest request = null;
+
+                synchronized (mRequestQueue) {
+                    request = mRequestQueue.poll();
+
+                    if (request == null) {
+                        mLoaderTask = null;
+
+                        return null;
+                    }
+                }
+
+                // Process the request. If we get true back, do something with it on
+                // the UI thread.
+
+                if (request.processInBackground()) {
+                    publishProgress(request);
+                }
+            }
         }
-      }
+
+        /*****************************************************
+         *
+         * Called after each request is complete.
+         *
+         *****************************************************/
+        @Override
+        protected void onProgressUpdate(ImageLoadRequest... requests) {
+
+            if (requests != null) {
+                for (ImageLoadRequest request : requests) {
+                    request.onProcessingComplete();
+                }
+            }
+        }
 
     }
 
-  }
+}
 

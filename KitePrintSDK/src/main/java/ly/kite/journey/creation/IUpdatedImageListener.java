@@ -36,11 +36,9 @@
 
 package ly.kite.journey.creation;
 
-
 ///// Import(s) /////
 
 import ly.kite.ordering.ImageSpec;
-
 
 ///// Class Declaration /////
 
@@ -50,12 +48,11 @@ import ly.kite.ordering.ImageSpec;
  * be notified when an asset is edited.
  *
  *****************************************************/
-public interface IUpdatedImageListener
-  {
-  /*****************************************************
-   *
-   * Called when an asset is updated.
-   *
-   *****************************************************/
-  public void onImageUpdated( int imageIndex, ImageSpec imageSpec );
-  }
+public interface IUpdatedImageListener {
+    /*****************************************************
+     *
+     * Called when an asset is updated.
+     *
+     *****************************************************/
+    public void onImageUpdated(int imageIndex, ImageSpec imageSpec);
+}

@@ -36,14 +36,12 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 
 ///// Class Declaration /////
 
@@ -52,82 +50,73 @@ import junit.framework.TestCase;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class BorderTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class BorderTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BorderTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BorderTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Constructor tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testConstructor1() {
 
+        Border border = new Border(1, 2, 3, 4);
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Constructor tests.
-   *
-   *****************************************************/
-
-  public void testConstructor1()
-    {
-    Border border = new Border( 1, 2, 3, 4 );
-
-    Assert.assertEquals( 1, border.topPixels );
-    Assert.assertEquals( 2, border.rightPixels );
-    Assert.assertEquals( 3, border.bottomPixels );
-    Assert.assertEquals( 4, border.leftPixels );
+        Assert.assertEquals(1, border.topPixels);
+        Assert.assertEquals(2, border.rightPixels);
+        Assert.assertEquals(3, border.bottomPixels);
+        Assert.assertEquals(4, border.leftPixels);
     }
 
+    /*****************************************************
+     *
+     * Parcel tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Parcel tests.
-   *
-   *****************************************************/
+    public void testParcel1() {
 
-  public void testParcel1()
-    {
-    Border originalBorder = new Border( 10, 11, 12, 13 );
+        Border originalBorder = new Border(10, 11, 12, 13);
 
-    Parcel parcel = Parcel.obtain();
+        Parcel parcel = Parcel.obtain();
 
-    originalBorder.writeToParcel( parcel, 0 );
+        originalBorder.writeToParcel(parcel, 0);
 
-    parcel.setDataPosition( 0 );
+        parcel.setDataPosition(0);
 
-    Border readBorder = Border.CREATOR.createFromParcel( parcel );
+        Border readBorder = Border.CREATOR.createFromParcel(parcel);
 
-    Assert.assertEquals( 10, readBorder.topPixels );
-    Assert.assertEquals( 11, readBorder.rightPixels );
-    Assert.assertEquals( 12, readBorder.bottomPixels );
-    Assert.assertEquals( 13, readBorder.leftPixels );
+        Assert.assertEquals(10, readBorder.topPixels);
+        Assert.assertEquals(11, readBorder.rightPixels);
+        Assert.assertEquals(12, readBorder.bottomPixels);
+        Assert.assertEquals(13, readBorder.leftPixels);
 
-    parcel.recycle();
+        parcel.recycle();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

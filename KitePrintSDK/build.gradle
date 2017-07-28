@@ -9,6 +9,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
@@ -44,7 +45,22 @@ android {
     }
 }
 
+task checkstyle(type: Checkstyle) {
+    ignoreFailures = true
+    configFile file("${project.rootDir}/KitePrintSDK/config/checkstyle/checkstyle.xml") // Where my checkstyle config is...
+    configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/KitePrintSDK/config/checkstyle/surpression.xml").absolutePath //
+    // Where
+    // is my suppressions file for checkstyle is...
+    source 'src/main/java'
+    include '**/*.java'//*
+    exclude '**/gen/**'
+
+    //empty classpath
+    classpath = files()
+}
+
 dependencies {
+    checkstyle('com.puppycrawl.tools:checkstyle:8.0')
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'

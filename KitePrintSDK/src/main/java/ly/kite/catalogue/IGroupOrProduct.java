@@ -36,14 +36,11 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
 import android.content.Context;
-import android.widget.ImageView;
 
 import java.net.URL;
 
@@ -53,77 +50,68 @@ import java.net.URL;
  * product groups / products screens.
  *
  *****************************************************/
-public interface IGroupOrProduct
-  {
-  ////////// Method(s) //////////
+public interface IGroupOrProduct {
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Returns the display image URL.
-   *
-   *****************************************************/
-  public URL getDisplayImageURL();
+    /*****************************************************
+     *
+     * Returns the display image URL.
+     *
+     *****************************************************/
+    public URL getDisplayImageURL();
 
+    /*****************************************************
+     *
+     * Returns the gravity for the display image.
+     *
+     *****************************************************/
+    public int getDisplayImageAnchorGravity(Context context);
 
-  /*****************************************************
-   *
-   * Returns the gravity for the display image.
-   *
-   *****************************************************/
-  public int getDisplayImageAnchorGravity( Context context );
+    /*****************************************************
+     *
+     * Returns the display label.
+     *
+     *****************************************************/
+    public String getDisplayLabel();
 
+    /*****************************************************
+     *
+     * Returns the display label colour.
+     *
+     *****************************************************/
+    public int getDisplayLabelColour();
 
-  /*****************************************************
-   *
-   * Returns the display label.
-   *
-   *****************************************************/
-  public String getDisplayLabel();
+    /*****************************************************
+     *
+     * Returns true if this group or product contains
+     * multiple prices. Generally if this is a group containing
+     * multiple products, it will return true.
+     *
+     *****************************************************/
+    public boolean containsMultiplePrices();
 
+    /*****************************************************
+     *
+     * Returns a display price.
+     *
+     *****************************************************/
+    public String getDisplayPrice(String preferredCurrency);
 
-  /*****************************************************
-   *
-   * Returns the display label colour.
-   *
-   *****************************************************/
-  public int getDisplayLabelColour();
+    /*****************************************************
+     *
+     * Returns a description, or null if there is no
+     * description.
+     *
+     *****************************************************/
+    public String getDescription();
 
+    /*****************************************************
+     *
+     * Returns true or false according to whether a flag is
+     * set.
+     *
+     *****************************************************/
+    public boolean flagIsSet(String tag);
 
-  /*****************************************************
-   *
-   * Returns true if this group or product contains
-   * multiple prices. Generally if this is a group containing
-   * multiple products, it will return true.
-   *
-   *****************************************************/
-  public boolean containsMultiplePrices();
-
-
-  /*****************************************************
-   *
-   * Returns a display price.
-   *
-   *****************************************************/
-  public String getDisplayPrice( String preferredCurrency );
-
-
-  /*****************************************************
-   *
-   * Returns a description, or null if there is no
-   * description.
-   *
-   *****************************************************/
-  public String getDescription();
-
-
-  /*****************************************************
-   *
-   * Returns true or false according to whether a flag is
-   * set.
-   *
-   *****************************************************/
-  public boolean flagIsSet( String tag );
-
-
-  }
+}
 

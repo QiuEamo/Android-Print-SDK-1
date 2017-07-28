@@ -36,16 +36,12 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
@@ -54,12 +50,10 @@ import com.stripe.android.model.Token;
 import com.stripe.exception.AuthenticationException;
 
 import ly.kite.KiteSDK;
-import ly.kite.app.IndeterminateProgressDialogFragment;
 import ly.kite.R;
 import ly.kite.app.RetainedFragmentHelper;
 import ly.kite.catalogue.SingleCurrencyAmounts;
 import ly.kite.ordering.Order;
-
 
 ///// Class Declaration /////
 
@@ -69,240 +63,206 @@ import ly.kite.ordering.Order;
  * collect credit card details.
  *
  *****************************************************/
-public class StripeCreditCardAgent extends ACreditCardDialogFragment implements ICreditCardAgent
-  {
-  ////////// Static Constant(s) //////////
+public class StripeCreditCardAgent extends ACreditCardDialogFragment implements ICreditCardAgent {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  TAG = "StripeCreditCardFrag.";
+    @SuppressWarnings("unused")
+    private static final String TAG = "StripeCreditCardFrag.";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
+    private Order mOrder;
+    private SingleCurrencyAmounts mSingleCurrencyAmount;
 
-  ////////// Member Variable(s) //////////
+    private Resources mResources;
 
-  private Context                 mContext;
-  private Order                   mOrder;
-  private SingleCurrencyAmounts   mSingleCurrencyAmount;
+    ////////// Static Initialiser(s) //////////
 
-  private Resources               mResources;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// ACreditCardDialogFragment Method(s) //////////
 
+    ////////// ICreditCardFragment Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Returns true if the agent uses PayPal to process
+     * credit card payments.
+     *
+     *****************************************************/
+    public boolean usesPayPal() {
 
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// ACreditCardDialogFragment Method(s) //////////
-
-
-  ////////// ICreditCardFragment Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the agent uses PayPal to process
-   * credit card payments.
-   *
-   *****************************************************/
-  public boolean usesPayPal()
-    {
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Notifies the agent that the user has clicked on the
+     * credit card payment button.
+     *
+     *****************************************************/
+    @Override
+    public void onPayClicked(Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount) {
 
-  /*****************************************************
-   *
-   * Notifies the agent that the user has clicked on the
-   * credit card payment button.
-   *
-   *****************************************************/
-  @Override
-  public void onPayClicked( Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount )
-    {
-    mContext              = context;
-    mOrder                = order;
-    mSingleCurrencyAmount = singleCurrencyAmount;
+        mContext = context;
+        mOrder = order;
+        mSingleCurrencyAmount = singleCurrencyAmount;
 
-    mResources            = context.getResources();
+        mResources = context.getResources();
 
-    setTargetFragment( paymentFragment, 0 );
+        setTargetFragment(paymentFragment, 0);
 
-    show( paymentFragment.getFragmentManager(), TAG );
+        show(paymentFragment.getFragmentManager(), TAG);
     }
 
-
-  /*****************************************************
-   *
-   * Passes an activity result to the agent.
-   *
-   *****************************************************/
-  @Override
-  public void onActivityResult( int requestCode, int resultCode, Intent data )
-    {
-    // We aren't expecting an activity result
+    /*****************************************************
+     *
+     * Passes an activity result to the agent.
+     *
+     *****************************************************/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // We aren't expecting an activity result
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the proceed button has been clicked.
+     *
+     *****************************************************/
+    @Override
+    protected void onProceed(String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString) {
+        // Do basic validation of card details
 
-  /*****************************************************
-   *
-   * Called when the proceed button has been clicked.
-   *
-   *****************************************************/
-  @Override
-  protected void onProceed( String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString )
-    {
-    // Do basic validation of card details
-
-    if ( ! validateCard( cardNumberString, expiryMonthString, expiryYearString, cvvString ) ) return;
-
-
-    // Create a Stripe card and perform additional validation. If it's OK, use it for payment.
-
-    Card card = getValidatedCard( cardNumberString, expiryMonthString, expiryYearString, cvvString );
-
-    if ( card != null )
-      {
-      onUseCard( card );
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a validated Stripe card, or null, if the card
-   * could not be validated.
-   *
-   *****************************************************/
-  private Card getValidatedCard( String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString )
-    {
-    // Create a Stripe card and validate it
-
-    try
-      {
-      Card card = new Card( cardNumberString, Integer.parseInt( expiryMonthString ), Integer.parseInt( expiryYearString ), cvvString );
-
-      if ( ! card.validateNumber() )
-        {
-        onDisplayError( R.string.card_error_invalid_number );
-
-        return ( null );
+        if (!validateCard(cardNumberString, expiryMonthString, expiryYearString, cvvString)) {
+            return;
         }
 
-      if ( ! card.validateExpiryDate() )
-        {
-        onDisplayError( R.string.card_error_invalid_expiry_date );
+        // Create a Stripe card and perform additional validation. If it's OK, use it for payment.
 
-        return ( null );
+        Card card = getValidatedCard(cardNumberString, expiryMonthString, expiryYearString, cvvString);
+
+        if (card != null) {
+            onUseCard(card);
         }
-
-      if ( ! card.validateCVC() )
-        {
-        onDisplayError( R.string.card_error_invalid_cvv );
-
-        return ( null );
-        }
-
-
-      return ( card );
-      }
-    catch ( Exception exception )
-      {
-      onDisplayError( getString( R.string.stripe_error_invalid_card_details ) + ": " + exception.getMessage() );
-      }
-
-    return ( null );
     }
 
+    /*****************************************************
+     *
+     * Returns a validated Stripe card, or null, if the card
+     * could not be validated.
+     *
+     *****************************************************/
+    private Card getValidatedCard(String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString) {
+        // Create a Stripe card and validate it
 
-  /*****************************************************
-   *
-   * Called when the card has been validated.
-   *
-   *****************************************************/
-  private void onUseCard( Card card )
-    {
-    // We can't call back to the activity because it has no concept of other credit cards. So
-    // we need to do the processing ourselves, and then return the token as the payment id to the
-    // Payment Activity.
+        try {
+            Card card = new Card(cardNumberString, Integer.parseInt(expiryMonthString), Integer.parseInt(expiryYearString), cvvString);
 
-    String stripePublicKey = KiteSDK.getInstance( mContext ).getStripePublicKey();
+            if (!card.validateNumber()) {
+                onDisplayError(R.string.card_error_invalid_number);
 
-    Stripe stripe = null;
+                return null;
+            }
 
-    try
-      {
-      stripe = new Stripe( stripePublicKey );
-      }
-    catch ( AuthenticationException ae )
-      {
-      Log.e( TAG, "Unable to create Stripe object", ae );
+            if (!card.validateExpiryDate()) {
+                onDisplayError(R.string.card_error_invalid_expiry_date);
 
-      onDisplayError( getString( R.string.stripe_error_create_object ) + ": " + ae.getMessage() );
+                return null;
+            }
 
-      return;
-      }
+            if (!card.validateCVC()) {
+                onDisplayError(R.string.card_error_invalid_cvv);
 
+                return null;
+            }
 
-    onClearError();
+            return card;
+        } catch (Exception exception) {
+            onDisplayError(getString(R.string.stripe_error_invalid_card_details) + ": " + exception.getMessage());
+        }
 
-    onProcessingStarted();
-
-    // Try to get a payment token
-    stripe.createToken( card, new StripeTokenCallback() );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Called when the card has been validated.
+     *
+     *****************************************************/
+    private void onUseCard(Card card) {
+        // We can't call back to the activity because it has no concept of other credit cards. So
+        // we need to do the processing ourselves, and then return the token as the payment id to the
+        // Payment Activity.
 
-  ////////// Inner Class(es) //////////
+        String stripePublicKey = KiteSDK.getInstance(mContext).getStripePublicKey();
 
-  private class StripeTokenCallback extends TokenCallback
-    {
-    public void onSuccess( final Token token )
-      {
-      onProcessingStopped();
+        Stripe stripe = null;
 
-      Log.i( TAG, "Successfully retrieved Stripe token: " + token.toString() );
+        try {
+            stripe = new Stripe(stripePublicKey);
+        } catch (AuthenticationException ae) {
+            Log.e(TAG, "Unable to create Stripe object", ae);
 
+            onDisplayError(getString(R.string.stripe_error_create_object) + ": " + ae.getMessage());
 
-      // Return the token to the payment fragment as soon as it is attached (if it
-      // is the activity) or set (if it is a fragment).
-
-      setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-        {
-        @Override
-        public void notify( Object callback )
-          {
-          APaymentFragment paymentFragment = (APaymentFragment)callback;
-
-          paymentFragment.submitOrderForPrinting( token.getId(), KiteSDK.getInstance( mContext ).getStripeAccountId(), PaymentMethod.CREDIT_CARD );
-
-          // Once the order has been submitted, we can be dismissed.
-          remove();
-          }
-        } );
-      }
-
-    public void onError( Exception exception )
-      {
-      onProcessingStopped();
-
-      Log.e( TAG, "Error retrieving token", exception );
-
-      // We may not be attached to an activity at this point (e.g. if the device has been rotated),
-      // so we need to be careful that the getString call doesn't fail.
-      try
-        {
-        onDisplayError( mResources.getString( R.string.stripe_error_retrieve_token ) + ": " + exception.getMessage() );
+            return;
         }
-      catch ( Exception ignore )
-        {
-        }
-      }
+
+        onClearError();
+
+        onProcessingStarted();
+
+        // Try to get a payment token
+        stripe.createToken(card, new StripeTokenCallback());
     }
-  }
+
+    ////////// Inner Class(es) //////////
+
+    private class StripeTokenCallback extends TokenCallback {
+        public void onSuccess(final Token token) {
+
+            onProcessingStopped();
+
+            Log.i(TAG, "Successfully retrieved Stripe token: " + token.toString());
+
+            // Return the token to the payment fragment as soon as it is attached (if it
+            // is the activity) or set (if it is a fragment).
+
+            setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+                @Override
+                public void notify(Object callback) {
+
+                    APaymentFragment paymentFragment = (APaymentFragment) callback;
+
+                    paymentFragment.submitOrderForPrinting(token.getId(), KiteSDK.getInstance(mContext).getStripeAccountId(),
+                            PaymentMethod.CREDIT_CARD);
+
+                    // Once the order has been submitted, we can be dismissed.
+                    remove();
+                }
+            });
+        }
+
+        public void onError(Exception exception) {
+
+            onProcessingStopped();
+
+            Log.e(TAG, "Error retrieving token", exception);
+
+            // We may not be attached to an activity at this point (e.g. if the device has been rotated),
+            // so we need to be careful that the getString call doesn't fail.
+            try {
+                onDisplayError(mResources.getString(R.string.stripe_error_retrieve_token) + ": " + exception.getMessage());
+            } catch (Exception ignore) {
+            }
+        }
+    }
+}

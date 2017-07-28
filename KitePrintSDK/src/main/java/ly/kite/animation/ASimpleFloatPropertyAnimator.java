@@ -37,9 +37,7 @@ import android.os.SystemClock;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -49,169 +47,154 @@ import android.view.animation.LinearInterpolator;
  * UI thread.
  *
  *****************************************************/
-public abstract class ASimpleFloatPropertyAnimator implements Runnable
-  {
-  ////////// Static Constant(s) //////////
+public abstract class ASimpleFloatPropertyAnimator implements Runnable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG       = "ASimpleFloatPropertyAnimator";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ASimpleFloatPropertyAnimator";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private long mDurationMillis;
+    private float mInitialValue;
+    private float mFinalValue;
+    private Interpolator mInterpolator;
 
-  ////////// Member Variable(s) //////////
+    private float mValueDifference;
+    private float mElapsedToProportionMultiplier;
 
-  private long                          mDurationMillis;
-  private float                         mInitialValue;
-  private float                         mFinalValue;
-  private Interpolator                  mInterpolator;
+    private long mStartTimeMillis;
+    private long mEndTimeMillis;
 
-  private float                         mValueDifference;
-  private float                         mElapsedToProportionMultiplier;
+    private boolean mAnimationHasBeenCancelled;
+    private Handler mHandler;
 
-  private long                          mStartTimeMillis;
-  private long                          mEndTimeMillis;
+    ////////// Static Initialiser(s) //////////
 
-  private boolean                       mAnimationHasBeenCancelled;
-  private Handler                       mHandler;
+    ////////// Static Method(s) //////////
 
-  
-  ////////// Static Initialiser(s) //////////
+    ////////// Constructor(s) //////////
 
+    public ASimpleFloatPropertyAnimator(long durationMillis, float initialValue, float finalValue, Interpolator interpolator) {
 
-  ////////// Static Method(s) //////////
+        mDurationMillis = durationMillis;
+        mInitialValue = initialValue;
+        mFinalValue = finalValue;
+        mInterpolator = interpolator;
 
+        mValueDifference = mFinalValue - mInitialValue;
+        mElapsedToProportionMultiplier = 1f / (float) durationMillis;
 
-  ////////// Constructor(s) //////////
-  
-  public ASimpleFloatPropertyAnimator( long durationMillis, float initialValue, float finalValue, Interpolator interpolator )
-    {
-    mDurationMillis                = durationMillis;
-    mInitialValue                  = initialValue;
-    mFinalValue                    = finalValue;
-    mInterpolator                  = interpolator;
-
-    mValueDifference               = mFinalValue - mInitialValue;
-    mElapsedToProportionMultiplier = 1f / (float)durationMillis;
-
-    mHandler = new Handler();
+        mHandler = new Handler();
     }
 
+    public ASimpleFloatPropertyAnimator(long durationMillis, float initialValue, float finalValue) {
 
-  public ASimpleFloatPropertyAnimator( long durationMillis, float initialValue, float finalValue )
-    {
-    this( durationMillis, initialValue, finalValue, new LinearInterpolator() );
+        this(durationMillis, initialValue, finalValue, new LinearInterpolator());
     }
-
 
     ////////// Runnable Method(s) //////////
 
-  /*****************************************************
-   *
-   * Called for every 'frame' of the animation from the
-   * UI thread.
-   *
-   *****************************************************/
-  public void run()
-    {
-    // If we have been cancelled - return immediately and do not continue
-    if ( mAnimationHasBeenCancelled ) return;
+    /*****************************************************
+     *
+     * Called for every 'frame' of the animation from the
+     * UI thread.
+     *
+     *****************************************************/
+    public void run() {
+        // If we have been cancelled - return immediately and do not continue
+        if (mAnimationHasBeenCancelled) {
+            return;
+        }
 
+        // Get the current time
+        long currentTimeMillis = SystemClock.elapsedRealtime();
 
-    // Get the current time
-    long currentTimeMillis = SystemClock.elapsedRealtime();
+        // If this is the first frame - initialise the animation
+        if (mStartTimeMillis <= 0) {
+            // Save the start time, and calculate the end time.
+            mStartTimeMillis = currentTimeMillis;
+            mEndTimeMillis = currentTimeMillis + mDurationMillis;
 
+            // Set the initial property value
+            onSetValue(mInitialValue);
+        }
 
-    // If this is the first frame - initialise the animation
-    if ( mStartTimeMillis <= 0 )
-      {
-      // Save the start time, and calculate the end time.
-      mStartTimeMillis = currentTimeMillis;
-      mEndTimeMillis   = currentTimeMillis + mDurationMillis;
+        // If this is the last frame - finish
+        else if (currentTimeMillis >= mEndTimeMillis) {
+            // Set the final property value
+            onSetValue(mFinalValue);
 
-      // Set the initial property value
-      onSetValue( mInitialValue );
-      }
+            onAnimationComplete();
 
-    // If this is the last frame - finish
-    else if ( currentTimeMillis >= mEndTimeMillis )
-      {
-      // Set the final property value
-      onSetValue( mFinalValue );
+            // Don't re-post on the UI thread
+            return;
+        }
 
-      onAnimationComplete();
+        // Otherwise this is an intermediate frame
+        else {
+            // Calculate the time fraction and the interpolated value
+            float proportion = (float) (currentTimeMillis - mStartTimeMillis) * mElapsedToProportionMultiplier;
+            float value = mInitialValue + (mInterpolator.getInterpolation(proportion) * mValueDifference);
 
-      // Don't re-post on the UI thread
-      return;
-      }
+            // Set the intermediate property value
+            onSetValue(value);
+        }
 
-    // Otherwise this is an intermediate frame
-    else
-      {
-      // Calculate the time fraction and the interpolated value
-      float proportion = (float)( currentTimeMillis - mStartTimeMillis ) * mElapsedToProportionMultiplier;
-      float value      = mInitialValue + ( mInterpolator.getInterpolation( proportion ) * mValueDifference );
-
-      // Set the intermediate property value
-      onSetValue( value );
-      }
-
-    // Re-post on the UI thread for the next frame
-    mHandler.post( this );
+        // Re-post on the UI thread for the next frame
+        mHandler.post(this);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Starts the animation.
+     *
+     *****************************************************/
+    public void start() {
 
-  /*****************************************************
-   *
-   * Starts the animation.
-   *
-   *****************************************************/
-  public void start()
-    {
-    mAnimationHasBeenCancelled = false;
+        mAnimationHasBeenCancelled = false;
 
-    // Post ourselves onto the UI thread
-    mHandler.post( this );
+        // Post ourselves onto the UI thread
+        mHandler.post(this);
     }
 
+    /*****************************************************
+     *
+     * Called to set the value during animation.
+     *
+     *****************************************************/
+    public abstract void onSetValue(float value);
 
-  /*****************************************************
-   *
-   * Called to set the value during animation.
-   *
-   *****************************************************/
-   public abstract void onSetValue( float value );
+    /*****************************************************
+     *
+     * Called when the animation is complete.
+     *
+     *****************************************************/
+    public void onAnimationComplete() {
 
-
-  /*****************************************************
-   *
-   * Called when the animation is complete.
-   *
-   *****************************************************/
-  public void onAnimationComplete() {}
-
-
-  /*****************************************************
-   * 
-   * Cancels the animation.
-   * 
-   *****************************************************/
-  public void cancel()
-    {
-    mAnimationHasBeenCancelled = true;
     }
 
+    /*****************************************************
+     *
+     * Cancels the animation.
+     *
+     *****************************************************/
+    public void cancel() {
 
-  ////////// Inner Class(es) //////////
+        mAnimationHasBeenCancelled = true;
+    }
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    ////////// Inner Class(es) //////////
 
-  }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+}
 

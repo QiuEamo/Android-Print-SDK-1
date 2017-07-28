@@ -36,14 +36,12 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
-
 
 ///// Class Declaration /////
 
@@ -52,129 +50,120 @@ import java.util.ArrayList;
  * This class tests the boolean helper class.
  *
  *****************************************************/
-public class BooleanUtilsTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class BooleanUtilsTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BooleanHelperTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BooleanHelperTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * List -> array Tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testArrayFrom1() {
 
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * List -> array Tests.
-   *
-   *****************************************************/
-
-  public void testArrayFrom1()
-    {
-    Assert.assertEquals( null, BooleanUtils.arrayFrom( null ) );
+        Assert.assertEquals(null, BooleanUtils.arrayFrom(null));
     }
 
-  public void testArrayFrom2()
-    {
-    ArrayList<Boolean> booleanList = new ArrayList<>();
+    public void testArrayFrom2() {
 
-    boolean[] booleanArray = BooleanUtils.arrayFrom( booleanList );
+        ArrayList<Boolean> booleanList = new ArrayList<>();
 
-    Assert.assertNotNull( booleanArray );
-    Assert.assertEquals( 0, booleanArray.length );
+        boolean[] booleanArray = BooleanUtils.arrayFrom(booleanList);
+
+        Assert.assertNotNull(booleanArray);
+        Assert.assertEquals(0, booleanArray.length);
     }
 
-  public void testArrayFrom3()
-    {
-    ArrayList<Boolean> booleanList = new ArrayList<>();
-    booleanList.add( true );
+    public void testArrayFrom3() {
 
-    boolean[] booleanArray = BooleanUtils.arrayFrom( booleanList );
+        ArrayList<Boolean> booleanList = new ArrayList<>();
+        booleanList.add(true);
 
-    Assert.assertNotNull( booleanArray );
-    Assert.assertEquals( 1, booleanArray.length );
-    Assert.assertEquals( true, booleanArray[ 0 ] );
+        boolean[] booleanArray = BooleanUtils.arrayFrom(booleanList);
+
+        Assert.assertNotNull(booleanArray);
+        Assert.assertEquals(1, booleanArray.length);
+        Assert.assertEquals(true, booleanArray[0]);
     }
 
-  public void testArrayFrom4()
-    {
-    ArrayList<Boolean> booleanList = new ArrayList<>();
-    booleanList.add( true );
-    booleanList.add( null );
-    booleanList.add( false );
+    public void testArrayFrom4() {
 
-    boolean[] booleanArray = BooleanUtils.arrayFrom( booleanList );
+        ArrayList<Boolean> booleanList = new ArrayList<>();
+        booleanList.add(true);
+        booleanList.add(null);
+        booleanList.add(false);
 
-    Assert.assertNotNull( booleanArray );
-    Assert.assertEquals( 3, booleanArray.length );
-    Assert.assertEquals( true, booleanArray[ 0 ] );
-    Assert.assertEquals( false, booleanArray[ 1 ] );
-    Assert.assertEquals( false, booleanArray[ 2 ] );
+        boolean[] booleanArray = BooleanUtils.arrayFrom(booleanList);
+
+        Assert.assertNotNull(booleanArray);
+        Assert.assertEquals(3, booleanArray.length);
+        Assert.assertEquals(true, booleanArray[0]);
+        Assert.assertEquals(false, booleanArray[1]);
+        Assert.assertEquals(false, booleanArray[2]);
     }
 
+    /*****************************************************
+     *
+     * Array -> list Tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Array -> list Tests.
-   *
-   *****************************************************/
+    public void testArrayListFrom1() {
 
-  public void testArrayListFrom1()
-    {
-    Assert.assertEquals( null, BooleanUtils.arrayListFrom( null ) );
+        Assert.assertEquals(null, BooleanUtils.arrayListFrom(null));
     }
 
-  public void testArrayListFrom2()
-    {
-    final boolean[] booleanArray = {};
+    public void testArrayListFrom2() {
 
-    ArrayList booleanList = BooleanUtils.arrayListFrom( booleanArray );
+        final boolean[] booleanArray = {};
 
-    Assert.assertNotNull( booleanList );
-    Assert.assertEquals( 0, booleanList.size() );
+        ArrayList booleanList = BooleanUtils.arrayListFrom(booleanArray);
+
+        Assert.assertNotNull(booleanList);
+        Assert.assertEquals(0, booleanList.size());
     }
 
-  public void testArrayListFrom3()
-    {
-    final boolean[] booleanArray = { true };
+    public void testArrayListFrom3() {
 
-    ArrayList booleanList = BooleanUtils.arrayListFrom( booleanArray );
+        final boolean[] booleanArray = {true};
 
-    Assert.assertNotNull( booleanList );
-    Assert.assertEquals( 1, booleanList.size() );
-    Assert.assertEquals( true, booleanList.get( 0 ) );
+        ArrayList booleanList = BooleanUtils.arrayListFrom(booleanArray);
+
+        Assert.assertNotNull(booleanList);
+        Assert.assertEquals(1, booleanList.size());
+        Assert.assertEquals(true, booleanList.get(0));
     }
 
-  public void testArrayListFrom4()
-    {
-    final boolean[] booleanArray = { true, false, true, false };
+    public void testArrayListFrom4() {
 
-    ArrayList booleanList = BooleanUtils.arrayListFrom( booleanArray );
+        final boolean[] booleanArray = {true, false, true, false};
 
-    Assert.assertNotNull( booleanList );
-    Assert.assertEquals( 4, booleanList.size() );
-    Assert.assertEquals( true, booleanList.get( 0 ) );
-    Assert.assertEquals( false, booleanList.get( 1 ) );
-    Assert.assertEquals( true, booleanList.get( 2 ) );
-    Assert.assertEquals( false, booleanList.get( 3 ) );
+        ArrayList booleanList = BooleanUtils.arrayListFrom(booleanArray);
+
+        Assert.assertNotNull(booleanList);
+        Assert.assertEquals(4, booleanList.size());
+        Assert.assertEquals(true, booleanList.get(0));
+        Assert.assertEquals(false, booleanList.get(1));
+        Assert.assertEquals(true, booleanList.get(2));
+        Assert.assertEquals(false, booleanList.get(3));
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

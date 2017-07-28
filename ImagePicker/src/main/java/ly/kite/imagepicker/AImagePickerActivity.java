@@ -36,7 +36,6 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -51,7 +50,6 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 import java.util.List;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -60,213 +58,191 @@ import java.util.List;
  * that display the art an image picker.
  *
  *****************************************************/
-abstract public class AImagePickerActivity extends Activity implements ImagePickerGridView.ICallback
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AImagePickerActivity extends Activity implements ImagePickerGridView.ICallback {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private   final String  LOG_TAG                        = "AImagePickerActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AImagePickerActivity";
 
-  static protected final String  EXTRA_MAX_IMAGE_COUNT          = "maxImageCount";
-  static private   final String  EXTRA_SELECTED_URL_STRING_LIST = "selectedURLStringList";
+    static protected final String EXTRA_MAX_IMAGE_COUNT = "maxImageCount";
+    private static final String EXTRA_SELECTED_URL_STRING_LIST = "selectedURLStringList";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    protected ImagePickerGridView mImagePickerGridView;
+    protected ProgressBar mProgressSpinner;
 
-  ////////// Member Variable(s) //////////
+    private MenuItem mDoneActionItem;
 
-  protected ImagePickerGridView  mImagePickerGridView;
-  protected ProgressBar          mProgressSpinner;
+    ////////// Static Initialiser(s) //////////
 
-  private   MenuItem             mDoneActionItem;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Adds the max image count to an intent as an extra.
+     *
+     *****************************************************/
+    static protected void addExtras(Intent intent, int maxImageCount) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Adds the max image count to an intent as an extra.
-   *
-   *****************************************************/
-  static protected void addExtras( Intent intent, int maxImageCount )
-    {
-    intent.putExtra( EXTRA_MAX_IMAGE_COUNT, maxImageCount );
+        intent.putExtra(EXTRA_MAX_IMAGE_COUNT, maxImageCount);
     }
 
+    /*****************************************************
+     *
+     * Returns a list of image URLs as strings from a result
+     * intent.
+     *
+     *****************************************************/
+    public static List<String> getImageURLListFromResult(Intent resultIntent) {
 
-  /*****************************************************
-   *
-   * Returns a list of image URLs as strings from a result
-   * intent.
-   *
-   *****************************************************/
-  static public List<String> getImageURLListFromResult( Intent resultIntent )
-    {
-    ArrayList<String> imageURLList = (ArrayList<String>)resultIntent.getStringArrayListExtra( EXTRA_SELECTED_URL_STRING_LIST );
+        ArrayList<String> imageURLList = (ArrayList<String>) resultIntent.getStringArrayListExtra(EXTRA_SELECTED_URL_STRING_LIST);
 
-    return ( imageURLList );
+        return imageURLList;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Activity Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-  ////////// Activity Method(s) //////////
+        super.onCreate(savedInstanceState);
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  protected void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
+        // Get extras
 
+        int maxImageCount = 0;
 
-    // Get extras
+        Intent intent = getIntent();
 
-    int maxImageCount = 0;
+        if (intent != null) {
+            maxImageCount = intent.getIntExtra(EXTRA_MAX_IMAGE_COUNT, 0);
+        }
 
-    Intent intent = getIntent();
+        // Set up the screen
 
-    if ( intent != null )
-      {
-      maxImageCount = intent.getIntExtra( EXTRA_MAX_IMAGE_COUNT, 0 );
-      }
+        setContentView(R.layout.ip_screen_grid);
 
+        mImagePickerGridView = (ImagePickerGridView) findViewById(R.id.image_picker_grid_view);
+        mProgressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
 
-    // Set up the screen
-
-    setContentView( R.layout.ip_screen_grid );
-
-    mImagePickerGridView = (ImagePickerGridView)findViewById( R.id.image_picker_grid_view );
-    mProgressSpinner     = (ProgressBar)findViewById( R.id.progress_spinner );
-
-
-    // Set up the grid view
-    mImagePickerGridView.setMaxImageCount( maxImageCount );
-    mImagePickerGridView.setCallback( this );
+        // Set up the grid view
+        mImagePickerGridView.setMaxImageCount(maxImageCount);
+        mImagePickerGridView.setCallback(this);
     }
 
+    /*****************************************************
+     *
+     * Called to create the actions.
+     *
+     *****************************************************/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-  /*****************************************************
-   *
-   * Called to create the actions.
-   *
-   *****************************************************/
-  @Override
-  public boolean onCreateOptionsMenu ( Menu menu )
-    {
-    MenuInflater menuInflator = getMenuInflater();
+        MenuInflater menuInflator = getMenuInflater();
 
-    menuInflator.inflate( R.menu.ip_menu, menu );
+        menuInflator.inflate(R.menu.ip_menu, menu);
 
-    mDoneActionItem = menu.findItem( R.id.item_done );
+        mDoneActionItem = menu.findItem(R.id.item_done);
 
-    mDoneActionItem.setVisible( mImagePickerGridView.getSelectedCount() > 0 );
+        mDoneActionItem.setVisible(mImagePickerGridView.getSelectedCount() > 0);
 
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Called when the back key is pressed.
+     *
+     *****************************************************/
+    @Override
+    public void onBackPressed() {
 
-  /*****************************************************
-   *
-   * Called when the back key is pressed.
-   *
-   *****************************************************/
-  @Override
-  public void onBackPressed()
-    {
-    onAscend();
+        onAscend();
     }
 
+    /*****************************************************
+     *
+     * Called when an action is clicked.
+     *
+     *****************************************************/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-  /*****************************************************
-   *
-   * Called when an action is clicked.
-   *
-   *****************************************************/
-  @Override
-  public boolean onOptionsItemSelected( MenuItem item )
-    {
-    int itemId = item.getItemId();
+        int itemId = item.getItemId();
 
+        if (itemId == android.R.id.home) {
+            onAscend();
 
-    if ( itemId == android.R.id.home )
-      {
-      onAscend();
+            return true;
+        } else if (itemId == R.id.item_done) {
+            Intent intent = new Intent();
 
-      return ( true );
-      }
+            intent.putStringArrayListExtra(EXTRA_SELECTED_URL_STRING_LIST, mImagePickerGridView.getSelectedURLStringList());
 
-    else if ( itemId == R.id.item_done )
-      {
-      Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
 
-      intent.putStringArrayListExtra( EXTRA_SELECTED_URL_STRING_LIST, mImagePickerGridView.getSelectedURLStringList() );
+            finish();
 
-      setResult( RESULT_OK, intent );
+            return true;
+        }
 
-      finish();
-
-      return ( true );
-      }
-
-
-    return ( super.onOptionsItemSelected( item ) );
+        return super.onOptionsItemSelected(item);
     }
 
+    ////////// AImagePickerActivity Method(s) //////////
 
-  ////////// AImagePickerActivity Method(s) //////////
+    @Override
+    public void onSelectedCountChanged(int oldCount, int newCount) {
 
-  @Override
-  public void onSelectedCountChanged( int oldCount, int newCount )
-    {
-    mDoneActionItem.setVisible( newCount > 0 );
+        mDoneActionItem.setVisible(newCount > 0);
     }
 
+    ////////// ImagePickerGridView.ICallback Method(s) //////////
 
-  ////////// ImagePickerGridView.ICallback Method(s) //////////
+    /*****************************************************
+     *
+     * Called to set the visibility of the loading progress
+     * spinner.
+     *
+     *****************************************************/
+    @Override
+    public void onItemsLoading(boolean display) {
 
-  /*****************************************************
-   *
-   * Called to set the visibility of the loading progress
-   * spinner.
-   *
-   *****************************************************/
-  @Override
-  public void onItemsLoading( boolean display )
-    {
-    if ( mProgressSpinner != null ) mProgressSpinner.setVisibility( display ? View.VISIBLE : View.GONE );
+        if (mProgressSpinner != null) {
+            mProgressSpinner.setVisibility(display ? View.VISIBLE : View.GONE);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Ascends the hierarchy. If we are already at the top,
-   * then exit.
-   *
-   *****************************************************/
-  private void onAscend()
-    {
-    // If we can't go up any further - finish and exit
-    if ( ! mImagePickerGridView.onAscend() ) finish();
+    /*****************************************************
+     *
+     * Ascends the hierarchy. If we are already at the top,
+     * then exit.
+     *
+     *****************************************************/
+    private void onAscend() {
+        // If we can't go up any further - finish and exit
+        if (!mImagePickerGridView.onAscend()) {
+            finish();
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}

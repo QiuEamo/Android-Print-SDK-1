@@ -36,12 +36,9 @@
 
 package ly.kite.animation;
 
-
 ///// Import(s) /////
 
-import android.util.Log;
 import android.view.animation.Interpolator;
-
 
 ///// Class Declaration /////
 
@@ -51,75 +48,66 @@ import android.view.animation.Interpolator;
  * dip, in the shape of a bell curve, around 0.5.
  *
  *****************************************************/
-public class BellInterpolator implements Interpolator
-  {
-  ////////// Static Constant(s) //////////
+public class BellInterpolator implements Interpolator {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG             = "BellInterpolator";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BellInterpolator";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private float mBaseValue;
+    private double mConstantMultiplier;
+    private double mExponentMultiplier;
+    //private boolean  mShowDebugOutput;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private float    mBaseValue;
-  private double   mConstantMultiplier;
-  private double   mExponentMultiplier;
-  //private boolean  mShowDebugOutput;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public BellInterpolator(float baseValue, float midValue, boolean showDebugOutput) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public BellInterpolator( float baseValue, float midValue, boolean showDebugOutput )
-    {
-    mBaseValue          = baseValue;
-    mConstantMultiplier = midValue;
-    mExponentMultiplier = 4f * Math.log( baseValue / midValue );
-    //mShowDebugOutput    = showDebugOutput;
+        mBaseValue = baseValue;
+        mConstantMultiplier = midValue;
+        mExponentMultiplier = 4f * Math.log(baseValue / midValue);
+        //mShowDebugOutput    = showDebugOutput;
     }
 
+    public BellInterpolator(float baseValue, float midValue) {
 
-  public BellInterpolator( float baseValue, float midValue )
-    {
-    this( baseValue, midValue, false );
+        this(baseValue, midValue, false);
     }
 
+    ////////// Interpolator Method(s) //////////
 
-  ////////// Interpolator Method(s) //////////
+    /*****************************************************
+     *
+     * Return the interpolated value.
+     *
+     *****************************************************/
+    @Override
+    public float getInterpolation(float input) {
 
-  /*****************************************************
-   *
-   * Return the interpolated value.
-   *
-   *****************************************************/
-  @Override
-  public float getInterpolation( float input )
-    {
-    float xMinusHalf = input - 0.5f;
+        float xMinusHalf = input - 0.5f;
 
-    float interpolation = (float)( mConstantMultiplier * Math.exp( mExponentMultiplier * ( xMinusHalf * xMinusHalf ) ) );
+        float interpolation = (float) (mConstantMultiplier * Math.exp(mExponentMultiplier * (xMinusHalf * xMinusHalf)));
 
-    //if ( mShowDebugOutput ) Log.d( TAG, "f(" + input + ") = " + interpolation );
+        //if ( mShowDebugOutput ) Log.d( TAG, "f(" + input + ") = " + interpolation );
 
-    return ( interpolation );
+        return interpolation;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

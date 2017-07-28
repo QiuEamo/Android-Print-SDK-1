@@ -36,17 +36,12 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
 
 import android.graphics.Bitmap;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import ly.kite.image.IImageConsumer;
-import ly.kite.image.ImageCache;
-
 
 ///// Class Declaration /////
 
@@ -55,189 +50,179 @@ import ly.kite.image.ImageCache;
  * This class tests the image cache class.
  *
  *****************************************************/
-public class ImageCacheTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class ImageCacheTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ImageCacheTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageCacheTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testCache1() {
 
+        ImageCache cache = new ImageCache(0);
 
-  ////////// Constructor(s) //////////
+        Object key = new Object();
+        Bitmap bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
+        cache.addImage(key, bitmap);
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  public void testCache1()
-    {
-    ImageCache cache = new ImageCache( 0 );
-
-    Object key    = new Object();
-    Bitmap bitmap = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
-
-    cache.addImage( key, bitmap );
-
-    Assert.assertEquals( null, cache.getImage( key ) );
+        Assert.assertEquals(null, cache.getImage(key));
     }
 
-  public void testCache2()
-    {
-    ImageCache cache = new ImageCache( 70 );
+    public void testCache2() {
 
-    Object key1    = new Object();
-    Bitmap bitmap1 = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        ImageCache cache = new ImageCache(70);
 
-    Object key2    = new Object();
-    Bitmap bitmap2 = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        Object key1 = new Object();
+        Bitmap bitmap1 = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    cache.addImage( key1, bitmap1 );
-    Assert.assertEquals( bitmap1, cache.getImage( key1 ) );
-    Assert.assertEquals( null, cache.getImage( key2 ) );
+        Object key2 = new Object();
+        Bitmap bitmap2 = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    cache.addImage( key2, bitmap2 );
-    Assert.assertEquals( null, cache.getImage( key1 ) );
-    Assert.assertEquals( bitmap2, cache.getImage( key2 ) );
+        cache.addImage(key1, bitmap1);
+        Assert.assertEquals(bitmap1, cache.getImage(key1));
+        Assert.assertEquals(null, cache.getImage(key2));
+
+        cache.addImage(key2, bitmap2);
+        Assert.assertEquals(null, cache.getImage(key1));
+        Assert.assertEquals(bitmap2, cache.getImage(key2));
     }
 
-  public void testCache3()
-    {
-    ImageCache cache = new ImageCache( 150 );
+    public void testCache3() {
 
-    Object key1    = new Object();
-    Bitmap bitmap1 = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        ImageCache cache = new ImageCache(150);
 
-    Object key2    = new Object();
-    Bitmap bitmap2 = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        Object key1 = new Object();
+        Bitmap bitmap1 = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    Object key3    = new Object();
-    Bitmap bitmap3 = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        Object key2 = new Object();
+        Bitmap bitmap2 = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    cache.addImage( key1, bitmap1 );
-    Assert.assertEquals( bitmap1, cache.getImage( key1 ) );
-    Assert.assertEquals( null,    cache.getImage( key2 ) );
-    Assert.assertEquals( null,    cache.getImage( key3 ) );
+        Object key3 = new Object();
+        Bitmap bitmap3 = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    cache.addImage( key2, bitmap2 );
-    Assert.assertEquals( bitmap1, cache.getImage( key1 ) );
-    Assert.assertEquals( bitmap2, cache.getImage( key2 ) );
-    Assert.assertEquals( null,    cache.getImage( key3 ) );
+        cache.addImage(key1, bitmap1);
+        Assert.assertEquals(bitmap1, cache.getImage(key1));
+        Assert.assertEquals(null, cache.getImage(key2));
+        Assert.assertEquals(null, cache.getImage(key3));
 
-    cache.addImage( key3, bitmap3 );
-    Assert.assertEquals( null, cache.getImage( key1 ) );
-    Assert.assertEquals( bitmap2, cache.getImage( key2 ) );
-    Assert.assertEquals( bitmap3, cache.getImage( key3 ) );
+        cache.addImage(key2, bitmap2);
+        Assert.assertEquals(bitmap1, cache.getImage(key1));
+        Assert.assertEquals(bitmap2, cache.getImage(key2));
+        Assert.assertEquals(null, cache.getImage(key3));
+
+        cache.addImage(key3, bitmap3);
+        Assert.assertEquals(null, cache.getImage(key1));
+        Assert.assertEquals(bitmap2, cache.getImage(key2));
+        Assert.assertEquals(bitmap3, cache.getImage(key3));
     }
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    public void testPending1() {
 
-  public void testPending1()
-    {
-    ImageCache    cache    = new ImageCache( 100 );
-    ImageConsumer consumer = new ImageConsumer();
+        ImageCache cache = new ImageCache(100);
+        ImageConsumer consumer = new ImageConsumer();
 
-    Object key    = new Object();
-    Bitmap bitmap = Bitmap.createBitmap( 4, 4, Bitmap.Config.ARGB_8888 );
+        Object key = new Object();
+        Bitmap bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
 
-    cache.addPendingImage( key, consumer );
+        cache.addPendingImage(key, consumer);
 
-    Assert.assertEquals( false, consumer.downloadingCalled );
-    Assert.assertEquals( false, consumer.availableCalled );
-    Assert.assertEquals( false, consumer.unavailableCalled );
+        Assert.assertEquals(false, consumer.downloadingCalled);
+        Assert.assertEquals(false, consumer.availableCalled);
+        Assert.assertEquals(false, consumer.unavailableCalled);
 
-    cache.onImageAvailable( key, bitmap );
+        cache.onImageAvailable(key, bitmap);
 
-    Assert.assertEquals( false, consumer.downloadingCalled );
-    Assert.assertEquals( true,  consumer.availableCalled );
-    Assert.assertEquals( false, consumer.unavailableCalled );
+        Assert.assertEquals(false, consumer.downloadingCalled);
+        Assert.assertEquals(true, consumer.availableCalled);
+        Assert.assertEquals(false, consumer.unavailableCalled);
     }
 
-  public void testPending2()
-    {
-    ImageCache    cache    = new ImageCache( 100 );
-    ImageConsumer consumer = new ImageConsumer();
+    public void testPending2() {
 
-    Object key    = new Object();
+        ImageCache cache = new ImageCache(100);
+        ImageConsumer consumer = new ImageConsumer();
 
-    cache.addPendingImage( key, consumer );
+        Object key = new Object();
 
-    cache.onImageDownloading( key );
+        cache.addPendingImage(key, consumer);
 
-    Assert.assertEquals( true,  consumer.downloadingCalled );
-    Assert.assertEquals( false, consumer.availableCalled );
-    Assert.assertEquals( false, consumer.unavailableCalled );
+        cache.onImageDownloading(key);
+
+        Assert.assertEquals(true, consumer.downloadingCalled);
+        Assert.assertEquals(false, consumer.availableCalled);
+        Assert.assertEquals(false, consumer.unavailableCalled);
     }
 
-  public void testPending3()
-    {
-    ImageCache    cache    = new ImageCache( 100 );
-    ImageConsumer consumer = new ImageConsumer();
+    public void testPending3() {
 
-    Object key    = new Object();
+        ImageCache cache = new ImageCache(100);
+        ImageConsumer consumer = new ImageConsumer();
 
-    cache.addPendingImage( key, consumer );
+        Object key = new Object();
 
-    cache.onImageUnavailable( key, new Exception( "Test" ) );
+        cache.addPendingImage(key, consumer);
 
-    Assert.assertEquals( false, consumer.downloadingCalled );
-    Assert.assertEquals( false, consumer.availableCalled );
-    Assert.assertEquals( true,  consumer.unavailableCalled );
+        cache.onImageUnavailable(key, new Exception("Test"));
+
+        Assert.assertEquals(false, consumer.downloadingCalled);
+        Assert.assertEquals(false, consumer.availableCalled);
+        Assert.assertEquals(true, consumer.unavailableCalled);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * An image consumer.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * An image consumer.
-   *
-   *****************************************************/
+    private class ImageConsumer implements IImageConsumer {
+        boolean downloadingCalled;
+        boolean availableCalled;
+        boolean unavailableCalled;
 
-  private class ImageConsumer implements IImageConsumer
-    {
-    boolean downloadingCalled;
-    boolean availableCalled;
-    boolean unavailableCalled;
+        @Override
+        public void onImageDownloading(Object key) {
 
-    @Override
-    public void onImageDownloading( Object key )
-      {
-      this.downloadingCalled = true;
-      }
+            this.downloadingCalled = true;
+        }
 
-    @Override
-    public void onImageAvailable( Object key, Bitmap bitmap )
-      {
-      this.availableCalled = true;
-      }
+        @Override
+        public void onImageAvailable(Object key, Bitmap bitmap) {
 
-    @Override
-    public void onImageUnavailable( Object key, Exception exception )
-      {
-      this.unavailableCalled = true;
-      }
+            this.availableCalled = true;
+        }
+
+        @Override
+        public void onImageUnavailable(Object key, Exception exception) {
+
+            this.unavailableCalled = true;
+        }
     }
 
-  }
+}

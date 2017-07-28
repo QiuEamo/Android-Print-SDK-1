@@ -36,16 +36,10 @@
 
 package ly.kite.app;
 
-
 ///// Import(s) /////
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-
-import ly.kite.journey.AKiteActivity;
-
 
 ///// Class Declaration /////
 
@@ -55,108 +49,90 @@ import ly.kite.journey.AKiteActivity;
  * implement deep linking into the SDK journey.
  *
  *****************************************************/
-abstract public class ADeepLinkableActivity extends APermissionsRequestingActivity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class ADeepLinkableActivity extends APermissionsRequestingActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                             = "ADeepLinkableActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ADeepLinkableActivity";
 
-  static private final String  URI_PATH_PREFIX_PRODUCT_GROUP_LABEL = "/product-group-label/";
-  static private final String  URI_PATH_PREFIX_PRODUCT_ID          = "/product-id/";
+    private static final String URI_PATH_PREFIX_PRODUCT_GROUP_LABEL = "/product-group-label/";
+    private static final String URI_PATH_PREFIX_PRODUCT_ID = "/product-id/";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Checks the intent used to start this activity for a
+     * deep link.
+     *
+     * @param schema The URI schema defined in your manifest for
+     *               the intent filter.
+     *
+     * @return true, if a deep link was found. In addition, one
+     *         of the callbacks will have been called.
+     *
+     *****************************************************/
+    protected boolean findDeepLink(String schema) {
+        // If the intent used to start this activity contains a URI, see if it matches
+        // a deep link format.
 
-  ////////// Static Method(s) //////////
+        Intent intent = getIntent();
 
+        if (intent != null) {
+            Uri uri = intent.getData();
 
-  ////////// Constructor(s) //////////
+            if (uri != null) {
+                String path = uri.getPath();
 
+                if (path != null) {
+                    if (path.startsWith(URI_PATH_PREFIX_PRODUCT_GROUP_LABEL)) {
+                        onDeepLinkProductGroup(path.substring(URI_PATH_PREFIX_PRODUCT_GROUP_LABEL.length()));
 
-  ////////// Method(s) //////////
+                        return true;
+                    } else if (path.startsWith(URI_PATH_PREFIX_PRODUCT_ID)) {
+                        onDeepLinkProductId(path.substring(URI_PATH_PREFIX_PRODUCT_ID.length()));
 
-  /*****************************************************
-   *
-   * Checks the intent used to start this activity for a
-   * deep link.
-   *
-   * @param schema The URI schema defined in your manifest for
-   *               the intent filter.
-   *
-   * @return true, if a deep link was found. In addition, one
-   *         of the callbacks will have been called.
-   *
-   *****************************************************/
-  protected boolean findDeepLink( String schema )
-    {
-    // If the intent used to start this activity contains a URI, see if it matches
-    // a deep link format.
-
-    Intent intent = getIntent();
-
-    if ( intent != null )
-      {
-      Uri uri = intent.getData();
-
-      if ( uri != null )
-        {
-        String path =  uri.getPath();
-
-        if ( path != null )
-          {
-          if ( path.startsWith( URI_PATH_PREFIX_PRODUCT_GROUP_LABEL ) )
-            {
-            onDeepLinkProductGroup( path.substring( URI_PATH_PREFIX_PRODUCT_GROUP_LABEL.length() ) );
-
-            return ( true );
+                        return true;
+                    }
+                }
             }
-          else if ( path.startsWith( URI_PATH_PREFIX_PRODUCT_ID ) )
-            {
-            onDeepLinkProductId( path.substring( URI_PATH_PREFIX_PRODUCT_ID.length() ) );
-
-            return ( true );
-            }
-          }
         }
-      }
 
-
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Called when the intent URI contains a product group
+     * label.
+     *
+     *****************************************************/
+    protected abstract void onDeepLinkProductGroup(String productGroupLabel);
 
-  /*****************************************************
-   *
-   * Called when the intent URI contains a product group
-   * label.
-   *
-   *****************************************************/
-  abstract protected void onDeepLinkProductGroup( String productGroupLabel );
+    /*****************************************************
+     *
+     * Called when the intent URI contains a product id.
+     *
+     *****************************************************/
+    protected abstract void onDeepLinkProductId(String productId);
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Called when the intent URI contains a product id.
-   *
-   *****************************************************/
-  abstract protected void onDeepLinkProductId( String productId );
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

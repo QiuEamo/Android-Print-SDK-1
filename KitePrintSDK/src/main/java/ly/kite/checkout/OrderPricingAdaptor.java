@@ -36,7 +36,6 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -54,10 +53,9 @@ import java.util.Locale;
 
 import ly.kite.KiteSDK;
 import ly.kite.R;
-import ly.kite.pricing.OrderPricing;
 import ly.kite.catalogue.MultipleCurrencyAmounts;
 import ly.kite.catalogue.SingleCurrencyAmounts;
-
+import ly.kite.pricing.OrderPricing;
 
 ///// Class Declaration /////
 
@@ -66,290 +64,255 @@ import ly.kite.catalogue.SingleCurrencyAmounts;
  * An adaptor for the image sources.
  *
  *****************************************************/
-public class OrderPricingAdaptor extends BaseAdapter
-  {
-  ////////// Static Constant(s) //////////
+public class OrderPricingAdaptor extends BaseAdapter {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "OrderPricingAdaptor";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderPricingAdaptor";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
+    private OrderPricing mPricing;
 
-  ////////// Member Variable(s) //////////
+    private LayoutInflater mLayoutInflator;
 
-  private Context          mContext;
-  private OrderPricing     mPricing;
+    private ArrayList<Item> mItemList;
 
-  private LayoutInflater   mLayoutInflator;
+    ////////// Static Initialiser(s) //////////
 
-  private ArrayList<Item>  mItemList;
+    ////////// Constructor(s) //////////
 
+    public OrderPricingAdaptor(Context context, OrderPricing pricing) {
 
-  ////////// Static Initialiser(s) //////////
+        mContext = context;
+        mPricing = pricing;
 
+        mLayoutInflator = LayoutInflater.from(context);
 
-  ////////// Static Method(s) //////////
+        // Create the item list
 
-  /*****************************************************
-   *
-   * Adds the pricing items as individual views to a linear
-   * layout rather than a list view.
-   *
-   *****************************************************/
-  static public void addItems( Context context, OrderPricing pricing, ViewGroup viewGroup )
-    {
-    new OrderPricingAdaptor( context, pricing ).addItems( viewGroup );
-    }
+        mItemList = new ArrayList<>();
 
-
-  ////////// Constructor(s) //////////
-
-  public OrderPricingAdaptor( Context context, OrderPricing pricing )
-    {
-    mContext        = context;
-    mPricing        = pricing;
-
-    mLayoutInflator = LayoutInflater.from( context );
-
-
-    // Create the item list
-
-    mItemList = new ArrayList<>();
-
-    if ( pricing == null ) return;
-
-
-    Locale defaultLocale         = Locale.getDefault();
-    String preferredCurrencyCode = KiteSDK.getInstance( mContext ).getLockedCurrencyCode();
-
-
-    ///// Line items
-
-    List<OrderPricing.LineItem> lineItemList = pricing.getLineItems();
-
-    for ( OrderPricing.LineItem lineItem : lineItemList )
-      {
-      String description = lineItem.getDescription();
-
-      MultipleCurrencyAmounts itemCost = lineItem.getProductCost();
-
-      String itemCostString = itemCost.getDefaultDisplayAmountWithFallback();
-
-      mItemList.add( new Item( description, itemCostString, false ) );
-      }
-
-
-    ///// Shipping
-
-    MultipleCurrencyAmounts shippingCost = pricing.getTotalShippingCost();
-    SingleCurrencyAmounts shippingCostInSingleCurrency;
-    String                 shippingCostString;
-
-    if ( shippingCost != null &&
-         ( shippingCostInSingleCurrency = shippingCost.getAmountsWithFallback( preferredCurrencyCode ) ) != null &&
-         shippingCostInSingleCurrency.getAmount().compareTo( BigDecimal.ZERO ) > 0 )
-      {
-      shippingCostString = shippingCostInSingleCurrency.getDisplayAmountForLocale( defaultLocale );
-      }
-    else
-      {
-      shippingCostString = mContext.getString( R.string.Free );
-      }
-
-    mItemList.add( new Item( mContext.getString( R.string.Shipping ), shippingCostString, false ) );
-
-
-    ///// Promo code
-
-    MultipleCurrencyAmounts promoDiscount = pricing.getPromoCodeDiscount();
-
-    if ( promoDiscount != null )
-      {
-      SingleCurrencyAmounts promoDiscountInSingleCurrency = promoDiscount.getAmountsWithFallback( preferredCurrencyCode );
-
-      if ( promoDiscountInSingleCurrency != null &&
-           promoDiscountInSingleCurrency.getAmount().compareTo( BigDecimal.ZERO ) > 0 )
-        {
-        mItemList.add( new Item( mContext.getString( R.string.Promotional_Discount ), promoDiscountInSingleCurrency.getDisplayAmountForLocale( defaultLocale ), false ) );
+        if (pricing == null) {
+            return;
         }
-      }
 
+        final Locale defaultLocale = Locale.getDefault();
+        final String preferredCurrencyCode = KiteSDK.getInstance(mContext).getLockedCurrencyCode();
 
-    ///// Total
+        ///// Line items
 
-    MultipleCurrencyAmounts totalCost = pricing.getTotalCost();
+        final List<OrderPricing.LineItem> lineItemList = pricing.getLineItems();
 
-    if ( totalCost != null )
-      {
-      SingleCurrencyAmounts totalCostInSingleCurrency = totalCost.getAmountsWithFallback( preferredCurrencyCode );
+        for (OrderPricing.LineItem lineItem : lineItemList) {
+            final String description = lineItem.getDescription();
 
-      mItemList.add( new Item( mContext.getString( R.string.Total ), totalCostInSingleCurrency.getDisplayAmountForLocale( defaultLocale ), true ) );
-      }
+            final MultipleCurrencyAmounts itemCost = lineItem.getProductCost();
+
+            final String itemCostString = itemCost.getDefaultDisplayAmountWithFallback();
+
+            mItemList.add(new Item(description, itemCostString, false));
+        }
+
+        ///// Shipping
+
+        final MultipleCurrencyAmounts shippingCost = pricing.getTotalShippingCost();
+        final SingleCurrencyAmounts shippingCostInSingleCurrency;
+        final String shippingCostString;
+
+        if (shippingCost != null &&
+                (shippingCostInSingleCurrency = shippingCost.getAmountsWithFallback(preferredCurrencyCode)) != null &&
+                shippingCostInSingleCurrency.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            shippingCostString = shippingCostInSingleCurrency.getDisplayAmountForLocale(defaultLocale);
+        } else {
+            shippingCostString = mContext.getString(R.string.Free);
+        }
+
+        mItemList.add(new Item(mContext.getString(R.string.Shipping), shippingCostString, false));
+
+        ///// Promo code
+
+        final MultipleCurrencyAmounts promoDiscount = pricing.getPromoCodeDiscount();
+
+        if (promoDiscount != null) {
+            final SingleCurrencyAmounts promoDiscountInSingleCurrency = promoDiscount.getAmountsWithFallback(preferredCurrencyCode);
+
+            if (promoDiscountInSingleCurrency != null &&
+                    promoDiscountInSingleCurrency.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                mItemList.add(new Item(mContext.getString(R.string.Promotional_Discount), promoDiscountInSingleCurrency
+                        .getDisplayAmountForLocale(defaultLocale), false));
+            }
+        }
+
+        ///// Total
+
+        final MultipleCurrencyAmounts totalCost = pricing.getTotalCost();
+
+        if (totalCost != null) {
+            final SingleCurrencyAmounts totalCostInSingleCurrency = totalCost.getAmountsWithFallback(preferredCurrencyCode);
+
+            mItemList.add(new Item(mContext.getString(R.string.Total), totalCostInSingleCurrency.getDisplayAmountForLocale(defaultLocale)
+                    , true));
+        }
 
     }
 
+    ////////// Static Method(s) //////////
 
-  ////////// BaseAdapter Method(s) //////////
+    /*****************************************************
+     *
+     * Adds the pricing items as individual views to a linear
+     * layout rather than a list view.
+     *
+     *****************************************************/
+    public static void addItems(Context context, OrderPricing pricing, ViewGroup viewGroup) {
 
-  /*****************************************************
-   *
-   * Returns the number of product items.
-   *
-   *****************************************************/
-  @Override
-  public int getCount()
-    {
-    return ( mItemList.size() );
+        new OrderPricingAdaptor(context, pricing).addItems(viewGroup);
     }
 
+    ////////// BaseAdapter Method(s) //////////
 
-  /*****************************************************
-   *
-   * Returns the product item at the requested position.
-   *
-   *****************************************************/
-  @Override
-  public Object getItem( int position )
-    {
-    return ( mItemList.get( position ) );
+    /*****************************************************
+     *
+     * Returns the number of product items.
+     *
+     *****************************************************/
+    @Override
+    public int getCount() {
+
+        return mItemList.size();
     }
 
+    /*****************************************************
+     *
+     * Returns the product item at the requested position.
+     *
+     *****************************************************/
+    @Override
+    public Object getItem(int position) {
 
-  /*****************************************************
-   *
-   * Returns an id for the product item at the requested
-   * position.
-   *
-   *****************************************************/
-  @Override
-  public long getItemId( int position )
-    {
-    return ( 0 );
+        return mItemList.get(position);
     }
 
+    /*****************************************************
+     *
+     * Returns an id for the product item at the requested
+     * position.
+     *
+     *****************************************************/
+    @Override
+    public long getItemId(int position) {
 
-  /*****************************************************
-   *
-   * Returns the view for the product item at the requested
-   * position.
-   *
-   *****************************************************/
-  @Override
-  public View getView( int position, View convertView, ViewGroup parent )
-    {
-    // Either re-use the convert view, or create a new one.
-
-    Object      tag;
-    View        view;
-    ViewHolder  viewHolder;
-
-    if ( convertView != null &&
-            ( tag = convertView.getTag() ) != null &&
-            ( tag instanceof ViewHolder ) )
-      {
-      view       = convertView;
-      viewHolder = (ViewHolder)tag;
-      }
-    else
-      {
-      view       = mLayoutInflator.inflate( R.layout.list_item_order_pricing, parent, false );
-      viewHolder = new ViewHolder( view );
-
-      view.setTag( viewHolder );
-      }
-
-
-    // Set up the view
-
-    Item item = (Item)getItem( position );
-
-    viewHolder.bind( item );
-
-
-    return ( view );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Returns the view for the product item at the requested
+     * position.
+     *
+     *****************************************************/
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Either re-use the convert view, or create a new one.
 
-  ////////// BaseAdapter Method(s) //////////
+        final Object tag;
+        final View view;
+        final ViewHolder viewHolder;
 
-  /*****************************************************
-   *
-   * Adds the pricing items to a view group, as child views.
-   *
-   *****************************************************/
-  private void addItems( ViewGroup viewGroup )
-    {
-    for ( int position = 0; position < getCount(); position ++ )
-      {
-      View       view       = mLayoutInflator.inflate( R.layout.list_item_order_pricing, viewGroup, false );
-      ViewHolder viewHolder = new ViewHolder( view );
+        if (convertView != null &&
+                (tag = convertView.getTag()) != null &&
+                (tag instanceof ViewHolder)) {
+            view = convertView;
+            viewHolder = (ViewHolder) tag;
+        } else {
+            view = mLayoutInflator.inflate(R.layout.list_item_order_pricing, parent, false);
+            viewHolder = new ViewHolder(view);
 
-      Item item = (Item)getItem( position );
+            view.setTag(viewHolder);
+        }
 
-      viewHolder.bind( item );
+        // Set up the view
 
-      viewGroup.addView( view );
-      }
+        final Item item = (Item) getItem(position);
+
+        viewHolder.bind(item);
+
+        return view;
     }
 
+    ////////// BaseAdapter Method(s) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * Adds the pricing items to a view group, as child views.
+     *
+     *****************************************************/
+    private void addItems(ViewGroup viewGroup) {
 
-  /*****************************************************
-   *
-   * A row item.
-   *
-   *****************************************************/
-  private class Item
-    {
-    String   description;
-    String   amount;
-    boolean  isBold;
+        for (int position = 0; position < getCount(); position++) {
+            final View view = mLayoutInflator.inflate(R.layout.list_item_order_pricing, viewGroup, false);
+            final ViewHolder viewHolder = new ViewHolder(view);
 
-    Item( String description, String amount, boolean isBold )
-      {
-      this.description = description;
-      this.amount      = amount;
-      this.isBold      = isBold;
-      }
+            final Item item = (Item) getItem(position);
+
+            viewHolder.bind(item);
+
+            viewGroup.addView(view);
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * References to views within the layout.
-   *
-   *****************************************************/
-  private class ViewHolder
-    {
-    TextView  descriptionTextView;
-    TextView  amountTextView;
+    /*****************************************************
+     *
+     * A row item.
+     *
+     *****************************************************/
+    private class Item {
+        String mDescription;
+        String mAmount;
+        boolean mIsBold;
 
+        Item(String description, String amount, boolean isBold) {
 
-    ViewHolder( View view )
-      {
-      this.descriptionTextView = (TextView)view.findViewById( R.id.description_text_view );
-      this.amountTextView      = (TextView)view.findViewById( R.id.amount_text_view );
-      }
-
-
-    void bind( Item item )
-      {
-      // Set the text
-      this.descriptionTextView.setText( item.description );
-      this.amountTextView.setText( item.amount );
-
-
-      // Change the style appropriately
-
-      int style = ( item.isBold ? Typeface.BOLD : Typeface.NORMAL );
-
-      this.descriptionTextView.setTypeface( Typeface.create( this.descriptionTextView.getTypeface(), style ) );
-      this.amountTextView     .setTypeface( Typeface.create( this.amountTextView.getTypeface(),      style ) );
-      }
+            this.mDescription = description;
+            this.mAmount = amount;
+            this.mIsBold = isBold;
+        }
     }
 
-  }
+    /*****************************************************
+     *
+     * References to views within the layout.
+     *
+     *****************************************************/
+    private class ViewHolder {
+        TextView mDescriptionTextView;
+        TextView mAmountTextView;
+
+        ViewHolder(View view) {
+
+            this.mDescriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
+            this.mAmountTextView = (TextView) view.findViewById(R.id.amount_text_view);
+        }
+
+        void bind(Item item) {
+            // Set the text
+            this.mDescriptionTextView.setText(item.mDescription);
+            this.mAmountTextView.setText(item.mAmount);
+
+            // Change the style appropriately
+
+            final int style = item.mIsBold ? Typeface.BOLD : Typeface.NORMAL;
+
+            this.mDescriptionTextView.setTypeface(Typeface.create(this.mDescriptionTextView.getTypeface(), style));
+            this.mAmountTextView.setTypeface(Typeface.create(this.mAmountTextView.getTypeface(), style));
+        }
+    }
+
+}
 

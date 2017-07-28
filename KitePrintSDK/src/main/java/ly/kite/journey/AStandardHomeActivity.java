@@ -27,7 +27,6 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
 
 import android.app.ActionBar;
@@ -40,9 +39,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
-import ly.kite.journey.selection.ChooseProductGroupFragment;
 import ly.kite.R;
-
+import ly.kite.journey.selection.ChooseProductGroupFragment;
 
 ///// Class Declaration /////
 
@@ -52,243 +50,206 @@ import ly.kite.R;
  * standard menu indicator.
  *
  *****************************************************/
-abstract public class AStandardHomeActivity extends AHomeActivity
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AStandardHomeActivity extends AHomeActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String LOG_TAG             = "AStandardHomeActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AStandardHomeActivity";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private ActionBarDrawerToggle mDrawerToggle;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private ActionBarDrawerToggle  mDrawerToggle;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// ProductSelectionActivity Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  ////////// Static Method(s) //////////
+        super.onCreate(savedInstanceState);
 
+        // Set up the drawer toggle
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_closed);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-  ////////// Constructor(s) //////////
+        // Set up the action bar
 
+        ActionBar actionBar = getActionBar();
 
-  ////////// ProductSelectionActivity Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
-
-
-    // Set up the drawer toggle
-    mDrawerToggle = new ActionBarDrawerToggle( this, mDrawerLayout, R.string.drawer_open, R.string.drawer_closed );
-    mDrawerLayout.setDrawerListener( mDrawerToggle );
-
-
-    // Set up the action bar
-
-    ActionBar actionBar = getActionBar();
-
-    if ( actionBar != null )
-      {
-      actionBar.setDisplayHomeAsUpEnabled( true );
-      actionBar.setHomeButtonEnabled( true );
-      }
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
     }
 
+    /*****************************************************
+     *
+     * Called after the activity has been created.
+     *
+     *****************************************************/
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called after the activity has been created.
-   *
-   *****************************************************/
-  @Override
-  protected void onPostCreate( Bundle savedInstanceState )
-    {
-    super.onPostCreate( savedInstanceState );
+        super.onPostCreate(savedInstanceState);
 
-    // Sync the toggle state after onRestoreInstanceState has occurred.
-    mDrawerToggle.syncState();
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
     }
 
+    /*****************************************************
+     *
+     * Called after the configuration changes.
+     *
+     *****************************************************/
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
 
-  /*****************************************************
-   *
-   * Called after the configuration changes.
-   *
-   *****************************************************/
-  @Override
-  public void onConfigurationChanged( Configuration newConfig )
-    {
-    super.onConfigurationChanged( newConfig );
+        super.onConfigurationChanged(newConfig);
 
-    mDrawerToggle.onConfigurationChanged( newConfig );
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
-  /*****************************************************
-   *
-   * Called when an action bar item is selected.
-   *
-   *****************************************************/
-  @Override
-  public boolean onOptionsItemSelected( MenuItem item )
-    {
-    // Pass the event to ActionBarDrawerToggle, if it returns
-    // true, then it has handled the app icon touch event
-    if ( mDrawerToggle.onOptionsItemSelected( item ) )
-      {
-      return ( true );
-      }
-
-    return super.onOptionsItemSelected( item );
-    }
-
-
-  /*****************************************************
-   *
-   * Called with the current top-most fragment.
-   *
-   *****************************************************/
-  protected void onNotifyTop( AKiteFragment topFragment )
-    {
-    ActionBar actionBar = getActionBar();
-
-
-    // Determine which fragment is top-most
-
-    String tag = topFragment.getTag();
-
-    if ( tag != null && tag.equals( ChooseProductGroupFragment.TAG ) )
-      {
-      ///// Home page /////
-
-      // We only enable the menu on the home page
-      mDrawerToggle.setDrawerIndicatorEnabled( true );
-      mDrawerLayout.setDrawerLockMode( DrawerLayout.LOCK_MODE_UNLOCKED );
-
-      if ( mShowMenuOnce )
-        {
-        mShowMenuOnce = false;
-
-
-        // Open and close the menu
-
-        mHandler = new Handler();
-
-        mHandler.postDelayed( new OpenMenuRunnable(), OPEN_MENU_DELAY_MILLIS );
+    /*****************************************************
+     *
+     * Called when an action bar item is selected.
+     *
+     *****************************************************/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
 
-      // We display the logo on the home page
-      actionBar.setDisplayShowTitleEnabled( false );
-      actionBar.setDisplayShowCustomEnabled( true );
-      }
-    else
-      {
-      mDrawerToggle.setDrawerIndicatorEnabled( false );
-      mDrawerLayout.setDrawerLockMode( DrawerLayout.LOCK_MODE_LOCKED_CLOSED );
-
-      // On other pages we show a title
-      actionBar.setDisplayShowTitleEnabled( true );
-      actionBar.setDisplayShowCustomEnabled( false );
-      }
-
-
-    super.onNotifyTop( topFragment );
+        return super.onOptionsItemSelected(item);
     }
 
+    /*****************************************************
+     *
+     * Called with the current top-most fragment.
+     *
+     *****************************************************/
+    protected void onNotifyTop(AKiteFragment topFragment) {
 
-  /*****************************************************
-   *
-   * Called when the back key is pressed.
-   *
-   *****************************************************/
-  @Override
-  public void onBackPressed()
-    {
-    // If the drawer is open - close it
-    if ( mDrawerLayout.isDrawerOpen( Gravity.LEFT ) )
-      {
-      mDrawerLayout.closeDrawer( Gravity.LEFT );
+        ActionBar actionBar = getActionBar();
 
-      return;
-      }
+        // Determine which fragment is top-most
 
-    super.onBackPressed();
+        String tag = topFragment.getTag();
+
+        if (tag != null && tag.equals(ChooseProductGroupFragment.TAG)) {
+            ///// Home page /////
+
+            // We only enable the menu on the home page
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+            if (mShowMenuOnce) {
+                mShowMenuOnce = false;
+
+                // Open and close the menu
+
+                mHandler = new Handler();
+
+                mHandler.postDelayed(new OpenMenuRunnable(), OPEN_MENU_DELAY_MILLIS);
+            }
+
+            // We display the logo on the home page
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayShowCustomEnabled(true);
+        } else {
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+            // On other pages we show a title
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(false);
+        }
+
+        super.onNotifyTop(topFragment);
     }
 
-
-  ////////// Method(s) //////////
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * Runnable to open the menu.
-   *
-   *****************************************************/
-  private class OpenMenuRunnable implements Runnable, DrawerLayout.DrawerListener
-    {
-    public void run()
-      {
-      // Override the drawer listener so we know when it has fully opened.
-      mDrawerLayout.setDrawerListener( this );
-
-      mDrawerLayout.openDrawer( Gravity.LEFT );
-      }
-
+    /*****************************************************
+     *
+     * Called when the back key is pressed.
+     *
+     *****************************************************/
     @Override
-    public void onDrawerSlide( View drawerView, float slideOffset )
-      {
-      // Ignore
-      }
+    public void onBackPressed() {
+        // If the drawer is open - close it
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
 
-    @Override
-    public void onDrawerOpened( View drawerView )
-      {
-      // We no longer need to listen for drawer events
-      mDrawerLayout.setDrawerListener( null );
+            return;
+        }
 
-      mHandler.postDelayed( new CloseMenuRunnable(), CLOSE_MENU_DELAY_MILLIS );
-      }
-
-    @Override
-    public void onDrawerClosed( View drawerView )
-      {
-      // Ignore
-      }
-
-    @Override
-    public void onDrawerStateChanged( int newState )
-      {
-      // Ignore
-      }
+        super.onBackPressed();
     }
 
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Runnable to close the menu.
-   *
-   *****************************************************/
-  private class CloseMenuRunnable implements Runnable
-    {
-    public void run()
-      {
-      mDrawerLayout.closeDrawers();
-      }
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * Runnable to open the menu.
+     *
+     *****************************************************/
+    private class OpenMenuRunnable implements Runnable, DrawerLayout.DrawerListener {
+        public void run() {
+            // Override the drawer listener so we know when it has fully opened.
+            mDrawerLayout.setDrawerListener(this);
+
+            mDrawerLayout.openDrawer(Gravity.LEFT);
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            // Ignore
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            // We no longer need to listen for drawer events
+            mDrawerLayout.setDrawerListener(null);
+
+            mHandler.postDelayed(new CloseMenuRunnable(), CLOSE_MENU_DELAY_MILLIS);
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            // Ignore
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            // Ignore
+        }
     }
 
+    /*****************************************************
+     *
+     * Runnable to close the menu.
+     *
+     *****************************************************/
+    private class CloseMenuRunnable implements Runnable {
+        public void run() {
 
-  }
+            mDrawerLayout.closeDrawers();
+        }
+    }
+
+}

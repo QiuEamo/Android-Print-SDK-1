@@ -36,12 +36,10 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 ///// Class Declaration /////
 
@@ -52,154 +50,137 @@ import java.util.HashMap;
  * to consumers.
  *
  *****************************************************/
-abstract public class ACache<K,V,C>
-  {
-  ////////// Static Constant(s) //////////
+public abstract class ACache<K, V, C> {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ACache";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ACache";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private HashMap<K, V> mCacheMap;
+    private HashMap<K, ArrayList<C>> mConsumerMap;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private HashMap<K,V>             mCacheMap;
-  private HashMap<K,ArrayList<C>>  mConsumerMap;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    protected ACache() {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  protected ACache()
-    {
-    mCacheMap    = new HashMap<>();
-    mConsumerMap = new HashMap<>();
+        mCacheMap = new HashMap<>();
+        mConsumerMap = new HashMap<>();
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a cached value for the supplied key, or null
+     * if the key has no cached value.
+     *
+     *****************************************************/
+    protected V getCachedValue(K key) {
 
-  /*****************************************************
-   *
-   * Returns a cached value for the supplied key, or null
-   * if the key has no cached value.
-   *
-   *****************************************************/
-  protected V getCachedValue( K key )
-    {
-    return ( mCacheMap.get( key ) );
+        return mCacheMap.get(key);
     }
 
+    /*****************************************************
+     *
+     * Registers a consumer's interest in the value for a key.
+     *
+     * @return true, if there is already a request running
+     *         for the same key, false otherwise.
+     *
+     *****************************************************/
+    protected boolean registerForValue(K key, C consumer) {
+        // If we don't already have an entry for the key - create a new list
+        // containing just this one callback.
 
-  /*****************************************************
-   *
-   * Registers a consumer's interest in the value for a key.
-   *
-   * @return true, if there is already a request running
-   *         for the same key, false otherwise.
-   *
-   *****************************************************/
-  protected boolean registerForValue( K key, C consumer )
-    {
-    // If we don't already have an entry for the key - create a new list
-    // containing just this one callback.
+        ArrayList<C> callbackList = mConsumerMap.get(key);
 
-    ArrayList<C> callbackList = mConsumerMap.get( key );
+        if (callbackList == null) {
+            callbackList = new ArrayList<>();
 
-    if ( callbackList == null )
-      {
-      callbackList = new ArrayList<>();
+            callbackList.add(consumer);
 
-      callbackList.add( consumer );
+            mConsumerMap.put(key, callbackList);
 
-      mConsumerMap.put( key, callbackList );
-
-      return ( false );
-      }
-
-
-    // We do already have an entry for the key, so add this callback if it
-    // is not already in the list.
-
-    if ( ! callbackList.contains( consumer ) ) callbackList.add( consumer );
-
-    return ( true );
-    }
-
-
-  /*****************************************************
-   *
-   * Stores the value in the cache, and distributes it to
-   * any consumers.
-   *
-   *****************************************************/
-  protected void saveAndDistributeValue( K key, V value )
-    {
-    // Cache the value
-    mCacheMap.put( key, value );
-
-
-    // Remove the list of consumers, and supply the value to each one in turn.
-
-    ArrayList<C> consumerList = mConsumerMap.remove( key );
-
-    if ( consumerList != null )
-      {
-      for ( C consumer : consumerList )
-        {
-        if ( consumer != null ) onValueAvailable( value, consumer );
+            return false;
         }
-      }
-    }
 
+        // We do already have an entry for the key, so add this callback if it
+        // is not already in the list.
 
-  /*****************************************************
-   *
-   * Called to distribute a value to a consumer in whatever
-   * way is appropriate. The consumer will never be null.
-   *
-   *****************************************************/
-  abstract protected void onValueAvailable( V value, C consumer );
-
-
-  /*****************************************************
-   *
-   * Distributes an error to any consumers.
-   *
-   *****************************************************/
-  protected void onError( K key, Exception exception )
-    {
-    // Remove the consumer list, and supply the error to them.
-
-    ArrayList<C> consumerList = mConsumerMap.remove( key );
-
-    if ( consumerList != null )
-      {
-      for ( C consumer : consumerList )
-        {
-        if ( consumer != null ) onError( exception, consumer );
+        if (!callbackList.contains(consumer)) {
+            callbackList.add(consumer);
         }
-      }
+
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Stores the value in the cache, and distributes it to
+     * any consumers.
+     *
+     *****************************************************/
+    protected void saveAndDistributeValue(K key, V value) {
+        // Cache the value
+        mCacheMap.put(key, value);
 
-  /*****************************************************
-   *
-   * Distributes an error to a consumer. The callback will
-   * never be null.
-   *
-   *****************************************************/
-  abstract protected void onError( Exception exception, C consumer );
+        // Remove the list of consumers, and supply the value to each one in turn.
 
+        final ArrayList<C> consumerList = mConsumerMap.remove(key);
 
-  ////////// Inner Class(es) //////////
+        if (consumerList != null) {
+            for (C consumer : consumerList) {
+                if (consumer != null) {
+                    onValueAvailable(value, consumer);
+                }
+            }
+        }
+    }
 
-  }
+    /*****************************************************
+     *
+     * Called to distribute a value to a consumer in whatever
+     * way is appropriate. The consumer will never be null.
+     *
+     *****************************************************/
+    protected abstract void onValueAvailable(V value, C consumer);
+
+    /*****************************************************
+     *
+     * Distributes an error to any consumers.
+     *
+     *****************************************************/
+    protected void onError(K key, Exception exception) {
+        // Remove the consumer list, and supply the error to them.
+
+        final ArrayList<C> consumerList = mConsumerMap.remove(key);
+
+        if (consumerList != null) {
+            for (C consumer : consumerList) {
+                if (consumer != null) {
+                    onError(exception, consumer);
+                }
+            }
+        }
+    }
+
+    /*****************************************************
+     *
+     * Distributes an error to a consumer. The callback will
+     * never be null.
+     *
+     *****************************************************/
+    protected abstract void onError(Exception exception, C consumer);
+
+    ////////// Inner Class(es) //////////
+
+}
 

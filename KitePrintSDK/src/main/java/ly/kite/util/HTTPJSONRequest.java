@@ -36,24 +36,22 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Map;
+import android.content.Context;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.content.Context;
-import android.util.Log;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Map;
 
 import ly.kite.KiteSDKException;
 import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -63,155 +61,140 @@ import ly.kite.R;
  * a JSON body response.
  *
  *****************************************************/
-public class HTTPJSONRequest extends HTTPRequest
-  {
-  ////////// Static Constant(s) //////////
+public class HTTPJSONRequest extends HTTPRequest {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "HTTPJSONRequest";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "HTTPJSONRequest";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private IJSONResponseListener mJSONResponseListener;
 
-  ////////// Member Variable(s) //////////
+    private JSONObject mJSONResponse;
 
-  private IJSONResponseListener  mJSONResponseListener;
+    ////////// Static Initialiser(s) //////////
 
-  private JSONObject             mJSONResponse;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public HTTPJSONRequest(Context context, HttpMethod httpMethod, String urlString, Map<String, String> headerMap, String
+            requestBodyString) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public HTTPJSONRequest( Context context, HttpMethod httpMethod, String urlString, Map<String, String> headerMap, String requestBodyString )
-    {
-    super( context, httpMethod, urlString, headerMap, requestBodyString );
+        super(context, httpMethod, urlString, headerMap, requestBodyString);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Starts the request.
+     *
+     *****************************************************/
+    public void start(IJSONResponseListener listener) {
 
-  /*****************************************************
-   *
-   * Starts the request.
-   *
-   *****************************************************/
-  public void start( IJSONResponseListener listener )
-    {
-    mJSONResponseListener = listener;
+        mJSONResponseListener = listener;
 
-    super.start( null );
+        super.start(null);
     }
 
+    /*****************************************************
+     *
+     * Processes the response on a background thread.
+     *
+     *****************************************************/
+    @Override
+    protected void processResponseInBackground(HttpResponse response) throws Exception {
 
-  /*****************************************************
-   *
-   * Processes the response on a background thread.
-   *
-   *****************************************************/
-  @Override
-  protected void processResponseInBackground( HttpResponse response ) throws Exception
-    {
-    BufferedReader reader = new BufferedReader( new InputStreamReader( response.getEntity().getContent(), "UTF-8" ) );
-    StringBuilder builder = new StringBuilder();
-    for ( String line = null; ( line = reader.readLine() ) != null; )
-      {
-      builder.append( line ).append( "\n" );
-      }
-
-
-    // If we get a body - parse it as JSON. Some endpoints don't return anything, so
-    // if this happens we just create an empty JSON object.
-
-    String bodyJSONString = builder.toString();
-
-    if ( ! bodyJSONString.trim().equals( "" ) )
-      {
-      try
-        {
-        JSONTokener tokener = new JSONTokener( bodyJSONString );
-
-        mJSONResponse = new JSONObject( tokener );
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+        StringBuilder builder = new StringBuilder();
+        for (String line = null; (line = reader.readLine()) != null; ) {
+            builder.append(line).append("\n");
         }
-      catch ( JSONException je )
-        {
-        // Display the body in the log. Sometimes the server returns non-JSON, which
-        // we want to see.
-        Log.e( LOG_TAG, "Unable to parse response as JSON:\n" + bodyJSONString, je );
 
-        // If the body is HTML rather than JSON, try and come up with a more user-friendly
-        // error message.
-        if ( bodyJSONString.contains( "<!DOCTYPE html>" ) )
-          {
-          if ( bodyJSONString.contains( "Offline for Maintenance" ) )
-            {
-            throw ( new KiteSDKException( mApplicationContext.getString( R.string.alert_dialog_message_server_offline_maintenance ) ) );
+        // If we get a body - parse it as JSON. Some endpoints don't return anything, so
+        // if this happens we just create an empty JSON object.
+
+        String bodyJSONString = builder.toString();
+
+        if (!bodyJSONString.trim().equals("")) {
+            try {
+                JSONTokener tokener = new JSONTokener(bodyJSONString);
+
+                mJSONResponse = new JSONObject(tokener);
+            } catch (JSONException je) {
+                // Display the body in the log. Sometimes the server returns non-JSON, which
+                // we want to see.
+                Log.e(LOG_TAG, "Unable to parse response as JSON:\n" + bodyJSONString, je);
+
+                // If the body is HTML rather than JSON, try and come up with a more user-friendly
+                // error message.
+                if (bodyJSONString.contains("<!DOCTYPE html>")) {
+                    if (bodyJSONString.contains("Offline for Maintenance")) {
+                        throw (new KiteSDKException(mApplicationContext.getString(R.string
+                                .alert_dialog_message_server_offline_maintenance)));
+                    } else {
+                        throw (new KiteSDKException(mApplicationContext.getString(R.string.alert_dialog_message_server_returned_html)));
+                    }
+                } else {
+                    // Re-throw the exception
+                    throw (je);
+                }
             }
-          else
-            {
-            throw ( new KiteSDKException( mApplicationContext.getString( R.string.alert_dialog_message_server_returned_html ) ) );
-            }
-          }
-        else
-          {
-          // Re-throw the exception
-          throw ( je );
-          }
+        } else {
+            mJSONResponse = new JSONObject();
         }
-      }
-    else
-      {
-      mJSONResponse = new JSONObject();
-      }
     }
 
+    /*****************************************************
+     *
+     * Called on the UI thread when a successful response is
+     * received.
+     *
+     *****************************************************/
+    protected void onResponseSuccess(int httpStatusCode) {
 
-  /*****************************************************
-   *
-   * Called on the UI thread when a successful response is
-   * received.
-   *
-   *****************************************************/
-  protected void onResponseSuccess( int httpStatusCode )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "onResponseSuccess( httpStatusCode = " + httpStatusCode + " ) JSON = " + mJSONResponse.toString() );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "onResponseSuccess( httpStatusCode = " + httpStatusCode + " ) JSON = " + mJSONResponse.toString());
+        }
 
-    if ( mJSONResponseListener != null ) mJSONResponseListener.onSuccess( httpStatusCode, mJSONResponse );
+        if (mJSONResponseListener != null) {
+            mJSONResponseListener.onSuccess(httpStatusCode, mJSONResponse);
+        }
     }
 
+    /*****************************************************
+     *
+     * Called on the UI thread when an error response is
+     * obtained.
+     *
+     *****************************************************/
+    protected void onResponseError(Exception exception) {
 
-  /*****************************************************
-   *
-   * Called on the UI thread when an error response is
-   * obtained.
-   *
-   *****************************************************/
-  protected void onResponseError( Exception exception )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "onResponseError( exception = " + exception + " )" );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "onResponseError( exception = " + exception + " )");
+        }
 
-    if ( mJSONResponseListener != null ) mJSONResponseListener.onError( exception );
+        if (mJSONResponseListener != null) {
+            mJSONResponseListener.onError(exception);
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * A listener interface for the result of a request.
+     *
+     *****************************************************/
+    public interface IJSONResponseListener {
+        void onSuccess(int httpStatusCode, JSONObject json);
 
-  /*****************************************************
-   *
-   * A listener interface for the result of a request.
-   *
-   *****************************************************/
-  public interface IJSONResponseListener
-    {
-    void onSuccess( int httpStatusCode, JSONObject json );
-    void onError  ( Exception exception );
+        void onError(Exception exception);
     }
 
-  }
+}
 

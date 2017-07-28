@@ -36,14 +36,12 @@
 
 package ly.kite.sample;
 
-
 ///// Import(s) /////
 
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
-
 
 ///// Class Declaration /////
 
@@ -52,60 +50,50 @@ import com.google.android.gms.gcm.GcmListenerService;
  * This service receives GCM messages.
  *
  *****************************************************/
-public class GCMListenerService extends GcmListenerService
-  {
-  ////////// Static Constant(s) //////////
+public class GCMListenerService extends GcmListenerService {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "GCMListenerService";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "GCMListenerService";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when a GCM message is received.
+     *
+     *****************************************************/
+    @Override
+    public void onMessageReceived(String from, Bundle data) {
 
-  ////////// Static Method(s) //////////
+        String message = data.getString("message");
 
+        Log.d(LOG_TAG, "From: " + from);
+        Log.d(LOG_TAG, "Message: " + message);
 
-  ////////// Constructor(s) //////////
+        // We don't do anything with topics at the moment, so every message is assumed
+        // to be a normal downstream message.
 
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when a GCM message is received.
-   *
-   *****************************************************/
-  @Override
-  public void onMessageReceived( String from, Bundle data )
-    {
-    String message = data.getString( "message" );
-
-    Log.d( LOG_TAG, "From: " + from );
-    Log.d( LOG_TAG, "Message: " + message );
-
-
-    // We don't do anything with topics at the moment, so every message is assumed
-    // to be a normal downstream message.
-
-
-    // TODO: Check and create a notification
+        // TODO: Check and create a notification
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

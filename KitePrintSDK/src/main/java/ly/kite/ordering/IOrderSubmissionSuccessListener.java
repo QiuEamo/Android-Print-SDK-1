@@ -36,11 +36,7 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
-
-import ly.kite.ordering.Order;
-
 
 ///// Interface Declaration /////
 
@@ -50,12 +46,10 @@ import ly.kite.ordering.Order;
  * listener.
  *
  *****************************************************/
-public interface IOrderSubmissionSuccessListener
-  {
-  ////////// Static Constant(s) //////////
+public interface IOrderSubmissionSuccessListener {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
-
-  public void onOrderSubmissionSuccess( Order sanitisedOrder );
-  }
+    public void onOrderSubmissionSuccess(Order sanitisedOrder);
+}

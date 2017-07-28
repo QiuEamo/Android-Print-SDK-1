@@ -36,17 +36,15 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import ly.kite.ordering.Order;
 import ly.kite.R;
+import ly.kite.ordering.Order;
 import ly.kite.ordering.OrderingDataAgent;
-
 
 ///// Class Declaration /////
 
@@ -55,122 +53,112 @@ import ly.kite.ordering.OrderingDataAgent;
  * This activity displays the order receipt screen.
  *
  *****************************************************/
-public class OrderReceiptActivity extends AReceiptActivity
-  {
+public class OrderReceiptActivity extends AReceiptActivity {
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Returns an intent used to start this activity.
+     *
+     *****************************************************/
+    private static Intent getStartIntent(Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton) {
 
-  /*****************************************************
-   *
-   * Returns an intent used to start this activity.
-   *
-   *****************************************************/
-  static private Intent getStartIntent( Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton )
-    {
-    Intent intent = new Intent( context, OrderReceiptActivity.class );
+        Intent intent = new Intent(context, OrderReceiptActivity.class);
 
-    addPreviousOrder( previousOrderId, intent );
+        addPreviousOrder(previousOrderId, intent);
 
-    addExtra( order, intent );
-    addHideSuccessfulNextButton( hideSuccessfulNextButton, intent );
+        addExtra(order, intent);
+        addHideSuccessfulNextButton(hideSuccessfulNextButton, intent);
 
-    return ( intent );
+        return intent;
     }
 
+    /*****************************************************
+     *
+     * Convenience method for starting this activity.
+     *
+     *****************************************************/
+    public static void start(Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton) {
 
-  /*****************************************************
-   *
-   * Convenience method for starting this activity.
-   *
-   *****************************************************/
-  static public void start( Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton )
-    {
-    Intent intent = getStartIntent( context, previousOrderId, order, hideSuccessfulNextButton );
+        Intent intent = getStartIntent(context, previousOrderId, order, hideSuccessfulNextButton);
 
-    context.startActivity( intent );
+        context.startActivity(intent);
     }
 
+    /*****************************************************
+     *
+     * Convenience method for starting this activity.
+     *
+     *****************************************************/
+    public static void start(Context context, Order order) {
 
-  /*****************************************************
-   *
-   * Convenience method for starting this activity.
-   *
-   *****************************************************/
-  static public void start( Context context, Order order )
-    {
-    start( context, OrderingDataAgent.NO_ORDER_ID, order, false );
+        start(context, OrderingDataAgent.NO_ORDER_ID, order, false);
     }
 
+    /*****************************************************
+     *
+     * Convenience method for starting this activity.
+     *
+     *****************************************************/
+    public static void startForResult(Activity activity, long previousOrderId, Order order, int requestCode) {
 
-  /*****************************************************
-   *
-   * Convenience method for starting this activity.
-   *
-   *****************************************************/
-  static public void startForResult( Activity activity, long previousOrderId, Order order, int requestCode )
-    {
-    Intent intent = getStartIntent( activity, previousOrderId, order, false );
+        Intent intent = getStartIntent(activity, previousOrderId, order, false);
 
-    activity.startActivityForResult( intent, requestCode );
+        activity.startActivityForResult(intent, requestCode);
     }
 
+    /*****************************************************
+     *
+     * Convenience method for starting this activity.
+     *
+     *****************************************************/
+    public static void startForResult(Activity activity, Order order, int requestCode) {
 
-  /*****************************************************
-   *
-   * Convenience method for starting this activity.
-   *
-   *****************************************************/
-  static public void startForResult( Activity activity, Order order, int requestCode )
-    {
-    startForResult( activity, OrderingDataAgent.NO_ORDER_ID, order, requestCode );
+        startForResult(activity, OrderingDataAgent.NO_ORDER_ID, order, requestCode);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Displays the success screen.
+     *
+     *****************************************************/
+    @Override
+    protected void onShowReceiptSuccess() {
 
-  /*****************************************************
-   *
-   * Displays the success screen.
-   *
-   *****************************************************/
-  @Override
-  protected void onShowReceiptSuccess()
-    {
-    setContentView( R.layout.screen_order_receipt );
+        setContentView(R.layout.screen_order_receipt);
 
-    setDisplayActionBarHomeAsUpEnabled( false );
+        setDisplayActionBarHomeAsUpEnabled(false);
     }
 
+    /*****************************************************
+     *
+     * Displays the failure.
+     *
+     *****************************************************/
+    @Override
+    protected void onShowReceiptFailure() {
 
-  /*****************************************************
-   *
-   * Displays the failure.
-   *
-   *****************************************************/
-  @Override
-  protected void onShowReceiptFailure()
-    {
-    setContentView( R.layout.screen_order_failure );
+        setContentView(R.layout.screen_order_failure);
 
-    setDisplayActionBarHomeAsUpEnabled( true );
+        setDisplayActionBarHomeAsUpEnabled(true);
 
-    if ( mOrder.getLastPrintSubmissionError() != null )
-      {
-      showErrorDialog( mOrder.getLastPrintSubmissionError().getMessage() );
-      }
+        if (mOrder.getLastPrintSubmissionError() != null) {
+            showErrorDialog(mOrder.getLastPrintSubmissionError().getMessage());
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when the next button is clicked.
+     *
+     *****************************************************/
+    @Override
+    protected void onNext() {
 
-  /*****************************************************
-   *
-   * Called when the next button is clicked.
-   *
-   *****************************************************/
-  @Override
-  protected void onNext()
-    {
-    continueShopping();
+        continueShopping();
     }
 
-  }
+}

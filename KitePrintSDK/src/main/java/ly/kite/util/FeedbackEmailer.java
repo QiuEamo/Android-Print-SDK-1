@@ -36,7 +36,6 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -45,7 +44,6 @@ import android.net.Uri;
 
 import ly.kite.R;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -53,60 +51,53 @@ import ly.kite.R;
  * Sends a feedback / support email.
  *
  *****************************************************/
-public class FeedbackEmailer
-  {
-  ////////// Static Constant(s) //////////
+public class FeedbackEmailer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "FeedbackEmailer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "FeedbackEmailer";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Send an email.
+     *
+     *****************************************************/
+    public static void sendEmail(Context context) {
 
-  ////////// Static Initialiser(s) //////////
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(R.string
+                .feedback_email_recipient), null));
 
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.feedback_email_subject));
+        emailIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.feedback_email_text));
 
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Send an email.
-   *
-   *****************************************************/
-  static public void sendEmail( Context context )
-    {
-    Intent emailIntent = new Intent( Intent.ACTION_SENDTO, Uri.fromParts( "mailto", context.getString( R.string.feedback_email_recipient ), null ) );
-
-    emailIntent.putExtra( Intent.EXTRA_SUBJECT, context.getString( R.string.feedback_email_subject ) );
-    emailIntent.putExtra( Intent.EXTRA_TEXT, context.getString( R.string.feedback_email_text ) );
-
-    context.startActivity( Intent.createChooser( emailIntent, context.getString( R.string.send_email_chooser_title ) ) );
+        context.startActivity(Intent.createChooser(emailIntent, context.getString(R.string.send_email_chooser_title)));
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Method(s) //////////
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

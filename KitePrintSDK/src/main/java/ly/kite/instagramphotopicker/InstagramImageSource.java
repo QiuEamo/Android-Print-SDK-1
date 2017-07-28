@@ -36,7 +36,6 @@
 
 package ly.kite.instagramphotopicker;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -50,11 +49,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import ly.kite.R;
 import ly.kite.KiteSDK;
+import ly.kite.R;
 import ly.kite.journey.AImageSource;
 import ly.kite.util.Asset;
-
 
 ///// Class Declaration /////
 
@@ -63,165 +61,146 @@ import ly.kite.util.Asset;
  * This class represents a local device image source.
  *
  *****************************************************/
-public class InstagramImageSource extends AImageSource
-  {
-  ////////// Static Constant(s) //////////
+public class InstagramImageSource extends AImageSource {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "InstagramImageSource";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "InstagramImageSource";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public InstagramImageSource() {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public InstagramImageSource()
-    {
-    super( R.color.image_source_background_instagram,
-           R.drawable.ic_image_source_instagram,
-           R.string.image_source_instagram,
-           R.id.add_image_from_instagram,
-           R.string.select_photo_from_instagram );
+        super(R.color.image_source_background_instagram,
+                R.drawable.ic_image_source_instagram,
+                R.string.image_source_instagram,
+                R.id.add_image_from_instagram,
+                R.string.select_photo_from_instagram);
     }
 
+    protected InstagramImageSource(int horizontalBackgroundColourResourceId,
+                                   int verticalBackgroundColourResourceId,
+                                   int horizontalLayoutIconResourceId,
+                                   int verticalLayoutIconResourceId,
+                                   int labelResourceId,
+                                   int menuItemId,
+                                   int menuItemTitleResourceId) {
 
-  protected InstagramImageSource( int horizontalBackgroundColourResourceId,
-                          int verticalBackgroundColourResourceId,
-                          int horizontalLayoutIconResourceId,
-                          int verticalLayoutIconResourceId,
-                          int labelResourceId,
-                          int menuItemId,
-                          int menuItemTitleResourceId )
-    {
-    super( horizontalBackgroundColourResourceId,
-            verticalBackgroundColourResourceId,
-            horizontalLayoutIconResourceId,
-            verticalLayoutIconResourceId,
-            labelResourceId,
-            menuItemId,
-            menuItemTitleResourceId );
+        super(horizontalBackgroundColourResourceId,
+                verticalBackgroundColourResourceId,
+                horizontalLayoutIconResourceId,
+                verticalLayoutIconResourceId,
+                labelResourceId,
+                menuItemId,
+                menuItemTitleResourceId);
     }
 
+    ////////// AImageSource Method(s) //////////
 
-  ////////// AImageSource Method(s) //////////
+    /*****************************************************
+     *
+     * Returns true if the Instagram image source is available.
+     * This will be the case if we have credentials.
+     *
+     *****************************************************/
+    public boolean isAvailable(Context context) {
 
-  /*****************************************************
-   *
-   * Returns true if the Instagram image source is available.
-   * This will be the case if we have credentials.
-   *
-   *****************************************************/
-  public boolean isAvailable( Context context )
-    {
-    return ( KiteSDK.getInstance( context ).haveInstagramCredentials() );
+        return KiteSDK.getInstance(context).haveInstagramCredentials();
     }
 
+    /*****************************************************
+     *
+     * Returns the layout resource id to be used to display
+     * this image source for the supplied layout type.
+     *
+     *****************************************************/
+    @Override
+    public int getLayoutResource(LayoutType layoutType) {
 
-  /*****************************************************
-   *
-   * Returns the layout resource id to be used to display
-   * this image source for the supplied layout type.
-   *
-   *****************************************************/
-  @Override
-  public int getLayoutResource( LayoutType layoutType )
-    {
-    switch ( layoutType )
-      {
-      case HORIZONTAL:
+        switch (layoutType) {
+            case HORIZONTAL:
 
-        return ( R.layout.grid_item_image_source_instagram_horizontal );
+                return R.layout.grid_item_image_source_instagram_horizontal;
 
-      case VERTICAL:
+            case VERTICAL:
 
-        return ( R.layout.grid_item_image_source_instagram_vertical );
-      }
-
-    return ( 0 );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the image source is picked to select
-   * images.
-   *
-   *****************************************************/
-  public void onPick( Fragment fragment, int maxImageCount )
-    {
-    // Clicking on the Instagram image source starts our Instagram image picker library
-
-    KiteSDK kiteSDK = KiteSDK.getInstance( fragment.getActivity() );
-
-    String instagramClientId    = kiteSDK.getInstagramClientId();
-    String instagramRedirectURI = kiteSDK.getInstagramRedirectURI();
-
-    InstagramPhotoPicker.startPhotoPickerForResult( fragment, instagramClientId, instagramRedirectURI, maxImageCount, getActivityRequestCode() );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns picked photos as assets.
-   *
-   *****************************************************/
-  @Override
-  public void getAssetsFromPickerResult( Activity activity, Intent data, IAssetConsumer assetConsumer )
-    {
-    List<String> photoURLStringList = InstagramPhotoPicker.getResultPhotos( data );
-
-    if ( photoURLStringList != null )
-      {
-      // Create an asset list, populate it, and call back to the consumer immediately.
-
-      List<Asset> assetList = new ArrayList<>( photoURLStringList.size() );
-
-      for ( String urlString : photoURLStringList )
-        {
-        try
-          {
-          assetList.add( new Asset( new URL( urlString ) ) );
-          }
-        catch ( MalformedURLException mue )
-          {
-          Log.e( LOG_TAG, "Unable to create asset from Instagram photo URL: " + urlString, mue );
-          }
+                return R.layout.grid_item_image_source_instagram_vertical;
         }
 
-      assetConsumer.isacOnAssets( assetList );
-      }
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Called when the image source is picked to select
+     * images.
+     *
+     *****************************************************/
+    public void onPick(Fragment fragment, int maxImageCount) {
+        // Clicking on the Instagram image source starts our Instagram image picker library
 
-  /*****************************************************
-   *
-   * Called to end the customer session.
-   *
-   *****************************************************/
-  @Override
-  public void endCustomerSession( Context context )
-    {
-    InstagramPhotoPicker.endCustomerSession( context );
+        KiteSDK kiteSDK = KiteSDK.getInstance(fragment.getActivity());
+
+        String instagramClientId = kiteSDK.getInstagramClientId();
+        String instagramRedirectURI = kiteSDK.getInstagramRedirectURI();
+
+        InstagramPhotoPicker.startPhotoPickerForResult(fragment, instagramClientId, instagramRedirectURI, maxImageCount,
+                getActivityRequestCode());
     }
 
+    /*****************************************************
+     *
+     * Returns picked photos as assets.
+     *
+     *****************************************************/
+    @Override
+    public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
 
-  ////////// Inner Class(es) //////////
+        List<String> photoURLStringList = InstagramPhotoPicker.getResultPhotos(data);
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+        if (photoURLStringList != null) {
+            // Create an asset list, populate it, and call back to the consumer immediately.
 
-  }
+            List<Asset> assetList = new ArrayList<>(photoURLStringList.size());
+
+            for (String urlString : photoURLStringList) {
+                try {
+                    assetList.add(new Asset(new URL(urlString)));
+                } catch (MalformedURLException mue) {
+                    Log.e(LOG_TAG, "Unable to create asset from Instagram photo URL: " + urlString, mue);
+                }
+            }
+
+            assetConsumer.isacOnAssets(assetList);
+        }
+    }
+
+    /*****************************************************
+     *
+     * Called to end the customer session.
+     *
+     *****************************************************/
+    @Override
+    public void endCustomerSession(Context context) {
+
+        InstagramPhotoPicker.endCustomerSession(context);
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
+
+}
 

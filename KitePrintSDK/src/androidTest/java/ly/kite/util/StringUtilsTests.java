@@ -36,13 +36,11 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
 
 import ly.kite.KiteTestCase;
-
 
 ///// Class Declaration /////
 
@@ -51,132 +49,120 @@ import ly.kite.KiteTestCase;
  * This class tests the string utils class.
  *
  *****************************************************/
-public class StringUtilsTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class StringUtilsTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "StringUtilsTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "StringUtilsTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Is null or blank tests
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testIsNullOrBlank() {
 
+        Assert.assertTrue(StringUtils.isNullOrBlank(null));
+        Assert.assertTrue(StringUtils.isNullOrBlank(""));
+        Assert.assertTrue(StringUtils.isNullOrBlank(" "));
+        Assert.assertTrue(StringUtils.isNullOrBlank("      "));
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Is null or blank tests
-   *
-   *****************************************************/
-
-  public void testIsNullOrBlank()
-    {
-    Assert.assertTrue( StringUtils.isNullOrBlank( null ) );
-    Assert.assertTrue( StringUtils.isNullOrBlank( "" ) );
-    Assert.assertTrue( StringUtils.isNullOrBlank( " " ) );
-    Assert.assertTrue( StringUtils.isNullOrBlank( "      " ) );
-
-    Assert.assertFalse( StringUtils.isNullOrBlank( "a" ) );
-    Assert.assertFalse( StringUtils.isNullOrBlank( "  blah   " ) );
+        Assert.assertFalse(StringUtils.isNullOrBlank("a"));
+        Assert.assertFalse(StringUtils.isNullOrBlank("  blah   "));
     }
 
+    /*****************************************************
+     *
+     * Is neither null nor blank tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Is neither null nor blank tests
-   *
-   *****************************************************/
+    public void testIsNeitherNullNorBlank() {
 
-  public void testIsNeitherNullNorBlank()
-    {
-    Assert.assertFalse( StringUtils.isNeitherNullNorBlank( null ) );
-    Assert.assertFalse( StringUtils.isNeitherNullNorBlank( "" ) );
-    Assert.assertFalse( StringUtils.isNeitherNullNorBlank( " " ) );
-    Assert.assertFalse( StringUtils.isNeitherNullNorBlank( "      " ) );
+        Assert.assertFalse(StringUtils.isNeitherNullNorBlank(null));
+        Assert.assertFalse(StringUtils.isNeitherNullNorBlank(""));
+        Assert.assertFalse(StringUtils.isNeitherNullNorBlank(" "));
+        Assert.assertFalse(StringUtils.isNeitherNullNorBlank("      "));
 
-    Assert.assertTrue( StringUtils.isNeitherNullNorBlank( "a" ) );
-    Assert.assertTrue( StringUtils.isNeitherNullNorBlank( "  blah   " ) );
+        Assert.assertTrue(StringUtils.isNeitherNullNorBlank("a"));
+        Assert.assertTrue(StringUtils.isNeitherNullNorBlank("  blah   "));
     }
 
+    /*****************************************************
+     *
+     * Are both null or equal tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Are both null or equal tests
-   *
-   *****************************************************/
+    public void testAreBothNullOrEqual() {
 
-  public void testAreBothNullOrEqual()
-    {
-    Assert.assertTrue( StringUtils.areBothNullOrEqual( null, null ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( "", null ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( " ", null ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( null, "" ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( null, " " ) );
+        Assert.assertTrue(StringUtils.areBothNullOrEqual(null, null));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual("", null));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual(" ", null));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual(null, ""));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual(null, " "));
 
-    Assert.assertTrue( StringUtils.areBothNullOrEqual( "", "" ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( " ", "" ) );
-    Assert.assertFalse( StringUtils.areBothNullOrEqual( "", "  blah " ) );
-    Assert.assertTrue( StringUtils.areBothNullOrEqual( " ", " " ) );
-    Assert.assertTrue( StringUtils.areBothNullOrEqual( " one ", " one " ) );
+        Assert.assertTrue(StringUtils.areBothNullOrEqual("", ""));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual(" ", ""));
+        Assert.assertFalse(StringUtils.areBothNullOrEqual("", "  blah "));
+        Assert.assertTrue(StringUtils.areBothNullOrEqual(" ", " "));
+        Assert.assertTrue(StringUtils.areBothNullOrEqual(" one ", " one "));
     }
 
+    /*****************************************************
+     *
+     * Get digits tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Get digits tests
-   *
-   *****************************************************/
+    public void testGetDigitString() {
 
-  public void testGetDigitString()
-    {
-    Assert.assertEquals( "", StringUtils.getDigitString( null ) );
-    Assert.assertEquals( "", StringUtils.getDigitString( "" ) );
-    Assert.assertEquals( "", StringUtils.getDigitString( "    " ) );
-    Assert.assertEquals( "", StringUtils.getDigitString( "sfjsdjlfjlks[]@&$" ) );
+        Assert.assertEquals("", StringUtils.getDigitString(null));
+        Assert.assertEquals("", StringUtils.getDigitString(""));
+        Assert.assertEquals("", StringUtils.getDigitString("    "));
+        Assert.assertEquals("", StringUtils.getDigitString("sfjsdjlfjlks[]@&$"));
 
-    Assert.assertEquals( "6", StringUtils.getDigitString( "sdkljfds6sjhfsd" ) );
-    Assert.assertEquals( "12345678", StringUtils.getDigitString( " 1 2 3 4 5 6 7 8" ) );
-    Assert.assertEquals( "0123456789", StringUtils.getDigitString( "0f1j2g3n4l5b6h7v8j9" ) );
+        Assert.assertEquals("6", StringUtils.getDigitString("sdkljfds6sjhfsd"));
+        Assert.assertEquals("12345678", StringUtils.getDigitString(" 1 2 3 4 5 6 7 8"));
+        Assert.assertEquals("0123456789", StringUtils.getDigitString("0f1j2g3n4l5b6h7v8j9"));
     }
 
+    /*****************************************************
+     *
+     * Is digit string tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Is digit string tests
-   *
-   *****************************************************/
+    public void testIsDigitString() {
 
-  public void testIsDigitString()
-    {
-    Assert.assertFalse( StringUtils.isDigitString( null ) );
-    Assert.assertFalse( StringUtils.isDigitString( "" ) );
-    Assert.assertFalse( StringUtils.isDigitString( " " ) );
-    Assert.assertFalse( StringUtils.isDigitString( "    " ) );
+        Assert.assertFalse(StringUtils.isDigitString(null));
+        Assert.assertFalse(StringUtils.isDigitString(""));
+        Assert.assertFalse(StringUtils.isDigitString(" "));
+        Assert.assertFalse(StringUtils.isDigitString("    "));
 
-    Assert.assertFalse( StringUtils.isDigitString( "a" ) );
-    Assert.assertFalse( StringUtils.isDigitString( "asaflsjflsjl" ) );
+        Assert.assertFalse(StringUtils.isDigitString("a"));
+        Assert.assertFalse(StringUtils.isDigitString("asaflsjflsjl"));
 
-    Assert.assertTrue( StringUtils.isDigitString( "1" ) );
-    Assert.assertFalse( StringUtils.isDigitString( " 1 " ) );
-    Assert.assertTrue( StringUtils.isDigitString( "123" ) );
-    Assert.assertFalse( StringUtils.isDigitString( "1228hhjhkds832hjk3" ) );
+        Assert.assertTrue(StringUtils.isDigitString("1"));
+        Assert.assertFalse(StringUtils.isDigitString(" 1 "));
+        Assert.assertTrue(StringUtils.isDigitString("123"));
+        Assert.assertFalse(StringUtils.isDigitString("1228hhjhkds832hjk3"));
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

@@ -36,22 +36,19 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import junit.framework.Assert;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-
-import junit.framework.Assert;
 
 import ly.kite.KiteTestCase;
 import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -60,217 +57,188 @@ import ly.kite.R;
  * This class tests the Asset class.
  *
  *****************************************************/
-public class AssetTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class AssetTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "AssetTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AssetTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Create from string tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testCreateFromString() {
 
+        Asset asset;
 
-  ////////// Constructor(s) //////////
+        asset = Asset.create("http://psps.s3.amazonaws.com/sdk_static/1.jpg");
 
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-  ////////// Method(s) //////////
+        asset = Asset.create("https://psps.s3.amazonaws.com/sdk_static/1.jpg");
 
-  /*****************************************************
-   *
-   * Create from string tests.
-   *
-   *****************************************************/
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-  public void testCreateFromString()
-    {
-    Asset asset;
+        asset = Asset.create("file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg");
 
+        Assert.assertEquals(Asset.Type.IMAGE_FILE, asset.getType());
+        Assert.assertEquals("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath());
+        Assert.assertEquals("IMG_20161219_094113.jpg", asset.getImageFileName());
 
-    asset = Asset.create( "http://psps.s3.amazonaws.com/sdk_static/1.jpg" );
+        asset = Asset.create("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg");
 
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
+        Assert.assertEquals(Asset.Type.IMAGE_FILE, asset.getType());
+        Assert.assertEquals("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath());
+        Assert.assertEquals("IMG_20161219_094113.jpg", asset.getImageFileName());
 
+        asset = Asset.create("content://media/external/images/media/22572");
 
-    asset = Asset.create( "https://psps.s3.amazonaws.com/sdk_static/1.jpg" );
-
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
-
-
-    asset = Asset.create( "file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg" );
-
-    Assert.assertEquals( Asset.Type.IMAGE_FILE, asset.getType() );
-    Assert.assertEquals( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath() );
-    Assert.assertEquals( "IMG_20161219_094113.jpg", asset.getImageFileName() );
-
-
-    asset = Asset.create( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg" );
-
-    Assert.assertEquals( Asset.Type.IMAGE_FILE, asset.getType() );
-    Assert.assertEquals( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath() );
-    Assert.assertEquals( "IMG_20161219_094113.jpg", asset.getImageFileName() );
-
-
-    asset = Asset.create( "content://media/external/images/media/22572" );
-
-    Assert.assertEquals( Asset.Type.IMAGE_URI, asset.getType() );
-    Assert.assertEquals( "content://media/external/images/media/22572", asset.getImageURI().toString() );
+        Assert.assertEquals(Asset.Type.IMAGE_URI, asset.getType());
+        Assert.assertEquals("content://media/external/images/media/22572", asset.getImageURI().toString());
     }
 
+    /*****************************************************
+     *
+     * Create from URL tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Create from URL tests.
-   *
-   *****************************************************/
+    public void testCreateFromURL() throws MalformedURLException {
 
-  public void testCreateFromURL() throws MalformedURLException
-    {
-    Asset asset;
+        Asset asset;
 
+        asset = Asset.create(new URL("http://psps.s3.amazonaws.com/sdk_static/1.jpg"));
 
-    asset = Asset.create( new URL( "http://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
+        asset = Asset.create(new URL("https://psps.s3.amazonaws.com/sdk_static/1.jpg"));
 
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-    asset = Asset.create( new URL( "https://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
+        asset = Asset.create(new URL("file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg"));
 
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
-
-
-    asset = Asset.create( new URL( "file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg" ) );
-
-    Assert.assertEquals( Asset.Type.IMAGE_FILE, asset.getType() );
-    Assert.assertEquals( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath() );
-    Assert.assertEquals( "IMG_20161219_094113.jpg", asset.getImageFileName() );
+        Assert.assertEquals(Asset.Type.IMAGE_FILE, asset.getType());
+        Assert.assertEquals("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath());
+        Assert.assertEquals("IMG_20161219_094113.jpg", asset.getImageFileName());
     }
 
+    /*****************************************************
+     *
+     * Create from URI tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Create from URI tests.
-   *
-   *****************************************************/
+    public void testCreateFromURI() {
 
-  public void testCreateFromURI()
-    {
-    Asset asset;
+        Asset asset;
 
+        asset = Asset.create(Uri.parse("http://psps.s3.amazonaws.com/sdk_static/1.jpg"));
 
-    asset = Asset.create( Uri.parse( "http://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "http://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
+        asset = Asset.create(Uri.parse("https://psps.s3.amazonaws.com/sdk_static/1.jpg"));
 
+        Assert.assertEquals(Asset.Type.REMOTE_URL, asset.getType());
+        Assert.assertEquals("https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString());
+        Assert.assertEquals(Asset.MIMEType.JPEG, asset.getMIMEType());
 
-    asset = Asset.create( Uri.parse( "https://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
+        asset = Asset.create(Uri.parse("file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg"));
 
-    Assert.assertEquals( Asset.Type.REMOTE_URL, asset.getType() );
-    Assert.assertEquals( "https://psps.s3.amazonaws.com/sdk_static/1.jpg", asset.getRemoteURL().toString() );
-    Assert.assertEquals( Asset.MIMEType.JPEG, asset.getMIMEType() );
+        Assert.assertEquals(Asset.Type.IMAGE_FILE, asset.getType());
+        Assert.assertEquals("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath());
+        Assert.assertEquals("IMG_20161219_094113.jpg", asset.getImageFileName());
 
+        asset = Asset.create(Uri.parse("content://media/external/images/media/22572"));
 
-    asset = Asset.create( Uri.parse( "file:///storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg" ) );
-
-    Assert.assertEquals( Asset.Type.IMAGE_FILE, asset.getType() );
-    Assert.assertEquals( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath() );
-    Assert.assertEquals( "IMG_20161219_094113.jpg", asset.getImageFileName() );
-
-
-    asset = Asset.create( Uri.parse( "content://media/external/images/media/22572" ) );
-
-    Assert.assertEquals( Asset.Type.IMAGE_URI, asset.getType() );
-    Assert.assertEquals( "content://media/external/images/media/22572", asset.getImageURI().toString() );
+        Assert.assertEquals(Asset.Type.IMAGE_URI, asset.getType());
+        Assert.assertEquals("content://media/external/images/media/22572", asset.getImageURI().toString());
     }
 
+    /*****************************************************
+     *
+     * Create from File tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Create from File tests.
-   *
-   *****************************************************/
+    public void testCreateFromFile() {
 
-  public void testCreateFromFile()
-    {
-    Asset asset;
+        Asset asset;
 
+        File file = new File("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg");
 
-    File file = new File( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg" );
+        asset = Asset.create(file);
 
-    asset = Asset.create( file );
-
-    Assert.assertEquals( Asset.Type.IMAGE_FILE, asset.getType() );
-    Assert.assertEquals( "/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath() );
-    Assert.assertEquals( "IMG_20161219_094113.jpg", asset.getImageFileName() );
+        Assert.assertEquals(Asset.Type.IMAGE_FILE, asset.getType());
+        Assert.assertEquals("/storage/emulated/0/DCIM/Camera/IMG_20161219_094113.jpg", asset.getImageFilePath());
+        Assert.assertEquals("IMG_20161219_094113.jpg", asset.getImageFileName());
     }
 
+    /*****************************************************
+     *
+     * Create from Bitmap tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Create from Bitmap tests.
-   *
-   *****************************************************/
+    public void testCreateFromBitmap() {
 
-  public void testCreateFromBitmap()
-    {
-    Asset asset;
+        Asset asset;
 
+        Bitmap bitmap = Bitmap.createBitmap(24, 24, Bitmap.Config.ARGB_8888);
 
-    Bitmap bitmap = Bitmap.createBitmap( 24, 24, Bitmap.Config.ARGB_8888 );
+        asset = Asset.create(bitmap);
 
-    asset = Asset.create( bitmap );
-
-    Assert.assertEquals( Asset.Type.BITMAP, asset.getType() );
-    Assert.assertTrue( asset.getBitmap() == bitmap );
+        Assert.assertEquals(Asset.Type.BITMAP, asset.getType());
+        Assert.assertTrue(asset.getBitmap() == bitmap);
     }
 
+    /*****************************************************
+     *
+     * Create from Bitmap resource id tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Create from Bitmap resource id tests.
-   *
-   *****************************************************/
+    public void testCreateFromBitmapResourceId() {
 
-  public void testCreateFromBitmapResourceId()
-    {
-    Asset asset;
+        Asset asset;
 
+        // Explicit Integer
+        asset = Asset.create(Integer.valueOf(R.drawable.placeholder));
 
-    // Explicit Integer
-    asset = Asset.create( Integer.valueOf( R.drawable.placeholder ) );
+        Assert.assertEquals(Asset.Type.BITMAP_RESOURCE_ID, asset.getType());
+        Assert.assertEquals(R.drawable.placeholder, asset.getBitmapResourceId());
 
-    Assert.assertEquals( Asset.Type.BITMAP_RESOURCE_ID, asset.getType() );
-    Assert.assertEquals( R.drawable.placeholder, asset.getBitmapResourceId() );
+        // Boxed Integer
+        asset = Asset.create(R.drawable.placeholder);
 
-
-    // Boxed Integer
-    asset = Asset.create( R.drawable.placeholder );
-
-    Assert.assertEquals( Asset.Type.BITMAP_RESOURCE_ID, asset.getType() );
-    Assert.assertEquals( R.drawable.placeholder, asset.getBitmapResourceId() );
+        Assert.assertEquals(Asset.Type.BITMAP_RESOURCE_ID, asset.getType());
+        Assert.assertEquals(R.drawable.placeholder, asset.getBitmapResourceId());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

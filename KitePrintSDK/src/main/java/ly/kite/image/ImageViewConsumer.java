@@ -36,7 +36,6 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
 
 import android.graphics.Bitmap;
@@ -44,7 +43,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import ly.kite.R;
-
 
 ///// Class Declaration /////
 
@@ -54,109 +52,100 @@ import ly.kite.R;
  * an image consumer. The key is stored as a tag.
  *
  *****************************************************/
-public class ImageViewConsumer implements IImageConsumer
-  {
-  ////////// Static Constant(s) //////////
+public class ImageViewConsumer implements IImageConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "ImageViewConsumer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageViewConsumer";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private ImageView mImageView;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private ImageView  mImageView;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Clears the key for an image view.
+     *
+     *****************************************************/
+    public static void clearKey(ImageView imageView) {
 
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Clears the key for an image view.
-   *
-   *****************************************************/
-  static public void clearKey( ImageView imageView )
-    {
-    imageView.setTag( R.id.image_view_consumer_key, null );
+        imageView.setTag(R.id.image_view_consumer_key, null);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public ImageViewConsumer(Object key, ImageView imageView) {
 
-  public ImageViewConsumer( Object key, ImageView imageView )
-    {
-    if ( key       == null ) throw ( new IllegalArgumentException( "No key supplied" ) );
-    if ( imageView == null ) throw ( new IllegalArgumentException( "No image view supplied" ) );
+        if (key == null) {
+            throw (new IllegalArgumentException("No key supplied"));
+        }
+        if (imageView == null) {
+            throw (new IllegalArgumentException("No image view supplied"));
+        }
 
-    mImageView = imageView;
+        mImageView = imageView;
 
-    imageView.setTag( R.id.image_view_consumer_key, key );
+        imageView.setTag(R.id.image_view_consumer_key, key);
     }
 
+    ////////// IImageConsumer Method(s) //////////
 
-  ////////// IImageConsumer Method(s) //////////
+    /*****************************************************
+     *
+     * Called if the image is being downloaded.
+     *
+     *****************************************************/
+    @Override
+    public void onImageDownloading(Object key) {
 
-  /*****************************************************
-   *
-   * Called if the image is being downloaded.
-   *
-   *****************************************************/
-  @Override
-  public void onImageDownloading( Object key )
-    {
-    Object imageViewKey = mImageView.getTag( R.id.image_view_consumer_key );
+        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
-    if ( imageViewKey != null && imageViewKey.equals( key ) )
-      {
-      // Currently do nothing, although we could display
-      // a loading image.
-      }
+        if (imageViewKey != null && imageViewKey.equals(key)) {
+            // Currently do nothing, although we could display
+            // a loading image.
+        }
     }
 
+    @Override
+    public void onImageAvailable(Object key, Bitmap bitmap) {
 
-  @Override
-  public void onImageAvailable( Object key, Bitmap bitmap )
-    {
-    Object imageViewKey = mImageView.getTag( R.id.image_view_consumer_key );
+        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
-    if ( imageViewKey != null && imageViewKey.equals( key ) )
-      {
-      clearKey( mImageView );
+        if (imageViewKey != null && imageViewKey.equals(key)) {
+            clearKey(mImageView);
 
-      mImageView.setImageBitmap( bitmap );
-      }
+            mImageView.setImageBitmap(bitmap);
+        }
     }
 
+    @Override
+    public void onImageUnavailable(Object key, Exception exception) {
 
-  @Override
-  public void onImageUnavailable( Object key, Exception exception )
-    {
-    Object imageViewKey = mImageView.getTag( R.id.image_view_consumer_key );
+        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
-    if ( imageViewKey != null && imageViewKey.equals( key ) )
-      {
-      Log.e( LOG_TAG, "Unable to load image for key: " + key, exception );
+        if (imageViewKey != null && imageViewKey.equals(key)) {
+            Log.e(LOG_TAG, "Unable to load image for key: " + key, exception);
 
-      // Don't clear the key, in case for some reason it loads subsequently
+            // Don't clear the key, in case for some reason it loads subsequently
 
-      // Currently do nothing, although we could display
-      // an error indicator image.
-      }
+            // Currently do nothing, although we could display
+            // an error indicator image.
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

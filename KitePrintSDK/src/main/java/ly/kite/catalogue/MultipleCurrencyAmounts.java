@@ -36,9 +36,7 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -63,678 +61,629 @@ import java.util.Set;
  * This class represents an amount in multiple currencies.
  *
  *****************************************************/
-public class MultipleCurrencyAmounts implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class MultipleCurrencyAmounts implements Parcelable {
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                     = "MultipleCurrencyAmounts";
+    ////////// Static Variable(s) //////////
 
-  static private final String  JSON_NAME_AMOUNT            = "amount";
-  static private final String  JSON_NAME_ORIGINAL_AMOUNT   = "original_amount";
+    public static final Parcelable.Creator<MultipleCurrencyAmounts> CREATOR = new Parcelable.Creator<MultipleCurrencyAmounts>() {
+        public MultipleCurrencyAmounts createFromParcel(Parcel sourceParcel) {
 
-  static private final String  FALLBACK_CURRENCY_CODE_1    = "USD";
-  static private final String  FALLBACK_CURRENCY_CODE_2    = "GBP";
-  static private final String  FALLBACK_CURRENCY_CODE_3    = "EUR";
+            return new MultipleCurrencyAmounts(sourceParcel);
+        }
 
-  static public  final String[] FALLBACK_CURRENCY_CODES =
-    {
-    FALLBACK_CURRENCY_CODE_1,
-    FALLBACK_CURRENCY_CODE_2,
-    FALLBACK_CURRENCY_CODE_3
+        public MultipleCurrencyAmounts[] newArray(int size) {
+
+            return new MultipleCurrencyAmounts[size];
+        }
+    };
+
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MultipleCurrencyAmounts";
+
+    private static final String JSON_NAME_AMOUNT = "amount";
+    private static final String JSON_NAME_ORIGINAL_AMOUNT = "original_amount";
+
+    private static final String FALLBACK_CURRENCY_CODE_1 = "USD";
+    private static final String FALLBACK_CURRENCY_CODE_2 = "GBP";
+    private static final String FALLBACK_CURRENCY_CODE_3 = "EUR";
+
+    public static final String[] FALLBACK_CURRENCY_CODES = {
+        FALLBACK_CURRENCY_CODE_1,
+        FALLBACK_CURRENCY_CODE_2,
+        FALLBACK_CURRENCY_CODE_3
     };
 
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
-  public static final Parcelable.Creator<MultipleCurrencyAmounts> CREATOR =
-    new Parcelable.Creator<MultipleCurrencyAmounts>()
-      {
-      public MultipleCurrencyAmounts createFromParcel( Parcel sourceParcel )
-        {
-        return ( new MultipleCurrencyAmounts( sourceParcel ) );
+    private HashMap<Currency, SingleCurrencyAmounts> mCurrencyAmountTable;
+    private HashMap<String, SingleCurrencyAmounts> mCurrencyCodeAmountTable;
+
+    ////////// Static Initialiser(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public MultipleCurrencyAmounts() {
+
+        mCurrencyAmountTable = new HashMap<Currency, SingleCurrencyAmounts>();
+        mCurrencyCodeAmountTable = new HashMap<String, SingleCurrencyAmounts>();
+    }
+
+    /*****************************************************
+     *
+     * Creates a multiple currency amount from a JSON object.
+     *
+     *****************************************************/
+    public MultipleCurrencyAmounts(JSONObject jsonObject) {
+
+        this();
+
+        // The amounts aren't in an array, so we need to iterate through the keys, i.e. the currency codes.
+
+        final Iterator<String> currencyIterator = jsonObject.keys();
+
+        while (currencyIterator.hasNext()) {
+            try {
+                final String currencyCode = currencyIterator.next();
+
+                // The amount might be a simple decimal value, or another JSON object in the form:
+                //   {"amount":"0.00000"}
+
+                BigDecimal amountBigDecimal;
+                BigDecimal originalAmountBigDecimal = null;
+
+                try {
+                    amountBigDecimal = new BigDecimal(jsonObject.getString(currencyCode));
+                } catch (NumberFormatException nfe) {
+                    final JSONObject amountJSONObject = jsonObject.getJSONObject(currencyCode);
+
+                    amountBigDecimal = new BigDecimal(amountJSONObject.getString(JSON_NAME_AMOUNT));
+
+                    // Check for an original amount
+
+                    final String originalAmountString = amountJSONObject.optString(JSON_NAME_ORIGINAL_AMOUNT, null);
+
+                    originalAmountBigDecimal = originalAmountString != null ? new BigDecimal(originalAmountString) : null;
+                }
+
+                add(new SingleCurrencyAmounts(Currency.getInstance(currencyCode), amountBigDecimal, originalAmountBigDecimal));
+            } catch (JSONException je) {
+                Log.e(LOG_TAG, "Could not get amounts from: " + jsonObject.toString());
+            }
+        }
+    }
+
+    /*****************************************************
+     *
+     * Creates a multiple currency amount from a JSONArray.
+     *
+     *****************************************************/
+
+    public MultipleCurrencyAmounts(JSONArray jsonArray) throws JSONException {
+
+        this();
+        JSONObject temp;
+        String currencyCode = null;
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            temp = jsonArray.getJSONObject(i);
+            currencyCode = temp.getString("currency");
+
+            BigDecimal amountBigDecimal;
+            BigDecimal originalAmountBigDecimal = null;
+
+            try {
+                amountBigDecimal = new BigDecimal(temp.getString("amount"));
+            } catch (NumberFormatException nfe) {
+                final JSONObject amountJSONObject = temp.getJSONObject("amount");
+
+                amountBigDecimal = new BigDecimal(amountJSONObject.getString(JSON_NAME_AMOUNT));
+
+                // Check for an original amount
+
+                final String originalAmountString = amountJSONObject.optString(JSON_NAME_ORIGINAL_AMOUNT, null);
+
+                originalAmountBigDecimal = originalAmountString != null ? new BigDecimal(originalAmountString) : null;
+            }
+            add(new SingleCurrencyAmounts(Currency.getInstance(currencyCode), amountBigDecimal, originalAmountBigDecimal));
+        }
+    }
+
+    /*****************************************************
+     *
+     * Creates a multiple currency amount from a parcel.
+     *
+     *****************************************************/
+    private MultipleCurrencyAmounts(Parcel parcel) {
+
+        this();
+
+        // The amounts are preceded by a count
+
+        final int count = parcel.readInt();
+
+        for (int index = 0; index < count; index++) {
+            add((SingleCurrencyAmounts) parcel.readParcelable(SingleCurrencyAmounts.class.getClassLoader()));
+        }
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Creates a new multiple currency amount containing just
+     * the supplied currency, or the supplied source amount
+     * if the currency is null.
+     *
+     *****************************************************/
+    public static MultipleCurrencyAmounts newFilteredInstance(MultipleCurrencyAmounts originalMultipleCurrencyAmount, String currencyCode) {
+
+        if (originalMultipleCurrencyAmount == null) {
+            return null;
         }
 
-      public MultipleCurrencyAmounts[] newArray( int size )
-        {
-        return ( new MultipleCurrencyAmounts[ size ] );
+        if (currencyCode == null) {
+            return originalMultipleCurrencyAmount;
         }
-      };
 
+        final MultipleCurrencyAmounts newMultipleCurrencyAmount = new MultipleCurrencyAmounts();
 
-  ////////// Member Variable(s) //////////
+        final SingleCurrencyAmounts singleCurrencyAmount = originalMultipleCurrencyAmount.get(currencyCode);
 
-  private HashMap<Currency,SingleCurrencyAmounts> mCurrencyAmountTable;
-  private HashMap<String,SingleCurrencyAmounts>   mCurrencyCodeAmountTable;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Creates a new multiple currency amount containing just
-   * the supplied currency, or the supplied source amount
-   * if the currency is null.
-   *
-   *****************************************************/
-  static public MultipleCurrencyAmounts newFilteredInstance( MultipleCurrencyAmounts originalMultipleCurrencyAmount, String currencyCode )
-    {
-    if ( originalMultipleCurrencyAmount == null ) return ( null );
-
-    if ( currencyCode == null ) return ( originalMultipleCurrencyAmount );
-
-    MultipleCurrencyAmounts newMultipleCurrencyAmount = new MultipleCurrencyAmounts();
-
-    SingleCurrencyAmounts singleCurrencyAmount = originalMultipleCurrencyAmount.get( currencyCode );
-
-    if ( singleCurrencyAmount != null ) newMultipleCurrencyAmount.add( singleCurrencyAmount );
-
-    return ( newMultipleCurrencyAmount );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a currency code from a currency.
-   *
-   * @return null, if no currency was supplied
-   * @return The currency code, if a currency was supplied
-   *
-   *****************************************************/
-  static private String getSafeCurrencyCode( Currency currency )
-    {
-    if ( currency != null ) return ( currency.getCurrencyCode() );
-
-    return ( "" );
-    }
-
-
-  ////////// Constructor(s) //////////
-
-  public MultipleCurrencyAmounts()
-    {
-    mCurrencyAmountTable     = new HashMap<Currency,SingleCurrencyAmounts>();
-    mCurrencyCodeAmountTable = new HashMap<String,SingleCurrencyAmounts>();
-    }
-
-
-  /*****************************************************
-   *
-   * Creates a multiple currency amount from a JSON object.
-   *
-   *****************************************************/
-  public MultipleCurrencyAmounts( JSONObject jsonObject )
-    {
-    this();
-
-
-    // The amounts aren't in an array, so we need to iterate through the keys, i.e. the currency codes.
-
-    Iterator<String> currencyIterator = jsonObject.keys();
-
-    while ( currencyIterator.hasNext() )
-      {
-      try
-        {
-        String currencyCode = currencyIterator.next();
-
-            // The amount might be a simple decimal value, or another JSON object in the form:
-        //   {"amount":"0.00000"}
-
-        BigDecimal amountBigDecimal;
-        BigDecimal originalAmountBigDecimal = null;
-
-        try
-          {
-          amountBigDecimal = new BigDecimal( jsonObject.getString( currencyCode ) );
-          }
-        catch ( NumberFormatException nfe )
-          {
-          JSONObject amountJSONObject = jsonObject.getJSONObject( currencyCode );
-
-          amountBigDecimal = new BigDecimal( amountJSONObject.getString( JSON_NAME_AMOUNT ) );
-
-
-          // Check for an original amount
-
-          String originalAmountString = amountJSONObject.optString( JSON_NAME_ORIGINAL_AMOUNT, null );
-
-          originalAmountBigDecimal = ( originalAmountString != null ? new BigDecimal( originalAmountString ) : null );
-          }
-
-
-        add( new SingleCurrencyAmounts( Currency.getInstance( currencyCode ), amountBigDecimal, originalAmountBigDecimal ) );
+        if (singleCurrencyAmount != null) {
+            newMultipleCurrencyAmount.add(singleCurrencyAmount);
         }
-      catch ( JSONException je )
-        {
-        Log.e( LOG_TAG, "Could not get amounts from: " + jsonObject.toString() );
+
+        return newMultipleCurrencyAmount;
+    }
+
+    /*****************************************************
+     *
+     * Returns a currency code from a currency.
+     *
+     * @return null, if no currency was supplied
+     * @return The currency code, if a currency was supplied
+     *
+     *****************************************************/
+    private static String getSafeCurrencyCode(Currency currency) {
+
+        if (currency != null) {
+            return currency.getCurrencyCode();
         }
-      }
+
+        return "";
     }
 
-  /*****************************************************
-  *
-  * Creates a multiple currency amount from a JSONArray.
-  *
-  *****************************************************/
+    ////////// Parcelable Method(s) //////////
 
-  public MultipleCurrencyAmounts (JSONArray jsonArray) throws JSONException {
-      this();
-      JSONObject temp;
-      String currencyCode = null;
+    /*****************************************************
+     *
+     * Describes the contents.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
 
-      for(int i=0;i<jsonArray.length();i++) {
-          temp = jsonArray.getJSONObject(i);
-          currencyCode = temp.getString("currency");
-
-          BigDecimal amountBigDecimal;
-          BigDecimal originalAmountBigDecimal = null;
-
-          try
-          {
-              amountBigDecimal = new BigDecimal(temp.getString("amount"));
-          }
-          catch ( NumberFormatException nfe ) {
-              JSONObject amountJSONObject = temp.getJSONObject("amount");
-
-              amountBigDecimal = new BigDecimal(amountJSONObject.getString(JSON_NAME_AMOUNT));
-
-
-              // Check for an original amount
-
-              String originalAmountString = amountJSONObject.optString(JSON_NAME_ORIGINAL_AMOUNT, null);
-
-              originalAmountBigDecimal = ( originalAmountString != null ? new BigDecimal( originalAmountString ) : null );
-          }
-          add( new SingleCurrencyAmounts( Currency.getInstance( currencyCode ), amountBigDecimal, originalAmountBigDecimal ) );
-      }
-  }
-
-
-  /*****************************************************
-   *
-   * Creates a multiple currency amount from a parcel.
-   *
-   *****************************************************/
-  private MultipleCurrencyAmounts( Parcel parcel )
-    {
-    this();
-
-
-    // The amounts are preceded by a count
-
-    int count = parcel.readInt();
-
-    for ( int index = 0; index < count; index ++ )
-      {
-      add( (SingleCurrencyAmounts)parcel.readParcelable( SingleCurrencyAmounts.class.getClassLoader() ) );
-      }
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Write the contents to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
+        // Write the count and all the entries to the parcel
 
-  ////////// Parcelable Method(s) //////////
+        targetParcel.writeInt(mCurrencyAmountTable.size());
 
-  /*****************************************************
-   *
-   * Describes the contents.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        for (SingleCurrencyAmounts singleCurrencyCost : mCurrencyCodeAmountTable.values()) {
+            targetParcel.writeParcelable(singleCurrencyCost, flags);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * Write the contents to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    // Write the count and all the entries to the parcel
+    /*****************************************************
+     *
+     * Adds a cost in a single currency.
+     *
+     *****************************************************/
+    public void add(SingleCurrencyAmounts singleCurrencyAmount) {
 
-    targetParcel.writeInt( mCurrencyAmountTable.size() );
-
-    for ( SingleCurrencyAmounts singleCurrencyCost : mCurrencyCodeAmountTable.values() )
-      {
-      targetParcel.writeParcelable( singleCurrencyCost, flags );
-      }
+        mCurrencyAmountTable.put(singleCurrencyAmount.getCurrency(), singleCurrencyAmount);
+        mCurrencyCodeAmountTable.put(singleCurrencyAmount.getCurrency().getCurrencyCode(), singleCurrencyAmount);
     }
 
+    /*****************************************************
+     *
+     * Returns a the cost for a currency code.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts get(String currencyCode) {
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Adds a cost in a single currency.
-   *
-   *****************************************************/
-  public void add( SingleCurrencyAmounts singleCurrencyAmount )
-    {
-    mCurrencyAmountTable.put( singleCurrencyAmount.getCurrency(), singleCurrencyAmount );
-    mCurrencyCodeAmountTable.put( singleCurrencyAmount.getCurrency().getCurrencyCode(), singleCurrencyAmount );
+        return mCurrencyCodeAmountTable.get(currencyCode);
     }
 
+    /*****************************************************
+     *
+     * Returns true if the currency code is available.
+     *
+     *****************************************************/
+    public boolean contains(String currencyCode) {
 
-  /*****************************************************
-   *
-   * Returns a the cost for a currency code.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts get( String currencyCode )
-    {
-    return ( mCurrencyCodeAmountTable.get( currencyCode ) );
+        return mCurrencyCodeAmountTable.containsKey(currencyCode);
     }
 
+    /*****************************************************
+     *
+     * Returns all the currency codes.
+     *
+     *****************************************************/
+    public Set<String> getAllCurrencyCodes() {
 
-  /*****************************************************
-   *
-   * Returns true if the currency code is available.
-   *
-   *****************************************************/
-  public boolean contains( String currencyCode )
-    {
-    return ( mCurrencyCodeAmountTable.containsKey( currencyCode ) );
+        return mCurrencyCodeAmountTable.keySet();
     }
 
+    /*****************************************************
+     *
+     * Returns the amount in a specific currency, falling back
+     * if the amount is not known in the requested currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getAmountsWithFallback(String preferredCurrencyCode) {
 
-  /*****************************************************
-   *
-   * Returns all the currency codes.
-   *
-   *****************************************************/
-  public Set<String> getAllCurrencyCodes()
-    {
-    return ( mCurrencyCodeAmountTable.keySet() );
+        SingleCurrencyAmounts amount;
+
+        // First try the requested currency code
+        if ((amount = get(preferredCurrencyCode)) != null) {
+            return amount;
+        }
+
+        // Next try falling back through major currencies
+        for (String fallbackCurrencyCode : FALLBACK_CURRENCY_CODES) {
+            if ((amount = get(fallbackCurrencyCode)) != null) {
+                return amount;
+            }
+        }
+
+        // Lastly, try and get any supported currency
+
+        final Collection<SingleCurrencyAmounts> collection = mCurrencyAmountTable.values();
+
+        if (collection != null) {
+            final Iterator<SingleCurrencyAmounts> iterator = collection.iterator();
+
+            if (iterator.hasNext()) {
+                return iterator.next();
+            }
+        }
+
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns the amount in a specific currency, falling back
+     * if the amount is not known in the requested currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getAmountsWithFallback(Currency preferredCurrency) {
 
-  /*****************************************************
-   *
-   * Returns the amount in a specific currency, falling back
-   * if the amount is not known in the requested currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getAmountsWithFallback( String preferredCurrencyCode )
-    {
-    SingleCurrencyAmounts amount;
-
-    // First try the requested currency code
-    if ( ( amount = get( preferredCurrencyCode ) ) != null ) return ( amount );
-
-    // Next try falling back through major currencies
-    for ( String fallbackCurrencyCode : FALLBACK_CURRENCY_CODES )
-      {
-      if ( ( amount = get( fallbackCurrencyCode ) ) != null ) return ( amount );
-      }
-
-
-    // Lastly, try and get any supported currency
-
-    Collection<SingleCurrencyAmounts> collection = mCurrencyAmountTable.values();
-
-    if ( collection != null )
-      {
-      Iterator<SingleCurrencyAmounts> iterator = collection.iterator();
-
-      if ( iterator.hasNext() ) return ( iterator.next() );
-      }
-
-
-    return ( null );
+        return getAmountsWithFallback(getSafeCurrencyCode(preferredCurrency));
     }
 
+    /*****************************************************
+     *
+     * Returns the amount in a specific currency, falling back
+     * if the amount is not known in the requested currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getAmountsWithFallbackMultipliedBy(int quantity, Currency preferredCurrency) {
 
-  /*****************************************************
-   *
-   * Returns the amount in a specific currency, falling back
-   * if the amount is not known in the requested currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getAmountsWithFallback( Currency preferredCurrency )
-    {
-    return ( getAmountsWithFallback( getSafeCurrencyCode( preferredCurrency ) ) );
+        return getAmountsWithFallback(getSafeCurrencyCode(preferredCurrency)).multipliedBy(quantity);
     }
 
+    /*****************************************************
+     *
+     * Returns the amount in a specific currency, falling back
+     * if the amount is not known in the requested currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getAmountsWithFallback(Locale locale) {
+        // We keep getting dodgy locales that have the country set incorrectly (e.g. fa, en),
+        // so if we can't get a currency from the locale, allow the fall-back procedure
+        // to pick the currency.
 
-  /*****************************************************
-   *
-   * Returns the amount in a specific currency, falling back
-   * if the amount is not known in the requested currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getAmountsWithFallbackMultipliedBy( int quantity, Currency preferredCurrency )
-    {
-    return ( getAmountsWithFallback( getSafeCurrencyCode( preferredCurrency ) ).multipliedBy( quantity ) );
+        Currency currency = null;
+
+        try {
+            currency = Currency.getInstance(locale);
+        } catch (Exception ignore) {
+            //Ignore
+        }
+
+        return getAmountsWithFallback(currency);
     }
 
+    /*****************************************************
+     *
+     * Returns the cost in the default currency (for the default
+     * locale), falling back if the cost is not known in the
+     * requested currency.
+     *
+     *****************************************************/
+    public SingleCurrencyAmounts getDefaultAmountWithFallback() {
 
-  /*****************************************************
-   *
-   * Returns the amount in a specific currency, falling back
-   * if the amount is not known in the requested currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getAmountsWithFallback( Locale locale )
-    {
-    // We keep getting dodgy locales that have the country set incorrectly (e.g. fa, en),
-    // so if we can't get a currency from the locale, allow the fall-back procedure
-    // to pick the currency.
+        final Locale defaultLocale = Locale.getDefault();
+        final Currency defaultCurrency = Currency.getInstance(defaultLocale);
 
-    Currency currency = null;
-
-    try
-      {
-      currency = Currency.getInstance( locale );
-      }
-    catch ( Exception ignore )
-      {
-      }
-
-    return ( getAmountsWithFallback( currency ) );
+        return getAmountsWithFallback(defaultCurrency.getCurrencyCode());
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDefaultDisplayAmountWithFallback() {
 
-  /*****************************************************
-   *
-   * Returns the cost in the default currency (for the default
-   * locale), falling back if the cost is not known in the
-   * requested currency.
-   *
-   *****************************************************/
-  public SingleCurrencyAmounts getDefaultAmountWithFallback()
-    {
-    Locale   defaultLocale   = Locale.getDefault();
-    Currency defaultCurrency = Currency.getInstance( defaultLocale );
-
-    return ( getAmountsWithFallback( defaultCurrency.getCurrencyCode() ) );
+        return getDisplayAmountWithFallbackMultipliedBy(null, 1, Locale.getDefault());
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDefaultDisplayAmountWithFallback(String preferredCurrency) {
 
-
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDefaultDisplayAmountWithFallback()
-    {
-    return ( getDisplayAmountWithFallbackMultipliedBy( null, 1, Locale.getDefault() ) );
+        return getDisplayAmountWithFallbackMultipliedBy(preferredCurrency, 1, Locale.getDefault());
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDefaultDisplayAmountWithFallbackMultipliedBy(int quantity) {
 
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDefaultDisplayAmountWithFallback( String preferredCurrency )
-    {
-    return ( getDisplayAmountWithFallbackMultipliedBy( preferredCurrency, 1, Locale.getDefault() ) );
+        return getDisplayAmountWithFallbackMultipliedBy(null, quantity, Locale.getDefault());
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDisplayAmountWithFallback(Locale locale) {
 
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDefaultDisplayAmountWithFallbackMultipliedBy( int quantity )
-    {
-    return ( getDisplayAmountWithFallbackMultipliedBy( null, quantity, Locale.getDefault() ) );
+        return getDisplayAmountWithFallbackMultipliedBy(null, 1, locale);
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDisplayAmountWithFallbackMultipliedBy(String preferredCurrencyCode, int quantity, Locale locale) {
 
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDisplayAmountWithFallback( Locale locale )
-    {
-    return ( getDisplayAmountWithFallbackMultipliedBy( null, 1, locale ) );
+        final Currency currency;
+
+        if (preferredCurrencyCode != null) {
+            currency = Currency.getInstance(preferredCurrencyCode);
+        } else {
+            currency = Currency.getInstance(locale);
+        }
+
+        // Get the single currency amounts
+
+        final SingleCurrencyAmounts singleAmounts = getAmountsWithFallback(currency.getCurrencyCode());
+
+        if (singleAmounts == null) {
+            return null;
+        }
+
+        final SingleCurrencyAmounts multipliedAmount = singleAmounts.multipliedBy(quantity);
+
+        // Format the amount we found for the default locale. It may not be the same currency
+        // we asked for.
+        return multipliedAmount.getDisplayAmountForLocale(locale);
     }
 
+    /*****************************************************
+     *
+     * Returns the original amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDisplayOriginalAmountWithFallbackMultipliedBy(String preferredCurrencyCode, int quantity, Locale locale) {
 
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDisplayAmountWithFallbackMultipliedBy( String preferredCurrencyCode, int quantity, Locale locale )
-    {
-    Currency currency;
+        final Currency currency;
 
-    if ( preferredCurrencyCode != null )
-      {
-      currency = Currency.getInstance( preferredCurrencyCode );
-      }
-    else
-      {
-      currency = Currency.getInstance( locale );
-      }
+        if (preferredCurrencyCode != null) {
+            currency = Currency.getInstance(preferredCurrencyCode);
+        } else {
+            currency = Currency.getInstance(locale);
+        }
 
+        // Get the single currency amounts
 
-    // Get the single currency amounts
+        final SingleCurrencyAmounts multipliedAmount = getAmountsWithFallback(currency.getCurrencyCode()).multipliedBy(quantity);
 
-    SingleCurrencyAmounts singleAmounts = getAmountsWithFallback( currency.getCurrencyCode() );
+        if (multipliedAmount == null) {
+            return null;
+        }
 
-    if ( singleAmounts == null ) return ( null );
-
-
-    SingleCurrencyAmounts multipliedAmount = singleAmounts.multipliedBy( quantity );
-
-    // Format the amount we found for the default locale. It may not be the same currency
-    // we asked for.
-    return ( multipliedAmount.getDisplayAmountForLocale( locale ) );
+        // Format the amount we found for the default locale. It may not be the same currency
+        // we asked for.
+        return multipliedAmount.getDisplayOriginalAmountForLocale(locale);
     }
 
+    /*****************************************************
+     *
+     * Returns the amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDisplayAmountWithFallbackMultipliedBy(String preferredCurrencyCode, int quantity) {
 
-  /*****************************************************
-   *
-   * Returns the original amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDisplayOriginalAmountWithFallbackMultipliedBy( String preferredCurrencyCode, int quantity, Locale locale )
-    {
-    Currency currency;
-
-    if ( preferredCurrencyCode != null )
-      {
-      currency = Currency.getInstance( preferredCurrencyCode );
-      }
-    else
-      {
-      currency = Currency.getInstance( locale );
-      }
-
-
-    // Get the single currency amounts
-
-    SingleCurrencyAmounts multipliedAmount = getAmountsWithFallback( currency.getCurrencyCode() ).multipliedBy( quantity );
-
-    if ( multipliedAmount == null ) return ( null );
-
-
-    // Format the amount we found for the default locale. It may not be the same currency
-    // we asked for.
-    return ( multipliedAmount.getDisplayOriginalAmountForLocale( locale ) );
+        return getDisplayAmountWithFallbackMultipliedBy(preferredCurrencyCode, quantity, Locale.getDefault());
     }
 
+    /*****************************************************
+     *
+     * Returns the original amount as a formatted string. Tries to use
+     * the default currency, but will fall back to other
+     * currencies if the preferred is not available.
+     *
+     * If the currency that we found matches the main currency
+     * for the default locale, then we use the number formatter
+     * to format the amount.
+     *
+     * If the currency that we found is different, then we format
+     * the amount with the full currency code. We do this to
+     * avoid any ambiguity. For example, if we were to live in
+     * Sweden but found a cost in Danish Krone, then having an
+     * amount such as 4.00 kr would be ambiguous (because we
+     * would believe we were being quoted in Swedish Kroner).
+     *
+     *****************************************************/
+    public String getDisplayOriginalAmountWithFallbackMultipliedBy(String preferredCurrencyCode, int quantity) {
 
-  /*****************************************************
-   *
-   * Returns the amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDisplayAmountWithFallbackMultipliedBy( String preferredCurrencyCode, int quantity )
-    {
-    return ( getDisplayAmountWithFallbackMultipliedBy( preferredCurrencyCode, quantity, Locale.getDefault() ) );
+        return getDisplayOriginalAmountWithFallbackMultipliedBy(preferredCurrencyCode, quantity, Locale.getDefault());
     }
 
+    /*****************************************************
+     *
+     * Returns the amounts as a list.
+     *
+     *****************************************************/
+    public Collection<SingleCurrencyAmounts> asCollection() {
 
-  /*****************************************************
-   *
-   * Returns the original amount as a formatted string. Tries to use
-   * the default currency, but will fall back to other
-   * currencies if the preferred is not available.
-   *
-   * If the currency that we found matches the main currency
-   * for the default locale, then we use the number formatter
-   * to format the amount.
-   *
-   * If the currency that we found is different, then we format
-   * the amount with the full currency code. We do this to
-   * avoid any ambiguity. For example, if we were to live in
-   * Sweden but found a cost in Danish Krone, then having an
-   * amount such as 4.00 kr would be ambiguous (because we
-   * would believe we were being quoted in Swedish Kroner).
-   *
-   *****************************************************/
-  public String getDisplayOriginalAmountWithFallbackMultipliedBy( String preferredCurrencyCode, int quantity )
-    {
-    return ( getDisplayOriginalAmountWithFallbackMultipliedBy( preferredCurrencyCode, quantity, Locale.getDefault() ) );
+        return mCurrencyAmountTable.values();
     }
 
+    /*****************************************************
+     *
+     * Returns the amounts as a string.
+     *
+     *****************************************************/
+    @Override
+    public String toString() {
 
-  /*****************************************************
-   *
-   * Returns the amounts as a list.
-   *
-   *****************************************************/
-  public Collection<SingleCurrencyAmounts> asCollection()
-    {
-    return ( mCurrencyAmountTable.values() );
+        final StringBuilder stringBuilder = new StringBuilder();
+
+        for (SingleCurrencyAmounts singleCurrencyAmount : mCurrencyAmountTable.values()) {
+            stringBuilder
+                    .append("  ")
+                    .append(singleCurrencyAmount.getCurrencyCode())
+                    .append(" ")
+                    .append(singleCurrencyAmount.getAmountAsDouble());
+        }
+
+        return stringBuilder.toString();
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Returns the amounts as a string.
-   *
-   *****************************************************/
-  @Override
-  public String toString()
-    {
-    StringBuilder stringBuilder = new StringBuilder();
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-    for ( SingleCurrencyAmounts singleCurrencyAmount : mCurrencyAmountTable.values() )
-      {
-      stringBuilder
-              .append( "  " )
-              .append( singleCurrencyAmount.getCurrencyCode() )
-              .append( " " )
-              .append( singleCurrencyAmount.getAmountAsDouble() );
-      }
-
-    return ( stringBuilder.toString() );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

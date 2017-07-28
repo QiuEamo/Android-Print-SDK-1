@@ -36,7 +36,6 @@
 
 package ly.kite.journey.creation;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -44,7 +43,6 @@ import android.content.Intent;
 
 import ly.kite.util.Asset;
 import ly.kite.util.AssetFragment;
-
 
 ///// Interface Declaration /////
 
@@ -54,36 +52,32 @@ import ly.kite.util.AssetFragment;
  * editor agents.
  *
  *****************************************************/
-public interface ICustomImageEditorAgent
-  {
-  ////////// Static Constant(s) //////////
+public interface ICustomImageEditorAgent {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Called to start the editor.
+     *
+     *****************************************************/
+    public void onStartEditor(Activity activity, Asset asset, int requestCode);
 
-  /*****************************************************
-   *
-   * Called to start the editor.
-   *
-   *****************************************************/
-  public void onStartEditor( Activity activity, Asset asset, int requestCode );
+    /*****************************************************
+     *
+     * Called to return the edited asset fragment.
+     *
+     *****************************************************/
+    public AssetFragment getAssetFragment(Intent resultIntent);
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Called to return the edited asset fragment.
-   *
-   *****************************************************/
-  public AssetFragment getAssetFragment( Intent resultIntent );
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

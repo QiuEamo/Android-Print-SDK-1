@@ -17,9 +17,9 @@
  * The software MAY ONLY be used with the Kite Tech Ltd platform and MAY NOT be modified
  * to be used with any co<merge>
 
-    <include layout="@layout/include_cta_bar"/>
+ <include layout="@layout/include_cta_bar"/>
 
-</merge>mpetitor platforms. This means the software MAY NOT be modified 
+ </merge>mpetitor platforms. This means the software MAY NOT be modified
  * to place orders with any competitors to Kite Tech Ltd, all orders MUST go through the
  * Kite Tech Ltd platform servers. 
  *
@@ -40,7 +40,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -49,7 +48,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -57,97 +55,86 @@ import android.view.View;
  * This class is an extended recycler view.
  *
  *****************************************************/
-public class ExtendedRecyclerView extends RecyclerView
-  {
-  ////////// Static Constant(s) //////////
+public class ExtendedRecyclerView extends RecyclerView {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "ExtendedRecyclerView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ExtendedRecyclerView";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public ExtendedRecyclerView(Context context) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public ExtendedRecyclerView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public ExtendedRecyclerView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public ExtendedRecyclerView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public ExtendedRecyclerView( Context context, AttributeSet attrs, int defStyle )
-    {
-    super( context, attrs, defStyle );
+    public ExtendedRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+
+        super(context, attrs, defStyle);
     }
 
+    ////////// RecyclerView Method(s) //////////
 
-  ////////// RecyclerView Method(s) //////////
+    /*****************************************************
+     *
+     * Saves the instance state.
+     *
+     *****************************************************/
+    @Override
+    public Parcelable onSaveInstanceState() {
 
-  /*****************************************************
-   *
-   * Saves the instance state.
-   *
-   *****************************************************/
-  @Override
-  public Parcelable onSaveInstanceState()
-    {
-    return ( super.onSaveInstanceState() );
+        return super.onSaveInstanceState();
     }
 
+    /*****************************************************
+     *
+     * Restores the instance state.
+     *
+     *****************************************************/
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
 
-  /*****************************************************
-   *
-   * Restores the instance state.
-   *
-   *****************************************************/
-  @Override
-  public void onRestoreInstanceState( Parcelable state )
-    {
-    super.onRestoreInstanceState( state );
+        super.onRestoreInstanceState(state);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a position corresponding to the supplied point.
+     *
+     *****************************************************/
+    public int positionFromPoint(int x, int y) {
 
-  /*****************************************************
-   *
-   * Returns a position corresponding to the supplied point.
-   *
-   *****************************************************/
-  public int positionFromPoint( int x, int y )
-    {
-    View childView = findChildViewUnder( x, y );
+        final View childView = findChildViewUnder(x, y);
 
-    if ( childView != null )
-      {
-      return ( getChildAdapterPosition( childView ) );
-      }
+        if (childView != null) {
+            return getChildAdapterPosition(childView);
+        }
 
-    return ( -1 );
+        return -1;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

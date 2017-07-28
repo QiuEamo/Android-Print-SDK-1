@@ -36,12 +36,10 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 
 ///// Class Declaration /////
 
@@ -50,128 +48,117 @@ import android.os.Parcelable;
  * This class represents a border with float values.
  *
  *****************************************************/
-public class BorderF implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class BorderF implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BorderF";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BorderF";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<BorderF> CREATOR =
+            new Parcelable.Creator<BorderF>() {
+                public BorderF createFromParcel(Parcel sourceParcel) {
 
-  public static final Parcelable.Creator<BorderF> CREATOR =
-    new Parcelable.Creator<BorderF>()
-      {
-      public BorderF createFromParcel( Parcel sourceParcel )
-        {
-        return ( new BorderF( sourceParcel ) );
-        }
+                    return new BorderF(sourceParcel);
+                }
 
-      public BorderF[] newArray( int size )
-        {
-        return ( new BorderF[ size ] );
-        }
-      };
+                public BorderF[] newArray(int size) {
 
+                    return new BorderF[size];
+                }
+            };
 
-  ////////// Member Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
-  final public float left;
-  final public float top;
-  final public float right;
-  final public float bottom;
+    public final float left;
+    public final float top;
+    public final float right;
+    public final float bottom;
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Method(s) //////////
+    public BorderF(float top, float right, float bottom, float left) {
 
-
-  ////////// Constructor(s) //////////
-
-  public BorderF( float top, float right, float bottom, float left )
-    {
-    this.top    = top;
-    this.right  = right;
-    this.bottom = bottom;
-    this.left   = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.left = left;
     }
 
-  public BorderF()
-    {
-    this( 0f, 0f, 0f, 0f );
+    public BorderF() {
+
+        this(0f, 0f, 0f, 0f);
     }
 
-  // Constructor used by parcelable interface
-  private BorderF( Parcel sourceParcel )
-    {
-    this.top    = sourceParcel.readFloat();
-    this.left   = sourceParcel.readFloat();
-    this.right  = sourceParcel.readFloat();
-    this.bottom = sourceParcel.readFloat();
+    // Constructor used by parcelable interface
+    private BorderF(Parcel sourceParcel) {
+
+        this.top = sourceParcel.readFloat();
+        this.left = sourceParcel.readFloat();
+        this.right = sourceParcel.readFloat();
+        this.bottom = sourceParcel.readFloat();
     }
 
+    ////////// Parcelable Method(s) //////////
 
-  ////////// Parcelable Method(s) //////////
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
 
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return 0;
     }
 
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
 
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeFloat( this.top );
-    targetParcel.writeFloat( this.left );
-    targetParcel.writeFloat( this.right );
-    targetParcel.writeFloat( this.bottom );
+        targetParcel.writeFloat(this.top);
+        targetParcel.writeFloat(this.left);
+        targetParcel.writeFloat(this.right);
+        targetParcel.writeFloat(this.bottom);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Creates a string representation of this BorderF.
+     *
+     *****************************************************/
+    @Override
+    public String toString() {
 
-  /*****************************************************
-   *
-   * Creates a string representation of this BorderF.
-   *
-   *****************************************************/
-  @Override
-  public String toString()
-    {
-    StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-    stringBuilder
-            .append( "{ top = " ).append( this.top )
-            .append( ", left = " ).append( this.left )
-            .append( ", right = " ).append( this.right )
-            .append( ", bottom = " ).append( this.bottom ).append( " }" );
+        stringBuilder
+                .append("{ top = ").append(this.top)
+                .append(", left = ").append(this.left)
+                .append(", right = ").append(this.right)
+                .append(", bottom = ").append(this.bottom).append(" }");
 
-    return ( stringBuilder.toString() );
+        return stringBuilder.toString();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

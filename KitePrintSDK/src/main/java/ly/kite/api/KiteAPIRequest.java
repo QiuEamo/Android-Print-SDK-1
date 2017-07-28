@@ -36,7 +36,6 @@
 
 package ly.kite.api;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -47,7 +46,6 @@ import java.util.Map;
 import ly.kite.BuildConfig;
 import ly.kite.KiteSDK;
 import ly.kite.util.HTTPJSONRequest;
-
 
 ///// Class Declaration /////
 
@@ -61,70 +59,58 @@ import ly.kite.util.HTTPJSONRequest;
  * the Kite API server.
  *
  *****************************************************/
-public class KiteAPIRequest extends HTTPJSONRequest
-  {
-  ////////// Static Constant(s) //////////
+public class KiteAPIRequest extends HTTPJSONRequest {
+    ////////// Static Constant(s) //////////
 
-  static private final String LOG_TAG                          = "KiteAPIRequest";
+    private static final String LOG_TAG = "KiteAPIRequest";
 
-  static  public final String ERROR_RESPONSE_JSON_OBJECT_NAME  = "error";
-  static  public final String ERROR_RESPONSE_MESSAGE_JSON_NAME = "message";
-  static  public final String ERROR_RESPONSE_CODE_JSON_NAME    = "code";
+    public static final String ERROR_RESPONSE_JSON_OBJECT_NAME = "error";
+    public static final String ERROR_RESPONSE_MESSAGE_JSON_NAME = "message";
+    public static final String ERROR_RESPONSE_CODE_JSON_NAME = "code";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public KiteAPIRequest(Context context, HttpMethod httpMethod, String urlString, Map<String, String> headerMap, String
+            requestBodyString) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public KiteAPIRequest( Context context, HttpMethod httpMethod, String urlString, Map<String, String> headerMap, String requestBodyString )
-    {
-    super( context, httpMethod, urlString, headerMap, requestBodyString );
+        super(context, httpMethod, urlString, headerMap, requestBodyString);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Starts the request.
+     *
+     *****************************************************/
+    public void start(IJSONResponseListener listener) {
+        // Add Kite headers to the request
 
-  /*****************************************************
-   *
-   * Starts the request.
-   *
-   *****************************************************/
-  public void start( IJSONResponseListener listener )
-    {
-    // Add Kite headers to the request
+        KiteSDK kiteSDK = KiteSDK.getInstance(mApplicationContext);
 
-    KiteSDK kiteSDK = KiteSDK.getInstance( mApplicationContext );
+        setHeader("Authorization", "ApiKey " + kiteSDK.getAPIKey() + ":");
+        setHeader("User-Agent", "Kite SDK Android v" + BuildConfig.VERSION_NAME);
+        setHeader("X-App-Package", mApplicationContext.getPackageName());
+        setHeader("X-App-Name", mApplicationContext.getString(mApplicationContext.getApplicationInfo().labelRes));
+        setHeader("X-Person-UUID", kiteSDK.getUniqueUserId());
 
-    setHeader( "Authorization", "ApiKey " + kiteSDK.getAPIKey() + ":" );
-    setHeader( "User-Agent", "Kite SDK Android v" + BuildConfig.VERSION_NAME );
-    setHeader( "X-App-Package", mApplicationContext.getPackageName() );
-    setHeader( "X-App-Name", mApplicationContext.getString( mApplicationContext.getApplicationInfo().labelRes ) );
-    setHeader( "X-Person-UUID", kiteSDK.getUniqueUserId() );
+        String languageCode = Locale.getDefault().getLanguage();
 
+        if (languageCode != null && (!languageCode.trim().equals(""))) {
+            setHeader("Accept-Language", languageCode);
+        }
 
-    String languageCode = Locale.getDefault().getLanguage();
-
-    if ( languageCode != null && ( ! languageCode.trim().equals( "" ) ) )
-      {
-      setHeader( "Accept-Language", languageCode );
-      }
-
-
-    super.start( listener );
+        super.start(listener);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-
-  }
+}

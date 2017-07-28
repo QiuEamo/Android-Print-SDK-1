@@ -36,9 +36,7 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -66,236 +64,210 @@ import ly.kite.payment.PayPalCardVaultStorageListener;
  * This class is the PayPal credit card agent.
  *
  *****************************************************/
-public class PayPalCreditCardAgent implements ICreditCardAgent
-  {
-  ////////// Static Constant(s) //////////
+public class PayPalCreditCardAgent implements ICreditCardAgent {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                          = "PayPalCreditCardAgent";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "PayPalCreditCardAgent";
 
-  static private final int     ACTIVITY_REQUEST_CODE_CREDITCARD = 32;
+    private static final int ACTIVITY_REQUEST_CODE_CREDITCARD = 32;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
+    private APaymentFragment mPaymentFragment;
+    private Order mOrder;
+    private SingleCurrencyAmounts mSingleCurrencyAmount;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private Context                mContext;
-  private APaymentFragment       mPaymentFragment;
-  private Order                  mOrder;
-  private SingleCurrencyAmounts  mSingleCurrencyAmount;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// ICreditCardAgent Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns true if the agent uses PayPal to process
+     * credit card payments.
+     *
+     *****************************************************/
+    public boolean usesPayPal() {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// ICreditCardAgent Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the agent uses PayPal to process
-   * credit card payments.
-   *
-   *****************************************************/
-  public boolean usesPayPal()
-    {
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Notifies the agent that the user has clicked on the
+     * credit card payment button.
+     *
+     *****************************************************/
+    @Override
+    public void onPayClicked(Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount) {
 
-  /*****************************************************
-   *
-   * Notifies the agent that the user has clicked on the
-   * credit card payment button.
-   *
-   *****************************************************/
-  @Override
-  public void onPayClicked( Context context, APaymentFragment paymentFragment, Order order, SingleCurrencyAmounts singleCurrencyAmount )
-    {
-    mContext              = context;
-    mPaymentFragment      = paymentFragment;
-    mOrder                = order;
-    mSingleCurrencyAmount = singleCurrencyAmount;
+        mContext = context;
+        mPaymentFragment = paymentFragment;
+        mOrder = order;
+        mSingleCurrencyAmount = singleCurrencyAmount;
 
+        final PayPalCard lastUsedCard = PayPalCard.getLastUsedCard(context);
 
-    final PayPalCard lastUsedCard = PayPalCard.getLastUsedCard( context );
+        if (lastUsedCard != null && !lastUsedCard.hasVaultStorageExpired()) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-    if ( lastUsedCard != null && !lastUsedCard.hasVaultStorageExpired() )
-      {
-      AlertDialog.Builder builder = new AlertDialog.Builder( context );
+            if (KiteSDK.getInstance(context).getPayPalEnvironment().equals(PayPalConfiguration.ENVIRONMENT_SANDBOX)) {
+                builder.setTitle(R.string.title_payment_source_sandbox);
+            } else {
+                builder.setTitle(R.string.title_payment_source);
+            }
 
-      if ( KiteSDK.getInstance( context ).getPayPalEnvironment().equals( PayPalConfiguration.ENVIRONMENT_SANDBOX ) )
-        {
-        builder.setTitle( R.string.title_payment_source_sandbox );
-        }
-      else
-        {
-        builder.setTitle( R.string.title_payment_source );
-        }
+            builder.setItems(new String[]{context.getString(R.string.alert_dialog_item_pay_with_new_card), context.getString(R.string
+                    .alert_dialog_item_pay_with_existing_card_format_string, lastUsedCard.getLastFour())},
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int itemIndex) {
 
-      builder.setItems( new String[]{ context.getString( R.string.alert_dialog_item_pay_with_new_card ), context.getString( R.string.alert_dialog_item_pay_with_existing_card_format_string, lastUsedCard.getLastFour() ) }, new DialogInterface.OnClickListener()
-        {
-        @Override
-        public void onClick( DialogInterface dialogInterface, int itemIndex )
-          {
-          if ( itemIndex == 0 )
-            {
+                            if (itemIndex == 0) {
+                                payWithNewCard();
+                            } else {
+                                payWithExistingCard(lastUsedCard);
+                            }
+                        }
+                    });
+            builder.show();
+        } else {
             payWithNewCard();
-            }
-          else
-            {
-            payWithExistingCard( lastUsedCard );
-            }
-          }
-        } );
-      builder.show();
-      }
-    else
-      {
-      payWithNewCard();
-      }
+        }
     }
 
+    /*****************************************************
+     *
+     * Passes an activity result to the agent.
+     *
+     *****************************************************/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //Activity activity = paymentFragment.getActivity();
 
+        if (requestCode == ACTIVITY_REQUEST_CODE_CREDITCARD) {
+            if (data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
+                final CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
 
-  /*****************************************************
-   *
-   * Passes an activity result to the agent.
-   *
-   *****************************************************/
-  @Override
-  public void onActivityResult( int requestCode, int resultCode, Intent data )
-    {
-    //Activity activity = paymentFragment.getActivity();
+                if (!scanResult.isExpiryValid()) {
+                    mPaymentFragment.showErrorDialog(R.string.alert_dialog_message_card_expired);
 
-    if ( requestCode == ACTIVITY_REQUEST_CODE_CREDITCARD )
-      {
-      if ( data != null && data.hasExtra( CardIOActivity.EXTRA_SCAN_RESULT ) )
-        {
-        CreditCard scanResult = data.getParcelableExtra( CardIOActivity.EXTRA_SCAN_RESULT );
+                    return;
+                }
 
-        if ( !scanResult.isExpiryValid() )
-          {
-          mPaymentFragment.showErrorDialog( R.string.alert_dialog_message_card_expired );
+                final PayPalCard card = new PayPalCard();
+                card.setNumber(scanResult.cardNumber);
+                card.setExpireMonth(scanResult.expiryMonth);
+                card.setExpireYear(scanResult.expiryYear);
+                card.setCvv2(scanResult.cvv);
+                card.setCardType(PayPalCard.CardType.getCardType(scanResult.getCardType()));
 
-          return;
-          }
+                if (card.getCardType() == PayPalCard.CardType.UNSUPPORTED) {
+                    mPaymentFragment.showErrorDialog(R.string.alert_dialog_message_card_not_recognised);
 
-        PayPalCard card = new PayPalCard();
-        card.setNumber( scanResult.cardNumber );
-        card.setExpireMonth( scanResult.expiryMonth );
-        card.setExpireYear( scanResult.expiryYear );
-        card.setCvv2( scanResult.cvv );
-        card.setCardType( PayPalCard.CardType.getCardType( scanResult.getCardType() ) );
+                    return;
+                }
 
-        if ( card.getCardType() == PayPalCard.CardType.UNSUPPORTED )
-          {
-          mPaymentFragment.showErrorDialog( R.string.alert_dialog_message_card_not_recognised );
+                final ProgressDialog dialog = new ProgressDialog(mContext);
+                dialog.setCancelable(false);
+                dialog.setTitle(R.string.alert_dialog_title_processing);
+                dialog.setMessage(mContext.getString(R.string.alert_dialog_message_processing));
+                dialog.show();
+                card.storeCard(KiteSDK.getInstance(mContext), new PayPalCardVaultStorageListener() {
+                    @Override
+                    public void onStoreSuccess(PayPalCard card) {
 
-          return;
-          }
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
 
-        final ProgressDialog dialog = new ProgressDialog( mContext );
-        dialog.setCancelable( false );
-        dialog.setTitle( R.string.alert_dialog_title_processing );
-        dialog.setMessage( mContext.getString( R.string.alert_dialog_message_processing ) );
+                        payWithExistingCard(card);
+                    }
+
+                    @Override
+                    public void onError(PayPalCard card, Exception ex) {
+
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+
+                        mPaymentFragment.showErrorDialog(R.string.alert_dialog_message_unable_to_store_card, ex.getMessage());
+                    }
+                });
+
+            } else {
+                // card scan cancelled
+            }
+
+            return;
+        }
+    }
+
+    ////////// Method(s) //////////
+
+    private void payWithNewCard() {
+
+        final Intent scanIntent = new Intent(mContext, CardIOActivity.class);
+
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true);
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
+
+        mPaymentFragment.startActivityForResult(scanIntent, ACTIVITY_REQUEST_CODE_CREDITCARD);
+    }
+
+    private void payWithExistingCard(PayPalCard card) {
+
+        final ProgressDialog dialog = new ProgressDialog(mContext);
+        dialog.setCancelable(false);
+        dialog.setTitle(R.string.alert_dialog_title_processing);
+        dialog.setMessage(mContext.getString(R.string.alert_dialog_message_processing));
         dialog.show();
-        card.storeCard( KiteSDK.getInstance( mContext ), new PayPalCardVaultStorageListener()
-          {
-          @Override
-          public void onStoreSuccess( PayPalCard card )
-            {
-            if ( dialog.isShowing() ) dialog.dismiss();
 
-            payWithExistingCard( card );
-            }
+        card.authoriseCard(KiteSDK.getInstance(mContext),
+                mSingleCurrencyAmount.getAmount(),
+                mSingleCurrencyAmount.getCurrencyCode(),
+                "",
+                mOrder.getShippingAddress(),
+                new PayPalCardChargeListener() {
+                    @Override
+                    public void onChargeSuccess(PayPalCard card, String proofOfPayment) {
 
-          @Override
-          public void onError( PayPalCard card, Exception ex )
-            {
-            if ( dialog.isShowing() ) dialog.dismiss();
+                        dialog.dismiss();
 
-            mPaymentFragment.showErrorDialog( R.string.alert_dialog_message_unable_to_store_card, ex.getMessage() );
-            }
-          } );
+                        card.saveAsLastUsedCard(mContext);
 
-        }
-      else
-        {
-        // card scan cancelled
-        }
+                        mPaymentFragment.submitOrderForPrinting(proofOfPayment, KiteSDK.getInstance(mContext).getPayPalAccountId(),
+                                PaymentMethod.CREDIT_CARD);
+                    }
 
-      return;
-      }
+                    @Override
+                    public void onError(PayPalCard card, Exception ex) {
+
+                        Log.e(LOG_TAG, "Error authorising card", ex);
+
+                        dialog.dismiss();
+
+                        mPaymentFragment.showErrorDialog(ex.getMessage());
+                    }
+                });
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  private void payWithNewCard()
-    {
-    Intent scanIntent = new Intent( mContext, CardIOActivity.class );
-
-    scanIntent.putExtra( CardIOActivity.EXTRA_REQUIRE_EXPIRY, true );
-    scanIntent.putExtra( CardIOActivity.EXTRA_REQUIRE_CVV, true );
-    scanIntent.putExtra( CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false );
-
-    mPaymentFragment.startActivityForResult( scanIntent, ACTIVITY_REQUEST_CODE_CREDITCARD );
-    }
-
-
-  private void payWithExistingCard( PayPalCard card )
-    {
-    final ProgressDialog dialog = new ProgressDialog( mContext );
-    dialog.setCancelable( false );
-    dialog.setTitle( R.string.alert_dialog_title_processing );
-    dialog.setMessage( mContext.getString( R.string.alert_dialog_message_processing ) );
-    dialog.show();
-
-    card.authoriseCard( KiteSDK.getInstance( mContext ),
-            mSingleCurrencyAmount.getAmount(),
-            mSingleCurrencyAmount.getCurrencyCode(),
-            "",
-            mOrder.getShippingAddress(),
-            new PayPalCardChargeListener()
-              {
-              @Override
-              public void onChargeSuccess( PayPalCard card, String proofOfPayment )
-                {
-                dialog.dismiss();
-
-                card.saveAsLastUsedCard( mContext );
-
-                mPaymentFragment.submitOrderForPrinting( proofOfPayment, KiteSDK.getInstance( mContext ).getPayPalAccountId(), PaymentMethod.CREDIT_CARD );
-                }
-
-              @Override
-              public void onError( PayPalCard card, Exception ex )
-                {
-                Log.e( LOG_TAG, "Error authorising card", ex );
-
-                dialog.dismiss();
-
-                mPaymentFragment.showErrorDialog( ex.getMessage() );
-                }
-              } );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

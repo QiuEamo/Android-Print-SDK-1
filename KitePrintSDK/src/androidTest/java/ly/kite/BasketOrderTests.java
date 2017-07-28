@@ -36,11 +36,8 @@
 
 package ly.kite;
 
-
 ///// Import(s) /////
 
-import android.content.Context;
-import android.database.Cursor;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -53,8 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import ly.kite.address.Address;
-import ly.kite.address.Country;
-import ly.kite.catalogue.BorderF;
 import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.Product;
 import ly.kite.journey.UserJourneyType;
@@ -65,13 +60,10 @@ import ly.kite.ordering.ImagesJob;
 import ly.kite.ordering.Job;
 import ly.kite.ordering.Order;
 import ly.kite.ordering.OrderingDataAgent;
-import ly.kite.ordering.OrderingDatabaseAgent;
-import ly.kite.KiteSDK;
 import ly.kite.ordering.PhotobookJob;
 import ly.kite.pricing.OrderPricing;
 import ly.kite.util.AssetFragment;
 import ly.kite.util.UploadableImage;
-
 
 ///// Class Declaration /////
 
@@ -81,895 +73,841 @@ import ly.kite.util.UploadableImage;
  * -> order.
  *
  *****************************************************/
-public class BasketOrderTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class BasketOrderTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BasketOrderTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BasketOrderTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// AndroidTestCase Method(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * CALENDAR tests.
+     *
+     *****************************************************/
 
+    public void testCalendar1() {
 
-  ////////// Constructor(s) //////////
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
 
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-  ////////// AndroidTestCase Method(s) //////////
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.CALENDAR,
+                2);
 
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-  ////////// Method(s) //////////
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-  /*****************************************************
-   *
-   * CALENDAR tests.
-   *
-   *****************************************************/
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-  public void testCalendar1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.CALENDAR, 2 );
+        orderingDataAgent.clearDefaultBasket();
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<Job> jobList = order.getJobs();
 
+        Assert.assertEquals(3, jobList.size());
 
-    orderingDataAgent.clearDefaultBasket();
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
+        Job job3 = jobList.get(2);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        Assert.assertTrue(job1 instanceof ImagesJob);
+        Assert.assertTrue(job2 instanceof ImagesJob);
+        Assert.assertTrue(job3 instanceof ImagesJob);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        ImagesJob imagesJob1 = (ImagesJob) job1;
+        ImagesJob imagesJob2 = (ImagesJob) job2;
+        ImagesJob imagesJob3 = (ImagesJob) job3;
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        // Job 1
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals("product_id", imagesJob1.getProductId());
+        Assert.assertEquals(3, imagesJob1.getOrderQuantity());
 
-    Assert.assertEquals( 3, jobList.size() );
+        List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
+        List<String> borderTextList1 = imagesJob1.getBorderTextList();
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
-    Job job3 = jobList.get( 2 );
+        Assert.assertEquals(2, uploadableImageList1.size());
+        Assert.assertNull(borderTextList1);
 
-    Assert.assertTrue( job1 instanceof ImagesJob );
-    Assert.assertTrue( job2 instanceof ImagesJob );
-    Assert.assertTrue( job3 instanceof ImagesJob );
+        Assert.assertNull(uploadableImageList1.get(0));
 
-    ImagesJob imagesJob1 = (ImagesJob)job1;
-    ImagesJob imagesJob2 = (ImagesJob)job2;
-    ImagesJob imagesJob3 = (ImagesJob)job3;
+        Assert.assertNotNull(assetFragment2 = uploadableImageList1.get(1).getAssetFragment());
 
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment2.getProportionalRectangle());
 
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
+        Assert.assertEquals("Alpha", imagesJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob1.getProductOption("Parameter2"));
 
+        // Job 2
 
-    // Job 1
+        Assert.assertEquals("product_id", imagesJob2.getProductId());
+        Assert.assertEquals(3, imagesJob2.getOrderQuantity());
 
-    Assert.assertEquals( "product_id", imagesJob1.getProductId() );
-    Assert.assertEquals( 3, imagesJob1.getOrderQuantity() );
+        List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
+        List<String> borderTextList2 = imagesJob2.getBorderTextList();
 
-    List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
-    List<String>          borderTextList1      = imagesJob1.getBorderTextList();
+        Assert.assertEquals(2, uploadableImageList2.size());
+        Assert.assertNull(borderTextList2);
 
-    Assert.assertEquals( 2, uploadableImageList1.size() );
-    Assert.assertNull( borderTextList1 );
+        Assert.assertNull(uploadableImageList2.get(0));
+        Assert.assertNull(uploadableImageList2.get(1));
 
-    Assert.assertNull( uploadableImageList1.get( 0 ) );
+        Assert.assertEquals("Alpha", imagesJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob2.getProductOption("Parameter2"));
 
-    Assert.assertNotNull( assetFragment2 = uploadableImageList1.get( 1 ).getAssetFragment() );
+        // Job 3
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment2.getProportionalRectangle() );
+        Assert.assertEquals("product_id", imagesJob3.getProductId());
+        Assert.assertEquals(3, imagesJob3.getOrderQuantity());
 
-    Assert.assertEquals( "Alpha", imagesJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob1.getProductOption( "Parameter2" ) );
+        List<UploadableImage> uploadableImageList3 = imagesJob3.getUploadableImageList();
+        List<String> borderTextList3 = imagesJob3.getBorderTextList();
 
+        Assert.assertEquals(2, uploadableImageList3.size());
+        Assert.assertNull(borderTextList3);
 
-    // Job 2
+        Assert.assertNotNull(assetFragment1 = uploadableImageList3.get(0).getAssetFragment());
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment1.getProportionalRectangle());
 
-    Assert.assertEquals( "product_id", imagesJob2.getProductId() );
-    Assert.assertEquals( 3, imagesJob2.getOrderQuantity() );
+        Assert.assertNotNull(assetFragment2 = uploadableImageList3.get(1).getAssetFragment());
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment2.getProportionalRectangle());
 
-    List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
-    List<String>          borderTextList2      = imagesJob2.getBorderTextList();
-
-    Assert.assertEquals( 2, uploadableImageList2.size() );
-    Assert.assertNull( borderTextList2 );
-
-    Assert.assertNull( uploadableImageList2.get( 0 ) );
-    Assert.assertNull( uploadableImageList2.get( 1 ) );
-
-    Assert.assertEquals( "Alpha", imagesJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob2.getProductOption( "Parameter2" ) );
-
-
-    // Job 3
-
-    Assert.assertEquals( "product_id", imagesJob3.getProductId() );
-    Assert.assertEquals( 3, imagesJob3.getOrderQuantity() );
-
-    List<UploadableImage> uploadableImageList3 = imagesJob3.getUploadableImageList();
-    List<String>          borderTextList3      = imagesJob3.getBorderTextList();
-
-    Assert.assertEquals( 2, uploadableImageList3.size() );
-    Assert.assertNull( borderTextList3 );
-
-    Assert.assertNotNull( assetFragment1 = uploadableImageList3.get( 0 ).getAssetFragment() );
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment1.getProportionalRectangle() );
-
-    Assert.assertNotNull( assetFragment2 = uploadableImageList3.get( 1 ).getAssetFragment() );
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment2.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", imagesJob3.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob3.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", imagesJob3.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob3.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * CIRCLE tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * CIRCLE tests.
-   *
-   *****************************************************/
+    public void testCircle1() {
 
-  public void testCircle1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.CIRCLE, 2 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.CIRCLE, 2);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        orderingDataAgent.clearDefaultBasket();
 
-    orderingDataAgent.clearDefaultBasket();
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        List<Job> jobList = order.getJobs();
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals(2, jobList.size());
 
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
 
-    Assert.assertEquals( 2, jobList.size() );
+        Assert.assertTrue(job1 instanceof ImagesJob);
+        Assert.assertTrue(job2 instanceof ImagesJob);
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
+        ImagesJob imagesJob1 = (ImagesJob) job1;
+        ImagesJob imagesJob2 = (ImagesJob) job2;
 
-    Assert.assertTrue( job1 instanceof ImagesJob );
-    Assert.assertTrue( job2 instanceof ImagesJob );
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
 
-    ImagesJob imagesJob1 = (ImagesJob)job1;
-    ImagesJob imagesJob2 = (ImagesJob)job2;
+        // Job 1
 
+        Assert.assertEquals("product_id", imagesJob1.getProductId());
+        Assert.assertEquals(3, imagesJob1.getOrderQuantity());
 
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
+        List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
+        List<String> borderTextList1 = imagesJob1.getBorderTextList();
 
+        Assert.assertEquals(2, uploadableImageList1.size());
+        Assert.assertNull(borderTextList1);
 
-    // Job 1
+        Assert.assertNotNull(assetFragment1 = uploadableImageList1.get(0).getAssetFragment());
+        Assert.assertNotNull(assetFragment2 = uploadableImageList1.get(1).getAssetFragment());
 
-    Assert.assertEquals( "product_id", imagesJob1.getProductId() );
-    Assert.assertEquals( 3, imagesJob1.getOrderQuantity() );
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment1.getProportionalRectangle());
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment2.getProportionalRectangle());
 
-    List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
-    List<String>          borderTextList1      = imagesJob1.getBorderTextList();
+        Assert.assertEquals("Alpha", imagesJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob1.getProductOption("Parameter2"));
 
-    Assert.assertEquals( 2, uploadableImageList1.size() );
-    Assert.assertNull( borderTextList1 );
+        // Job 2
 
-    Assert.assertNotNull( assetFragment1 = uploadableImageList1.get( 0 ).getAssetFragment() );
-    Assert.assertNotNull( assetFragment2 = uploadableImageList1.get( 1 ).getAssetFragment() );
+        Assert.assertEquals("product_id", imagesJob2.getProductId());
+        Assert.assertEquals(3, imagesJob2.getOrderQuantity());
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment1.getProportionalRectangle() );
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment2.getProportionalRectangle() );
+        List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
+        List<String> borderTextList2 = imagesJob2.getBorderTextList();
 
-    Assert.assertEquals( "Alpha", imagesJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob1.getProductOption( "Parameter2" ) );
+        Assert.assertEquals(1, uploadableImageList2.size());
+        Assert.assertNull(borderTextList2);
 
+        Assert.assertNotNull(assetFragment1 = uploadableImageList2.get(0).getAssetFragment());
 
-    // Job 2
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment1.getProportionalRectangle());
 
-    Assert.assertEquals( "product_id", imagesJob2.getProductId() );
-    Assert.assertEquals( 3, imagesJob2.getOrderQuantity() );
-
-    List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
-    List<String>          borderTextList2      = imagesJob2.getBorderTextList();
-
-    Assert.assertEquals( 1, uploadableImageList2.size() );
-    Assert.assertNull( borderTextList2 );
-
-    Assert.assertNotNull( assetFragment1 = uploadableImageList2.get( 0 ).getAssetFragment() );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment1.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", imagesJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob2.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", imagesJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob2.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * GREETING CARD tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * GREETING CARD tests.
-   *
-   *****************************************************/
+    public void testGreetingCard1() {
 
-  public void testGreetingCard1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.GREETINGCARD, 4 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .GREETINGCARD, 4);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        orderingDataAgent.clearDefaultBasket();
 
-    orderingDataAgent.clearDefaultBasket();
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        List<Job> jobList = order.getJobs();
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals(3, jobList.size());
 
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
+        Job job3 = jobList.get(2);
 
-    Assert.assertEquals( 3, jobList.size() );
+        Assert.assertTrue(job1 instanceof GreetingCardJob);
+        Assert.assertTrue(job2 instanceof GreetingCardJob);
+        Assert.assertTrue(job3 instanceof GreetingCardJob);
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
-    Job job3 = jobList.get( 2 );
+        GreetingCardJob greetingCardJob1 = (GreetingCardJob) job1;
+        GreetingCardJob greetingCardJob2 = (GreetingCardJob) job2;
+        GreetingCardJob greetingCardJob3 = (GreetingCardJob) job3;
 
-    Assert.assertTrue( job1 instanceof GreetingCardJob );
-    Assert.assertTrue( job2 instanceof GreetingCardJob );
-    Assert.assertTrue( job3 instanceof GreetingCardJob );
+        AssetFragment assetFragment;
 
-    GreetingCardJob greetingCardJob1 = (GreetingCardJob)job1;
-    GreetingCardJob greetingCardJob2 = (GreetingCardJob)job2;
-    GreetingCardJob greetingCardJob3 = (GreetingCardJob)job3;
+        // Job 1
 
+        Assert.assertEquals("product_id", greetingCardJob1.getProductId());
+        Assert.assertEquals(3, greetingCardJob1.getOrderQuantity());
 
-    AssetFragment assetFragment;
+        Assert.assertNotNull(assetFragment = greetingCardJob1.getFrontUploadableImage().getAssetFragment());
+        Assert.assertNull(greetingCardJob1.getBackUploadableImage());
+        Assert.assertNull(greetingCardJob1.getInsideLeftUploadableImage());
+        Assert.assertNull(greetingCardJob1.getInsideRightUploadableImage());
 
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment.getProportionalRectangle());
 
-    // Job 1
+        Assert.assertEquals("Alpha", greetingCardJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", greetingCardJob1.getProductOption("Parameter2"));
 
-    Assert.assertEquals( "product_id", greetingCardJob1.getProductId() );
-    Assert.assertEquals( 3, greetingCardJob1.getOrderQuantity() );
+        // Job 2
 
-    Assert.assertNotNull( assetFragment = greetingCardJob1.getFrontUploadableImage().getAssetFragment() );
-    Assert.assertNull( greetingCardJob1.getBackUploadableImage() );
-    Assert.assertNull( greetingCardJob1.getInsideLeftUploadableImage() );
-    Assert.assertNull( greetingCardJob1.getInsideRightUploadableImage() );
+        Assert.assertEquals("product_id", greetingCardJob2.getProductId());
+        Assert.assertEquals(3, greetingCardJob2.getOrderQuantity());
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment.getProportionalRectangle() );
+        Assert.assertNotNull(assetFragment = greetingCardJob2.getFrontUploadableImage().getAssetFragment());
+        Assert.assertNull(greetingCardJob2.getBackUploadableImage());
+        Assert.assertNull(greetingCardJob2.getInsideLeftUploadableImage());
+        Assert.assertNull(greetingCardJob2.getInsideRightUploadableImage());
 
-    Assert.assertEquals( "Alpha", greetingCardJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", greetingCardJob1.getProductOption( "Parameter2" ) );
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment.getProportionalRectangle());
 
+        Assert.assertEquals("Alpha", greetingCardJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", greetingCardJob2.getProductOption("Parameter2"));
 
-    // Job 2
+        // Job 3
 
-    Assert.assertEquals( "product_id", greetingCardJob2.getProductId() );
-    Assert.assertEquals( 3, greetingCardJob2.getOrderQuantity() );
+        Assert.assertEquals("product_id", greetingCardJob3.getProductId());
+        Assert.assertEquals(3, greetingCardJob3.getOrderQuantity());
 
-    Assert.assertNotNull( assetFragment = greetingCardJob2.getFrontUploadableImage().getAssetFragment() );
-    Assert.assertNull( greetingCardJob2.getBackUploadableImage() );
-    Assert.assertNull( greetingCardJob2.getInsideLeftUploadableImage() );
-    Assert.assertNull( greetingCardJob2.getInsideRightUploadableImage() );
+        Assert.assertNotNull(assetFragment = greetingCardJob3.getFrontUploadableImage().getAssetFragment());
+        Assert.assertNull(greetingCardJob3.getBackUploadableImage());
+        Assert.assertNull(greetingCardJob3.getInsideLeftUploadableImage());
+        Assert.assertNull(greetingCardJob3.getInsideRightUploadableImage());
 
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment.getProportionalRectangle() );
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment.getProportionalRectangle());
 
-    Assert.assertEquals( "Alpha", greetingCardJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", greetingCardJob2.getProductOption( "Parameter2" ) );
-
-
-    // Job 3
-
-    Assert.assertEquals( "product_id", greetingCardJob3.getProductId() );
-    Assert.assertEquals( 3, greetingCardJob3.getOrderQuantity() );
-
-    Assert.assertNotNull( assetFragment = greetingCardJob3.getFrontUploadableImage().getAssetFragment() );
-    Assert.assertNull( greetingCardJob3.getBackUploadableImage() );
-    Assert.assertNull( greetingCardJob3.getInsideLeftUploadableImage() );
-    Assert.assertNull( greetingCardJob3.getInsideRightUploadableImage() );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", greetingCardJob3.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", greetingCardJob3.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", greetingCardJob3.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", greetingCardJob3.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * PHONE CASE tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * PHONE CASE tests.
-   *
-   *****************************************************/
+    public void testPhoneCase1() {
 
-  public void testPhoneCase1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "A Phone Case", "Phone Case", 0xff000000, UserJourneyType.PHONE_CASE, 1 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "A Phone Case", "Phone Case", 0xff000000, UserJourneyType.PHONE_CASE,
+                1);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Phone Cases", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Phone Cases", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        orderingDataAgent.clearDefaultBasket();
 
-    orderingDataAgent.clearDefaultBasket();
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        List<Job> jobList = order.getJobs();
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals(3, jobList.size());
 
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
+        Job job3 = jobList.get(2);
 
-    Assert.assertEquals( 3, jobList.size() );
+        Assert.assertTrue(job1 instanceof ImagesJob);
+        Assert.assertTrue(job2 instanceof ImagesJob);
+        Assert.assertTrue(job3 instanceof ImagesJob);
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
-    Job job3 = jobList.get( 2 );
+        ImagesJob imagesJob1 = (ImagesJob) job1;
+        ImagesJob imagesJob2 = (ImagesJob) job2;
+        ImagesJob imagesJob3 = (ImagesJob) job3;
 
-    Assert.assertTrue( job1 instanceof ImagesJob );
-    Assert.assertTrue( job2 instanceof ImagesJob );
-    Assert.assertTrue( job3 instanceof ImagesJob );
+        List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
+        List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
+        List<UploadableImage> uploadableImageList3 = imagesJob3.getUploadableImageList();
 
-    ImagesJob imagesJob1 = (ImagesJob)job1;
-    ImagesJob imagesJob2 = (ImagesJob)job2;
-    ImagesJob imagesJob3 = (ImagesJob)job3;
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
+        AssetFragment assetFragment3;
 
-    List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
-    List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
-    List<UploadableImage> uploadableImageList3 = imagesJob3.getUploadableImageList();
+        // Job 1
 
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
-    AssetFragment assetFragment3;
+        Assert.assertEquals("product_id", imagesJob1.getProductId());
+        Assert.assertEquals(3, imagesJob1.getOrderQuantity());
 
+        Assert.assertEquals(1, uploadableImageList1.size());
+        Assert.assertNotNull(assetFragment1 = uploadableImageList1.get(0).getAssetFragment());
 
-    // Job 1
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment1.getProportionalRectangle());
 
-    Assert.assertEquals( "product_id", imagesJob1.getProductId() );
-    Assert.assertEquals( 3, imagesJob1.getOrderQuantity() );
+        Assert.assertEquals("Alpha", imagesJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob1.getProductOption("Parameter2"));
 
-    Assert.assertEquals( 1, uploadableImageList1.size() );
-    Assert.assertNotNull( assetFragment1 = uploadableImageList1.get( 0 ).getAssetFragment() );
+        // Job 2
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment1.getProportionalRectangle() );
+        Assert.assertEquals("product_id", imagesJob2.getProductId());
+        Assert.assertEquals(3, imagesJob2.getOrderQuantity());
 
-    Assert.assertEquals( "Alpha", imagesJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob1.getProductOption( "Parameter2" ) );
+        Assert.assertEquals(1, uploadableImageList2.size());
+        Assert.assertNotNull(assetFragment2 = uploadableImageList2.get(0).getAssetFragment());
 
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment2.getProportionalRectangle());
 
-    // Job 2
+        Assert.assertEquals("Alpha", imagesJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob2.getProductOption("Parameter2"));
 
-    Assert.assertEquals( "product_id", imagesJob2.getProductId() );
-    Assert.assertEquals( 3, imagesJob2.getOrderQuantity() );
+        // Job 3
 
-    Assert.assertEquals( 1, uploadableImageList2.size() );
-    Assert.assertNotNull( assetFragment2 = uploadableImageList2.get( 0 ).getAssetFragment() );
+        Assert.assertEquals("product_id", imagesJob3.getProductId());
+        Assert.assertEquals(3, imagesJob3.getOrderQuantity());
 
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment2.getProportionalRectangle() );
+        Assert.assertEquals(1, uploadableImageList3.size());
+        Assert.assertNotNull(assetFragment3 = uploadableImageList3.get(0).getAssetFragment());
 
-    Assert.assertEquals( "Alpha", imagesJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob2.getProductOption( "Parameter2" ) );
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment3.getProportionalRectangle());
 
-
-    // Job 3
-
-    Assert.assertEquals( "product_id", imagesJob3.getProductId() );
-    Assert.assertEquals( 3, imagesJob3.getOrderQuantity() );
-
-    Assert.assertEquals( 1, uploadableImageList3.size() );
-    Assert.assertNotNull( assetFragment3 = uploadableImageList3.get( 0 ).getAssetFragment() );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment3.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", imagesJob3.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob3.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", imagesJob3.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob3.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * PHOTOBOOK tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * PHOTOBOOK tests.
-   *
-   *****************************************************/
+    // No summary front page
+    public void testPhotobook1() {
 
-  // No summary front page
-  public void testPhotobook1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.PHOTOBOOK, 2 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .PHOTOBOOK, 2);
 
-    KiteSDK.IEnvironment environment;
-    environment = KiteSDK.DefaultEnvironment.TEST;
-    KiteSDK sdk = KiteSDK.getInstance(getContext(),"mnk45k3nk5jn4kjn534jkn5kjn34k5j34", environment);
+        KiteSDK.IEnvironment environment;
+        environment = KiteSDK.DefaultEnvironment.TEST;
+        KiteSDK sdk = KiteSDK.getInstance(getContext(), "mnk45k3nk5jn4kjn534jkn5kjn34k5j34", environment);
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
-    originalImageSpecList.add( null );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
+        originalImageSpecList.add(null);
 
+        // Initialise the SDK so that we can supply a customiser
+        KiteSDK.getInstance(getContext(), "NoKey", KiteSDK.DefaultEnvironment.TEST);
 
-    // Initialise the SDK so that we can supply a customiser
-    KiteSDK.getInstance( getContext(), "NoKey", KiteSDK.DefaultEnvironment.TEST );
+        orderingDataAgent.clearDefaultBasket();
 
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.clearDefaultBasket();
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        List<Job> jobList = order.getJobs();
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        Assert.assertEquals(2, jobList.size());
 
-    List<Job> jobList = order.getJobs();
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
 
+        Assert.assertTrue(job1 instanceof PhotobookJob);
+        Assert.assertTrue(job2 instanceof PhotobookJob);
 
-    Assert.assertEquals( 2, jobList.size() );
+        PhotobookJob photobookJob1 = (PhotobookJob) job1;
+        PhotobookJob photobookJob2 = (PhotobookJob) job2;
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
+        AssetFragment frontCoverAssetFragment;
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
 
-    Assert.assertTrue( job1 instanceof PhotobookJob );
-    Assert.assertTrue( job2 instanceof PhotobookJob );
+        // Job 1
 
-    PhotobookJob photobookJob1 = (PhotobookJob)job1;
-    PhotobookJob photobookJob2 = (PhotobookJob)job2;
+        Assert.assertEquals("product_id", photobookJob1.getProductId());
+        Assert.assertEquals(3, photobookJob1.getOrderQuantity());
 
+        Assert.assertNull(photobookJob1.getFrontCoverUploadableImage());
 
-    AssetFragment frontCoverAssetFragment;
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
+        List<UploadableImage> uploadableImageList1 = photobookJob1.getUploadableImageList();
+        Assert.assertEquals(2, uploadableImageList1.size());
 
+        Assert.assertNotNull(assetFragment1 = uploadableImageList1.get(0).getAssetFragment());
+        Assert.assertNull(uploadableImageList1.get(1));
 
-    // Job 1
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment1.getProportionalRectangle());
 
-    Assert.assertEquals( "product_id", photobookJob1.getProductId() );
-    Assert.assertEquals( 3, photobookJob1.getOrderQuantity() );
+        Assert.assertEquals("Alpha", photobookJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", photobookJob1.getProductOption("Parameter2"));
 
-    Assert.assertNull( photobookJob1.getFrontCoverUploadableImage() );
+        // Job 2
 
-    List<UploadableImage> uploadableImageList1 = photobookJob1.getUploadableImageList();
-    Assert.assertEquals( 2, uploadableImageList1.size() );
+        Assert.assertEquals("product_id", photobookJob2.getProductId());
+        Assert.assertEquals(3, photobookJob2.getOrderQuantity());
 
-    Assert.assertNotNull( assetFragment1 = uploadableImageList1.get( 0 ).getAssetFragment() );
-    Assert.assertNull( uploadableImageList1.get( 1 ) );
+        Assert.assertNotNull(frontCoverAssetFragment = photobookJob2.getFrontCoverUploadableImage().getAssetFragment());
+        Assert.assertEquals(originalProportionalRectangle2, frontCoverAssetFragment.getProportionalRectangle());
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment1.getProportionalRectangle() );
+        List<UploadableImage> uploadableImageList2 = photobookJob2.getUploadableImageList();
+        Assert.assertEquals(2, uploadableImageList2.size());
 
-    Assert.assertEquals( "Alpha", photobookJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", photobookJob1.getProductOption( "Parameter2" ) );
+        Assert.assertNotNull(assetFragment1 = uploadableImageList2.get(0).getAssetFragment());
+        Assert.assertNull(uploadableImageList2.get(1));
 
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment1.getProportionalRectangle());
 
-    // Job 2
-
-    Assert.assertEquals( "product_id", photobookJob2.getProductId() );
-    Assert.assertEquals( 3, photobookJob2.getOrderQuantity() );
-
-    Assert.assertNotNull( frontCoverAssetFragment = photobookJob2.getFrontCoverUploadableImage().getAssetFragment() );
-    Assert.assertEquals( originalProportionalRectangle2, frontCoverAssetFragment.getProportionalRectangle() );
-
-    List<UploadableImage> uploadableImageList2 = photobookJob2.getUploadableImageList();
-    Assert.assertEquals( 2, uploadableImageList2.size() );
-
-    Assert.assertNotNull( assetFragment1 = uploadableImageList2.get( 0 ).getAssetFragment() );
-    Assert.assertNull( uploadableImageList2.get( 1 ) );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment1.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", photobookJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", photobookJob2.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", photobookJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", photobookJob2.getProductOption("Parameter2"));
     }
 
+    // Summary front page
+    public void testPhotobook2() {
 
-  // Summary front page
-  public void testPhotobook2()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.PHOTOBOOK, 2 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .PHOTOBOOK, 2);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        // Initialise the SDK so that we can supply a customiser
+        KiteSDK.getInstance(getContext(), "NoKey", KiteSDK.DefaultEnvironment.TEST)
+                .setCustomiser(PhotobookSummaryCustomiser.class);
 
-    // Initialise the SDK so that we can supply a customiser
-    KiteSDK.getInstance( getContext(), "NoKey", KiteSDK.DefaultEnvironment.TEST )
-            .setCustomiser( PhotobookSummaryCustomiser.class );
+        orderingDataAgent.clearDefaultBasket();
 
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.clearDefaultBasket();
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        List<Job> jobList = order.getJobs();
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        Assert.assertEquals(3, jobList.size());
 
-    List<Job> jobList = order.getJobs();
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
+        Job job3 = jobList.get(2);
 
+        Assert.assertTrue(job1 instanceof PhotobookJob);
+        Assert.assertTrue(job2 instanceof PhotobookJob);
+        Assert.assertTrue(job3 instanceof PhotobookJob);
 
-    Assert.assertEquals( 3, jobList.size() );
+        PhotobookJob photobookJob1 = (PhotobookJob) job1;
+        PhotobookJob photobookJob2 = (PhotobookJob) job2;
+        PhotobookJob photobookJob3 = (PhotobookJob) job3;
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
-    Job job3 = jobList.get( 2 );
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
 
-    Assert.assertTrue( job1 instanceof PhotobookJob );
-    Assert.assertTrue( job2 instanceof PhotobookJob );
-    Assert.assertTrue( job3 instanceof PhotobookJob );
+        // Job 1
 
-    PhotobookJob photobookJob1 = (PhotobookJob)job1;
-    PhotobookJob photobookJob2 = (PhotobookJob)job2;
-    PhotobookJob photobookJob3 = (PhotobookJob)job3;
+        Assert.assertEquals("product_id", photobookJob1.getProductId());
+        Assert.assertEquals(3, photobookJob1.getOrderQuantity());
 
+        List<UploadableImage> uploadableImageList1 = photobookJob1.getUploadableImageList();
+        Assert.assertEquals(2, uploadableImageList1.size());
 
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
+        Assert.assertNull(uploadableImageList1.get(0));
+        Assert.assertNotNull(assetFragment2 = uploadableImageList1.get(1).getAssetFragment());
 
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment2.getProportionalRectangle());
 
-    // Job 1
+        Assert.assertEquals("Alpha", photobookJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", photobookJob1.getProductOption("Parameter2"));
 
-    Assert.assertEquals( "product_id", photobookJob1.getProductId() );
-    Assert.assertEquals( 3, photobookJob1.getOrderQuantity() );
+        // Job 2
 
-    List<UploadableImage> uploadableImageList1 = photobookJob1.getUploadableImageList();
-    Assert.assertEquals( 2, uploadableImageList1.size() );
+        Assert.assertEquals("product_id", photobookJob2.getProductId());
+        Assert.assertEquals(3, photobookJob2.getOrderQuantity());
 
-    Assert.assertNull( uploadableImageList1.get( 0 ) );
-    Assert.assertNotNull( assetFragment2 = uploadableImageList1.get( 1 ).getAssetFragment() );
+        List<UploadableImage> uploadableImageList2 = photobookJob2.getUploadableImageList();
+        Assert.assertEquals(2, uploadableImageList2.size());
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment2.getProportionalRectangle() );
+        Assert.assertNull(uploadableImageList2.get(0));
+        Assert.assertNull(uploadableImageList2.get(1));
 
-    Assert.assertEquals( "Alpha", photobookJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", photobookJob1.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", photobookJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", photobookJob2.getProductOption("Parameter2"));
 
+        // Job 3
 
-    // Job 2
+        Assert.assertEquals("product_id", photobookJob3.getProductId());
+        Assert.assertEquals(3, photobookJob3.getOrderQuantity());
 
-    Assert.assertEquals( "product_id", photobookJob2.getProductId() );
-    Assert.assertEquals( 3, photobookJob2.getOrderQuantity() );
+        List<UploadableImage> uploadableImageList3 = photobookJob3.getUploadableImageList();
+        Assert.assertEquals(2, uploadableImageList3.size());
 
-    List<UploadableImage> uploadableImageList2 = photobookJob2.getUploadableImageList();
-    Assert.assertEquals( 2, uploadableImageList2.size() );
+        Assert.assertNotNull(assetFragment1 = uploadableImageList3.get(0).getAssetFragment());
+        Assert.assertNotNull(assetFragment2 = uploadableImageList3.get(1).getAssetFragment());
 
-    Assert.assertNull( uploadableImageList2.get( 0 ) );
-    Assert.assertNull( uploadableImageList2.get( 1 ) );
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment1.getProportionalRectangle());
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment2.getProportionalRectangle());
 
-    Assert.assertEquals( "Alpha", photobookJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", photobookJob2.getProductOption( "Parameter2" ) );
-
-
-    // Job 3
-
-    Assert.assertEquals( "product_id", photobookJob3.getProductId() );
-    Assert.assertEquals( 3, photobookJob3.getOrderQuantity() );
-
-    List<UploadableImage> uploadableImageList3 = photobookJob3.getUploadableImageList();
-    Assert.assertEquals( 2, uploadableImageList3.size() );
-
-    Assert.assertNotNull( assetFragment1 = uploadableImageList3.get( 0 ).getAssetFragment() );
-    Assert.assertNotNull( assetFragment2 = uploadableImageList3.get( 1 ).getAssetFragment() );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment1.getProportionalRectangle() );
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment2.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", photobookJob3.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", photobookJob3.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", photobookJob3.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", photobookJob3.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * RECTANGLE tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * RECTANGLE tests.
-   *
-   *****************************************************/
+    public void testRectangle1() {
 
-  public void testRectangle1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.RECTANGLE, 2 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .RECTANGLE, 2);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        orderingDataAgent.clearDefaultBasket();
 
-    orderingDataAgent.clearDefaultBasket();
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        List<Job> jobList = order.getJobs();
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals(2, jobList.size());
 
+        Job job1 = jobList.get(0);
+        Job job2 = jobList.get(1);
 
-    Assert.assertEquals( 2, jobList.size() );
+        Assert.assertTrue(job1 instanceof ImagesJob);
+        Assert.assertTrue(job2 instanceof ImagesJob);
 
-    Job job1 = jobList.get( 0 );
-    Job job2 = jobList.get( 1 );
+        ImagesJob imagesJob1 = (ImagesJob) job1;
+        ImagesJob imagesJob2 = (ImagesJob) job2;
 
-    Assert.assertTrue( job1 instanceof ImagesJob );
-    Assert.assertTrue( job2 instanceof ImagesJob );
+        AssetFragment assetFragment1;
+        AssetFragment assetFragment2;
 
-    ImagesJob imagesJob1 = (ImagesJob)job1;
-    ImagesJob imagesJob2 = (ImagesJob)job2;
+        // Job 1
 
+        Assert.assertEquals("product_id", imagesJob1.getProductId());
+        Assert.assertEquals(3, imagesJob1.getOrderQuantity());
 
-    AssetFragment assetFragment1;
-    AssetFragment assetFragment2;
+        List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
+        List<String> borderTextList1 = imagesJob1.getBorderTextList();
 
+        Assert.assertEquals(2, uploadableImageList1.size());
+        Assert.assertNull(borderTextList1);
 
-    // Job 1
+        Assert.assertNotNull(assetFragment1 = uploadableImageList1.get(0).getAssetFragment());
+        Assert.assertNotNull(assetFragment2 = uploadableImageList1.get(1).getAssetFragment());
 
-    Assert.assertEquals( "product_id", imagesJob1.getProductId() );
-    Assert.assertEquals( 3, imagesJob1.getOrderQuantity() );
+        Assert.assertEquals(originalProportionalRectangle1, assetFragment1.getProportionalRectangle());
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment2.getProportionalRectangle());
 
-    List<UploadableImage> uploadableImageList1 = imagesJob1.getUploadableImageList();
-    List<String>          borderTextList1      = imagesJob1.getBorderTextList();
+        Assert.assertEquals("Alpha", imagesJob1.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob1.getProductOption("Parameter2"));
 
-    Assert.assertEquals( 2, uploadableImageList1.size() );
-    Assert.assertNull( borderTextList1 );
+        // Job 2
 
-    Assert.assertNotNull( assetFragment1 = uploadableImageList1.get( 0 ).getAssetFragment() );
-    Assert.assertNotNull( assetFragment2 = uploadableImageList1.get( 1 ).getAssetFragment() );
+        Assert.assertEquals("product_id", imagesJob2.getProductId());
+        Assert.assertEquals(3, imagesJob2.getOrderQuantity());
 
-    Assert.assertEquals( originalProportionalRectangle1, assetFragment1.getProportionalRectangle() );
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment2.getProportionalRectangle() );
+        List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
+        List<String> borderTextList2 = imagesJob2.getBorderTextList();
 
-    Assert.assertEquals( "Alpha", imagesJob1.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob1.getProductOption( "Parameter2" ) );
+        Assert.assertEquals(1, uploadableImageList2.size());
+        Assert.assertNull(borderTextList2);
 
+        Assert.assertNotNull(assetFragment1 = uploadableImageList2.get(0).getAssetFragment());
 
-    // Job 2
+        Assert.assertEquals(originalProportionalRectangle2, assetFragment1.getProportionalRectangle());
 
-    Assert.assertEquals( "product_id", imagesJob2.getProductId() );
-    Assert.assertEquals( 3, imagesJob2.getOrderQuantity() );
-
-    List<UploadableImage> uploadableImageList2 = imagesJob2.getUploadableImageList();
-    List<String>          borderTextList2      = imagesJob2.getBorderTextList();
-
-    Assert.assertEquals( 1, uploadableImageList2.size() );
-    Assert.assertNull( borderTextList2 );
-
-    Assert.assertNotNull( assetFragment1 = uploadableImageList2.get( 0 ).getAssetFragment() );
-
-    Assert.assertEquals( originalProportionalRectangle2, assetFragment1.getProportionalRectangle() );
-
-    Assert.assertEquals( "Alpha", imagesJob2.getProductOption( "Parameter1" ) );
-    Assert.assertEquals( "Bravo", imagesJob2.getProductOption( "Parameter2" ) );
+        Assert.assertEquals("Alpha", imagesJob2.getProductOption("Parameter1"));
+        Assert.assertEquals("Bravo", imagesJob2.getProductOption("Parameter2"));
     }
 
+    /*****************************************************
+     *
+     * Successful order tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Successful order tests.
-   *
-   *****************************************************/
+    public void testSuccess1() {
 
-  public void testSuccess1()
-    {
-    OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance( getContext() );
-    Product product = new Product( "product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType.RECTANGLE, 2 );
+        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(getContext());
+        Product product = new Product("product_id", "product_code", "Product Name", "Product Type", 0xff000000, UserJourneyType
+                .RECTANGLE, 2);
 
-    //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
+        //KiteSDK.setEncryptionKey("mnk45k3nk5jn4kjn534jkn5kjn34k5j34");
 
-    Catalogue catalogue = new Catalogue();
-    catalogue.addProduct( "Group Label", null, product );
+        Catalogue catalogue = new Catalogue();
+        catalogue.addProduct("Group Label", null, product);
 
-    HashMap<String,String> optionsMap = new HashMap<>();
-    optionsMap.put( "Parameter1", "Alpha" );
-    optionsMap.put( "Parameter2", "Bravo" );
+        HashMap<String, String> optionsMap = new HashMap<>();
+        optionsMap.put("Parameter1", "Alpha");
+        optionsMap.put("Parameter2", "Bravo");
 
-    RectF originalProportionalRectangle1 = new RectF( 0.0f, 0.0f, 1.0f, 1.0f );
-    RectF originalProportionalRectangle2 = new RectF( 0.3f, 0.25f, 0.8f, 0.75f );
+        RectF originalProportionalRectangle1 = new RectF(0.0f, 0.0f, 1.0f, 1.0f);
+        RectF originalProportionalRectangle2 = new RectF(0.3f, 0.25f, 0.8f, 0.75f);
 
-    ImageSpec originalImageSpec1 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle1, null, 1 );
-    ImageSpec originalImageSpec2 = new ImageSpec( createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2 );
+        ImageSpec originalImageSpec1 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle1, null, 1);
+        ImageSpec originalImageSpec2 = new ImageSpec(createSessionAssetFile(), originalProportionalRectangle2, "Second border text", 2);
 
-    List<ImageSpec> originalImageSpecList = new ArrayList<>();
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec1 );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( null );
-    originalImageSpecList.add( originalImageSpec2 );
+        List<ImageSpec> originalImageSpecList = new ArrayList<>();
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec1);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(null);
+        originalImageSpecList.add(originalImageSpec2);
 
+        orderingDataAgent.clearDefaultBasket();
 
-    orderingDataAgent.clearDefaultBasket();
+        orderingDataAgent.addItemSynchronously(OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123);
 
-    orderingDataAgent.addItemSynchronously( OrderingDataAgent.CREATE_NEW_ITEM_ID, product, optionsMap, originalImageSpecList, 3, 123 );
+        List<BasketItem> basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-    List<BasketItem> basketItemList = orderingDataAgent.getAllItems( catalogue );
+        Address shippingAddress = Address.getKiteTeamAddress();
 
-    Address shippingAddress = Address.getKiteTeamAddress();
+        Order order = new Order(getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null);
 
-    Order order = new Order( getContext(), basketItemList, shippingAddress, "info@kite.ly", "0123 456789", null );
+        List<Job> jobList = order.getJobs();
 
-    List<Job> jobList = order.getJobs();
+        Assert.assertEquals(2, jobList.size());
 
+        try {
+            order.setReceipt("receipt");
+            order.setOrderPricing(new OrderPricing("{ total: { GBP : 23.50 }, total_shipping_cost: { GBP : 2.99 }, total_product_cost : {" +
+                    " GBP : 23.50 }, line_items: [ ] }"));
 
-    Assert.assertEquals( 2, jobList.size() );
+            orderingDataAgent.onOrderSuccess(OrderingDataAgent.NO_ORDER_ID, order);
+        } catch (JSONException je) {
+            Log.e(LOG_TAG, "Unable to set order success", je);
 
+            Assert.fail(je.getMessage());
+        }
 
-    try
-      {
-      order.setReceipt( "receipt" );
-      order.setOrderPricing( new OrderPricing( "{ total: { GBP : 23.50 }, total_shipping_cost: { GBP : 2.99 }, total_product_cost : { GBP : 23.50 }, line_items: [ ] }" ) );
+        basketItemList = orderingDataAgent.getAllItems(catalogue);
 
-      orderingDataAgent.onOrderSuccess( OrderingDataAgent.NO_ORDER_ID, order );
-      }
-    catch ( JSONException je )
-      {
-      Log.e( LOG_TAG, "Unable to set order success", je );
-
-      Assert.fail( je.getMessage() );
-      }
-
-
-    basketItemList = orderingDataAgent.getAllItems( catalogue );
-
-    Assert.assertEquals( 0, basketItemList.size() );
+        Assert.assertEquals(0, basketItemList.size());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}

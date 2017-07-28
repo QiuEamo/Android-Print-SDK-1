@@ -36,10 +36,7 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
-
-import java.net.URL;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -56,6 +53,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.net.URL;
 
 ///// Class Declaration /////
 
@@ -64,177 +62,156 @@ import com.google.zxing.qrcode.QRCodeWriter;
  * This view displays a QR code.
  *
  *****************************************************/
-public class QRCodeView extends View
-  {
-  ////////// Static Constant(s) //////////
+public class QRCodeView extends View {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "QRCodeView";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "QRCodeView";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private int mSize;
 
-  ////////// Member Variable(s) //////////
+    private URL mURL;
 
-  private int     mSize;
+    private Bitmap mQRCodeBitmap;
 
-  private URL     mURL;
+    ////////// Static Initialiser(s) //////////
 
-  private Bitmap  mQRCodeBitmap;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates the QR code bitmap.
+     *
+     *****************************************************/
+    private static Bitmap createQRCodeBitmap(URL url, int size) {
 
-  ////////// Static Initialiser(s) //////////
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
+        try {
+            BitMatrix bitMatrix = qrCodeWriter.encode(url.toExternalForm(), BarcodeFormat.QR_CODE, size, size, null);
 
-  ////////// Static Method(s) //////////
+            int matrixWidth = bitMatrix.getWidth();
+            int matrixHeight = bitMatrix.getHeight();
 
-  /*****************************************************
-   *
-   * Creates the QR code bitmap.
-   *
-   *****************************************************/
-  static private Bitmap createQRCodeBitmap( URL url, int size )
-    {
-    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            // Create a bitmap and a canvas over it
 
-    try
-      {
-      BitMatrix bitMatrix = qrCodeWriter.encode( url.toExternalForm(), BarcodeFormat.QR_CODE, size, size, null );
+            Bitmap bitmap = Bitmap.createBitmap(matrixWidth, matrixHeight, Bitmap.Config.ARGB_8888);
 
-      int matrixWidth = bitMatrix.getWidth();
-      int matrixHeight = bitMatrix.getHeight();
+            Canvas canvas = new Canvas(bitmap);
 
+            Paint paint = new Paint();
 
-      // Create a bitmap and a canvas over it
+            paint.setColor(0xff000000);
+            paint.setStyle(Paint.Style.FILL);
 
-      Bitmap bitmap = Bitmap.createBitmap( matrixWidth, matrixHeight, Bitmap.Config.ARGB_8888 );
+            // Draw the bits onto the canvas
 
-      Canvas canvas = new Canvas( bitmap );
-
-      Paint  paint = new Paint();
-
-      paint.setColor( 0xff000000 );
-      paint.setStyle( Paint.Style.FILL );
-
-
-      // Draw the bits onto the canvas
-
-      for ( int i = 0; i < matrixWidth; i++ )
-        {
-        for ( int j = 0; j < matrixHeight; j++ )
-          {
-          if ( bitMatrix.get( i, j ) )
-            {
-            canvas.drawRect( i, j, i + 1, j + 1, paint );
+            for (int i = 0; i < matrixWidth; i++) {
+                for (int j = 0; j < matrixHeight; j++) {
+                    if (bitMatrix.get(i, j)) {
+                        canvas.drawRect(i, j, i + 1, j + 1, paint);
+                    }
+                }
             }
-          }
+
+            return bitmap;
+        } catch (WriterException we) {
+            Log.e(LOG_TAG, "Unable to encode QR code for " + url.toString(), we);
         }
 
-
-      return ( bitmap );
-      }
-    catch ( WriterException we )
-      {
-      Log.e( LOG_TAG, "Unable to encode QR code for " + url.toString(), we );
-      }
-
-    return ( null );
+        return null;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public QRCodeView(Context context) {
 
-  public QRCodeView( Context context )
-    {
-    super( context );
+        super(context);
     }
 
-  public QRCodeView( Context context, AttributeSet attrs )
-    {
-    super( context, attrs );
+    public QRCodeView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
     }
 
-  public QRCodeView( Context context, AttributeSet attrs, int defStyleAttr )
-    {
-    super( context, attrs, defStyleAttr );
+    public QRCodeView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
     }
 
+    ////////// View Method(s) //////////
 
-  ////////// View Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the size changes.
+     *
+     *****************************************************/
+    @Override
+    public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
 
-  /*****************************************************
-   *
-   * Called when the size changes.
-   *
-   *****************************************************/
-  @Override
-  public void onSizeChanged( int width, int height, int oldWidth, int oldHeight )
-    {
-    super.onSizeChanged( width, height, oldWidth, oldHeight );
+        super.onSizeChanged(width, height, oldWidth, oldHeight);
 
-    mSize         = Math.min( width, height );
+        mSize = Math.min(width, height);
 
-    mQRCodeBitmap = null;
+        mQRCodeBitmap = null;
 
-    invalidate();
+        invalidate();
     }
 
+    /*****************************************************
+     *
+     * Draws the view.
+     *
+     *****************************************************/
+    @Override
+    public void onDraw(Canvas canvas) {
 
-  /*****************************************************
-   *
-   * Draws the view.
-   *
-   *****************************************************/
-  @Override
-  public void onDraw( Canvas canvas )
-    {
-    super.onDraw( canvas );
+        super.onDraw(canvas);
 
-    if ( mQRCodeBitmap == null )
-      {
-      mQRCodeBitmap = createQRCodeBitmap( mURL, mSize );
-      }
+        if (mQRCodeBitmap == null) {
+            mQRCodeBitmap = createQRCodeBitmap(mURL, mSize);
+        }
 
-    if ( mQRCodeBitmap != null )
-      {
-      int width = getWidth();
-      int height = getHeight();
+        if (mQRCodeBitmap != null) {
+            int width = getWidth();
+            int height = getHeight();
 
-      int halfWidth  = width / 2;
-      int halfHeight = height / 2;
-      int halfSize   = mSize / 2;
+            int halfWidth = width / 2;
+            int halfHeight = height / 2;
+            int halfSize = mSize / 2;
 
-      Rect  sourceRect  = new Rect( 0, 0, mQRCodeBitmap.getWidth(), mQRCodeBitmap.getHeight() );
-      RectF targetRectF = new RectF( halfWidth - halfSize, halfHeight - halfSize, halfWidth + halfSize, halfHeight + halfSize );
+            Rect sourceRect = new Rect(0, 0, mQRCodeBitmap.getWidth(), mQRCodeBitmap.getHeight());
+            RectF targetRectF = new RectF(halfWidth - halfSize, halfHeight - halfSize, halfWidth + halfSize, halfHeight + halfSize);
 
-      canvas.drawBitmap( mQRCodeBitmap, sourceRect, targetRectF, null );
-      }
+            canvas.drawBitmap(mQRCodeBitmap, sourceRect, targetRectF, null);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the URL.
+     *
+     *****************************************************/
+    public void setURL(URL url) {
 
-  /*****************************************************
-   *
-   * Sets the URL.
-   *
-   *****************************************************/
-  public void setURL( URL url )
-    {
-    mURL = url;
+        mURL = url;
 
-    invalidate();
+        invalidate();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

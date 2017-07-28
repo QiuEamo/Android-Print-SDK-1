@@ -36,28 +36,9 @@
 
 package ly.kite;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
-import android.view.Gravity;
-
-import ly.kite.analytics.IAnalyticsEventCallback;
-import ly.kite.analytics.NullAnalyticsEventCallback;
-import ly.kite.checkout.APaymentFragment;
-import ly.kite.checkout.AShippingActivity;
-import ly.kite.checkout.DefaultPaymentFragment;
-import ly.kite.checkout.ICreditCardAgent;
-import ly.kite.checkout.IOrderSubmissionResultListener;
-import ly.kite.checkout.ShippingActivity;
-import ly.kite.checkout.StripeCreditCardAgent;
-import ly.kite.instagramphotopicker.InstagramImageSource;
-import ly.kite.journey.AImageSource;
-import ly.kite.journey.DeviceImageSource;
-import ly.kite.journey.creation.ICustomImageEditorAgent;
-import ly.kite.ordering.IOrderSubmissionSuccessListener;
-import ly.kite.ordering.Order;
-
 
 ///// Class Declaration /////
 
@@ -67,52 +48,44 @@ import ly.kite.ordering.Order;
  * front page for photobooks.
  *
  *****************************************************/
-public class PhotobookSummaryCustomiser extends SDKCustomiser
-  {
-  ////////// Static Constant(s) //////////
+public class PhotobookSummaryCustomiser extends SDKCustomiser {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "PhotobookSummaryCustomiser";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "PhotobookSummaryCustomiser";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Context mContext;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private Context  mContext;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns true if the photobook cover page is a summary
+     * of photos in the content pages.
+     *
+     *****************************************************/
+    public boolean photobookFrontCoverIsSummary() {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the photobook cover page is a summary
-   * of photos in the content pages.
-   *
-   *****************************************************/
-  public boolean photobookFrontCoverIsSummary()
-    {
-    return ( true );
+        return true;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

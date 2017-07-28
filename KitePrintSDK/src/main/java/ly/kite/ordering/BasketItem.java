@@ -36,20 +36,15 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.Product;
-import ly.kite.ordering.ImageSpec;
-import ly.kite.util.Asset;
 import ly.kite.util.AssetFragment;
 
 /*****************************************************
@@ -57,167 +52,158 @@ import ly.kite.util.AssetFragment;
  * This class holds a basket item.
  *
  *****************************************************/
-public class BasketItem
-  {
-  ////////// Static Constant(s) //////////
+public class BasketItem {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "BasketItem";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BasketItem";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private long mId;
+    private Product mProduct;
+    private int mOrderQuantity;
+    private HashMap<String, String> mOptionsMap;
+    private ArrayList<ImageSpec> mImageSpecList;
+    private int mShippingClass;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private long                    mId;
-  private Product                 mProduct;
-  private int                     mOrderQuantity;
-  private HashMap<String,String>  mOptionsMap;
-  private ArrayList<ImageSpec>    mImageSpecList;
-  private int                     mShippingClass;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public BasketItem(long id, Product product, int orderQuantity, HashMap<String, String> optionsMap, ArrayList<ImageSpec>
+            imageSpecList, int shippingClass) {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public BasketItem( long id, Product product, int orderQuantity, HashMap<String,String> optionsMap, ArrayList<ImageSpec> imageSpecList , int shippingClass)
-    {
-      int i;
-      Catalogue catalogue;
-    mId            = id;
-    mProduct       = product;
-    mOrderQuantity = orderQuantity;
-    mOptionsMap    = optionsMap;
-    mImageSpecList = imageSpecList;
-    mShippingClass = shippingClass;
+        int i;
+        Catalogue catalogue;
+        mId = id;
+        mProduct = product;
+        mOrderQuantity = orderQuantity;
+        mOptionsMap = optionsMap;
+        mImageSpecList = imageSpecList;
+        mShippingClass = shippingClass;
 
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the item id.
+     *
+     *****************************************************/
+    public long getId() {
 
-  /*****************************************************
-   *
-   * Returns the item id.
-   *
-   *****************************************************/
-  public long getId()
-    {
-    return ( mId );
+        return mId;
     }
 
+    /*****************************************************
+     *
+     * Returns the product.
+     *
+     *****************************************************/
+    public Product getProduct() {
 
-  /*****************************************************
-   *
-   * Returns the product.
-   *
-   *****************************************************/
-  public Product getProduct()
-    {
-    return ( mProduct );
+        return mProduct;
     }
 
+    /*****************************************************
+     *
+     * Sets the order quantity.
+     *
+     *****************************************************/
+    public void setOrderQuantity(int orderQuantity) {
 
-  /*****************************************************
-   *
-   * Sets the order quantity.
-   *
-   *****************************************************/
-  public void setOrderQuantity( int orderQuantity )
-    {
-    mOrderQuantity = orderQuantity;
+        mOrderQuantity = orderQuantity;
     }
 
+    /*****************************************************
+     *
+     * Sets the shipping class.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Sets the shipping class.
-   *
-   *****************************************************/
+    public void setShippingClass(int shippingClass) {
 
-  public void setShippingClass (int shippingClass)  { mShippingClass = shippingClass; }
-
-  /*****************************************************
-   *
-   * Returns the shipping class.
-   *
-   *****************************************************/
-
-  public int getShippingClass () { return (mShippingClass); }
-
-
-  /*****************************************************
-   *
-   * Returns the order quantity.
-   *
-   *****************************************************/
-  public int getOrderQuantity()
-    {
-    return ( mOrderQuantity );
+        mShippingClass = shippingClass;
     }
 
+    /*****************************************************
+     *
+     * Returns the shipping class.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Returns the options map.
-   *
-   *****************************************************/
-  public HashMap<String,String> getOptionsMap()
-    {
-    return ( mOptionsMap );
+    public int getShippingClass() {
+
+        return mShippingClass;
     }
 
+    /*****************************************************
+     *
+     * Returns the order quantity.
+     *
+     *****************************************************/
+    public int getOrderQuantity() {
 
-  /*****************************************************
-   *
-   * Returns the image spec list.
-   *
-   *****************************************************/
-  public ArrayList<ImageSpec> getImageSpecList()
-    {
-    return ( mImageSpecList );
+        return mOrderQuantity;
     }
 
+    /*****************************************************
+     *
+     * Returns the options map.
+     *
+     *****************************************************/
+    public HashMap<String, String> getOptionsMap() {
 
-  /*****************************************************
-   *
-   * Returns the image to be displayed as the basket item.
-   * Tries to find an image spec; if there is none, returns
-   * the product image.
-   *
-   *****************************************************/
-  public AssetFragment getDisplayAssetFragment()
-    {
-    if ( mImageSpecList != null )
-      {
-      for ( ImageSpec imageSpec : mImageSpecList )
-        {
-        if ( imageSpec != null )
-          {
-          AssetFragment assetFragment = imageSpec.getAssetFragment();
+        return mOptionsMap;
+    }
 
-          if ( assetFragment != null ) return ( assetFragment );
-          }
+    /*****************************************************
+     *
+     * Returns the image spec list.
+     *
+     *****************************************************/
+    public ArrayList<ImageSpec> getImageSpecList() {
+
+        return mImageSpecList;
+    }
+
+    /*****************************************************
+     *
+     * Returns the image to be displayed as the basket item.
+     * Tries to find an image spec; if there is none, returns
+     * the product image.
+     *
+     *****************************************************/
+    public AssetFragment getDisplayAssetFragment() {
+
+        if (mImageSpecList != null) {
+            for (ImageSpec imageSpec : mImageSpecList) {
+                if (imageSpec != null) {
+                    AssetFragment assetFragment = imageSpec.getAssetFragment();
+
+                    if (assetFragment != null) {
+                        return assetFragment;
+                    }
+                }
+            }
         }
-      }
 
-    return ( null );
+        return null;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

@@ -36,9 +36,7 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -53,281 +51,269 @@ import java.util.List;
  * This class holds an asset plus any upload details.
  *
  *****************************************************/
-public class UploadableImage implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class UploadableImage implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "UploadableImage";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "UploadableImage";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<UploadableImage> CREATOR = new Parcelable.Creator<UploadableImage>() {
+        public UploadableImage createFromParcel(Parcel in) {
 
-  public static final Parcelable.Creator<UploadableImage> CREATOR = new Parcelable.Creator<UploadableImage>()
-    {
-    public UploadableImage createFromParcel( Parcel in )
-      {
-      return ( new UploadableImage( in ) );
-      }
+            return new UploadableImage(in);
+        }
 
-    public UploadableImage[] newArray( int size )
-      {
-      return ( new UploadableImage[ size ] );
-      }
+        public UploadableImage[] newArray(int size) {
+
+            return new UploadableImage[size];
+        }
     };
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    private AssetFragment mAssetFragment;
 
-  private AssetFragment  mAssetFragment;
+    private boolean mHasBeenUploaded;
+    private long mUploadedAssetId;
+    private URL mPreviewURL;
 
-  private boolean        mHasBeenUploaded;
-  private long           mUploadedAssetId;
-  private URL            mPreviewURL;
+    ////////// Static Initialiser(s) //////////
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    /*****************************************************
+     *
+     * Returns true if both the uploadable images are null,
+     * or equal.
+     *
+     *****************************************************/
+    public static boolean areBothNullOrEqual(UploadableImage uploadableImage1, UploadableImage uploadableImage2) {
 
+        if (uploadableImage1 == null && uploadableImage2 == null) {
+            return true;
+        }
+        if (uploadableImage1 == null || uploadableImage2 == null) {
+            return false;
+        }
 
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if both the uploadable images are null,
-   * or equal.
-   *
-   *****************************************************/
-  static public boolean areBothNullOrEqual( UploadableImage uploadableImage1, UploadableImage uploadableImage2 )
-    {
-    if ( uploadableImage1 == null && uploadableImage2 == null ) return ( true );
-    if ( uploadableImage1 == null || uploadableImage2 == null ) return ( false );
-
-    return ( uploadableImage1.equals( uploadableImage2 ) );
+        return uploadableImage1.equals(uploadableImage2);
     }
 
+    /*****************************************************
+     *
+     * Returns true if both the uploadable image lists are
+     * null, or equal.
+     *
+     *****************************************************/
+    public static boolean areBothNullOrEqual(List<UploadableImage> list1, List<UploadableImage> list2) {
 
-  /*****************************************************
-   *
-   * Returns true if both the uploadable image lists are
-   * null, or equal.
-   *
-   *****************************************************/
-  static public boolean areBothNullOrEqual( List<UploadableImage> list1, List<UploadableImage> list2 )
-    {
-    if ( list1 == null && list2 == null ) return ( true );
-    if ( list1 == null || list2 == null ) return ( false );
+        if (list1 == null && list2 == null) {
+            return true;
+        }
+        if (list1 == null || list2 == null) {
+            return false;
+        }
 
-    if ( list1.size() != list2.size() ) return ( false );
+        if (list1.size() != list2.size()) {
+            return false;
+        }
 
+        int index = 0;
 
-    int index = 0;
+        for (UploadableImage uploadableImage1 : list1) {
+            if (!UploadableImage.areBothNullOrEqual(uploadableImage1, list2.get(index))) {
+                return false;
+            }
 
-    for ( UploadableImage uploadableImage1 : list1 )
-      {
-      if ( ! UploadableImage.areBothNullOrEqual( uploadableImage1, list2.get( index ) ) ) return ( false );
+            index++;
+        }
 
-      index ++;
-      }
-
-
-    return ( true );
+        return true;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public UploadableImage(AssetFragment assetFragment) {
 
-  public UploadableImage( AssetFragment assetFragment )
-    {
-    mAssetFragment = assetFragment;
+        mAssetFragment = assetFragment;
     }
 
+    public UploadableImage(Asset asset) {
 
-  public UploadableImage( Asset asset )
-    {
-    this ( new AssetFragment( asset ) );
+        this(new AssetFragment(asset));
     }
 
+    UploadableImage(Parcel sourceParcel) {
 
-  UploadableImage( Parcel sourceParcel )
-    {
-    mAssetFragment    = sourceParcel.readParcelable( AssetFragment.class.getClassLoader() );
-    mHasBeenUploaded  = (Boolean)sourceParcel.readValue( Boolean.class.getClassLoader() );
-    mUploadedAssetId  = sourceParcel.readLong();
-    mPreviewURL       = (URL)sourceParcel.readSerializable();
+        mAssetFragment = sourceParcel.readParcelable(AssetFragment.class.getClassLoader());
+        mHasBeenUploaded = (Boolean) sourceParcel.readValue(Boolean.class.getClassLoader());
+        mUploadedAssetId = sourceParcel.readLong();
+        mPreviewURL = (URL) sourceParcel.readSerializable();
     }
 
+    ////////// Parcelable Method(s) //////////
 
-  ////////// Parcelable Method(s) //////////
+    @Override
+    public int describeContents() {
 
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
 
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeParcelable( mAssetFragment, flags );
-    targetParcel.writeValue( mHasBeenUploaded );
-    targetParcel.writeLong( mUploadedAssetId );
-    targetParcel.writeSerializable( mPreviewURL );
+        targetParcel.writeParcelable(mAssetFragment, flags);
+        targetParcel.writeValue(mHasBeenUploaded);
+        targetParcel.writeLong(mUploadedAssetId);
+        targetParcel.writeSerializable(mPreviewURL);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the image to be an asset fragment.
+     *
+     *****************************************************/
+    public void setImage(AssetFragment assetFragment) {
 
-  /*****************************************************
-   *
-   * Sets the image to be an asset fragment.
-   *
-   *****************************************************/
-  public void setImage( AssetFragment assetFragment )
-    {
-    mAssetFragment = assetFragment;
+        mAssetFragment = assetFragment;
     }
 
+    /*****************************************************
+     *
+     * Sets the image to be the whole area of an asset.
+     *
+     *****************************************************/
+    public void setImage(Asset asset) {
 
-  /*****************************************************
-   *
-   * Sets the image to be the whole area of an asset.
-   *
-   *****************************************************/
-  public void setImage( Asset asset )
-    {
-    setImage( new AssetFragment( asset ) );
+        setImage(new AssetFragment(asset));
     }
 
+    /*****************************************************
+     *
+     * Returns the asset fragment.
+     *
+     *****************************************************/
+    public AssetFragment getAssetFragment() {
 
-  /*****************************************************
-   *
-   * Returns the asset fragment.
-   *
-   *****************************************************/
-  public AssetFragment getAssetFragment()
-    {
-    return ( mAssetFragment );
+        return mAssetFragment;
     }
 
+    /*****************************************************
+     *
+     * Returns the asset.
+     *
+     *****************************************************/
+    public Asset getAsset() {
 
-  /*****************************************************
-   *
-   * Returns the asset.
-   *
-   *****************************************************/
-  public Asset getAsset()
-    {
-    return ( mAssetFragment.getAsset() );
+        return mAssetFragment.getAsset();
     }
 
+    /*****************************************************
+     *
+     * Returns the asset type.
+     *
+     *****************************************************/
+    public Asset.Type getType() {
 
-  /*****************************************************
-   *
-   * Returns the asset type.
-   *
-   *****************************************************/
-  public Asset.Type getType()
-    {
-    return ( mAssetFragment.getAsset().getType() );
+        return mAssetFragment.getAsset().getType();
     }
 
+    /*****************************************************
+     *
+     * Returns the asset remote URL.
+     *
+     *****************************************************/
+    public URL getRemoteURL() {
 
-  /*****************************************************
-   *
-   * Returns the asset remote URL.
-   *
-   *****************************************************/
-  public URL getRemoteURL()
-    {
-    return ( mAssetFragment.getAsset().getRemoteURL() );
+        return mAssetFragment.getAsset().getRemoteURL();
     }
 
+    /*****************************************************
+     *
+     * Saves the results of uploading.
+     *
+     *****************************************************/
+    public void markAsUploaded(long uploadedAssetId, URL previewURL) {
 
-  /*****************************************************
-   *
-   * Saves the results of uploading.
-   *
-   *****************************************************/
-  public void markAsUploaded( long uploadedAssetId, URL previewURL )
-    {
-    mHasBeenUploaded = true;
-    mUploadedAssetId = uploadedAssetId;
-    mPreviewURL      = previewURL;
+        mHasBeenUploaded = true;
+        mUploadedAssetId = uploadedAssetId;
+        mPreviewURL = previewURL;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the asset has been uploaded.
+     *
+     *****************************************************/
+    public boolean hasBeenUploaded() {
 
-  /*****************************************************
-   *
-   * Returns true if the asset has been uploaded.
-   *
-   *****************************************************/
-  public boolean hasBeenUploaded()
-    {
-    return ( mHasBeenUploaded );
+        return mHasBeenUploaded;
     }
 
+    /*****************************************************
+     *
+     * Returns the id following upload.
+     *
+     *****************************************************/
+    public long getUploadedAssetId() {
 
-  /*****************************************************
-   *
-   * Returns the id following upload.
-   *
-   *****************************************************/
-  public long getUploadedAssetId()
-    {
-    if ( ! mHasBeenUploaded ) throw ( new IllegalStateException( "The id cannot be returned if the asset fragment has not been uploaded" ) );
+        if (!mHasBeenUploaded) {
+            throw (new IllegalStateException("The id cannot be returned if the asset fragment has not been uploaded"));
+        }
 
-    return ( mUploadedAssetId );
+        return mUploadedAssetId;
     }
 
+    /*****************************************************
+     *
+     * Returns the preview URL following upload.
+     *
+     *****************************************************/
+    public URL getPreviewURL() {
 
-  /*****************************************************
-   *
-   * Returns the preview URL following upload.
-   *
-   *****************************************************/
-  public URL getPreviewURL()
-    {
-    if ( ! mHasBeenUploaded ) throw ( new IllegalStateException( "The preview URL cannot be returned if the asset fragment has not been uploaded" ) );
+        if (!mHasBeenUploaded) {
+            throw (new IllegalStateException("The preview URL cannot be returned if the asset fragment has not been uploaded"));
+        }
 
-    return ( mPreviewURL );
+        return mPreviewURL;
     }
 
+    /*****************************************************
+     *
+     * Returns true if this image spec equals the supplied
+     * image spec.
+     *
+     *****************************************************/
+    @Override
+    public boolean equals(Object otherObject) {
 
-  /*****************************************************
-   *
-   * Returns true if this image spec equals the supplied
-   * image spec.
-   *
-   *****************************************************/
-  @Override
-  public boolean equals( Object otherObject )
-    {
-    if ( otherObject == null || ! ( otherObject instanceof UploadableImage ) )
-      {
-      return ( false );
-      }
+        if (otherObject == null || !(otherObject instanceof UploadableImage)) {
+            return false;
+        }
 
-    UploadableImage otherUploadableImage = (UploadableImage) otherObject;
+        UploadableImage otherUploadableImage = (UploadableImage) otherObject;
 
+        if (otherUploadableImage == this) {
+            return true;
+        }
 
-    if ( otherUploadableImage == this ) return ( true );
-
-
-    return ( mAssetFragment.equals( otherUploadableImage.mAssetFragment ) &&
-             mHasBeenUploaded == otherUploadableImage.mHasBeenUploaded &&
-             mUploadedAssetId == otherUploadableImage.mUploadedAssetId &&
-             NetUtils.areBothNullOrEqual( mPreviewURL, otherUploadableImage.mPreviewURL ) );
+        return (mAssetFragment.equals(otherUploadableImage.mAssetFragment) &&
+                mHasBeenUploaded == otherUploadableImage.mHasBeenUploaded &&
+                mUploadedAssetId == otherUploadableImage.mUploadedAssetId &&
+                NetUtils.areBothNullOrEqual(mPreviewURL, otherUploadableImage.mPreviewURL));
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

@@ -36,13 +36,11 @@
 
 package ly.kite.journey;
 
-
 ///// Import(s) /////
 
 import java.util.ArrayList;
 
 import ly.kite.ordering.ImageSpec;
-
 
 ///// Class Declaration /////
 
@@ -52,28 +50,25 @@ import ly.kite.ordering.ImageSpec;
  * list.
  *
  *****************************************************/
-public interface IImageSpecStore
-  {
-  ////////// Static Constant(s) //////////
+public interface IImageSpecStore {
+    ////////// Static Constant(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the assets and quantity list.
+     *
+     *****************************************************/
+    ArrayList<ImageSpec> getImageSpecArrayList();
 
-  /*****************************************************
-   *
-   * Returns the assets and quantity list.
-   *
-   *****************************************************/
-  ArrayList<ImageSpec> getImageSpecArrayList();
+    ////////// Inner Class(es) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

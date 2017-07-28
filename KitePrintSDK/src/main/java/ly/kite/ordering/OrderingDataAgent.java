@@ -36,9 +36,7 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -57,387 +55,353 @@ import ly.kite.util.AssetHelper;
  * This class manages the basket.
  *
  *****************************************************/
-public class OrderingDataAgent
-  {
-  ////////// Static Constant(s) //////////
+public class OrderingDataAgent {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG            = "OrderingDataAgent";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderingDataAgent";
 
-  static public  final int     CREATE_NEW_ITEM_ID = -1;
-  static public  final long    BASKET_ID_DEFAULT  = 0;
-  static public  final long    NO_ORDER_ID        = -1;
+    public static final int CREATE_NEW_ITEM_ID = -1;
+    public static final long BASKET_ID_DEFAULT = 0;
+    public static final long NO_ORDER_ID = -1;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    private static OrderingDataAgent sDataAgent;
 
-  static private OrderingDataAgent sDataAgent;
+    ////////// Member Variable(s) //////////
 
+    private Context mApplicationContext;
+    private OrderingDatabaseAgent mOrderingDatabaseAgent;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private Context                mApplicationContext;
-  private OrderingDatabaseAgent  mOrderingDatabaseAgent;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns an instance of this agent.
-   *
-   *****************************************************/
-  static public OrderingDataAgent getInstance( Context context )
-    {
-    if ( sDataAgent == null )
-      {
-      sDataAgent = new OrderingDataAgent( context );
-      }
-
-    return ( sDataAgent );
-    }
-
-
-  ////////// Constructor(s) //////////
-
-  private OrderingDataAgent( Context context )
-    {
-    mApplicationContext    = context.getApplicationContext();
-    mOrderingDatabaseAgent = new OrderingDatabaseAgent( mApplicationContext, null );
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Clears a basket.
-   *
-   *****************************************************/
-  public OrderingDataAgent clearBasket( long basketId )
-    {
-    mOrderingDatabaseAgent.clearBasket( basketId );
-
-    AssetHelper.clearBasketAssets( mApplicationContext, basketId );
-
-    return ( this );
-    }
-
-
-  /*****************************************************
-   *
-   * Clears the default basket.
-   *
-   *****************************************************/
-  public OrderingDataAgent clearDefaultBasket()
-    {
-    return ( clearBasket( BASKET_ID_DEFAULT ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Saves an item to the basket. This is performed
-   * asynchronously because assets may need to be copied
-   * into a dedicated directory, so a listener should be
-   * provided. The listener is called once the order has
-   * been added to the basket.
-   *
-   *****************************************************/
-  public void addItem( long itemId, Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity, IAddListener addListener , int shippingClass)
-    {
-    // Create an add item task and start it
-    new AddItemTask( itemId, product, optionsMap, imageSpecList, orderQuantity, addListener ,shippingClass).execute();
-    }
-
-
-  /*****************************************************
-   *
-   * Saves an item to the basket. This is performed
-   * asynchronously because assets may need to be copied
-   * into a dedicated directory, so a listener should be
-   * provided. The listener is called once the order has
-   * been added to the basket.
-   *
-   *****************************************************/
-  public void addItem( Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity, IAddListener addListener,int shippingClass )
-    {
-    addItem( CREATE_NEW_ITEM_ID, product, optionsMap, imageSpecList, orderQuantity, addListener, shippingClass);
-    }
-
-
-  /*****************************************************
-   *
-   * Saves an item to the basket. This is performed
-   * asynchronously because assets may need to be copied
-   * into a dedicated directory, so a listener should be
-   * provided. The listener is called once the order has
-   * been added to the basket.
-   *
-   *****************************************************/
-  public void addItem( Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, IAddListener addListener,int shippingClass )
-    {
-    addItem( product, optionsMap, imageSpecList, 1, addListener, shippingClass );
-    }
-
-
-  /*****************************************************
-   *
-   * Replaces an item in the default basket.
-   *
-   *****************************************************/
-  public void replaceItem( long itemId, Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity, IAddListener addListener, int shippingClass)
-    {
-    // Delete the item and add a new one
-
-    mOrderingDatabaseAgent.deleteItem( itemId );
-
-    addItem( itemId, product, optionsMap, imageSpecList, orderQuantity, addListener, shippingClass );
-    }
-
-
-  /*****************************************************
-   *
-   * Saves an item to the default basket synchronously.
-   * This should not be called from anywhere other than
-   * the AddItemTask.
-   *
-   *****************************************************/
-  public void addItemSynchronously( long itemId, Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity, int shippingClass)
-    {
-    // We need to create a basket item per <mProduct.getQuantityPerSheet()> images, i.e.
-    // split the images into multiple jobs.
-
-    List<List<ImageSpec>> splitImageSpecLists = product.getUserJourneyType().dbItemsFromCreationItems( mApplicationContext, imageSpecList, product );
-
-    if ( splitImageSpecLists != null )
-      {
-      // Each list of image specs now corresponds to a basket item
-
-      for ( List<ImageSpec> itemImageSpecList : splitImageSpecLists )
-        {
-        if ( itemImageSpecList != null )
-          {
-          // Move any referenced assets to the basket (if they are not already in)
-          itemImageSpecList = AssetHelper.createAsBasketAssets( mApplicationContext, BASKET_ID_DEFAULT, itemImageSpecList );
-
-          // Create or replace the basket item
-          mOrderingDatabaseAgent.saveDefaultBasketItem( itemId, product, optionsMap, itemImageSpecList, orderQuantity,shippingClass);
-
-          // If we were supplied an item id then this is an update. However, if more images were
-          // subsequently added whilst editing the item - additional jobs are inserted as new ones.
-          itemId = CREATE_NEW_ITEM_ID;
-          }
-        }
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a list of default basket items.
-   *
-   *****************************************************/
-  public List<BasketItem> getAllItems( Catalogue catalogue )
-    {
-    return ( mOrderingDatabaseAgent.loadDefaultBasket( mApplicationContext, catalogue ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns the item count for the default basket.
-   *
-   *****************************************************/
-  public int getItemCount()
-    {
-    return ( mOrderingDatabaseAgent.selectItemCount() );
-    }
-
-  /*****************************************************
-   *
-   * Updates the shipping class
-   *
-   *****************************************************/
-    public int changeShippingClass( long itemId ,int shippingClass)
-    {
-      return ( mOrderingDatabaseAgent.updateShippingClass( itemId, shippingClass ) );
-    }
-
+    ////////// Static Method(s) //////////
 
     /*****************************************************
-   *
-   * Increments the order quantity for a basket item.
-   *
-   *****************************************************/
-  public int incrementOrderQuantity( long itemId )
-    {
-    return ( mOrderingDatabaseAgent.updateOrderQuantity( itemId, +1 ) );
-    }
+     *
+     * Returns an instance of this agent.
+     *
+     *****************************************************/
+    public static OrderingDataAgent getInstance(Context context) {
 
-
-  /*****************************************************
-   *
-   * Decrements the order quantity for a basket item.
-   *
-   *****************************************************/
-  public int decrementOrderQuantity( long itemId )
-    {
-    int orderQuantity = mOrderingDatabaseAgent.updateOrderQuantity( itemId, -1 );
-
-    // If the order quantity has gone to zero - delete the item
-    if ( orderQuantity < 1 )
-      {
-      mOrderingDatabaseAgent.deleteItem( itemId );
-      }
-
-    return ( orderQuantity );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a list of order history items.
-   *
-   *****************************************************/
-  public List<OrderHistoryItem> getOrderHistoryList( Catalogue catalogue )
-    {
-    return ( mOrderingDatabaseAgent.loadOrderHistory( mApplicationContext, catalogue ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when an order was successfully completed from
-   * the default basket.
-   *
-   *****************************************************/
-  public void onOrderSuccess( long previousOrderId, Order order )
-    {
-    if ( previousOrderId >= 0 )
-      {
-      // If a previously failed order has now been successful, it will already have its own
-      // order id, so we just need to:
-      //   - Determine its basket id
-      //   - Remove its basket (assets & database entries)
-      //   - Clear all order details except those required for a successful order history entry
-
-      long basketId = mOrderingDatabaseAgent.selectBasketIdForOrder( previousOrderId );
-
-      if ( basketId >= 0 )
-        {
-        clearBasket( basketId );
-
-        mOrderingDatabaseAgent.updateToSuccessfulOrder( previousOrderId, order.getReceipt() );
+        if (sDataAgent == null) {
+            sDataAgent = new OrderingDataAgent(context);
         }
-      }
-    else
-      {
-      // This is a new order, so simply clear its basket and create a new database order
 
-      clearDefaultBasket();
-
-      mOrderingDatabaseAgent.insertSuccessfulOrder( order.getItemsDescription(), order.getReceipt(), order.getOrderPricing().getPricingJSONString() );
-      }
+        return sDataAgent;
     }
 
+    ////////// Constructor(s) //////////
 
-  /*****************************************************
-   *
-   * Called when an order failed.
-   *
-   *****************************************************/
-  public long onOrderFailure( long previousOrderId, Order order )
-    {
-    if ( previousOrderId >= 0 )
-      {
-      // If the order has already failed at least once, and fails
-      // again - we don't need to do anything to it.
-      // TODO: Do we need to update the date?
-      // So simply retrieve the basket id and return it.
+    private OrderingDataAgent(Context context) {
 
-      return ( mOrderingDatabaseAgent.selectBasketIdForOrder( previousOrderId ) );
-      }
-    else
-      {
-      // Get a new basket id
-      long newBasketId = mOrderingDatabaseAgent.insertBasket( -1 );
-
-
-      // Move items and assets from the default basket to the new basket
-
-      AssetHelper.moveBasket( mApplicationContext, BASKET_ID_DEFAULT, newBasketId );
-
-      mOrderingDatabaseAgent.updateBasket( BASKET_ID_DEFAULT, newBasketId );
-
-
-      // Create the new order on the database, and return its id
-      return ( mOrderingDatabaseAgent.newOrder( newBasketId, order ) );
-      }
+        mApplicationContext = context.getApplicationContext();
+        mOrderingDatabaseAgent = new OrderingDatabaseAgent(mApplicationContext, null);
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * Clears a basket.
+     *
+     *****************************************************/
+    public OrderingDataAgent clearBasket(long basketId) {
 
-  /*****************************************************
-   *
-   * Interface for add-to-basket listeners.
-   *
-   *****************************************************/
-  public interface IAddListener
-    {
-    public void onItemAdded();
+        mOrderingDatabaseAgent.clearBasket(basketId);
+
+        AssetHelper.clearBasketAssets(mApplicationContext, basketId);
+
+        return this;
     }
 
+    /*****************************************************
+     *
+     * Clears the default basket.
+     *
+     *****************************************************/
+    public OrderingDataAgent clearDefaultBasket() {
 
-  /*****************************************************
-   *
-   * Task for adding orders to the default basket.
-   *
-   *****************************************************/
-  private class AddItemTask extends AsyncTask<Void,Void,Void>
-    {
-    private long                    mItemId;
-    private Product                 mProduct;
-    private HashMap<String,String>  mOptionsMap;
-    private List<ImageSpec>         mImageSpecList;
-    private int                     mOrderQuantity;
-    private IAddListener            mAddListener;
-    private int                     mShippingClass;
+        return clearBasket(BASKET_ID_DEFAULT);
+    }
 
+    /*****************************************************
+     *
+     * Saves an item to the basket. This is performed
+     * asynchronously because assets may need to be copied
+     * into a dedicated directory, so a listener should be
+     * provided. The listener is called once the order has
+     * been added to the basket.
+     *
+     *****************************************************/
+    public void addItem(long itemId, Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, int
+            orderQuantity, IAddListener addListener, int shippingClass) {
+        // Create an add item task and start it
+        new AddItemTask(itemId, product, optionsMap, imageSpecList, orderQuantity, addListener, shippingClass).execute();
+    }
 
-    AddItemTask( long itemId, Product product, HashMap<String,String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity, IAddListener addListener ,int shippingClass)
-      {
-      mItemId        = itemId;
-      mProduct       = product;
-      mOptionsMap    = optionsMap;
-      mImageSpecList = imageSpecList;
-      mOrderQuantity = orderQuantity;
-      mAddListener   = addListener;
-      mShippingClass = shippingClass;
-      }
+    /*****************************************************
+     *
+     * Saves an item to the basket. This is performed
+     * asynchronously because assets may need to be copied
+     * into a dedicated directory, so a listener should be
+     * provided. The listener is called once the order has
+     * been added to the basket.
+     *
+     *****************************************************/
+    public void addItem(Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity,
+                        IAddListener addListener, int shippingClass) {
 
+        addItem(CREATE_NEW_ITEM_ID, product, optionsMap, imageSpecList, orderQuantity, addListener, shippingClass);
+    }
 
-    @Override
-    protected Void doInBackground( Void... params )
-      {
-      addItemSynchronously( mItemId, mProduct, mOptionsMap, mImageSpecList, mOrderQuantity, mShippingClass );
+    /*****************************************************
+     *
+     * Saves an item to the basket. This is performed
+     * asynchronously because assets may need to be copied
+     * into a dedicated directory, so a listener should be
+     * provided. The listener is called once the order has
+     * been added to the basket.
+     *
+     *****************************************************/
+    public void addItem(Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, IAddListener addListener, int
+            shippingClass) {
 
-      return ( null );
-      }
+        addItem(product, optionsMap, imageSpecList, 1, addListener, shippingClass);
+    }
 
+    /*****************************************************
+     *
+     * Replaces an item in the default basket.
+     *
+     *****************************************************/
+    public void replaceItem(long itemId, Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, int
+            orderQuantity, IAddListener addListener, int shippingClass) {
+        // Delete the item and add a new one
 
-    @Override
-    protected void onPostExecute( Void result )
-      {
-      if ( mAddListener != null ) mAddListener.onItemAdded();
-      }
+        mOrderingDatabaseAgent.deleteItem(itemId);
 
+        addItem(itemId, product, optionsMap, imageSpecList, orderQuantity, addListener, shippingClass);
+    }
+
+    /*****************************************************
+     *
+     * Saves an item to the default basket synchronously.
+     * This should not be called from anywhere other than
+     * the AddItemTask.
+     *
+     *****************************************************/
+    public void addItemSynchronously(long itemId, Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, int
+            orderQuantity, int shippingClass) {
+        // We need to create a basket item per <mProduct.getQuantityPerSheet()> images, i.e.
+        // split the images into multiple jobs.
+
+        List<List<ImageSpec>> splitImageSpecLists = product.getUserJourneyType().dbItemsFromCreationItems(mApplicationContext,
+                imageSpecList, product);
+
+        if (splitImageSpecLists != null) {
+            // Each list of image specs now corresponds to a basket item
+
+            for (List<ImageSpec> itemImageSpecList : splitImageSpecLists) {
+                if (itemImageSpecList != null) {
+                    // Move any referenced assets to the basket (if they are not already in)
+                    itemImageSpecList = AssetHelper.createAsBasketAssets(mApplicationContext, BASKET_ID_DEFAULT, itemImageSpecList);
+
+                    // Create or replace the basket item
+                    mOrderingDatabaseAgent.saveDefaultBasketItem(itemId, product, optionsMap, itemImageSpecList, orderQuantity,
+                            shippingClass);
+
+                    // If we were supplied an item id then this is an update. However, if more images were
+                    // subsequently added whilst editing the item - additional jobs are inserted as new ones.
+                    itemId = CREATE_NEW_ITEM_ID;
+                }
+            }
+        }
+    }
+
+    /*****************************************************
+     *
+     * Returns a list of default basket items.
+     *
+     *****************************************************/
+    public List<BasketItem> getAllItems(Catalogue catalogue) {
+
+        return mOrderingDatabaseAgent.loadDefaultBasket(mApplicationContext, catalogue);
+    }
+
+    /*****************************************************
+     *
+     * Returns the item count for the default basket.
+     *
+     *****************************************************/
+    public int getItemCount() {
+
+        return mOrderingDatabaseAgent.selectItemCount();
+    }
+
+    /*****************************************************
+     *
+     * Updates the shipping class
+     *
+     *****************************************************/
+    public int changeShippingClass(long itemId, int shippingClass) {
+
+        return mOrderingDatabaseAgent.updateShippingClass(itemId, shippingClass);
+    }
+
+    /*****************************************************
+     *
+     * Increments the order quantity for a basket item.
+     *
+     *****************************************************/
+    public int incrementOrderQuantity(long itemId) {
+
+        return mOrderingDatabaseAgent.updateOrderQuantity(itemId, +1);
+    }
+
+    /*****************************************************
+     *
+     * Decrements the order quantity for a basket item.
+     *
+     *****************************************************/
+    public int decrementOrderQuantity(long itemId) {
+
+        int orderQuantity = mOrderingDatabaseAgent.updateOrderQuantity(itemId, -1);
+
+        // If the order quantity has gone to zero - delete the item
+        if (orderQuantity < 1) {
+            mOrderingDatabaseAgent.deleteItem(itemId);
+        }
+
+        return orderQuantity;
+    }
+
+    /*****************************************************
+     *
+     * Returns a list of order history items.
+     *
+     *****************************************************/
+    public List<OrderHistoryItem> getOrderHistoryList(Catalogue catalogue) {
+
+        return mOrderingDatabaseAgent.loadOrderHistory(mApplicationContext, catalogue);
+    }
+
+    /*****************************************************
+     *
+     * Called when an order was successfully completed from
+     * the default basket.
+     *
+     *****************************************************/
+    public void onOrderSuccess(long previousOrderId, Order order) {
+
+        if (previousOrderId >= 0) {
+            // If a previously failed order has now been successful, it will already have its own
+            // order id, so we just need to:
+            //   - Determine its basket id
+            //   - Remove its basket (assets & database entries)
+            //   - Clear all order details except those required for a successful order history entry
+
+            long basketId = mOrderingDatabaseAgent.selectBasketIdForOrder(previousOrderId);
+
+            if (basketId >= 0) {
+                clearBasket(basketId);
+
+                mOrderingDatabaseAgent.updateToSuccessfulOrder(previousOrderId, order.getReceipt());
+            }
+        } else {
+            // This is a new order, so simply clear its basket and create a new database order
+
+            clearDefaultBasket();
+
+            mOrderingDatabaseAgent.insertSuccessfulOrder(order.getItemsDescription(), order.getReceipt(), order.getOrderPricing()
+                    .getPricingJSONString());
+        }
+    }
+
+    /*****************************************************
+     *
+     * Called when an order failed.
+     *
+     *****************************************************/
+    public long onOrderFailure(long previousOrderId, Order order) {
+
+        if (previousOrderId >= 0) {
+            // If the order has already failed at least once, and fails
+            // again - we don't need to do anything to it.
+            // TODO: Do we need to update the date?
+            // So simply retrieve the basket id and return it.
+
+            return mOrderingDatabaseAgent.selectBasketIdForOrder(previousOrderId);
+        } else {
+            // Get a new basket id
+            long newBasketId = mOrderingDatabaseAgent.insertBasket(-1);
+
+            // Move items and assets from the default basket to the new basket
+
+            AssetHelper.moveBasket(mApplicationContext, BASKET_ID_DEFAULT, newBasketId);
+
+            mOrderingDatabaseAgent.updateBasket(BASKET_ID_DEFAULT, newBasketId);
+
+            // Create the new order on the database, and return its id
+            return mOrderingDatabaseAgent.newOrder(newBasketId, order);
+        }
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * Interface for add-to-basket listeners.
+     *
+     *****************************************************/
+    public interface IAddListener {
+        public void onItemAdded();
+    }
+
+    /*****************************************************
+     *
+     * Task for adding orders to the default basket.
+     *
+     *****************************************************/
+    private class AddItemTask extends AsyncTask<Void, Void, Void> {
+        private long mItemId;
+        private Product mProduct;
+        private HashMap<String, String> mOptionsMap;
+        private List<ImageSpec> mImageSpecList;
+        private int mOrderQuantity;
+        private IAddListener mAddListener;
+        private int mShippingClass;
+
+        AddItemTask(long itemId, Product product, HashMap<String, String> optionsMap, List<ImageSpec> imageSpecList, int orderQuantity,
+                    IAddListener addListener, int shippingClass) {
+
+            mItemId = itemId;
+            mProduct = product;
+            mOptionsMap = optionsMap;
+            mImageSpecList = imageSpecList;
+            mOrderQuantity = orderQuantity;
+            mAddListener = addListener;
+            mShippingClass = shippingClass;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            addItemSynchronously(mItemId, mProduct, mOptionsMap, mImageSpecList, mOrderQuantity, mShippingClass);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
+            if (mAddListener != null) {
+                mAddListener.onItemAdded();
+            }
+        }
 
     }
 
-  }
+}
 

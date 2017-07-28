@@ -36,7 +36,6 @@
 
 package ly.kite.app;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -49,19 +48,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 import ly.kite.R;
-import ly.kite.widget.AEditTextEnforcer;
-import ly.kite.widget.CVVEditTextEnforcer;
-import ly.kite.widget.CardNumberEditTextEnforcer;
-import ly.kite.widget.MonthEditTextEnforcer;
-import ly.kite.widget.YearEditTextEnforcer;
-
 
 ///// Class Declaration /////
 
@@ -71,213 +60,190 @@ import ly.kite.widget.YearEditTextEnforcer;
  * spinner.
  *
  *****************************************************/
-public class IndeterminateProgressDialogFragment extends DialogFragment
-  {
-  ////////// Static Constant(s) //////////
+public class IndeterminateProgressDialogFragment extends DialogFragment {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public  final String  TAG                = "IndeterminateProgres...";
+    @SuppressWarnings("unused")
+    public static final String TAG = "IndeterminateProgres...";
 
-  static private final String  BUNDLE_KEY_MESSAGE = "message";
+    private static final String BUNDLE_KEY_MESSAGE = "message";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String mMessage;
+    private ICancelListener mCancelListener;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private String           mMessage;
-  private ICancelListener  mCancelListener;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Creates an instance of this fragment, with a message
+     * passed in the arguments.
+     *
+     *****************************************************/
+    public static IndeterminateProgressDialogFragment newInstance(String message) {
 
-  ////////// Static Initialiser(s) //////////
+        IndeterminateProgressDialogFragment fragment = new IndeterminateProgressDialogFragment();
 
+        Bundle arguments = new Bundle();
 
-  ////////// Static Method(s) //////////
+        arguments.putString(BUNDLE_KEY_MESSAGE, message);
 
-  /*****************************************************
-   *
-   * Creates an instance of this fragment, with a message
-   * passed in the arguments.
-   *
-   *****************************************************/
-  static public IndeterminateProgressDialogFragment newInstance( String message )
-    {
-    IndeterminateProgressDialogFragment fragment = new IndeterminateProgressDialogFragment();
+        fragment.setArguments(arguments);
 
-    Bundle arguments = new Bundle();
-
-    arguments.putString( BUNDLE_KEY_MESSAGE, message );
-
-    fragment.setArguments( arguments );
-
-    return ( fragment );
+        return fragment;
     }
 
+    /*****************************************************
+     *
+     * Creates an instance of this fragment, with a message
+     * passed in the arguments.
+     *
+     *****************************************************/
+    public static IndeterminateProgressDialogFragment newInstance(Context context, int messageResourceId) {
 
-  /*****************************************************
-   *
-   * Creates an instance of this fragment, with a message
-   * passed in the arguments.
-   *
-   *****************************************************/
-  static public IndeterminateProgressDialogFragment newInstance( Context context, int messageResourceId )
-    {
-    return ( newInstance( context.getString( messageResourceId ) ) );
+        return newInstance(context.getString(messageResourceId));
     }
 
+    /*****************************************************
+     *
+     * Creates an instance of this fragment, with a message
+     * passed in the arguments.
+     *
+     *****************************************************/
+    public static IndeterminateProgressDialogFragment newInstance(Fragment fragment, int messageResourceId) {
 
-  /*****************************************************
-   *
-   * Creates an instance of this fragment, with a message
-   * passed in the arguments.
-   *
-   *****************************************************/
-  static public IndeterminateProgressDialogFragment newInstance( Fragment fragment, int messageResourceId )
-    {
-    return ( newInstance( fragment.getString( messageResourceId ) ) );
+        return newInstance(fragment.getString(messageResourceId));
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// DialogFragment Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the fragment is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  ////////// DialogFragment Method(s) //////////
+        super.onCreate(savedInstanceState);
 
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState)
-    {
-    super.onCreate( savedInstanceState );
+        setStyle(STYLE_NO_TITLE, 0);
 
-    setStyle( STYLE_NO_TITLE, 0 );
+        // Get the message
 
+        Bundle arguments = getArguments();
 
-    // Get the message
-
-    Bundle arguments = getArguments();
-
-    if ( arguments != null )
-      {
-      mMessage = arguments.getString( BUNDLE_KEY_MESSAGE );
-      }
+        if (arguments != null) {
+            mMessage = arguments.getString(BUNDLE_KEY_MESSAGE);
+        }
     }
 
+    /*****************************************************
+     *
+     * Creates and returns the view for this fragment.
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Creates and returns the view for this fragment.
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.dialog_indeterminate_progress, container, false );
+        View view = layoutInflator.inflate(R.layout.dialog_indeterminate_progress, container, false);
 
-    TextView messageTextView = (TextView)view.findViewById( R.id.message_text_view );
+        TextView messageTextView = (TextView) view.findViewById(R.id.message_text_view);
 
+        // Set the message
+        if (messageTextView != null) {
+            messageTextView.setText(mMessage);
+        }
 
-    // Set the message
-    if ( messageTextView != null ) messageTextView.setText( mMessage );
-
-
-    return ( view );
+        return view;
     }
 
+    /*****************************************************
+     *
+     * Called if the dialog is cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
 
-  /*****************************************************
-   *
-   * Called if the dialog is cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void onCancel( DialogInterface dialogInterface )
-    {
-    if ( mCancelListener != null ) mCancelListener.onDialogCancelled( this );
+        if (mCancelListener != null) {
+            mCancelListener.onDialogCancelled(this);
+        }
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Displays this progress dialog.
+     *
+     *****************************************************/
+    public void show(Activity activity, ICancelListener cancelListener) {
 
-  /*****************************************************
-   *
-   * Displays this progress dialog.
-   *
-   *****************************************************/
-  public void show( Activity activity, ICancelListener cancelListener )
-    {
-    if ( cancelListener != null )
-      {
-      mCancelListener = cancelListener;
+        if (cancelListener != null) {
+            mCancelListener = cancelListener;
 
-      setCancelable( true );
-      }
-    else
-      {
-      setCancelable( false );
-      }
+            setCancelable(true);
+        } else {
+            setCancelable(false);
+        }
 
-    show( activity.getFragmentManager(), TAG );
+        show(activity.getFragmentManager(), TAG);
     }
 
+    /*****************************************************
+     *
+     * Displays this progress dialog.
+     *
+     *****************************************************/
+    public void show(Activity activity) {
 
-  /*****************************************************
-   *
-   * Displays this progress dialog.
-   *
-   *****************************************************/
-  public void show( Activity activity )
-    {
-    show( activity, null );
+        show(activity, null);
     }
 
+    /*****************************************************
+     *
+     * Displays this progress dialog.
+     *
+     *****************************************************/
+    public void show(Fragment fragment, ICancelListener cancelListener) {
 
-  /*****************************************************
-   *
-   * Displays this progress dialog.
-   *
-   *****************************************************/
-  public void show( Fragment fragment, ICancelListener cancelListener )
-    {
-    Activity activity = fragment.getActivity();
+        Activity activity = fragment.getActivity();
 
-    if ( activity != null )
-      {
-      show( activity, cancelListener );
-      }
-    else
-      {
-      Log.e( TAG, "Unable to show dialog - no activity found" );
-      }
+        if (activity != null) {
+            show(activity, cancelListener);
+        } else {
+            Log.e(TAG, "Unable to show dialog - no activity found");
+        }
     }
 
+    /*****************************************************
+     *
+     * Displays this progress dialog.
+     *
+     *****************************************************/
+    public void show(Fragment fragment) {
 
-  /*****************************************************
-   *
-   * Displays this progress dialog.
-   *
-   *****************************************************/
-  public void show( Fragment fragment )
-    {
-    show( fragment, null );
+        show(fragment, null);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * A cancel listener.
-   *
-   *****************************************************/
-  public interface ICancelListener
-    {
-    public void onDialogCancelled( IndeterminateProgressDialogFragment dialogFragment );
+    /*****************************************************
+     *
+     * A cancel listener.
+     *
+     *****************************************************/
+    public interface ICancelListener {
+        public void onDialogCancelled(IndeterminateProgressDialogFragment dialogFragment);
     }
 
-  }
+}
 

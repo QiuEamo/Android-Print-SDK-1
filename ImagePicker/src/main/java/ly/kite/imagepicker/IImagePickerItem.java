@@ -36,16 +36,12 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
 import android.widget.ImageView;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-
 
 ///// Interface Declaration /////
 
@@ -54,57 +50,51 @@ import java.util.LinkedHashMap;
  * This interface defines an item in the image picker grid.
  *
  *****************************************************/
-public interface IImagePickerItem
-  {
+public interface IImagePickerItem {
 
-  /*****************************************************
-   *
-   * Returns the URL of the image for the item.
-   *
-   *****************************************************/
-  public String getImageURLString();
+    /*****************************************************
+     *
+     * Returns the URL of the image for the item.
+     *
+     *****************************************************/
+    public String getImageURLString();
 
+    /*****************************************************
+     *
+     * Returns the URL of a thumbnail image for the item.
+     *
+     *****************************************************/
+    public void loadThumbnailImageInto(Context context, ImageView imageView);
 
-  /*****************************************************
-   *
-   * Returns the URL of a thumbnail image for the item.
-   *
-   *****************************************************/
-  public void loadThumbnailImageInto( Context context, ImageView imageView );
+    /*****************************************************
+     *
+     * Returns the text label for the item.
+     *
+     *****************************************************/
+    public String getLabel();
 
+    /*****************************************************
+     *
+     * Returns a key if this item is a parent and can be
+     * descended into.
+     *
+     *****************************************************/
+    public String getKeyIfParent();
 
-  /*****************************************************
-   *
-   * Returns the text label for the item.
-   *
-   *****************************************************/
-  public String getLabel();
+    /*****************************************************
+     *
+     * Returns a selectable item if this item may be selected,
+     * null otherwise.
+     *
+     *****************************************************/
+    public ISelectableItem getSelectableItem();
 
+    /*****************************************************
+     *
+     * Returns the number of this item's children that are
+     * selected.
+     *
+     *****************************************************/
+    public int getSelectedCount(LinkedHashMap<String, ISelectableItem> selectableItemTable);
 
-  /*****************************************************
-   *
-   * Returns a key if this item is a parent and can be
-   * descended into.
-   *
-   *****************************************************/
-  public String getKeyIfParent();
-
-
-  /*****************************************************
-   *
-   * Returns a selectable item if this item may be selected,
-   * null otherwise.
-   *
-   *****************************************************/
-  public ISelectableItem getSelectableItem();
-
-
-  /*****************************************************
-   *
-   * Returns the number of this item's children that are
-   * selected.
-   *
-   *****************************************************/
-  public int getSelectedCount( LinkedHashMap<String,ISelectableItem> selectableItemTable );
-
-  }
+}

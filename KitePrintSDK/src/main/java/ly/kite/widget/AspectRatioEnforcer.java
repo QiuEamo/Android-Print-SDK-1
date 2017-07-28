@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -48,7 +47,6 @@ import android.view.View;
 import ly.kite.KiteSDK;
 import ly.kite.R;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -56,199 +54,176 @@ import ly.kite.R;
  * This class is used by Views to enforce aspect ratios.
  *
  *****************************************************/
-public class AspectRatioEnforcer
-  {
-  ////////// Static Constant(s) //////////
+public class AspectRatioEnforcer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "AspectRatioEnforcer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AspectRatioEnforcer";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private float mWidthToHeightMultiplier;
 
-  ////////// Member Variable(s) //////////
+    private float mLeftPaddingProportion;
+    private float mTopPaddingProportion;
+    private float mRightPaddingProportion;
+    private float mBottomPaddingProportion;
 
-  private float  mWidthToHeightMultiplier;
+    private int mLastCalculatedWidthMeasureSpec;
+    private int mLastCalculatedHeightMeasureSpec;
 
-  private float  mLeftPaddingProportion;
-  private float  mTopPaddingProportion;
-  private float  mRightPaddingProportion;
-  private float  mBottomPaddingProportion;
+    ////////// Static Initialiser(s) //////////
 
-  private int    mLastCalculatedWidthMeasureSpec;
-  private int    mLastCalculatedHeightMeasureSpec;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public AspectRatioEnforcer(Context context, AttributeSet attributeSet, int defaultStyle) {
+        // Check the XML attributes
 
+        if (attributeSet != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.AspectRatioEnforcer, defaultStyle,
+                    defaultStyle);
 
-  ////////// Static Method(s) //////////
+            // If an aspect ratio was defined in the XML then set it now.
+            // ** Otherwise leave it at its uninitialised value **
 
+            TypedValue value = new TypedValue();
 
-  ////////// Constructor(s) //////////
+            if (typedArray.getValue(R.styleable.AspectRatioEnforcer_aspectRatio, value)) {
+                setAspectRatio(value.getFloat());
+            }
 
-  public AspectRatioEnforcer( Context context, AttributeSet attributeSet, int defaultStyle )
-    {
-    // Check the XML attributes
-
-    if ( attributeSet != null )
-      {
-      TypedArray typedArray = context.obtainStyledAttributes( attributeSet, R.styleable.AspectRatioEnforcer, defaultStyle, defaultStyle );
-
-
-      // If an aspect ratio was defined in the XML then set it now.
-      // ** Otherwise leave it at its uninitialised value **
-
-      TypedValue value = new TypedValue();
-
-      if ( typedArray.getValue( R.styleable.AspectRatioEnforcer_aspectRatio, value ) )
-        {
-        setAspectRatio( value.getFloat() );
+            typedArray.recycle();
         }
 
-
-      typedArray.recycle();
-      }
-
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Sets the aspect ratio for content.
+     *
+     *****************************************************/
+    public void setAspectRatio(float aspectRatio) {
 
-  /*****************************************************
-   *
-   * Sets the aspect ratio for content.
-   *
-   *****************************************************/
-  public void setAspectRatio( float aspectRatio )
-    {
-    mWidthToHeightMultiplier = 1.0f / aspectRatio;
+        mWidthToHeightMultiplier = 1.0f / aspectRatio;
     }
 
+    /*****************************************************
+     *
+     * Sets a frame border around the image as a proportion
+     * of the image size (which we won't know until we are
+     * measured), by setting the padding.
+     *
+     *****************************************************/
+    public void setPaddingProportions(float leftProportion, float topProportion, float rightProportion, float bottomProportion) {
 
-  /*****************************************************
-   *
-   * Sets a frame border around the image as a proportion
-   * of the image size (which we won't know until we are
-   * measured), by setting the padding.
-   *
-   *****************************************************/
-  public void setPaddingProportions( float leftProportion, float topProportion, float rightProportion, float bottomProportion )
-    {
-    mLeftPaddingProportion   = leftProportion;
-    mTopPaddingProportion    = topProportion;
-    mRightPaddingProportion  = rightProportion;
-    mBottomPaddingProportion = bottomProportion;
+        mLeftPaddingProportion = leftProportion;
+        mTopPaddingProportion = topProportion;
+        mRightPaddingProportion = rightProportion;
+        mBottomPaddingProportion = bottomProportion;
     }
 
+    /*****************************************************
+     *
+     * Called by the enforcing view from its onMeasure
+     * method.
+     *
+     *****************************************************/
+    public void onMeasure(View view, int widthMeasureSpec, int heightMeasureSpec) {
 
-  /*****************************************************
-   *
-   * Called by the enforcing view from its onMeasure
-   * method.
-   *
-   *****************************************************/
-  public void onMeasure( View view, int widthMeasureSpec, int heightMeasureSpec )
-    {
-    int widthMode = View.MeasureSpec.getMode( widthMeasureSpec );
-    int widthSize = View.MeasureSpec.getSize( widthMeasureSpec );
+        int widthMode = View.MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = View.MeasureSpec.getSize(widthMeasureSpec);
 
+        // We only do this jiggery-pokery with the size if the width is known and we were
+        // supplied an aspect ratio.
 
-    // We only do this jiggery-pokery with the size if the width is known and we were
-    // supplied an aspect ratio.
+        if ((widthMode == View.MeasureSpec.AT_MOST || widthMode == View.MeasureSpec.EXACTLY) &&
+                mWidthToHeightMultiplier >= KiteSDK.FLOAT_ZERO_THRESHOLD) {
+            float contentWidth;
+            float contentHeight;
+            float viewHeight;
 
-    if ( ( widthMode == View.MeasureSpec.AT_MOST || widthMode == View.MeasureSpec.EXACTLY ) &&
-            mWidthToHeightMultiplier >= KiteSDK.FLOAT_ZERO_THRESHOLD )
-      {
-      float contentWidth;
-      float contentHeight;
-      float viewHeight;
+            if (mLeftPaddingProportion >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
+                    mTopPaddingProportion >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
+                    mRightPaddingProportion >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
+                    mBottomPaddingProportion >= KiteSDK.FLOAT_ZERO_THRESHOLD) {
 
-      if ( mLeftPaddingProportion   >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
-           mTopPaddingProportion    >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
-           mRightPaddingProportion  >= KiteSDK.FLOAT_ZERO_THRESHOLD ||
-           mBottomPaddingProportion >= KiteSDK.FLOAT_ZERO_THRESHOLD )
-        {
+                // If padding proportions have been supplied, our calculations are based on the following equations:
+                //
+                // Available width =   left padding                            + content width +   right padding
+                //                 = ( content width * left padding proportion ) + content width + ( content width * right padding
+                // proportion )
+                //                 =   content width * ( left padding proportion + 1 + right padding proportion )
+                //
+                // Therefore: content width = available width / ( left padding proportion + 1 + right padding proportion )
+                //
+                contentWidth = widthSize / (mLeftPaddingProportion + 1f + mRightPaddingProportion);
 
-        // If padding proportions have been supplied, our calculations are based on the following equations:
-        //
-        // Available width =   left padding                            + content width +   right padding
-        //                 = ( content width * left padding proportion ) + content width + ( content width * right padding proportion )
-        //                 =   content width * ( left padding proportion + 1 + right padding proportion )
-        //
-        // Therefore: content width = available width / ( left padding proportion + 1 + right padding proportion )
-        //
-        contentWidth = widthSize / ( mLeftPaddingProportion + 1f + mRightPaddingProportion );
+                // Now that we have the width, we can calculate the height using the aspect ratio
+                contentHeight = contentWidth * mWidthToHeightMultiplier;
 
-        // Now that we have the width, we can calculate the height using the aspect ratio
-        contentHeight = contentWidth * mWidthToHeightMultiplier;
+                // Finally, calculate and set the padding.
 
+                float leftPadding = contentWidth * mLeftPaddingProportion;
+                float rightPadding = contentWidth * mRightPaddingProportion;
+                float topPadding = contentHeight * mTopPaddingProportion;
+                float bottomPadding = contentHeight * mBottomPaddingProportion;
 
-        // Finally, calculate and set the padding.
+                view.setPadding((int) leftPadding, (int) topPadding, (int) rightPadding, (int) bottomPadding);
 
-        float leftPadding   = contentWidth  * mLeftPaddingProportion;
-        float rightPadding  = contentWidth  * mRightPaddingProportion;
-        float topPadding    = contentHeight * mTopPaddingProportion;
-        float bottomPadding = contentHeight * mBottomPaddingProportion;
+                viewHeight = topPadding + contentHeight + bottomPadding;
+            } else {
+                // If no padding proportions have been set, then leave the padding as it is, and just calculate
+                // the content dimensions.
 
-        view.setPadding( (int) leftPadding, (int) topPadding, (int) rightPadding, (int) bottomPadding );
+                contentWidth = widthSize - (view.getPaddingLeft() + view.getPaddingRight());
+                contentHeight = contentWidth * mWidthToHeightMultiplier;
 
-        viewHeight = topPadding + contentHeight + bottomPadding;
-        }
-      else
-        {
-        // If no padding proportions have been set, then leave the padding as it is, and just calculate
-        // the content dimensions.
+                viewHeight = view.getPaddingTop() + contentHeight + view.getPaddingBottom();
+            }
 
-        contentWidth  = widthSize - ( view.getPaddingLeft() + view.getPaddingRight() );
-        contentHeight = contentWidth * mWidthToHeightMultiplier;
-
-        viewHeight = view.getPaddingTop() + contentHeight + view.getPaddingBottom();
+            // Adjust the height measure spec to set the height of the view
+            heightMeasureSpec = View.MeasureSpec.makeMeasureSpec((int) viewHeight, widthMode);
         }
 
-
-      // Adjust the height measure spec to set the height of the view
-      heightMeasureSpec = View.MeasureSpec.makeMeasureSpec( (int) viewHeight, widthMode );
-      }
-
-
-    mLastCalculatedWidthMeasureSpec  = widthMeasureSpec;
-    mLastCalculatedHeightMeasureSpec = heightMeasureSpec;
+        mLastCalculatedWidthMeasureSpec = widthMeasureSpec;
+        mLastCalculatedHeightMeasureSpec = heightMeasureSpec;
     }
 
+    /*****************************************************
+     *
+     * Returns the width measure spec calculated in the
+     * onMeasure method.
+     *
+     *****************************************************/
+    public int getWidthMeasureSpec() {
 
-  /*****************************************************
-   *
-   * Returns the width measure spec calculated in the
-   * onMeasure method.
-   *
-   *****************************************************/
-  public int getWidthMeasureSpec()
-    {
-    return ( mLastCalculatedWidthMeasureSpec );
+        return mLastCalculatedWidthMeasureSpec;
     }
 
+    /*****************************************************
+     *
+     * Returns the height measure spec calculated in the
+     * onMeasure method.
+     *
+     *****************************************************/
+    public int getHeightMeasureSpec() {
 
-  /*****************************************************
-   *
-   * Returns the height measure spec calculated in the
-   * onMeasure method.
-   *
-   *****************************************************/
-  public int getHeightMeasureSpec()
-    {
-    return ( mLastCalculatedHeightMeasureSpec );
+        return mLastCalculatedHeightMeasureSpec;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

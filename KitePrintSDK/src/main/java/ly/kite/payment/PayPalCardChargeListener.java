@@ -5,5 +5,6 @@ package ly.kite.payment;
  */
 public interface PayPalCardChargeListener {
     void onChargeSuccess(PayPalCard card, String proofOfPayment);
+
     void onError(PayPalCard card, Exception ex);
 }

@@ -36,7 +36,6 @@
 
 package ly.kite.journey.selection;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -44,7 +43,6 @@ import android.app.Activity;
 import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.ICatalogueConsumer;
 import ly.kite.journey.AKiteFragment;
-
 
 ///// Class Declaration /////
 
@@ -54,96 +52,82 @@ import ly.kite.journey.AKiteFragment;
  * fragments.
  *
  *****************************************************/
-abstract public class AProductSelectionFragment extends AKiteFragment implements ICatalogueConsumer
-  {
-  ////////// Static Constant(s) //////////
+abstract public class AProductSelectionFragment extends AKiteFragment implements ICatalogueConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "AProductSelectionFragment";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AProductSelectionFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    protected Catalogue mCatalogue;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  protected Catalogue  mCatalogue;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// ICatalogueConsumer Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called when the sync completes successfully.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueSuccess(Catalogue catalogue) {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// ICatalogueConsumer Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the sync completes successfully.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueSuccess( Catalogue catalogue )
-    {
-    mCatalogue = catalogue;
+        mCatalogue = catalogue;
     }
 
-
-  /*****************************************************
-   *
-   * Called when the catalogue load is cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueCancelled()
-    {
-    // Don't do anything. Catalogue cancellations are dealt with
-    // by the activity.
+    /*****************************************************
+     *
+     * Called when the catalogue load is cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueCancelled() {
+        // Don't do anything. Catalogue cancellations are dealt with
+        // by the activity.
     }
 
-
-  /*****************************************************
-   *
-   * Called when the sync completes successfully.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueError( Exception exception )
-    {
-    // Don't do anything. Catalogue load errors are dealt with
-    // by the activity.
+    /*****************************************************
+     *
+     * Called when the sync completes successfully.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueError(Exception exception) {
+        // Don't do anything. Catalogue load errors are dealt with
+        // by the activity.
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Requests the catalogue.
+     *
+     *****************************************************/
+    protected void requestCatalogue() {
 
-  /*****************************************************
-   *
-   * Requests the catalogue.
-   *
-   *****************************************************/
-  protected void requestCatalogue()
-    {
-    Activity activity = getActivity();
+        Activity activity = getActivity();
 
-    if ( activity != null && activity instanceof ICatalogueHolder )
-      {
-      ( (ICatalogueHolder)activity ).requestCatalogue( this );
-      }
+        if (activity != null && activity instanceof ICatalogueHolder) {
+            ((ICatalogueHolder) activity).requestCatalogue(this);
+        }
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

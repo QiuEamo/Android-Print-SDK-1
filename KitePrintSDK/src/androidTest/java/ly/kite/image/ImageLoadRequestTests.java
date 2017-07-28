@@ -36,16 +36,12 @@
 
 package ly.kite.image;
 
-
 ///// Import(s) /////
 
 import android.media.ExifInterface;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import ly.kite.image.ImageLoadRequest;
-
 
 ///// Class Declaration /////
 
@@ -54,96 +50,88 @@ import ly.kite.image.ImageLoadRequest;
  * This class tests the image loader class.
  *
  *****************************************************/
-public class ImageLoadRequestTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class ImageLoadRequestTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "ImageLoadRequestTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageLoadRequestTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testDegreesFromEXIFOrientation() {
 
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  public void testDegreesFromEXIFOrientation()
-    {
-    Assert.assertEquals(   0, ImageLoadRequest.degreesFromEXIFOrientation( ExifInterface.ORIENTATION_NORMAL ) );
-    Assert.assertEquals(  90, ImageLoadRequest.degreesFromEXIFOrientation( ExifInterface.ORIENTATION_ROTATE_90 ) );
-    Assert.assertEquals( 180, ImageLoadRequest.degreesFromEXIFOrientation( ExifInterface.ORIENTATION_ROTATE_180 ) );
-    Assert.assertEquals( 270, ImageLoadRequest.degreesFromEXIFOrientation( ExifInterface.ORIENTATION_ROTATE_270 ) );
+        Assert.assertEquals(0, ImageLoadRequest.degreesFromEXIFOrientation(ExifInterface.ORIENTATION_NORMAL));
+        Assert.assertEquals(90, ImageLoadRequest.degreesFromEXIFOrientation(ExifInterface.ORIENTATION_ROTATE_90));
+        Assert.assertEquals(180, ImageLoadRequest.degreesFromEXIFOrientation(ExifInterface.ORIENTATION_ROTATE_180));
+        Assert.assertEquals(270, ImageLoadRequest.degreesFromEXIFOrientation(ExifInterface.ORIENTATION_ROTATE_270));
     }
 
+    public void testSampleSizeForResize() {
 
-  public void testSampleSizeForResize()
-    {
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768, 1024, 768 ) );
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768, 1023, 768 ) );
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768, 1024, 767 ) );
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 1024, 768));
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 1023, 768));
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 1024, 767));
 
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768, 513, 385 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 512, 385 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 511, 385 ) );
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 513, 385));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 512, 385));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 511, 385));
 
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768, 513, 385 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 513, 384 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 513, 383 ) );
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 513, 385));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 513, 384));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 513, 383));
 
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 512, 384 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 511, 384 ) );
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 512, 383 ) );
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 512, 384));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 511, 384));
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 512, 383));
 
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 257, 193 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 256, 193 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 255, 193 ) );
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 257, 193));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 256, 193));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 255, 193));
 
-    Assert.assertEquals(   2, ImageLoadRequest.sampleSizeForResize( 1024, 768, 257, 193 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 257, 192 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 257, 191 ) );
+        Assert.assertEquals(2, ImageLoadRequest.sampleSizeForResize(1024, 768, 257, 193));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 257, 192));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 257, 191));
 
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 256, 192 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 255, 192 ) );
-    Assert.assertEquals(   4, ImageLoadRequest.sampleSizeForResize( 1024, 768, 256, 191 ) );
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 256, 192));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 255, 192));
+        Assert.assertEquals(4, ImageLoadRequest.sampleSizeForResize(1024, 768, 256, 191));
 
-    Assert.assertEquals(   8, ImageLoadRequest.sampleSizeForResize( 1024, 768, 128,  96 ) );
+        Assert.assertEquals(8, ImageLoadRequest.sampleSizeForResize(1024, 768, 128, 96));
 
-    Assert.assertEquals(  16, ImageLoadRequest.sampleSizeForResize( 1024, 768,  64,  48 ) );
+        Assert.assertEquals(16, ImageLoadRequest.sampleSizeForResize(1024, 768, 64, 48));
 
-    Assert.assertEquals(  32, ImageLoadRequest.sampleSizeForResize( 1024, 768,  32,  24 ) );
+        Assert.assertEquals(32, ImageLoadRequest.sampleSizeForResize(1024, 768, 32, 24));
 
-    Assert.assertEquals(  64, ImageLoadRequest.sampleSizeForResize( 1024, 768,  16,  12 ) );
+        Assert.assertEquals(64, ImageLoadRequest.sampleSizeForResize(1024, 768, 16, 12));
 
-    Assert.assertEquals( 128, ImageLoadRequest.sampleSizeForResize( 1024, 768,   8,  6 ) );
+        Assert.assertEquals(128, ImageLoadRequest.sampleSizeForResize(1024, 768, 8, 6));
 
-    Assert.assertEquals( 256, ImageLoadRequest.sampleSizeForResize( 1024, 768,   4,  3 ) );
+        Assert.assertEquals(256, ImageLoadRequest.sampleSizeForResize(1024, 768, 4, 3));
 
-    Assert.assertEquals( 512, ImageLoadRequest.sampleSizeForResize( 1024, 768,   2,  1 ) );
+        Assert.assertEquals(512, ImageLoadRequest.sampleSizeForResize(1024, 768, 2, 1));
 
-    Assert.assertEquals( 512, ImageLoadRequest.sampleSizeForResize( 1024, 768,   1,  1 ) );
+        Assert.assertEquals(512, ImageLoadRequest.sampleSizeForResize(1024, 768, 1, 1));
 
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768,   0,   0 ) );
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768,  -1,   0 ) );
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768,   0,  -1 ) );
-    Assert.assertEquals(   1, ImageLoadRequest.sampleSizeForResize( 1024, 768,  -1,  -1 ) );
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 0, 0));
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, -1, 0));
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, 0, -1));
+        Assert.assertEquals(1, ImageLoadRequest.sampleSizeForResize(1024, 768, -1, -1));
     }
 
-  }
+}

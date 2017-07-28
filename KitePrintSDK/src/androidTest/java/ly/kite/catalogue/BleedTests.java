@@ -36,14 +36,12 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 
 ///// Class Declaration /////
 
@@ -52,82 +50,73 @@ import junit.framework.TestCase;
  * This class tests the single currency amount class.
  *
  *****************************************************/
-public class BleedTests extends TestCase
-  {
-  ////////// Static Constant(s) //////////
+public class BleedTests extends TestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "BleedTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "BleedTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Constructor tests.
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testConstructor1() {
 
+        Bleed bleed = new Bleed(1, 2, 3, 4);
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Constructor tests.
-   *
-   *****************************************************/
-
-  public void testConstructor1()
-    {
-    Bleed bleed = new Bleed( 1, 2, 3, 4 );
-
-    Assert.assertEquals( 1, bleed.topPixels );
-    Assert.assertEquals( 2, bleed.rightPixels );
-    Assert.assertEquals( 3, bleed.bottomPixels );
-    Assert.assertEquals( 4, bleed.leftPixels );
+        Assert.assertEquals(1, bleed.topPixels);
+        Assert.assertEquals(2, bleed.rightPixels);
+        Assert.assertEquals(3, bleed.bottomPixels);
+        Assert.assertEquals(4, bleed.leftPixels);
     }
 
+    /*****************************************************
+     *
+     * Parcel tests.
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Parcel tests.
-   *
-   *****************************************************/
+    public void testParcel1() {
 
-  public void testParcel1()
-    {
-    Bleed originalBleed = new Bleed( 10, 11, 12, 13 );
+        Bleed originalBleed = new Bleed(10, 11, 12, 13);
 
-    Parcel parcel = Parcel.obtain();
+        Parcel parcel = Parcel.obtain();
 
-    originalBleed.writeToParcel( parcel, 0 );
+        originalBleed.writeToParcel(parcel, 0);
 
-    parcel.setDataPosition( 0 );
+        parcel.setDataPosition(0);
 
-    Bleed readBleed = Bleed.CREATOR.createFromParcel( parcel );
+        Bleed readBleed = Bleed.CREATOR.createFromParcel(parcel);
 
-    Assert.assertEquals( 10, readBleed.topPixels );
-    Assert.assertEquals( 11, readBleed.rightPixels );
-    Assert.assertEquals( 12, readBleed.bottomPixels );
-    Assert.assertEquals( 13, readBleed.leftPixels );
+        Assert.assertEquals(10, readBleed.topPixels);
+        Assert.assertEquals(11, readBleed.rightPixels);
+        Assert.assertEquals(12, readBleed.bottomPixels);
+        Assert.assertEquals(13, readBleed.leftPixels);
 
-    parcel.recycle();
+        parcel.recycle();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

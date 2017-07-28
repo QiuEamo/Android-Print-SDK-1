@@ -36,7 +36,6 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -48,7 +47,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.LinkedHashMap;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -57,168 +55,152 @@ import java.util.LinkedHashMap;
  * item that represents a single image.
  *
  *****************************************************/
-public class SimpleChildItem implements IImagePickerItem, ISelectableItem
-  {
-  ////////// Static Constant(s) //////////
+public class SimpleChildItem implements IImagePickerItem, ISelectableItem {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG          = "SimpleChildItem";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SimpleChildItem";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public SimpleChildItem createFromParcel(Parcel in) {
 
-  public static final Parcelable.Creator CREATOR = new Parcelable.Creator()
-    {
-    public SimpleChildItem createFromParcel( Parcel in )
-      {
-      return new SimpleChildItem( in );
-      }
+            return new SimpleChildItem(in);
+        }
 
-    public SimpleChildItem[] newArray( int size )
-      {
-      return new SimpleChildItem[ size ];
-      }
+        public SimpleChildItem[] newArray(int size) {
+
+            return new SimpleChildItem[size];
+        }
     };
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    private String mURLString;
 
-  private String  mURLString;
+    ////////// Static Initialiser(s) //////////
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Constructor(s) //////////
 
+    public SimpleChildItem(String urlString) {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public SimpleChildItem( String urlString )
-    {
-    mURLString = urlString;
+        mURLString = urlString;
     }
 
-  private SimpleChildItem( Parcel sourceParcel )
-    {
-    mURLString = sourceParcel.readString();
+    private SimpleChildItem(Parcel sourceParcel) {
+
+        mURLString = sourceParcel.readString();
     }
 
+    ////////// Parcelable Method(s) //////////
 
-  ////////// Parcelable Method(s) //////////
+    @Override
+    public int describeContents() {
 
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return 0;
     }
 
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeString( mURLString );
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
+
+        targetParcel.writeString(mURLString);
     }
 
+    ////////// IImagePickerItem Method(s) //////////
 
-  ////////// IImagePickerItem Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the image URL.
+     *
+     *****************************************************/
+    @Override
+    public void loadThumbnailImageInto(Context context, ImageView imageView) {
 
-  /*****************************************************
-   *
-   * Returns the image URL.
-   *
-   *****************************************************/
-  @Override
-  public void loadThumbnailImageInto( Context context, ImageView imageView )
-    {
-    Picasso.with( context )
-            .load( mURLString )
-            .resizeDimen( R.dimen.ip_image_default_resize_width, R.dimen.ip_image_default_resize_height )
-            .centerCrop()
-            .onlyScaleDown()
-            .into( imageView );
+        Picasso.with(context)
+                .load(mURLString)
+                .resizeDimen(R.dimen.ip_image_default_resize_width, R.dimen.ip_image_default_resize_height)
+                .centerCrop()
+                .onlyScaleDown()
+                .into(imageView);
     }
 
+    /*****************************************************
+     *
+     * Returns the full image URL.
+     *
+     *****************************************************/
+    @Override
+    public String getImageURLString() {
 
-  /*****************************************************
-   *
-   * Returns the full image URL.
-   *
-   *****************************************************/
-  @Override
-  public String getImageURLString()
-    {
-    return ( mURLString );
+        return mURLString;
     }
 
+    /*****************************************************
+     *
+     * Returns the label.
+     *
+     *****************************************************/
+    @Override
+    public String getLabel() {
 
-  /*****************************************************
-   *
-   * Returns the label.
-   *
-   *****************************************************/
-  @Override
-  public String getLabel()
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns a key if this item is a parent and can be
+     * descended into.
+     *
+     *****************************************************/
+    public String getKeyIfParent() {
 
-  /*****************************************************
-   *
-   * Returns a key if this item is a parent and can be
-   * descended into.
-   *
-   *****************************************************/
-  public String getKeyIfParent()
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns a selectable item if this item may be selected,
+     * null otherwise.
+     *
+     *****************************************************/
+    public ISelectableItem getSelectableItem() {
 
-  /*****************************************************
-   *
-   * Returns a selectable item if this item may be selected,
-   * null otherwise.
-   *
-   *****************************************************/
-  public ISelectableItem getSelectableItem()
-    {
-    return ( this );
+        return this;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the item has selected children.
+     *
+     *****************************************************/
+    @Override
+    public int getSelectedCount(LinkedHashMap<String, ISelectableItem> selectableItemTable) {
 
-  /*****************************************************
-   *
-   * Returns true if the item has selected children.
-   *
-   *****************************************************/
-  @Override
-  public int getSelectedCount( LinkedHashMap<String,ISelectableItem> selectableItemTable )
-    {
-    return ( selectableItemTable.containsKey( getKey() ) ? 1 : 0 );
+        return selectableItemTable.containsKey(getKey()) ? 1 : 0;
     }
 
+    ////////// ISelectableItem Method(s) //////////
 
-  ////////// ISelectableItem Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a key for the item.
+     *
+     *****************************************************/
+    public String getKey() {
 
-  /*****************************************************
-   *
-   * Returns a key for the item.
-   *
-   *****************************************************/
-  public String getKey()
-    {
-    return ( mURLString );
+        return mURLString;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

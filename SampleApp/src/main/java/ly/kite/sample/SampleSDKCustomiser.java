@@ -36,20 +36,17 @@
 
 package ly.kite.sample;
 
-
 ///// Import(s) /////
 
 import android.widget.Toast;
 
 import ly.kite.SDKCustomiser;
-import ly.kite.checkout.IOrderSubmissionResultListener;
 import ly.kite.instagramphotopicker.InstagramImageSource;
 import ly.kite.journey.AImageSource;
 import ly.kite.journey.DeviceImageSource;
 import ly.kite.ordering.IOrderSubmissionSuccessListener;
 import ly.kite.ordering.Order;
 import ly.kite.photofromphone.FromPhoneImageSource;
-
 
 ///// Class Declaration /////
 
@@ -62,80 +59,69 @@ import ly.kite.photofromphone.FromPhoneImageSource;
  * the default methods in the SDKCustomiser class.
  *
  *****************************************************/
-public class SampleSDKCustomiser extends SDKCustomiser
-  {
-  ////////// Static Constant(s) //////////
+public class SampleSDKCustomiser extends SDKCustomiser {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "SampleSDKCustomiser";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SampleSDKCustomiser";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns true if the user's phone number should be
+     * entered on the shipping screen.
+     *
+     *****************************************************/
+    public boolean requestPhoneNumber() {
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Returns true if the user's phone number should be
-   * entered on the shipping screen.
-   *
-   *****************************************************/
-  public boolean requestPhoneNumber()
-    {
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Returns the image sources.
+     *
+     *****************************************************/
+    public AImageSource[] getImageSources() {
 
-  /*****************************************************
-   *
-   * Returns the image sources.
-   *
-   *****************************************************/
-  public AImageSource[] getImageSources()
-    {
-    return ( new AImageSource[] { new DeviceImageSource(), new InstagramImageSource(), new FromPhoneImageSource() } );
-    //return ( new AImageSource[] { new DeviceImageSource() } );
+        return (new AImageSource[]{new DeviceImageSource(), new InstagramImageSource(), new FromPhoneImageSource()});
+        //return  new AImageSource[] { new DeviceImageSource() } ;
     }
 
+    /*****************************************************
+     *
+     * Returns a callback for order completion.
+     *
+     *****************************************************/
+    public IOrderSubmissionSuccessListener getOrderSubmissionSuccessListener() {
 
-  /*****************************************************
-   *
-   * Returns a callback for order completion.
-   *
-   *****************************************************/
-  public IOrderSubmissionSuccessListener getOrderSubmissionSuccessListener()
-    {
-    return ( new IOrderSubmissionSuccessListener()
-      {
-      @Override
-      public void onOrderSubmissionSuccess( Order sanitisedOrder )
-        {
-        Toast.makeText( getContext(), "Order success: " + sanitisedOrder.getReceipt(), Toast.LENGTH_SHORT ).show();
-        }
-      } );
+        return new IOrderSubmissionSuccessListener() {
+            @Override
+            public void onOrderSubmissionSuccess(Order sanitisedOrder) {
+
+                Toast.makeText(getContext(), "Order success: " + sanitisedOrder.getReceipt(), Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

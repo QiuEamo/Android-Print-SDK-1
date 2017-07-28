@@ -36,10 +36,8 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +59,6 @@ import ly.kite.widget.CardNumberEditTextEnforcer;
 import ly.kite.widget.MonthEditTextEnforcer;
 import ly.kite.widget.YearEditTextEnforcer;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -71,371 +68,320 @@ import ly.kite.widget.YearEditTextEnforcer;
  *
  *****************************************************/
 abstract public class ACreditCardDialogFragment extends ARetainedDialogFragment implements AEditTextEnforcer.ICallback,
-                                                                                  View.OnClickListener
-  {
-  ////////// Static Constant(s) //////////
+        View.OnClickListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                    = "ACreditCardFragment";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ACreditCardFragment";
 
-  static private final int     MAX_CARD_VALIDITY_IN_YEARS = 20;
+    private static final int MAX_CARD_VALIDITY_IN_YEARS = 20;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private EditText mCardNumberEditText;
+    private EditText mExpiryMonthEditText;
+    private EditText mExpiryYearEditText;
+    private EditText mCVVEditText;
+    private ImageView mLogoImageView;
+    private TextView mErrorTextView;
+    private ProgressBar mProgressSpinner;
+    private Button mCancelButton;
+    private Button mProceedButton;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private EditText     mCardNumberEditText;
-  private EditText     mExpiryMonthEditText;
-  private EditText     mExpiryYearEditText;
-  private EditText     mCVVEditText;
-  private ImageView    mLogoImageView;
-  private TextView     mErrorTextView;
-  private ProgressBar  mProgressSpinner;
-  private Button       mCancelButton;
-  private Button       mProceedButton;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public ACreditCardDialogFragment() {
 
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public ACreditCardDialogFragment()
-    {
-    super( APaymentFragment.class );
+        super(APaymentFragment.class);
     }
 
+    ////////// DialogFragment Method(s) //////////
 
-  ////////// DialogFragment Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the fragment is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState)
-    {
-    super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
 
-    setStyle( STYLE_NO_TITLE, 0 );
+        setStyle(STYLE_NO_TITLE, 0);
     }
 
+    /*****************************************************
+     *
+     * Creates and returns the view for this fragment.
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Creates and returns the view for this fragment.
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.dialog_credit_card, container, false );
+        View view = layoutInflator.inflate(R.layout.dialog_credit_card, container, false);
 
-    mCardNumberEditText  = (EditText)view.findViewById( R.id.card_number_edit_text );
-    mExpiryMonthEditText = (EditText)view.findViewById( R.id.expiry_month_edit_text );
-    mExpiryYearEditText  = (EditText)view.findViewById( R.id.expiry_year_edit_text );
-    mCVVEditText         = (EditText)view.findViewById( R.id.cvv_edit_text );
-    mLogoImageView       = (ImageView)view.findViewById( R.id.logo_image_view );
-    mErrorTextView       = (TextView)view.findViewById( R.id.error_text_view );
-    mProgressSpinner     = (ProgressBar)view.findViewById( R.id.progress_spinner );
-    mCancelButton        = (Button)view.findViewById( R.id.cancel_button );
-    mProceedButton       = (Button)view.findViewById( R.id.proceed_button );
+        mCardNumberEditText = (EditText) view.findViewById(R.id.card_number_edit_text);
+        mExpiryMonthEditText = (EditText) view.findViewById(R.id.expiry_month_edit_text);
+        mExpiryYearEditText = (EditText) view.findViewById(R.id.expiry_year_edit_text);
+        mCVVEditText = (EditText) view.findViewById(R.id.cvv_edit_text);
+        mLogoImageView = (ImageView) view.findViewById(R.id.logo_image_view);
+        mErrorTextView = (TextView) view.findViewById(R.id.error_text_view);
+        mProgressSpinner = (ProgressBar) view.findViewById(R.id.progress_spinner);
+        mCancelButton = (Button) view.findViewById(R.id.cancel_button);
+        mProceedButton = (Button) view.findViewById(R.id.proceed_button);
 
+        // Set up enforcers for the text fields
 
-    // Set up enforcers for the text fields
+        CVVEditTextEnforcer cvvEditTextEnforcer = null;
 
-    CVVEditTextEnforcer cvvEditTextEnforcer = null;
-
-    if ( mCVVEditText != null )
-      {
-      cvvEditTextEnforcer = new CVVEditTextEnforcer( mCVVEditText, this );
-      }
-
-    if ( mCardNumberEditText != null )
-      {
-      new CardNumberEditTextEnforcer( mCardNumberEditText, mLogoImageView, cvvEditTextEnforcer, this );
-      }
-
-    if ( mExpiryMonthEditText != null )
-      {
-      new MonthEditTextEnforcer( mExpiryMonthEditText, this );
-      }
-
-    if ( mExpiryYearEditText != null )
-      {
-      // The valid years are from now until the maximum allowed expiry
-
-      int firstYear = Calendar.getInstance().get( Calendar.YEAR );
-
-      new YearEditTextEnforcer( mExpiryYearEditText, firstYear, firstYear + MAX_CARD_VALIDITY_IN_YEARS, this );
-      }
-
-    mProgressSpinner.setVisibility( View.GONE );
-
-    if ( mCancelButton  != null ) mCancelButton.setOnClickListener( this );
-    if ( mProceedButton != null ) mProceedButton.setOnClickListener( this );
-
-    return ( view );
-    }
-
-
-  ////////// AEditTextEnforcer.ICallback Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the card number is complete.
-   *
-   *****************************************************/
-  @Override
-  public void eteOnTextComplete( EditText editText )
-    {
-    onClearError();
-
-
-    // Check what edit text has been completed, and shift the focus to the next
-    // one.
-
-    if ( editText == mCardNumberEditText )
-      {
-      // Card number -> expiry month
-
-      if ( mExpiryMonthEditText != null )
-        {
-        mExpiryMonthEditText.requestFocus();
+        if (mCVVEditText != null) {
+            cvvEditTextEnforcer = new CVVEditTextEnforcer(mCVVEditText, this);
         }
-      }
 
-    else if ( editText == mExpiryMonthEditText )
-      {
-      // Expiry month -> expiry year
-
-      if ( mExpiryYearEditText != null )
-        {
-        mExpiryYearEditText.requestFocus();
+        if (mCardNumberEditText != null) {
+            new CardNumberEditTextEnforcer(mCardNumberEditText, mLogoImageView, cvvEditTextEnforcer, this);
         }
-      }
 
-    else if ( editText == mExpiryYearEditText )
-      {
-      // Expiry year -> CVV
-
-      if ( mCVVEditText != null )
-        {
-        mCVVEditText.requestFocus();
+        if (mExpiryMonthEditText != null) {
+            new MonthEditTextEnforcer(mExpiryMonthEditText, this);
         }
-      }
 
-    else if ( editText == mCVVEditText )
-      {
-      // CVV -> Done button
+        if (mExpiryYearEditText != null) {
+            // The valid years are from now until the maximum allowed expiry
 
-      if ( mProceedButton != null )
-        {
-        mProceedButton.requestFocus();
+            int firstYear = Calendar.getInstance().get(Calendar.YEAR);
+
+            new YearEditTextEnforcer(mExpiryYearEditText, firstYear, firstYear + MAX_CARD_VALIDITY_IN_YEARS, this);
         }
-      }
+
+        mProgressSpinner.setVisibility(View.GONE);
+
+        if (mCancelButton != null) {
+            mCancelButton.setOnClickListener(this);
+        }
+        if (mProceedButton != null) {
+            mProceedButton.setOnClickListener(this);
+        }
+
+        return view;
+    }
+
+    ////////// AEditTextEnforcer.ICallback Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called when the card number is complete.
+     *
+     *****************************************************/
+    @Override
+    public void eteOnTextComplete(EditText editText) {
+
+        onClearError();
+
+        // Check what edit text has been completed, and shift the focus to the next
+        // one.
+
+        if (editText == mCardNumberEditText) {
+            // Card number -> expiry month
+
+            if (mExpiryMonthEditText != null) {
+                mExpiryMonthEditText.requestFocus();
+            }
+        } else if (editText == mExpiryMonthEditText) {
+            // Expiry month -> expiry year
+
+            if (mExpiryYearEditText != null) {
+                mExpiryYearEditText.requestFocus();
+            }
+        } else if (editText == mExpiryYearEditText) {
+            // Expiry year -> CVV
+
+            if (mCVVEditText != null) {
+                mCVVEditText.requestFocus();
+            }
+        } else if (editText == mCVVEditText) {
+            // CVV -> Done button
+
+            if (mProceedButton != null) {
+                mProceedButton.requestFocus();
+            }
+        }
 
     }
 
+    ////////// View.OnClickListener Method(s) //////////
 
-  ////////// View.OnClickListener Method(s) //////////
+    /*****************************************************
+     *
+     * Called when a view is clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onClick(View view) {
 
-  /*****************************************************
-   *
-   * Called when a view is clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onClick( View view )
-    {
-    if ( view == mCancelButton )
-      {
-      dismiss();
-      }
-
-    else if ( view == mProceedButton )
-      {
-      onProceed();
-      }
+        if (view == mCancelButton) {
+            dismiss();
+        } else if (view == mProceedButton) {
+            onProceed();
+        }
 
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the proceed button has been clicked.
+     *
+     *****************************************************/
+    private void onProceed() {
 
-  /*****************************************************
-   *
-   * Called when the proceed button has been clicked.
-   *
-   *****************************************************/
-  private void onProceed()
-    {
-    String cardNumberString  = StringUtils.getDigitString( mCardNumberEditText.getText().toString() );
-    String expiryMonthString = StringUtils.getDigitString( mExpiryMonthEditText.getText().toString() );
-    String expiryYearString  = StringUtils.getDigitString( mExpiryYearEditText.getText().toString() );
-    String cvvString         = StringUtils.getDigitString( mCVVEditText.getText().toString() );
+        String cardNumberString = StringUtils.getDigitString(mCardNumberEditText.getText().toString());
+        String expiryMonthString = StringUtils.getDigitString(mExpiryMonthEditText.getText().toString());
+        String expiryYearString = StringUtils.getDigitString(mExpiryYearEditText.getText().toString());
+        String cvvString = StringUtils.getDigitString(mCVVEditText.getText().toString());
 
-    onProceed( cardNumberString,
-               expiryMonthString,
-               expiryYearString,
-               cvvString );
+        onProceed(cardNumberString,
+                expiryMonthString,
+                expiryYearString,
+                cvvString);
     }
 
+    /*****************************************************
+     *
+     * Called to clear any error text.
+     *
+     *****************************************************/
+    protected void onClearError() {
 
-  /*****************************************************
-   *
-   * Called to clear any error text.
-   *
-   *****************************************************/
-  protected void onClearError()
-    {
-    if ( mErrorTextView != null )
-      {
-      mErrorTextView.setText( null );
-      }
+        if (mErrorTextView != null) {
+            mErrorTextView.setText(null);
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when there is an error with the card details.
+     *
+     *****************************************************/
+    protected void onDisplayError(String message) {
 
-  /*****************************************************
-   *
-   * Called when there is an error with the card details.
-   *
-   *****************************************************/
-  protected void onDisplayError( String message )
-    {
-    if ( mErrorTextView != null )
-      {
-      mErrorTextView.setText( message );
-      }
+        if (mErrorTextView != null) {
+            mErrorTextView.setText(message);
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when there is an error with the card details.
+     *
+     *****************************************************/
+    protected void onDisplayError(int messageResourceId) {
 
-  /*****************************************************
-   *
-   * Called when there is an error with the card details.
-   *
-   *****************************************************/
-  protected void onDisplayError( int messageResourceId )
-    {
-    onDisplayError( getActivity().getString( messageResourceId ) );
+        onDisplayError(getActivity().getString(messageResourceId));
     }
 
+    /*****************************************************
+     *
+     * Called when the proceed button has been clicked, and
+     * the obvious details validated.
+     *
+     *****************************************************/
+    protected abstract void onProceed(String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString);
 
-  /*****************************************************
-   *
-   * Called when the proceed button has been clicked, and
-   * the obvious details validated.
-   *
-   *****************************************************/
-  abstract protected void onProceed( String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString );
+    /*****************************************************
+     *
+     * Performs basic validation of credit card details.
+     *
+     *****************************************************/
+    protected boolean validateCard(String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString) {
+        ///// Card number
 
+        if (!StringUtils.isDigitString(cardNumberString)) {
+            onDisplayError(R.string.card_error_invalid_number);
 
-  /*****************************************************
-   *
-   * Performs basic validation of credit card details.
-   *
-   *****************************************************/
-  protected boolean validateCard( String cardNumberString, String expiryMonthString, String expiryYearString, String cvvString )
-    {
-    ///// Card number
+            return false;
+        }
 
-    if ( ! StringUtils.isDigitString( cardNumberString ) )
-      {
-      onDisplayError( R.string.card_error_invalid_number );
+        ///// Expiry month
 
-      return ( false );
-      }
+        if (!StringUtils.isDigitString(expiryMonthString)) {
+            onDisplayError(R.string.card_error_invalid_expiry_date);
 
+            return false;
+        }
 
-    ///// Expiry month
+        ///// Expiry year
 
-    if ( ! StringUtils.isDigitString( expiryMonthString ) )
-      {
-      onDisplayError( R.string.card_error_invalid_expiry_date );
+        if (!StringUtils.isDigitString(expiryYearString)) {
+            onDisplayError(R.string.card_error_invalid_expiry_date);
 
-      return ( false );
-      }
+            return false;
+        }
 
+        ///// CVV
 
-    ///// Expiry year
+        if (!StringUtils.isDigitString(cvvString)) {
+            onDisplayError(R.string.card_error_invalid_cvv);
 
-    if ( ! StringUtils.isDigitString( expiryYearString ) )
-      {
-      onDisplayError( R.string.card_error_invalid_expiry_date );
+            return false;
+        }
 
-      return ( false );
-      }
-
-
-    ///// CVV
-
-    if ( ! StringUtils.isDigitString( cvvString ) )
-      {
-      onDisplayError( R.string.card_error_invalid_cvv );
-
-      return ( false );
-      }
-
-
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Sets the enabled state of all the UI components.
+     *
+     *****************************************************/
+    private void setUIEnabled(boolean enabled) {
 
-  /*****************************************************
-   *
-   * Sets the enabled state of all the UI components.
-   *
-   *****************************************************/
-  private void setUIEnabled( boolean enabled )
-    {
-    mCardNumberEditText.setEnabled( enabled );
-    mExpiryMonthEditText.setEnabled( enabled );
-    mExpiryYearEditText.setEnabled( enabled );
-    mCVVEditText.setEnabled( enabled );
-    mCancelButton.setEnabled( enabled );
-    mProceedButton.setEnabled( enabled );
+        mCardNumberEditText.setEnabled(enabled);
+        mExpiryMonthEditText.setEnabled(enabled);
+        mExpiryYearEditText.setEnabled(enabled);
+        mCVVEditText.setEnabled(enabled);
+        mCancelButton.setEnabled(enabled);
+        mProceedButton.setEnabled(enabled);
     }
 
+    /*****************************************************
+     *
+     * Called when processing the card starts.
+     *
+     *****************************************************/
+    protected void onProcessingStarted() {
 
-  /*****************************************************
-   *
-   * Called when processing the card starts.
-   *
-   *****************************************************/
-  protected void onProcessingStarted()
-    {
-    setUIEnabled( false );
+        setUIEnabled(false);
 
-    mProgressSpinner.setVisibility( View.VISIBLE );
+        mProgressSpinner.setVisibility(View.VISIBLE);
     }
 
+    /*****************************************************
+     *
+     * Called when processing the card stops.
+     *
+     *****************************************************/
+    protected void onProcessingStopped() {
 
-  /*****************************************************
-   *
-   * Called when processing the card stops.
-   *
-   *****************************************************/
-  protected void onProcessingStopped()
-    {
-    setUIEnabled( true );
+        setUIEnabled(true);
 
-    mProgressSpinner.setVisibility( View.GONE );
+        mProgressSpinner.setVisibility(View.GONE);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

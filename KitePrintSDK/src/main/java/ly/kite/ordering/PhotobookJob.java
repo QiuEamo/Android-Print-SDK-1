@@ -36,7 +36,6 @@
 
 package ly.kite.ordering;
 
-
 ///// Import(s) /////
 
 import android.os.Parcel;
@@ -54,7 +53,6 @@ import ly.kite.catalogue.Product;
 import ly.kite.util.AssetFragment;
 import ly.kite.util.UploadableImage;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -62,250 +60,233 @@ import ly.kite.util.UploadableImage;
  * This class represents a photobook job.
  *
  *****************************************************/
-public class PhotobookJob extends ImagesJob
-  {
-  ////////// Static Constant(s) //////////
+public class PhotobookJob extends ImagesJob {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "PhotobookJob";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "PhotobookJob";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<PhotobookJob> CREATOR = new Parcelable.Creator<PhotobookJob>() {
+        public PhotobookJob createFromParcel(Parcel in) {
 
-  public static final Parcelable.Creator<PhotobookJob> CREATOR = new Parcelable.Creator<PhotobookJob>()
-    {
-    public PhotobookJob createFromParcel( Parcel in )
-      {
-      return ( new PhotobookJob( in ) );
-      }
+            return new PhotobookJob(in);
+        }
 
-    public PhotobookJob[] newArray( int size )
-      {
-      return ( new PhotobookJob[ size ] );
-      }
+        public PhotobookJob[] newArray(int size) {
+
+            return new PhotobookJob[size];
+        }
     };
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    private UploadableImage mFrontCoverUploadableImage;
 
-  private UploadableImage  mFrontCoverUploadableImage;
+    ////////// Static Initialiser(s) //////////
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Constructor(s) //////////
 
+    public PhotobookJob(long jobId, Product product, int orderQuantity, HashMap<String, String> optionsMap, Object frontCoverImage,
+                        List<?> contentObjectList, int shippingClass) {
 
-  ////////// Static Method(s) //////////
+        super(jobId, product, orderQuantity, optionsMap, contentObjectList, 0, true, shippingClass);
 
-
-  ////////// Constructor(s) //////////
-
-  public PhotobookJob( long jobId, Product product, int orderQuantity, HashMap<String,String> optionsMap, Object frontCoverImage, List<?> contentObjectList, int shippingClass )
-    {
-    super( jobId, product, orderQuantity, optionsMap, contentObjectList, 0, true, shippingClass);
-
-    mFrontCoverUploadableImage = singleUploadableImageFrom( frontCoverImage );
+        mFrontCoverUploadableImage = singleUploadableImageFrom(frontCoverImage);
     }
 
-  public PhotobookJob( Product product, int orderQuantity, HashMap<String,String> optionsMap, Object frontCoverImage, List<?> contentObjectList, int shippingClass )
-    {
-    this( 0, product, orderQuantity, optionsMap, frontCoverImage, contentObjectList, shippingClass );
+    public PhotobookJob(Product product, int orderQuantity, HashMap<String, String> optionsMap, Object frontCoverImage, List<?>
+            contentObjectList, int shippingClass) {
+
+        this(0, product, orderQuantity, optionsMap, frontCoverImage, contentObjectList, shippingClass);
     }
 
-  protected PhotobookJob( Parcel parcel )
-    {
-    super( parcel );
+    protected PhotobookJob(Parcel parcel) {
 
-    mFrontCoverUploadableImage = parcel.readParcelable( AssetFragment.class.getClassLoader() );
+        super(parcel);
+
+        mFrontCoverUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
     }
 
+    ////////// Parcelable Method(s) //////////
 
-  ////////// Parcelable Method(s) //////////
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
 
-  @Override
-  public void writeToParcel( Parcel parcel, int flags )
-    {
-    super.writeToParcel( parcel, flags );
+        super.writeToParcel(parcel, flags);
 
-    parcel.writeParcelable( mFrontCoverUploadableImage, flags );
+        parcel.writeParcelable(mFrontCoverUploadableImage, flags);
     }
 
+    ////////// ImagesJob Method(s) //////////
 
-  ////////// ImagesJob Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a list of asset fragments that need uploading.
+     *
+     *****************************************************/
+    @Override
+    public List<UploadableImage> getImagesForUploading() {
+        // Create a new list, and add the front cover to it
 
-  /*****************************************************
-   *
-   * Returns a list of asset fragments that need uploading.
-   *
-   *****************************************************/
-  @Override
-  public List<UploadableImage> getImagesForUploading()
-    {
-    // Create a new list, and add the front cover to it
+        ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
 
-    ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
+        if (mFrontCoverUploadableImage != null) {
+            uploadableImageArrayList.add(mFrontCoverUploadableImage);
+        }
 
-    if ( mFrontCoverUploadableImage != null ) uploadableImageArrayList.add( mFrontCoverUploadableImage );
+        // Add any content images
+        super.addImagesForUploading(uploadableImageArrayList);
 
-
-    // Add any content images
-    super.addImagesForUploading( uploadableImageArrayList );
-
-    return ( uploadableImageArrayList );
+        return uploadableImageArrayList;
     }
 
+    /*****************************************************
+     *
+     * Adds the assets to the supplied JSON object. Photobook
+     * orders need assets in the following form:
+     *
+     * "assets":
+     *   {
+     *   "back_cover": null,
+     *   "inside_pdf": null,
+     *   "cover_pdf": null,
+     *   "front_cover": null,
+     *   "pages":
+     *     [
+     *       {
+     *       "layout": "single_centered",
+     *       "asset": "2409887"
+     *       },
+     *       {
+     *       "layout": "single_centered",
+     *       "asset": "2409888"
+     *       },
+     *       ...
+     *     ]
+     *   }
+     *
+     *****************************************************/
+    @Override
+    protected void putAssetsJSON(List<UploadableImage> uploadableImageList, JSONObject jsonObject) throws JSONException {
 
-  /*****************************************************
-   *
-   * Adds the assets to the supplied JSON object. Photobook
-   * orders need assets in the following form:
-   *
-   * "assets":
-   *   {
-   *   "back_cover": null,
-   *   "inside_pdf": null,
-   *   "cover_pdf": null,
-   *   "front_cover": null,
-   *   "pages":
-   *     [
-   *       {
-   *       "layout": "single_centered",
-   *       "asset": "2409887"
-   *       },
-   *       {
-   *       "layout": "single_centered",
-   *       "asset": "2409888"
-   *       },
-   *       ...
-   *     ]
-   *   }
-   *
-   *****************************************************/
-  @Override
-  protected void putAssetsJSON( List<UploadableImage> uploadableImageList, JSONObject jsonObject ) throws JSONException
-    {
-    JSONObject assetsJSONObject = new JSONObject();
+        JSONObject assetsJSONObject = new JSONObject();
 
-    assetsJSONObject.put( "back_cover", JSONObject.NULL );
-    assetsJSONObject.put( "inside_pdf", JSONObject.NULL );
-    assetsJSONObject.put( "cover_pdf",  JSONObject.NULL );
+        assetsJSONObject.put("back_cover", JSONObject.NULL);
+        assetsJSONObject.put("inside_pdf", JSONObject.NULL);
+        assetsJSONObject.put("cover_pdf", JSONObject.NULL);
 
+        // Add any front cover
 
-    // Add any front cover
+        if (mFrontCoverUploadableImage != null) {
+            assetsJSONObject.put("front_cover", String.valueOf(mFrontCoverUploadableImage.getUploadedAssetId()));
+        } else {
+            assetsJSONObject.put("front_cover", JSONObject.NULL);
+        }
 
-    if ( mFrontCoverUploadableImage != null )
-      {
-      assetsJSONObject.put( "front_cover", String.valueOf( mFrontCoverUploadableImage.getUploadedAssetId() ) );
-      }
-    else
-      {
-      assetsJSONObject.put( "front_cover", JSONObject.NULL );
-      }
+        // Add the content pages
 
+        JSONArray pagesJSONArray = new JSONArray();
 
-    // Add the content pages
+        for (UploadableImage uploadableImage : uploadableImageList) {
+            pagesJSONArray.put(getPageJSONObject(uploadableImage));
+        }
 
-    JSONArray pagesJSONArray = new JSONArray();
+        assetsJSONObject.put("pages", pagesJSONArray);
 
-    for ( UploadableImage uploadableImage : uploadableImageList )
-      {
-      pagesJSONArray.put( getPageJSONObject( uploadableImage ) );
-      }
-
-    assetsJSONObject.put( "pages", pagesJSONArray );
-
-
-    jsonObject.put( "assets", assetsJSONObject );
+        jsonObject.put("assets", assetsJSONObject);
     }
 
+    /*****************************************************
+     *
+     * Returns a JSON object that represents a page.
+     *
+     *****************************************************/
+    protected JSONObject getPageJSONObject(UploadableImage uploadableImage) throws JSONException {
 
-  /*****************************************************
-   *
-   * Returns a JSON object that represents a page.
-   *
-   *****************************************************/
-  protected JSONObject getPageJSONObject( UploadableImage uploadableImage ) throws JSONException
-    {
-    JSONObject pageJSONObject = new JSONObject();
+        JSONObject pageJSONObject = new JSONObject();
 
-    if ( uploadableImage != null )
-      {
-      pageJSONObject.put( "layout", "single_centered" );
-      pageJSONObject.put( "asset", String.valueOf( uploadableImage.getUploadedAssetId() ) );
-      }
-    else
-      {
-      pageJSONObject.put( "layout", "blank" );
-      }
+        if (uploadableImage != null) {
+            pageJSONObject.put("layout", "single_centered");
+            pageJSONObject.put("asset", String.valueOf(uploadableImage.getUploadedAssetId()));
+        } else {
+            pageJSONObject.put("layout", "blank");
+        }
 
-    return ( pageJSONObject );
+        return pageJSONObject;
     }
 
+    /*****************************************************
+     *
+     * Returns the number of photos that are part of this job.
+     * This quantity is a pain in the arse, because its meaning
+     * varies.
+     *
+     * For photobooks, we need to consider the front cover as
+     * well as the content images:
+     *   - If all pages are full, we don't want to include the front
+     *   cover because the server will think we have another book.
+     *   - If just the front cover is occupied we need to add it in,
+     *   otherwise the quanity will be 0 and the server will think
+     *   there are no photos at all.
+     *
+     *****************************************************/
+    @Override
+    public int getQuantity() {
 
-  /*****************************************************
-   *
-   * Returns the number of photos that are part of this job.
-   * This quantity is a pain in the arse, because its meaning
-   * varies.
-   *
-   * For photobooks, we need to consider the front cover as
-   * well as the content images:
-   *   - If all pages are full, we don't want to include the front
-   *   cover because the server will think we have another book.
-   *   - If just the front cover is occupied we need to add it in,
-   *   otherwise the quanity will be 0 and the server will think
-   *   there are no photos at all.
-   *
-   *****************************************************/
-  @Override
-  public int getQuantity()
-    {
-    int quantity = super.getQuantity();
+        int quantity = super.getQuantity();
 
-    if ( quantity < 1 ) return ( mFrontCoverUploadableImage != null ? 1 : 0 );
+        if (quantity < 1) {
+            return mFrontCoverUploadableImage != null ? 1 : 0;
+        }
 
-    return ( quantity );
+        return quantity;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns any front cover uploadable image.
+     *
+     *****************************************************/
+    public UploadableImage getFrontCoverUploadableImage() {
 
-  /*****************************************************
-   *
-   * Returns any front cover uploadable image.
-   *
-   *****************************************************/
-  public UploadableImage getFrontCoverUploadableImage()
-    {
-    return ( mFrontCoverUploadableImage );
+        return mFrontCoverUploadableImage;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the other object is the same as this
+     * photobook job.
+     *
+     *****************************************************/
+    @Override
+    public boolean equals(Object otherObject) {
 
-  /*****************************************************
-   *
-   * Returns true if the other object is the same as this
-   * photobook job.
-   *
-   *****************************************************/
-  @Override
-  public boolean equals( Object otherObject )
-    {
-    if ( otherObject == null || ( !( otherObject instanceof PhotobookJob ) ) ) return ( false );
+        if (otherObject == null || (!(otherObject instanceof PhotobookJob))) {
+            return false;
+        }
 
-    PhotobookJob otherPhotobookJob = (PhotobookJob)otherObject;
+        PhotobookJob otherPhotobookJob = (PhotobookJob) otherObject;
 
-    if ( ! UploadableImage.areBothNullOrEqual( mFrontCoverUploadableImage, otherPhotobookJob.mFrontCoverUploadableImage ) ) return ( false );
+        if (!UploadableImage.areBothNullOrEqual(mFrontCoverUploadableImage, otherPhotobookJob.mFrontCoverUploadableImage)) {
+            return false;
+        }
 
-    return ( super.equals( otherObject ) );
+        return super.equals(otherObject);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

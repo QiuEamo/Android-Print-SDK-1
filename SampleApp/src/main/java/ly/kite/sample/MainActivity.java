@@ -36,27 +36,22 @@
 
 package ly.kite.sample;
 
-
 ///// Import(s) /////
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
-// Uncomment to include Crashlytics (Fabric) crash reporting
-//import com.crashlytics.android.Crashlytics;
-//import io.fabric.sdk.android.Fabric;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
+import ly.kite.KiteSDK;
 import ly.kite.address.Address;
 import ly.kite.app.ADeepLinkableActivity;
 import ly.kite.catalogue.Catalogue;
@@ -67,10 +62,11 @@ import ly.kite.journey.AImageSource;
 import ly.kite.journey.DeviceImageSource;
 import ly.kite.ordering.Job;
 import ly.kite.ordering.Order;
-import ly.kite.ordering.OrderingDatabaseAgent;
 import ly.kite.util.Asset;
-import ly.kite.KiteSDK;
 
+// Uncomment to include Crashlytics (Fabric) crash reporting
+//import com.crashlytics.android.Crashlytics;
+//import io.fabric.sdk.android.Fabric;
 
 ///// Class Declaration /////
 
@@ -82,393 +78,344 @@ import ly.kite.KiteSDK;
  * selection / shopping journey.
  *
  *****************************************************/
-public class MainActivity extends ADeepLinkableActivity
-  {
-  ////////// Static Constant(s) //////////
+public class MainActivity extends ADeepLinkableActivity {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG                    = "MainActivity";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MainActivity";
 
-  private static final String  REPLACE_DETAILS_HERE       = "REPLACE_ME";
+    private static final String REPLACE_DETAILS_HERE = "REPLACE_ME";
 
-  private static final int    REQUEST_CODE_SELECT_PICTURE = 1;
-  private static final int    REQUEST_CODE_CHECKOUT       = 2;
+    private static final int REQUEST_CODE_SELECT_PICTURE = 1;
+    private static final int REQUEST_CODE_CHECKOUT = 2;
 
+    private static final String DEEP_LINK_URI_SCHEMA = "kite-sample-app";
 
-  static private final String DEEP_LINK_URI_SCHEMA        = "kite-sample-app";
+    private static final String PRODUCT_ID_POSTCARD = "postcard";
 
-  static private final String PRODUCT_ID_POSTCARD         = "postcard";
+    /**********************************************************************
+     * Insert your Kite API keys here. These are found under your profile
+     * by logging in to the developer portal at https://www.kite.ly
+     **********************************************************************/
+    private static String API_KEY_TEST = "2408339a7bb4ce5fdb594d59c6a85444e7601ab7";
+    private static String API_KEY_STAGING = REPLACE_DETAILS_HERE;
+    private static String API_KEY_LIVE = REPLACE_DETAILS_HERE;
 
+    /**********************************************************************
+     * Insert your Instagram details here.
+     **********************************************************************/
+    private static String INSTAGRAM_API_KEY = REPLACE_DETAILS_HERE;
+    private static String INSTAGRAM_REDIRECT_URI = REPLACE_DETAILS_HERE;
 
-  /**********************************************************************
-   * Insert your Kite API keys here. These are found under your profile
-   * by logging in to the developer portal at https://www.kite.ly
-   **********************************************************************/
-  static private       String API_KEY_TEST                = REPLACE_DETAILS_HERE;
-  static private       String API_KEY_STAGING             = REPLACE_DETAILS_HERE;
-  static private       String API_KEY_LIVE                = REPLACE_DETAILS_HERE;
+    ////////// Static Variable(s) //////////
 
+    ////////// Member Variable(s) //////////
 
-  /**********************************************************************
-   * Insert your Instagram details here.
-   **********************************************************************/
-  private static      String INSTAGRAM_API_KEY           = REPLACE_DETAILS_HERE;
-  private static      String INSTAGRAM_REDIRECT_URI      = REPLACE_DETAILS_HERE;
+    private Switch mEnvironmentSwitch;
 
+    private KiteSDK mKiteSDK;
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Static Variable(s) //////////
-
-
-  ////////// Member Variable(s) //////////
-
-  private Switch   mEnvironmentSwitch;
-
-  private KiteSDK  mKiteSDK;
-
-
-  ////////// Static Initialiser(s) //////////
-
-  static
-    {
+    static {
     }
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    ////////// Constructor(s) //////////
 
+    ////////// Activity Method(s) //////////
 
-  ////////// Constructor(s) //////////
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
 
-  ////////// Activity Method(s) //////////
+        // Uncomment to include Crashlytics (Fabric) crash reporting
+        //Fabric.with( this, new Crashlytics() );
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  protected void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
+        // Set up the screen
 
-    // Uncomment to include Crashlytics (Fabric) crash reporting
-    //Fabric.with( this, new Crashlytics() );
+        setContentView(R.layout.screen_main);
 
+        mEnvironmentSwitch = (Switch) findViewById(R.id.environment_switch);
 
-    // Set up the screen
+        // Check for any deep linking, i.e. if the start intent contains
+        // a product group label or product id that we should go to directly.
 
-    setContentView( R.layout.screen_main );
-
-    mEnvironmentSwitch = (Switch) findViewById( R.id.environment_switch );
-
-
-    // Check for any deep linking, i.e. if the start intent contains
-    // a product group label or product id that we should go to directly.
-
-    findDeepLink( DEEP_LINK_URI_SCHEMA );
+        findDeepLink(DEEP_LINK_URI_SCHEMA);
     }
 
+    /*****************************************************
+     *
+     * Called with the result of a called activity.
+     *
+     *****************************************************/
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-  /*****************************************************
-   *
-   * Called with the result of a called activity.
-   *
-   *****************************************************/
-  public void onActivityResult( int requestCode, int resultCode, Intent data )
-    {
-    if ( requestCode == REQUEST_CODE_CHECKOUT )
-      {
-      ///// Check out /////
+        if (requestCode == REQUEST_CODE_CHECKOUT) {
+            ///// Check out /////
 
-      if ( resultCode == Activity.RESULT_OK )
-        {
-        Toast.makeText( this, "User successfully checked out!", Toast.LENGTH_LONG ).show();
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(this, "User successfully checked out!", Toast.LENGTH_LONG).show();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, "User cancelled checkout :(", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == REQUEST_CODE_SELECT_PICTURE) {
+            ///// Select gallery picture /////
+
+            if (resultCode == RESULT_OK) {
+                ArrayList<Asset> assetArrayList = DeviceImageSource.getAssets(data);
+
+                fullJourney(assetArrayList);
+            }
         }
-      else if ( resultCode == Activity.RESULT_CANCELED )
-        {
-        Toast.makeText( this, "User cancelled checkout :(", Toast.LENGTH_LONG ).show();
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called when the print local photos button is clicked.
+     *
+     *****************************************************/
+    public void onPrintLocalButtonClicked(View view) {
+
+        callRunnableWithPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new Runnable() {
+            public void run() {
+                // Launch the picture selector
+                DevicePhotoPicker.startPhotoPickerForResult(MainActivity.this, AImageSource.UNLIMITED_IMAGES, REQUEST_CODE_SELECT_PICTURE);
+            }
+        });
+    }
+
+    /*****************************************************
+     *
+     * Called when the print photos at remove URLs button
+     * is clicked.
+     *
+     *****************************************************/
+    public void onPrintRemoteButtonClicked(View view) {
+        // Create some assets from a combination of a local resource and remote URLs
+
+        ArrayList<Asset> assetArrayList = new ArrayList<>();
+
+        assetArrayList.add(new Asset(R.drawable.instagram1));
+
+        try {
+            assetArrayList.add(Asset.create("http://psps.s3.amazonaws.com/sdk_static/1.jpg"));
+            assetArrayList.add(Asset.create("http://psps.s3.amazonaws.com/sdk_static/2.jpg"));
+            assetArrayList.add(Asset.create("http://psps.s3.amazonaws.com/sdk_static/3.jpg"));
+            assetArrayList.add(Asset.create("http://psps.s3.amazonaws.com/sdk_static/4.jpg"));
+        } catch (Exception ex) {
         }
-      }
-    else if ( requestCode == REQUEST_CODE_SELECT_PICTURE )
-      {
-      ///// Select gallery picture /////
 
-      if ( resultCode == RESULT_OK )
-        {
-        ArrayList<Asset> assetArrayList = DeviceImageSource.getAssets( data );
+        fullJourney(assetArrayList);
+    }
 
-        fullJourney( assetArrayList );
+    /*****************************************************
+     *
+     * Called when the order history button is clicked.
+     *
+     *****************************************************/
+    public void onOrderHistoryButtonClicked(View view) {
+
+        KiteSDK kiteSDK = configureSDK();
+
+        kiteSDK.startOrderHistory(this);
+    }
+
+    /*****************************************************
+     *
+     * Called when the print local photos button is clicked.
+     *
+     *****************************************************/
+    public void onPrintPostcardButtonClicked(View view) {
+
+        postcardJourney();
+    }
+
+    /*****************************************************
+     *
+     * Sets up the SDK.
+     *
+     *****************************************************/
+    private KiteSDK configureSDK() {
+
+        String apiKey;
+        KiteSDK.IEnvironment environment;
+
+        // Determine the API and environment based on the position
+        // of the on-screen switch.
+
+        if (mEnvironmentSwitch != null && mEnvironmentSwitch.isChecked()) {
+            apiKey = API_KEY_LIVE;
+            environment = KiteSDK.DefaultEnvironment.LIVE;
+        } else {
+            apiKey = API_KEY_TEST;
+            environment = KiteSDK.DefaultEnvironment.TEST;
         }
-      }
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the print local photos button is clicked.
-   *
-   *****************************************************/
-  public void onPrintLocalButtonClicked( View view )
-    {
-    callRunnableWithPermissions( new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, new Runnable()
-      {
-      public void run()
-        {
-        // Launch the picture selector
-        DevicePhotoPicker.startPhotoPickerForResult( MainActivity.this, AImageSource.UNLIMITED_IMAGES, REQUEST_CODE_SELECT_PICTURE );
-        }
-      });
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the print photos at remove URLs button
-   * is clicked.
-   *
-   *****************************************************/
-  public void onPrintRemoteButtonClicked( View view )
-    {
-    // Create some assets from a combination of a local resource and remote URLs
-
-    ArrayList<Asset> assetArrayList = new ArrayList<>();
-
-    assetArrayList.add( new Asset( R.drawable.instagram1 ) );
-
-    try
-      {
-      assetArrayList.add( Asset.create( "http://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
-      assetArrayList.add( Asset.create( "http://psps.s3.amazonaws.com/sdk_static/2.jpg" ) );
-      assetArrayList.add( Asset.create( "http://psps.s3.amazonaws.com/sdk_static/3.jpg" ) );
-      assetArrayList.add( Asset.create( "http://psps.s3.amazonaws.com/sdk_static/4.jpg" ) );
-      }
-    catch ( Exception ex )
-      {
-      }
-
-    fullJourney( assetArrayList );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the order history button is clicked.
-   *
-   *****************************************************/
-  public void onOrderHistoryButtonClicked( View view )
-    {
-    KiteSDK kiteSDK = configureSDK();
-
-    kiteSDK.startOrderHistory( this );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the print local photos button is clicked.
-   *
-   *****************************************************/
-  public void onPrintPostcardButtonClicked( View view )
-    {
-    postcardJourney();
-    }
-
-
-  /*****************************************************
-   *
-   * Sets up the SDK.
-   *
-   *****************************************************/
-  private KiteSDK configureSDK()
-    {
-    String apiKey;
-    KiteSDK.IEnvironment environment;
-
-
-    // Determine the API and environment based on the position
-    // of the on-screen switch.
-
-    if ( mEnvironmentSwitch != null && mEnvironmentSwitch.isChecked() )
-      {
-      apiKey      = API_KEY_LIVE;
-      environment = KiteSDK.DefaultEnvironment.LIVE;
-      }
-    else
-      {
-      apiKey      = API_KEY_TEST;
-      environment = KiteSDK.DefaultEnvironment.TEST;
-      }
 
 //    apiKey      = API_KEY_STAGING;
 //    environment = KiteSDK.DefaultEnvironment.STAGING_DO_NOT_USE;
 
+        // Check that the API has been set in code
+        if (apiKey.equals(REPLACE_DETAILS_HERE)) {
+            showError("Set API Keys", "Please set your Kite API keys at the top of the SampleApp's MainActivity.java. You can find these " +
+                    "by logging into https://www.kite.ly.");
 
-    // Check that the API has been set in code
-    if ( apiKey.equals( REPLACE_DETAILS_HERE ) )
-      {
-      showError( "Set API Keys", "Please set your Kite API keys at the top of the SampleApp's MainActivity.java. You can find these by logging into https://www.kite.ly." );
-
-      return ( null );
-      }
-
-
-    // Create an instance of the SDK, and set a customiser
-
-    KiteSDK kiteSDK = KiteSDK.getInstance( this, apiKey, environment );
-
-    kiteSDK.setCustomiser( SampleSDKCustomiser.class );
-
-
-    return ( kiteSDK );
-    }
-
-
-  /*****************************************************
-   *
-   * Starts the SDK shopping journey with a set of image
-   * assets.
-   *
-   *****************************************************/
-  private void fullJourney( ArrayList<Asset> assetList )
-    {
-    KiteSDK kiteSDK = configureSDK();
-
-    if ( kiteSDK != null )
-      {
-      kiteSDK
-
-        // Uncomment this if you have defined Instagram credentials
-        .setInstagramCredentials( INSTAGRAM_API_KEY, INSTAGRAM_REDIRECT_URI )
-
-        .startShopping( this, assetList );  // Use this to shop all products in catalogue
-        //.startShoppingByProductId( this, assets, "pbx_squares_5x5", "pbx_squares_8x8" );  // Use this to shop specific products by id
-      }
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the intent URI contains a product group
-   * label.
-   *
-   *****************************************************/
-  @Override
-  protected void onDeepLinkProductGroup( String productGroupLabel )
-    {
-    KiteSDK kiteSDK = configureSDK();
-
-    if ( kiteSDK != null ) kiteSDK.startShoppingForProductGroup( this, null, productGroupLabel );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the intent URI contains a product id.
-   *
-   *****************************************************/
-  @Override
-  protected void onDeepLinkProductId( String productId )
-    {
-    KiteSDK kiteSDK = configureSDK();
-
-    if ( kiteSDK != null ) kiteSDK.startShoppingForProduct( this, null, productId );
-    }
-
-
-  /*****************************************************
-   *
-   * Prints a postcode and goes straight to the checkout
-   * activity.
-   *
-   *****************************************************/
-  private void postcardJourney()
-    {
-    final KiteSDK kiteSDK = configureSDK();
-
-    if ( kiteSDK == null ) return;
-
-    kiteSDK.getCatalogueLoader().requestCatalogue( new ICatalogueConsumer()
-      {
-      @Override
-      public void onCatalogueSuccess( Catalogue catalogue )
-        {
-        Product product = catalogue.findProductById( PRODUCT_ID_POSTCARD );
-
-        if ( product == null )
-          {
-          showError( "Invalid Product Id", "No product could be found for product id: " + PRODUCT_ID_POSTCARD );
-
-          return;
-          }
-
-        try
-          {
-          // Create Postcard Job & Add to Order
-
-          Asset frontImage = new Asset( new URL( "http://psps.s3.amazonaws.com/sdk_static/1.jpg" ) );
-          Asset backImage  = new Asset( new URL( "http://psps.s3.amazonaws.com/sdk_static/2.jpg" ) );
-
-          Job postcard = Job.createPostcardJob(
-                  product,
-                  frontImage,
-                  backImage,
-                  "Message to go on the back of the postcard",
-                  Address.getKiteTeamAddress(),
-                  123);//default value
-
-          Order order = new Order();
-
-          order.addJob( postcard );
-
-
-          // Start managed check-out
-          kiteSDK.startCheckoutForResult( MainActivity.this, order, REQUEST_CODE_CHECKOUT );
-          }
-        catch ( MalformedURLException ex )
-          {
-          // Ignore
-          }
+            return null;
         }
 
-      @Override
-      public void onCatalogueCancelled()
-        {
-        // Ignore
-        }
+        // Create an instance of the SDK, and set a customiser
 
-      @Override
-      public void onCatalogueError( Exception exception )
-        {
-        // Handle gracefully
-        }
-      } );
+        KiteSDK kiteSDK = KiteSDK.getInstance(this, apiKey, environment);
+
+        kiteSDK.setCustomiser(SampleSDKCustomiser.class);
+
+        return kiteSDK;
     }
 
+    /*****************************************************
+     *
+     * Starts the SDK shopping journey with a set of image
+     * assets.
+     *
+     *****************************************************/
+    private void fullJourney(ArrayList<Asset> assetList) {
 
-  /*****************************************************
-   *
-   * Displays an error dialog.
-   *
-   *****************************************************/
-  private void showError( String title, String message )
-    {
-    new AlertDialog.Builder( this )
-            .setTitle( title )
-            .setMessage( message )
-            .setPositiveButton( "OK", null )
-            .show();
+        KiteSDK kiteSDK = configureSDK();
+
+        if (kiteSDK != null) {
+            kiteSDK
+
+                    // Uncomment this if you have defined Instagram credentials
+                    .setInstagramCredentials(INSTAGRAM_API_KEY, INSTAGRAM_REDIRECT_URI)
+
+                    .startShopping(this, assetList);  // Use this to shop all products in catalogue
+            //.startShoppingByProductId( this, assets, "pbx_squares_5x5", "pbx_squares_8x8" );  // Use this to shop specific products by id
+        }
     }
 
+    /*****************************************************
+     *
+     * Called when the intent URI contains a product group
+     * label.
+     *
+     *****************************************************/
+    @Override
+    protected void onDeepLinkProductGroup(String productGroupLabel) {
 
-  ////////// Inner Class(es) //////////
+        KiteSDK kiteSDK = configureSDK();
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+        if (kiteSDK != null) {
+            kiteSDK.startShoppingForProductGroup(this, null, productGroupLabel);
+        }
+    }
+
+    /*****************************************************
+     *
+     * Called when the intent URI contains a product id.
+     *
+     *****************************************************/
+    @Override
+    protected void onDeepLinkProductId(String productId) {
+
+        KiteSDK kiteSDK = configureSDK();
+
+        if (kiteSDK != null) {
+            kiteSDK.startShoppingForProduct(this, null, productId);
+        }
+    }
+
+    /*****************************************************
+     *
+     * Prints a postcode and goes straight to the checkout
+     * activity.
+     *
+     *****************************************************/
+    private void postcardJourney() {
+
+        final KiteSDK kiteSDK = configureSDK();
+
+        if (kiteSDK == null) {
+            return;
+        }
+
+        kiteSDK.getCatalogueLoader().requestCatalogue(new ICatalogueConsumer() {
+            @Override
+            public void onCatalogueSuccess(Catalogue catalogue) {
+
+                Product product = catalogue.findProductById(PRODUCT_ID_POSTCARD);
+
+                if (product == null) {
+                    showError("Invalid Product Id", "No product could be found for product id: " + PRODUCT_ID_POSTCARD);
+
+                    return;
+                }
+
+                try {
+                    // Create Postcard Job & Add to Order
+
+                    Asset frontImage = new Asset(new URL("http://psps.s3.amazonaws.com/sdk_static/1.jpg"));
+                    Asset backImage = new Asset(new URL("http://psps.s3.amazonaws.com/sdk_static/2.jpg"));
+
+                    Job postcard = Job.createPostcardJob(
+                            product,
+                            frontImage,
+                            backImage,
+                            "Message to go on the back of the postcard",
+                            Address.getKiteTeamAddress(),
+                            123);//default value
+
+                    Order order = new Order();
+
+                    order.addJob(postcard);
+
+                    // Start managed check-out
+                    kiteSDK.startCheckoutForResult(MainActivity.this, order, REQUEST_CODE_CHECKOUT);
+                } catch (MalformedURLException ex) {
+                    // Ignore
+                }
+            }
+
+            @Override
+            public void onCatalogueCancelled() {
+                // Ignore
+            }
+
+            @Override
+            public void onCatalogueError(Exception exception) {
+                // Handle gracefully
+            }
+        });
+    }
+
+    /*****************************************************
+     *
+     * Displays an error dialog.
+     *
+     *****************************************************/
+    private void showError(String title, String message) {
+
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
 }

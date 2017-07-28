@@ -36,9 +36,7 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -52,82 +50,67 @@ import java.util.HashMap;
  * This is a simple typeface cache.
  *
  *****************************************************/
-public class TypefaceCache
-  {
-  ////////// Static Constant(s) //////////
+public class TypefaceCache {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "TypefaceCache";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "TypefaceCache";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    private static HashMap<String, Typeface> sTypefaceTable;
 
-  private static HashMap<String,Typeface>  sTypefaceTable;
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
-
-
-  ////////// Static Initialiser(s) //////////
-
-  static
-    {
-    sTypefaceTable = new HashMap<>();
+    static {
+        sTypefaceTable = new HashMap<>();
     }
 
+    ////////// Static Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Returns a typeface for the supplied name.
+     *
+     *****************************************************/
+    public static Typeface getTypeface(Context context, String fileName) {
+        // See if we already have it cached
 
-  /*****************************************************
-   *
-   * Returns a typeface for the supplied name.
-   *
-   *****************************************************/
-  static public Typeface getTypeface( Context context, String fileName )
-    {
-    // See if we already have it cached
+        Typeface typeface = sTypefaceTable.get(fileName);
 
-    Typeface typeface = sTypefaceTable.get( fileName );
+        if (typeface == null) {
+            // We don't already have it cached so try to load it now
 
-    if ( typeface == null )
-      {
-      // We don't already have it cached so try to load it now
+            try {
+                typeface = Typeface.createFromAsset(context.getAssets(), fileName);
 
-      try
-        {
-        typeface = Typeface.createFromAsset( context.getAssets(), fileName );
-
-        sTypefaceTable.put( fileName, typeface );
+                sTypefaceTable.put(fileName, typeface);
+            } catch (Exception exception) {
+            }
         }
-      catch ( Exception exception )
-        {
-        }
-      }
 
-
-    return ( typeface );
+        return typeface;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  ////////// Method(s) //////////
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

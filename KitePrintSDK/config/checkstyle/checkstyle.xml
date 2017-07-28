@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <!--#########################################################
+                                   Block checks
+            #########################################################-->
+
+        <!-- Find nested blocks, i.e. blocks that are used freely in the code -->
+        <module name="AvoidNestedBlocks"/>
+
+        <!-- Check that "{" is NOT placed on a new line -->
+        <module name="LeftCurly">
+            <property name="option" value="eol"/>
+        </module>
+
+        <!-- Check that "}" is placed on a new line , except when it's followed by catch or else-->
+        <module name="RightCurly">
+            <property name="option" value="alone_or_singleline"/>
+            <property name="tokens"
+                      value="LITERAL_FINALLY, CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT, LAMBDA"/>
+            <property name="shouldStartLine" value="true"/>
+        </module>
+
+        <!-- Check for braces around code blocks -->
+        <module name="NeedBraces"/>
+
+        <!-- Check that catch blocks do contain some code -->
+        <module name="EmptyCatchBlock">
+            <property name="commentFormat" value="Ignore"/>
+            <message key="catch.block.empty" value="Empty catch block. If it should be empty add '//Ignore'"/>
+        </module>
+
+        <!--#########################################################
+                                 Class design
+           #########################################################-->
+
+        <!-- Make sure that utility classes (classes that contain only static methods or fields in their API) do not have a public constructor -->
+        <module name="HideUtilityClassConstructor"/>
+
+        <!--#########################################################
+                                    Coding
+           #########################################################-->
+
+        <!-- Check that there is only one statement per line -->
+        <module name="OneStatementPerLine"/>
+
+        <!-- Check that switch statements have a "default" clause -->
+        <module name="MissingSwitchDefault"/>
+
+        <!-- Check that the default is after all the cases in a switch statement -->
+        <module name="DefaultComesLast">
+            <property name="skipIfLastAndSharedWithCase" value="false"/>
+        </module>
+
+        <!-- Check that class/interface declarations are in the right order:
+        1) Class (static) variables. First the public class variables, then protected, then package level (no access modifier), and then private.
+        2) Instance variables. First the public class variables, then protected, then package level (no access modifier), and then private.
+        3) Constructors
+        4) Methods -->
+        <module name="DeclarationOrder">
+            <message key="declaration.order.access"
+                     value="Variable access definition in wrong order. Should be: public , protected, package level, private."/>
+            <message key="declaration.order.constructor"
+                     value="Constructor definition in wrong order. Should be: Class (static) variables, Instance variables, Constructors, Methods."/>
+            <message key="declaration.order.instance"
+                     value="Instance variable definition in wrong order. Should be public class variables , protected , package level , private."/>
+            <message key="declaration.order.static"
+                     value="Static variable definition in wrong order. Should be at the beginning of the class."/>
+        </module>
+
+        <!-- Check that local variables that never have their values changed are declared final -->
+        <module name="FinalLocalVariable"/>
+
+        <!-- Check that certain exception types do not appear in a catch statement -->
+        <module name="IllegalCatch">
+            <property name="illegalClassNames"
+                      value="java.lang.Throwable, java.lang.RuntimeException"/>
+        </module>
+
+        <!-- Check that certain exception types do not appear in a throw statement -->
+        <module name="IllegalThrows">
+            <property name="illegalClassNames"
+                      value="java.lang.Throwable, java.lang.Error, java.lang.RuntimeException"/>
+        </module>
+
+        <!-- Checks that each variable declaration is in its own statement and on its own line -->
+        <module name="MultipleVariableDeclarations"/>
+
+        <!-- Checks for the use of unnecessary parentheses -->
+        <module name="UnnecessaryParentheses"/>
+
+        <!--#########################################################
+                                   Imports
+           #########################################################-->
+
+        <!-- Check that there are no import statements that use the * notation -->
+        <module name="AvoidStarImport">
+            <property name="excludes" value="java.io"/>
+            <property name="allowClassImports" value="false"/>
+            <property name="allowStaticMemberImports" value="false"/>
+        </module>
+
+        <!-- Check for redundant import statements -->
+        <module name="RedundantImport"/>
+
+        <!-- Check for unused imports -->
+        <module name="UnusedImports"/>
+
+        <!--#########################################################
+                                 Misellaneous
+           #########################################################-->
+
+        <!-- Check that the style of array type definitions is Java style , not C style -->
+        <module name="ArrayTypeStyle"/>
+
+        <!-- Check the indentation between comments and surrounding code -->
+        <module name="CommentsIndentation"/>
+
+        <!-- Check if the Java code is correctly indented -->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+            <property name="arrayInitIndent" value="4"/>
+        </module>
+
+        <!-- Check for "TODO" comments -->
+        <module name="TodoComment">
+            <property name="format" value="(TODO)|(todo)|(Todo)|(FIXME)"/>
+        </module>
+
+        <!--#########################################################
+                                  Modifiers
+           #########################################################-->
+
+        <!-- Check that the order of modifiers conforms to the suggestions in the Java Language specification -->
+        <module name="ModifierOrder">
+            <message key="mod.order" value="{0} modifier out of order with the JLS suggestions: public, protected, private, abstract, default, static, final, transient, volatile, synchronized, native, strictfp"/>
+        </module>
+
+        <!--#########################################################
+                               Naming conventions
+           #########################################################-->
+
+        <!-- Validate identifiers for constants (must have all capital letters) -->
+        <module name="ConstantName"/>
+
+        <module name="ClassTypeParameterName"/>
+
+        <!-- Check local, non-final variable names -->
+        <module name="LocalVariableName"/>
+
+        <!-- Validate identifiers for methods -->
+        <module name="MethodName">
+            <property name="allowClassName" value="true"/>
+        </module>
+
+        <!-- Validate identifiers for non-static fields. Members should start with "m" -->
+        <module name="MemberName">
+            <property name="format" value="^m[A-Z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Validates identifiers for packages. They  should start with "com."-->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-zA-Z_][a-zA-Z0-9_]*)*$"/>
+        </module>
+
+        <!-- Checks that method and catch parameter names conform to the format -->
+        <module name="ParameterName"/>
+
+        <!-- Validate identifiers for classes, interfaces, enums, and annotations  -->
+        <module name="TypeName"/>
+
+        <!--#########################################################
+                                Size violations
+           #########################################################-->
+
+        <!-- Check that NO line is longer that 140 characters -->
+        <module name="LineLength">
+            <property name="max" value="140"/>
+            <property name="severity" value="warning"/>
+            <property name="ignorePattern"
+                      value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+        </module>
+
+        <!--#########################################################
+                                  Whitespace
+           #########################################################-->
+
+        <!-- Check that there are NO consecutive empty lines -->
+        <module name="EmptyLineSeparator">
+            <property name="allowMultipleEmptyLines" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
+            <property name="tokens"
+                      value="PACKAGE_DEF, IMPORT, CLASS_DEF, INTERFACE_DEF, ENUM_DEF, STATIC_INIT, INSTANCE_INIT, METHOD_DEF, CTOR_DEF"/>
+        </module>
+
+        <!-- Check the padding of parentheses happens -->
+        <module name="ParenPad">
+            <property name="option" value="nospace"/>
+        </module>
+
+        <!-- Check that tokens are surrounded by whitespace -->
+        <module name="WhitespaceAround"/>
+
+    </module>
+
+    <!-- Check whether files end with a line separator -->
+    <module name="NewlineAtEndOfFile">
+        <property name="lineSeparator" value="lf"/>
+        <property name="fileExtensions" value="java, xml"/>
+    </module>
+
+</module>

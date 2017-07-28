@@ -36,7 +36,6 @@
 
 package ly.kite.imagepicker;
 
-
 ///// Import(s) /////
 
 import android.content.Context;
@@ -49,7 +48,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -59,176 +57,155 @@ import java.util.List;
  * picker item can contain other parents or children.
  *
  *****************************************************/
-public class SimpleParentItem implements IImagePickerItem
-  {
-  ////////// Static Constant(s) //////////
+public class SimpleParentItem implements IImagePickerItem {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "SimpleParentItem";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SimpleParentItem";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String mKey;
+    private String mName;
+    private ArrayList<IImagePickerItem> mSubItemList;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private String                       mKey;
-  private String                       mName;
-  private ArrayList<IImagePickerItem>  mSubItemList;
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    public SimpleParentItem(String key, String name) {
+        // Make sure we were supplied a key
+        if (key == null || key.trim().equals("")) {
+            throw (new IllegalArgumentException("A key must be supplied"));
+        }
 
+        mKey = key;
+        mName = name;
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public SimpleParentItem( String key, String name )
-    {
-    // Make sure we were supplied a key
-    if ( key == null || key.trim().equals( "" ) )
-      {
-      throw ( new IllegalArgumentException( "A key must be supplied" ) );
-      }
-
-    mKey         = key;
-    mName        = name;
-
-    mSubItemList = new ArrayList<>();
+        mSubItemList = new ArrayList<>();
     }
 
+    public SimpleParentItem(Parcel inParcel) {
 
-  public SimpleParentItem( Parcel inParcel )
-    {
-    mKey  = inParcel.readString();
-    mName = inParcel.readString();
+        mKey = inParcel.readString();
+        mName = inParcel.readString();
     }
 
+    ////////// IImagePickerItem Method(s) //////////
 
-  ////////// IImagePickerItem Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the thumbnail image URL. We use the first
+     * image in the group for this purpose.
+     *
+     *****************************************************/
+    @Override
+    public void loadThumbnailImageInto(Context context, ImageView imageView) {
 
-  /*****************************************************
-   *
-   * Returns the thumbnail image URL. We use the first
-   * image in the group for this purpose.
-   *
-   *****************************************************/
-  @Override
-  public void loadThumbnailImageInto( Context context, ImageView imageView )
-    {
-    Picasso.with( context )
-            .load( mSubItemList.get( 0 ).getImageURLString() )
-            .resizeDimen( R.dimen.ip_image_default_resize_width, R.dimen.ip_image_default_resize_height )
-            .centerCrop()
-            .onlyScaleDown()
-            .into( imageView );
+        Picasso.with(context)
+                .load(mSubItemList.get(0).getImageURLString())
+                .resizeDimen(R.dimen.ip_image_default_resize_width, R.dimen.ip_image_default_resize_height)
+                .centerCrop()
+                .onlyScaleDown()
+                .into(imageView);
     }
 
-
-  /*****************************************************
-   *
-   * Returns the full image URL.
-   *
-   *****************************************************/
-  @Override
-  public String getImageURLString()
-    {
-    // There is no full image for an album since it can't be
-    // selected.
-    return ( null );
+    /*****************************************************
+     *
+     * Returns the full image URL.
+     *
+     *****************************************************/
+    @Override
+    public String getImageURLString() {
+        // There is no full image for an album since it can't be
+        // selected.
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns the label.
+     *
+     *****************************************************/
+    @Override
+    public String getLabel() {
 
-  /*****************************************************
-   *
-   * Returns the label.
-   *
-   *****************************************************/
-  @Override
-  public String getLabel()
-    {
-    return ( mName );
+        return mName;
     }
 
+    /*****************************************************
+     *
+     * Returns a key if this item is a parent and can be
+     * descended into.
+     *
+     *****************************************************/
+    public String getKeyIfParent() {
 
-  /*****************************************************
-   *
-   * Returns a key if this item is a parent and can be
-   * descended into.
-   *
-   *****************************************************/
-  public String getKeyIfParent()
-    {
-    return ( mKey );
+        return mKey;
     }
 
+    /*****************************************************
+     *
+     * Returns a selectable item if this item may be selected,
+     * null otherwise.
+     *
+     *****************************************************/
+    public ISelectableItem getSelectableItem() {
 
-  /*****************************************************
-   *
-   * Returns a selectable item if this item may be selected,
-   * null otherwise.
-   *
-   *****************************************************/
-  public ISelectableItem getSelectableItem()
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns true if the group has selected children.
+     *
+     *****************************************************/
+    @Override
+    public int getSelectedCount(LinkedHashMap<String, ISelectableItem> selectableItemTable) {
+        // Go through all the images in this group and count ones that are selected
 
-  /*****************************************************
-   *
-   * Returns true if the group has selected children.
-   *
-   *****************************************************/
-  @Override
-  public int getSelectedCount( LinkedHashMap<String,ISelectableItem> selectableItemTable )
-    {
-    // Go through all the images in this group and count ones that are selected
+        int count = 0;
 
-    int count = 0;
+        for (IImagePickerItem subItem : mSubItemList) {
+            count += subItem.getSelectedCount(selectableItemTable);
+        }
 
-    for ( IImagePickerItem subItem : mSubItemList )
-      {
-      count += subItem.getSelectedCount( selectableItemTable );
-      }
-
-    return ( count );
+        return count;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Adds an image to the group.
+     *
+     *****************************************************/
+    public void addImage(SimpleChildItem image) {
 
-  /*****************************************************
-   *
-   * Adds an image to the group.
-   *
-   *****************************************************/
-  public void addImage( SimpleChildItem image )
-    {
-    mSubItemList.add( image );
+        mSubItemList.add(image);
     }
 
+    /*****************************************************
+     *
+     * Returns the image list.
+     *
+     *****************************************************/
+    public List<IImagePickerItem> getSubItemList() {
 
-  /*****************************************************
-   *
-   * Returns the image list.
-   *
-   *****************************************************/
-  public List<IImagePickerItem> getSubItemList()
-    {
-    return ( mSubItemList );
+        return mSubItemList;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

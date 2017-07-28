@@ -36,7 +36,6 @@
 
 package ly.kite.gcm;
 
-
 ///// Import(s) /////
 
 import android.app.IntentService;
@@ -55,7 +54,6 @@ import ly.kite.KiteSDK;
 import ly.kite.api.KiteAPIRequest;
 import ly.kite.util.HTTPJSONRequest;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -63,232 +61,210 @@ import ly.kite.util.HTTPJSONRequest;
  * This service registers for GCM.
  *
  *****************************************************/
-public class GCMRegistrationService extends IntentService implements HTTPJSONRequest.IJSONResponseListener
-  {
-  ////////// Static Constant(s) //////////
+public class GCMRegistrationService extends IntentService implements HTTPJSONRequest.IJSONResponseListener {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings("unused")
-  private static final String TAG                                              = "GCMRegistrationService";
+    @SuppressWarnings("unused")
+    private static final String TAG = "GCMRegistrationService";
 
-  private static final String SHARED_PREFERENCES_NAME                          = "kite_sdk_gcm_shared_prefs";
-  private static final String SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED = "gcm_registration_required";
+    private static final String SHARED_PREFERENCES_NAME = "kite_sdk_gcm_shared_prefs";
+    private static final String SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED = "gcm_registration_required";
 
-  private static final String USER_REQUEST_FORMAT_STRING                       = "%s/person/";
+    private static final String USER_REQUEST_FORMAT_STRING = "%s/person/";
 
-  private static final String JSON_NAME_ENVIRONMENT                            = "environment";
-  private static final String JSON_NAME_PLATFORM                               = "platform";
-  private static final String JSON_NAME_PUSH_TOKEN                             = "push_token";
-  private static final String JSON_NAME_SET                                    = "set";
-  private static final String JSON_NAME_TOKEN                                  = "token";
-  private static final String JSON_NAME_UUID                                   = "uuid";
+    private static final String JSON_NAME_ENVIRONMENT = "environment";
+    private static final String JSON_NAME_PLATFORM = "platform";
+    private static final String JSON_NAME_PUSH_TOKEN = "push_token";
+    private static final String JSON_NAME_SET = "set";
+    private static final String JSON_NAME_TOKEN = "token";
+    private static final String JSON_NAME_UUID = "uuid";
 
-  private static final String JSON_VALUE_ANDROID                               = "Android";
+    private static final String JSON_VALUE_ANDROID = "Android";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private HTTPJSONRequest mHTTPJSONRequest;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  private HTTPJSONRequest  mHTTPJSONRequest;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Starts this service.
+     *
+     *****************************************************/
+    public static void start(Context context) {
 
-  ////////// Static Initialiser(s) //////////
+        Intent intent = new Intent(context, GCMRegistrationService.class);
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Starts this service.
-   *
-   *****************************************************/
-  static public void start( Context context )
-    {
-    Intent intent = new Intent( context, GCMRegistrationService.class );
-
-    context.startService( intent );
+        context.startService(intent);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public GCMRegistrationService() {
 
-  public GCMRegistrationService()
-    {
-    super( TAG );
+        super(TAG);
     }
 
+    ////////// IntentService Method(s) //////////
 
-  ////////// IntentService Method(s) //////////
+    /*****************************************************
+     *
+     * Handles an intent.
+     *
+     *****************************************************/
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        // Check if GCM is required
 
-  /*****************************************************
-   *
-   * Handles an intent.
-   *
-   *****************************************************/
-  @Override
-  protected void onHandleIntent( Intent intent )
-    {
-    // Check if GCM is required
+        String gcmSenderId = getString(R.string.gcm_sender_id);
 
-    String gcmSenderId = getString( R.string.gcm_sender_id );
+        if (gcmSenderId == null || gcmSenderId.trim().equals("")) {
+            return;
+        }
 
-    if ( gcmSenderId == null || gcmSenderId.trim().equals( "" ) ) return;
+        // Check if we need to register
 
+        SharedPreferences sharedPreferences = getSharedPreferences();
 
-    // Check if we need to register
+        boolean registrationRequired = sharedPreferences.getBoolean(SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED, true);
 
-    SharedPreferences sharedPreferences = getSharedPreferences();
+        if (!registrationRequired) {
+            return;
+        }
 
-    boolean registrationRequired = sharedPreferences.getBoolean( SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED, true );
+        try {
+            // Initially this call goes out to the network to retrieve the token, subsequent calls
+            // are local.
 
-    if ( ! registrationRequired ) return;
+            InstanceID instanceID = InstanceID.getInstance(this);
 
+            String token = instanceID.getToken(gcmSenderId, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
-    try
-      {
-      // Initially this call goes out to the network to retrieve the token, subsequent calls
-      // are local.
+            Log.i(TAG, "Got GCM registration token: " + token);
 
-      InstanceID instanceID = InstanceID.getInstance( this );
+            sendRegistrationToServer(token);
+        } catch (Exception exception) {
+            Log.e(TAG, "Failed to complete token refresh", exception);
 
-      String token = instanceID.getToken( gcmSenderId, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null );
+            // If an exception happens while fetching the new token or updating our registration data
+            // on a third-party server, this ensures that we'll attempt the update at a later time.
 
-      Log.i( TAG, "Got GCM registration token: " + token );
+            saveRegistrationRequired(true);
+        }
 
-
-      sendRegistrationToServer( token );
-      }
-    catch ( Exception exception )
-      {
-      Log.e( TAG, "Failed to complete token refresh", exception );
-
-
-      // If an exception happens while fetching the new token or updating our registration data
-      // on a third-party server, this ensures that we'll attempt the update at a later time.
-
-      saveRegistrationRequired( true );
-      }
-
-    // We don't need to perform any notification because this is a background process and we
-    // don't care if it fails.
+        // We don't need to perform any notification because this is a background process and we
+        // don't care if it fails.
     }
 
+    ////////// HTTPJSONRequest Method(s) //////////
 
-  ////////// HTTPJSONRequest Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the HTTP request succeeds.
+     *
+     *****************************************************/
+    @Override
+    public void onSuccess(int httpStatusCode, JSONObject json) {
 
-  /*****************************************************
-   *
-   * Called when the HTTP request succeeds.
-   *
-   *****************************************************/
-  @Override
-  public void onSuccess( int httpStatusCode, JSONObject json )
-    {
-    if ( httpStatusCode >= 200 && httpStatusCode <= 299 )
-      {
-      Log.i( TAG, "Registered GCM token: status code = " + httpStatusCode + ", json = " + json.toString() );
+        if (httpStatusCode >= 200 && httpStatusCode <= 299) {
+            Log.i(TAG, "Registered GCM token: status code = " + httpStatusCode + ", json = " + json.toString());
 
-      saveRegistrationRequired( false );
-      }
-    else
-      {
-      Log.i( TAG, "Error registering GCM token: status code = " + httpStatusCode + ", json = " + json.toString() );
-      }
+            saveRegistrationRequired(false);
+        } else {
+            Log.i(TAG, "Error registering GCM token: status code = " + httpStatusCode + ", json = " + json.toString());
+        }
 
-
-    mHTTPJSONRequest = null;
+        mHTTPJSONRequest = null;
     }
 
+    /*****************************************************
+     *
+     * Called when the HTTP request fails.
+     *
+     *****************************************************/
+    @Override
+    public void onError(Exception exception) {
 
-  /*****************************************************
-   *
-   * Called when the HTTP request fails.
-   *
-   *****************************************************/
-  @Override
-  public void onError( Exception exception )
-    {
-    Log.e( TAG, "Failed to register GCM token", exception );
+        Log.e(TAG, "Failed to register GCM token", exception);
 
-    saveRegistrationRequired( true );
+        saveRegistrationRequired(true);
 
-    mHTTPJSONRequest = null;
+        mHTTPJSONRequest = null;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the shared preferences.
+     *
+     *****************************************************/
+    private SharedPreferences getSharedPreferences() {
 
-  /*****************************************************
-   *
-   * Returns the shared preferences.
-   *
-   *****************************************************/
-  private SharedPreferences getSharedPreferences()
-    {
-    return ( getSharedPreferences( SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE ) );
+        return getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
+    /*****************************************************
+     *
+     * Sends registration information to the Kite server.
+     *
+     *****************************************************/
+    private void sendRegistrationToServer(String token) throws JSONException {
+        // Make sure we are not already calling the endpoint
+        if (mHTTPJSONRequest != null) {
+            return;
+        }
 
-  /*****************************************************
-   *
-   * Sends registration information to the Kite server.
-   *
-   *****************************************************/
-  private void sendRegistrationToServer( String token ) throws JSONException
-    {
-    // Make sure we are not already calling the endpoint
-    if ( mHTTPJSONRequest != null ) return;
+        // Create the JSON body
 
+        JSONObject jsonPushTokenObject = new JSONObject();
+        jsonPushTokenObject.put(JSON_NAME_PLATFORM, JSON_VALUE_ANDROID);
+        jsonPushTokenObject.put(JSON_NAME_TOKEN, token);
 
-    // Create the JSON body
+        JSONObject jsonSetObject = new JSONObject();
+        jsonSetObject.put(JSON_NAME_PUSH_TOKEN, jsonPushTokenObject);
+        jsonSetObject.put(JSON_NAME_PLATFORM, JSON_VALUE_ANDROID);
+        jsonSetObject.put(JSON_NAME_ENVIRONMENT, KiteSDK.getInstance(this).getEnvironmentName());
 
-    JSONObject jsonPushTokenObject = new JSONObject();
-    jsonPushTokenObject.put( JSON_NAME_PLATFORM, JSON_VALUE_ANDROID );
-    jsonPushTokenObject.put( JSON_NAME_TOKEN,    token );
+        JSONObject jsonBodyObject = new JSONObject();
+        jsonBodyObject.put(JSON_NAME_UUID, KiteSDK.getInstance(this).getUniqueUserId());
+        jsonBodyObject.put(JSON_NAME_SET, jsonSetObject);
 
-    JSONObject jsonSetObject = new JSONObject();
-    jsonSetObject.put( JSON_NAME_PUSH_TOKEN,  jsonPushTokenObject );
-    jsonSetObject.put( JSON_NAME_PLATFORM,    JSON_VALUE_ANDROID );
-    jsonSetObject.put( JSON_NAME_ENVIRONMENT, KiteSDK.getInstance( this ).getEnvironmentName() );
+        // Create and start the request
 
-    JSONObject jsonBodyObject = new JSONObject();
-    jsonBodyObject.put( JSON_NAME_UUID, KiteSDK.getInstance( this ).getUniqueUserId() );
-    jsonBodyObject.put( JSON_NAME_SET, jsonSetObject );
+        String requestURLString = String.format(USER_REQUEST_FORMAT_STRING, KiteSDK.getInstance(this).getAPIEndpoint());
 
+        mHTTPJSONRequest = new KiteAPIRequest(this, HTTPJSONRequest.HttpMethod.POST, requestURLString, null, jsonBodyObject.toString());
 
-    // Create and start the request
-
-    String requestURLString = String.format( USER_REQUEST_FORMAT_STRING, KiteSDK.getInstance( this ).getAPIEndpoint() );
-
-    mHTTPJSONRequest = new KiteAPIRequest( this, HTTPJSONRequest.HttpMethod.POST, requestURLString, null, jsonBodyObject.toString() );
-
-    mHTTPJSONRequest.start( this );
+        mHTTPJSONRequest.start(this);
     }
 
+    /*****************************************************
+     *
+     * Saves a flag indicating whether registration is required
+     * in the future.
+     *
+     *****************************************************/
+    private void saveRegistrationRequired(boolean registrationRequired) {
 
-  /*****************************************************
-   *
-   * Saves a flag indicating whether registration is required
-   * in the future.
-   *
-   *****************************************************/
-  private void saveRegistrationRequired( boolean registrationRequired )
-    {
-    getSharedPreferences()
-      .edit()
-        .putBoolean( SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED, registrationRequired )
-      .apply();
+        getSharedPreferences()
+                .edit()
+                .putBoolean(SHARED_PREFERENCES_KEY_GCM_REGISTRATION_REQUIRED, registrationRequired)
+                .apply();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

@@ -36,7 +36,6 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.text.Editable;
@@ -48,7 +47,6 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -57,203 +55,177 @@ import java.util.List;
  * to a small range of strings.
  *
  *****************************************************/
-abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer implements InputFilter, TextWatcher
-  {
-  ////////// Static Constant(s) //////////
+abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer implements InputFilter, TextWatcher {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG = "ALimitedRangeEditTextEnforcer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ALimitedRangeEditTextEnforcer";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns a list of all the valid strings that contain the
+     * supplied (sub)string.
+     *
+     *****************************************************/
+    public static List<String> getValidStrings(String[] validStrings, String searchString) {
 
-  ////////// Static Initialiser(s) //////////
+        ArrayList<String> potentialStringList = new ArrayList<>();
 
-
-  ////////// Static Method(s) //////////
-
-
-  /*****************************************************
-   *
-   * Returns a list of all the valid strings that contain the
-   * supplied (sub)string.
-   *
-   *****************************************************/
-  static public List<String> getValidStrings( String[] validStrings, String searchString )
-    {
-    ArrayList<String> potentialStringList = new ArrayList<>();
-
-
-    for ( String candidateString : validStrings )
-      {
-      if ( candidateString.contains( searchString ) )
-        {
-        potentialStringList.add( candidateString );
+        for (String candidateString : validStrings) {
+            if (candidateString.contains(searchString)) {
+                potentialStringList.add(candidateString);
+            }
         }
-      }
 
-
-    return ( potentialStringList );
+        return potentialStringList;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public ALimitedRangeEditTextEnforcer(EditText editText, ICallback callback) {
 
-  public ALimitedRangeEditTextEnforcer( EditText editText, ICallback callback )
-    {
-    super( editText, callback );
+        super(editText, callback);
 
-    // Set up the filter
-    final InputFilter[] inputFilters = { this };
-    editText.setFilters( inputFilters );
+        // Set up the filter
+        final InputFilter[] inputFilters = {this};
+        editText.setFilters(inputFilters);
 
-    // Set up the text change listener
-    editText.addTextChangedListener( this );
+        // Set up the text change listener
+        editText.addTextChangedListener(this);
     }
 
+    ////////// InputFilter Method(s) //////////
 
-  ////////// InputFilter Method(s) //////////
+    /*****************************************************
+     *
+     * Filters changes to the edit text field.
+     *
+     *****************************************************/
+    @Override
+    public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+        //Log.d( LOG_TAG, "filter( source = " + source + ", start = " + start + ", end = " + end + ", dest = " + dest + ", dstart = " +
+        // dstart + ", dend = " + dend + " )" );
 
-  /*****************************************************
-   *
-   * Filters changes to the edit text field.
-   *
-   *****************************************************/
-  @Override
-  public CharSequence filter( CharSequence source, int start, int end, Spanned dest, int dstart, int dend )
-    {
-    //Log.d( LOG_TAG, "filter( source = " + source + ", start = " + start + ", end = " + end + ", dest = " + dest + ", dstart = " + dstart + ", dend = " + dend + " )" );
+        // See if there is a shortcut string
 
+        if ((dest == null || dest.length() == 0) && (end - start) == 1) {
+            String shortcutString = getShortcutString(source.charAt(start));
 
-    // See if there is a shortcut string
-
-    if ( ( dest == null || dest.length() == 0 ) && ( end - start ) == 1 )
-      {
-      String shortcutString = getShortcutString( source.charAt( start ) );
-
-      if ( shortcutString != null ) return ( shortcutString );
-      }
-
-
-    // Work out what the result string would be, and see if any of the valid strings
-    // contain it.
-
-    StringBuilder stringBuilder = new StringBuilder( dest );
-
-    stringBuilder.replace( dstart, dend, String.valueOf( source.subSequence( start, end ) ) );
-
-    if ( getValidStringsContaining( stringBuilder.toString() ).size() < 1 )
-      {
-      return ( "" );
-      }
-
-
-    return ( null );
-    }
-
-
-  ////////// TextWatcher Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called before the text is changed.
-   *
-   *****************************************************/
-  @Override
-  public void beforeTextChanged( CharSequence s, int start, int count, int after )
-    {
-    // Do nothing
-    }
-
-
-  /*****************************************************
-   *
-   * Called after the text is changed.
-   *
-   *****************************************************/
-  @Override
-  public void onTextChanged( CharSequence charSequence, int start, int before, int count )
-    {
-    // Ignore empty strings
-    if ( charSequence == null || charSequence.length() < 1 ) return;
-
-
-    // If we find any single valid valid value containing the character sequence, change
-    // the text to it
-
-    List<String> potentialStringList = getValidStringsContaining( charSequence.toString() );
-
-    int potentialStringCount = potentialStringList.size();
-
-    if ( potentialStringCount < 1 )
-      {
-      // We found nothing so change the field to red
-      mEditText.setTextColor( TEXT_COLOUR_ERROR );
-      }
-    else
-      {
-      // We found something so change the colour to normal
-      mEditText.setTextColor( mOKTextColour );
-
-      if ( potentialStringCount == 1 )
-        {
-        // We found one match. If the field isn't already the one match (we don't want
-        // an infinite recursion), then change it now.
-
-        String matchingString = potentialStringList.get( 0 );
-
-        if ( ! matchingString.equals( charSequence.toString() ) )
-          {
-          mEditText.setText( matchingString );
-
-          // Put the cursor at the end
-          mEditText.setSelection( matchingString.length() );
-          }
-
-        if ( mCallback != null ) mCallback.eteOnTextComplete( mEditText );
+            if (shortcutString != null) {
+                return shortcutString;
+            }
         }
-      }
+
+        // Work out what the result string would be, and see if any of the valid strings
+        // contain it.
+
+        StringBuilder stringBuilder = new StringBuilder(dest);
+
+        stringBuilder.replace(dstart, dend, String.valueOf(source.subSequence(start, end)));
+
+        if (getValidStringsContaining(stringBuilder.toString()).size() < 1) {
+            return "";
+        }
+
+        return null;
+    }
+
+    ////////// TextWatcher Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called before the text is changed.
+     *
+     *****************************************************/
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // Do nothing
+    }
+
+    /*****************************************************
+     *
+     * Called after the text is changed.
+     *
+     *****************************************************/
+    @Override
+    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+        // Ignore empty strings
+        if (charSequence == null || charSequence.length() < 1) {
+            return;
+        }
+
+        // If we find any single valid valid value containing the character sequence, change
+        // the text to it
+
+        List<String> potentialStringList = getValidStringsContaining(charSequence.toString());
+
+        int potentialStringCount = potentialStringList.size();
+
+        if (potentialStringCount < 1) {
+            // We found nothing so change the field to red
+            mEditText.setTextColor(TEXT_COLOUR_ERROR);
+        } else {
+            // We found something so change the colour to normal
+            mEditText.setTextColor(mOKTextColour);
+
+            if (potentialStringCount == 1) {
+                // We found one match. If the field isn't already the one match (we don't want
+                // an infinite recursion), then change it now.
+
+                String matchingString = potentialStringList.get(0);
+
+                if (!matchingString.equals(charSequence.toString())) {
+                    mEditText.setText(matchingString);
+
+                    // Put the cursor at the end
+                    mEditText.setSelection(matchingString.length());
+                }
+
+                if (mCallback != null) {
+                    mCallback.eteOnTextComplete(mEditText);
+                }
+            }
+        }
 
     }
 
-
-  /*****************************************************
-   *
-   * Called after the text is changed.
-   *
-   *****************************************************/
-  @Override
-  public void afterTextChanged( Editable s )
-    {
-    // Do nothing
+    /*****************************************************
+     *
+     * Called after the text is changed.
+     *
+     *****************************************************/
+    @Override
+    public void afterTextChanged(Editable s) {
+        // Do nothing
     }
 
+    /*****************************************************
+     *
+     * Returns a valid string for a single entered character,
+     * or null if no shortcut should be available.
+     *
+     *****************************************************/
+    protected String getShortcutString(char character) {
 
-  /*****************************************************
-   *
-   * Returns a valid string for a single entered character,
-   * or null if no shortcut should be available.
-   *
-   *****************************************************/
-  protected String getShortcutString( char character )
-    {
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Returns a list of all the valid strings that contain the
+     * supplied (sub)string.
+     *
+     *****************************************************/
+    abstract protected List<String> getValidStringsContaining(String searchString);
 
-  /*****************************************************
-   *
-   * Returns a list of all the valid strings that contain the
-   * supplied (sub)string.
-   *
-   *****************************************************/
-  abstract protected List<String> getValidStringsContaining( String searchString );
+    ////////// Inner Class(es) //////////
 
-
-  ////////// Inner Class(es) //////////
-
-  }
+}

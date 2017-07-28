@@ -36,7 +36,6 @@
 
 package ly.kite.journey.ordering;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -58,7 +57,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 import ly.kite.R;
-import ly.kite.app.IndeterminateProgressDialogFragment;
 import ly.kite.catalogue.Catalogue;
 import ly.kite.catalogue.CatalogueLoaderFragment;
 import ly.kite.catalogue.ICatalogueConsumer;
@@ -70,7 +68,6 @@ import ly.kite.ordering.OrderHistoryItem;
 import ly.kite.ordering.OrderingDataAgent;
 import ly.kite.pricing.OrderPricing;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -79,341 +76,299 @@ import ly.kite.pricing.OrderPricing;
  *
  *****************************************************/
 public class OrderHistoryFragment extends AKiteFragment implements AdapterView.OnItemClickListener,
-                                                                   ICatalogueConsumer
-  {
-  ////////// Static Constant(s) //////////
+        ICatalogueConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String  TAG = "OrderHistoryFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "OrderHistoryFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private Catalogue mCatalogue;
 
-  ////////// Member Variable(s) //////////
+    private ListView mListView;
 
-  private Catalogue                            mCatalogue;
+    private List<OrderHistoryItem> mOrderHistoryItemList;
+    private OrderHistoryAdaptor mOrderHistoryAdaptor;
 
-  private ListView                             mListView;
+    ////////// Static Initialiser(s) //////////
 
-  private List<OrderHistoryItem>               mOrderHistoryItemList;
-  private OrderHistoryAdaptor                  mOrderHistoryAdaptor;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Starts this activity.
+     *
+     *****************************************************/
+    public static void start(Context context) {
 
-  ////////// Static Initialiser(s) //////////
+        Intent intent = new Intent(context, OrderHistoryFragment.class);
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Starts this activity.
-   *
-   *****************************************************/
-  static public void start( Context context )
-    {
-    Intent intent = new Intent( context, OrderHistoryFragment.class );
-
-    context.startActivity( intent );
+        context.startActivity(intent);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    ////////// AKiteFragment Method(s) //////////
 
-
-  ////////// AKiteFragment Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when the activity is resumed.
-   *
-   *****************************************************/
-  @Override
-  public void onResume()
-    {
-    super.onResume();
-
-
-    // Request the catalogue. We do this when the activity resumes, because
-    // we may have looked at a failed order which gets re-tried and then
-    // succeeds. If this happens, we need to refresh our order history list.
-    requestCatalogue();
-    }
-
-
-  /*****************************************************
-   *
-   * Called to create the view.
-   *
-   *****************************************************/
-  @Override
-  public View onCreateView( LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState )
-    {
-    View view = layoutInflator.inflate( R.layout.screen_order_history, container, false );
-
-    mListView = (ListView)view.findViewById( R.id.list_view );
-
-
-    // Listen for clicks
-    mListView.setOnItemClickListener( this );
-
-
-    checkDisplayOrders();
-
-
-    return ( view );
-    }
-
-
-  ////////// ICatalogueConsumer Method(s) //////////
-
-  @Override
-  public void onCatalogueSuccess( Catalogue catalogue )
-    {
-    mCatalogue = catalogue;
-
-    checkDisplayOrders();
-    }
-
-
-  @Override
-  public void onCatalogueCancelled()
-    {
-    }
-
-
-  @Override
-  public void onCatalogueError( Exception exception )
-    {
-    // Display an error dialog
-    ( (AKiteActivity)getActivity() ).displayModalDialog
-            (
-                    R.string.alert_dialog_title_error_retrieving_products,
-                    R.string.alert_dialog_message_error_retrieving_products,
-                    R.string.Retry,
-                    new RequestCatalogueRunnable(),
-                    R.string.Cancel,
-                    new FinishRunnable()
-            );
-    }
-
-
-  ////////// AdapterView.OnItemClickListener Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called when an order is clicked.
-   *
-   *****************************************************/
-  @Override
-  public void onItemClick( AdapterView<?> parent, View view, int position, long id )
-    {
-    // Get the order history item
-    OrderHistoryItem orderHistoryItem = mOrderHistoryItemList.get( position );
-
-
-    try
-      {
-      // Create an order using all the information from the order history item
-
-      String userDataJSON = orderHistoryItem.getUserDataJSON();
-
-      Order order = new Order(
-              getActivity(),
-              orderHistoryItem.getBasket(),
-              orderHistoryItem.getShippingAddress(),
-              orderHistoryItem.getNotificationEmail(),
-              orderHistoryItem.getNotificationPhone(),
-              ( userDataJSON != null ? new JSONObject( userDataJSON ) : null ),
-              orderHistoryItem.getAdditionalParametersMap(),
-              orderHistoryItem.getPromoCode(),
-              new OrderPricing( orderHistoryItem.getPricingJSON() ),
-              orderHistoryItem.getProofOfPayment(),
-              orderHistoryItem.getReceipt() );
-
-      // Start the receipt screen with the order
-      OrderReceiptActivity.start( getActivity(), orderHistoryItem.getOrderId(), order, true );
-      }
-    catch ( JSONException je )
-      {
-      Log.e( TAG, "Unable to recreate pricing JSON", je );
-      }
-
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Requests the catalogue.
-   *
-   *****************************************************/
-  void requestCatalogue()
-    {
-    CatalogueLoaderFragment.findOrStart( this );
-    }
-
-
-  /*****************************************************
-   *
-   * Checks whether we have all the information we need
-   * to display orders.
-   *
-   *****************************************************/
-  private void checkDisplayOrders()
-    {
-    if ( mCatalogue == null || mListView == null ) return;
-
-
-    // Set up the order history list
-
-    mOrderHistoryItemList = OrderingDataAgent.getInstance( getActivity() ).getOrderHistoryList( mCatalogue );
-
-    mOrderHistoryAdaptor = new OrderHistoryAdaptor();
-
-    mListView.setAdapter( mOrderHistoryAdaptor );
-    }
-
-
-  /*****************************************************
-   *
-   * Called to finish this activity.
-   *
-   *****************************************************/
-  void onLoadCancelled()
-    {
-    Activity activity = getActivity();
-
-    if ( activity != null && activity instanceof ICancelListener )
-      {
-      ( (ICancelListener)activity ).onLoadCancelled();
-      }
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * A listener for cancel events.
-   *
-   *****************************************************/
-  public interface ICancelListener
-    {
-    public void onLoadCancelled();
-    }
-
-
-  /*****************************************************
-   *
-   * The order history adaptor.
-   *
-   *****************************************************/
-  private class OrderHistoryAdaptor extends BaseAdapter
-    {
+    /*****************************************************
+     *
+     * Called when the activity is resumed.
+     *
+     *****************************************************/
     @Override
-    public int getCount()
-      {
-      return ( mOrderHistoryItemList.size() );
-      }
+    public void onResume() {
 
+        super.onResume();
+
+        // Request the catalogue. We do this when the activity resumes, because
+        // we may have looked at a failed order which gets re-tried and then
+        // succeeds. If this happens, we need to refresh our order history list.
+        requestCatalogue();
+    }
+
+    /*****************************************************
+     *
+     * Called to create the view.
+     *
+     *****************************************************/
+    @Override
+    public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = layoutInflator.inflate(R.layout.screen_order_history, container, false);
+
+        mListView = (ListView) view.findViewById(R.id.list_view);
+
+        // Listen for clicks
+        mListView.setOnItemClickListener(this);
+
+        checkDisplayOrders();
+
+        return view;
+    }
+
+    ////////// ICatalogueConsumer Method(s) //////////
 
     @Override
-    public Object getItem( int position )
-      {
-      return ( mOrderHistoryItemList.get( position ) );
-      }
+    public void onCatalogueSuccess(Catalogue catalogue) {
 
+        mCatalogue = catalogue;
 
-    @Override
-    public long getItemId( int position )
-      {
-      return ( 0 );
-      }
-
+        checkDisplayOrders();
+    }
 
     @Override
-    public View getView( int position, View convertView, ViewGroup parent )
-      {
-      Object      tag;
-      View        view;
-      ViewHolder  viewHolder;
+    public void onCatalogueCancelled() {
 
-      if ( convertView != null &&
-           ( tag = convertView.getTag() ) != null &&
-           tag instanceof ViewHolder )
-        {
-        view       = convertView;
-        viewHolder = (ViewHolder)tag;
-        }
-      else
-        {
-        view       = LayoutInflater.from( getActivity() ).inflate( R.layout.list_item_order_history, parent, false );
-        viewHolder = new ViewHolder( view );
+    }
 
-        view.setTag( viewHolder );
+    @Override
+    public void onCatalogueError(Exception exception) {
+        // Display an error dialog
+        ((AKiteActivity) getActivity()).displayModalDialog
+                (
+                        R.string.alert_dialog_title_error_retrieving_products,
+                        R.string.alert_dialog_message_error_retrieving_products,
+                        R.string.Retry,
+                        new RequestCatalogueRunnable(),
+                        R.string.Cancel,
+                        new FinishRunnable()
+                );
+    }
+
+    ////////// AdapterView.OnItemClickListener Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called when an order is clicked.
+     *
+     *****************************************************/
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Get the order history item
+        OrderHistoryItem orderHistoryItem = mOrderHistoryItemList.get(position);
+
+        try {
+            // Create an order using all the information from the order history item
+
+            String userDataJSON = orderHistoryItem.getUserDataJSON();
+
+            Order order = new Order(
+                    getActivity(),
+                    orderHistoryItem.getBasket(),
+                    orderHistoryItem.getShippingAddress(),
+                    orderHistoryItem.getNotificationEmail(),
+                    orderHistoryItem.getNotificationPhone(),
+                    (userDataJSON != null ? new JSONObject(userDataJSON) : null),
+                    orderHistoryItem.getAdditionalParametersMap(),
+                    orderHistoryItem.getPromoCode(),
+                    new OrderPricing(orderHistoryItem.getPricingJSON()),
+                    orderHistoryItem.getProofOfPayment(),
+                    orderHistoryItem.getReceipt());
+
+            // Start the receipt screen with the order
+            OrderReceiptActivity.start(getActivity(), orderHistoryItem.getOrderId(), order, true);
+        } catch (JSONException je) {
+            Log.e(TAG, "Unable to recreate pricing JSON", je);
         }
 
+    }
 
-      OrderHistoryItem orderHistoryItem = (OrderHistoryItem)getItem( position );
+    ////////// Method(s) //////////
 
-      viewHolder.bind( orderHistoryItem );
+    /*****************************************************
+     *
+     * Requests the catalogue.
+     *
+     *****************************************************/
+    void requestCatalogue() {
 
-      return ( view );
-      }
+        CatalogueLoaderFragment.findOrStart(this);
+    }
 
+    /*****************************************************
+     *
+     * Checks whether we have all the information we need
+     * to display orders.
+     *
+     *****************************************************/
+    private void checkDisplayOrders() {
 
-    private class ViewHolder
-      {
-      View      view;
-      TextView  dateTextView;
-      TextView  descriptionTextView;
-
-      ViewHolder( View view )
-        {
-        this.view = view;
-        this.dateTextView = (TextView)view.findViewById( R.id.date_text_view );
-        this.descriptionTextView = (TextView)view.findViewById( R.id.description_text_view );
+        if (mCatalogue == null || mListView == null) {
+            return;
         }
 
-      void bind( OrderHistoryItem orderHistoryItem )
-        {
-        this.dateTextView.setText( orderHistoryItem.getDateString() );
-        this.descriptionTextView.setText( orderHistoryItem.getDescription() );
+        // Set up the order history list
+
+        mOrderHistoryItemList = OrderingDataAgent.getInstance(getActivity()).getOrderHistoryList(mCatalogue);
+
+        mOrderHistoryAdaptor = new OrderHistoryAdaptor();
+
+        mListView.setAdapter(mOrderHistoryAdaptor);
+    }
+
+    /*****************************************************
+     *
+     * Called to finish this activity.
+     *
+     *****************************************************/
+    void onLoadCancelled() {
+
+        Activity activity = getActivity();
+
+        if (activity != null && activity instanceof ICancelListener) {
+            ((ICancelListener) activity).onLoadCancelled();
         }
-      }
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * A request catalogue runnable.
-   *
-   *****************************************************/
-  private class RequestCatalogueRunnable implements Runnable
-    {
-    @Override
-    public void run()
-      {
-      requestCatalogue();
-      }
+    /*****************************************************
+     *
+     * A listener for cancel events.
+     *
+     *****************************************************/
+    public interface ICancelListener {
+        public void onLoadCancelled();
     }
 
+    /*****************************************************
+     *
+     * The order history adaptor.
+     *
+     *****************************************************/
+    private class OrderHistoryAdaptor extends BaseAdapter {
+        @Override
+        public int getCount() {
 
-  /*****************************************************
-   *
-   * A finish runnable.
-   *
-   *****************************************************/
-  private class FinishRunnable implements Runnable
-    {
-    @Override
-    public void run()
-      {
-      onLoadCancelled();
-      }
+            return mOrderHistoryItemList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+
+            return mOrderHistoryItemList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            Object tag;
+            View view;
+            ViewHolder viewHolder;
+
+            if (convertView != null &&
+                    (tag = convertView.getTag()) != null &&
+                    tag instanceof ViewHolder) {
+                view = convertView;
+                viewHolder = (ViewHolder) tag;
+            } else {
+                view = LayoutInflater.from(getActivity()).inflate(R.layout.list_item_order_history, parent, false);
+                viewHolder = new ViewHolder(view);
+
+                view.setTag(viewHolder);
+            }
+
+            OrderHistoryItem orderHistoryItem = (OrderHistoryItem) getItem(position);
+
+            viewHolder.bind(orderHistoryItem);
+
+            return view;
+        }
+
+        private class ViewHolder {
+            View view;
+            TextView dateTextView;
+            TextView descriptionTextView;
+
+            ViewHolder(View view) {
+
+                this.view = view;
+                this.dateTextView = (TextView) view.findViewById(R.id.date_text_view);
+                this.descriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
+            }
+
+            void bind(OrderHistoryItem orderHistoryItem) {
+
+                this.dateTextView.setText(orderHistoryItem.getDateString());
+                this.descriptionTextView.setText(orderHistoryItem.getDescription());
+            }
+        }
     }
 
-  }
+    /*****************************************************
+     *
+     * A request catalogue runnable.
+     *
+     *****************************************************/
+    private class RequestCatalogueRunnable implements Runnable {
+        @Override
+        public void run() {
+
+            requestCatalogue();
+        }
+    }
+
+    /*****************************************************
+     *
+     * A finish runnable.
+     *
+     *****************************************************/
+    private class FinishRunnable implements Runnable {
+        @Override
+        public void run() {
+
+            onLoadCancelled();
+        }
+    }
+
+}
 

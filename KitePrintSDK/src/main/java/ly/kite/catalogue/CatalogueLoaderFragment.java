@@ -36,7 +36,6 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -53,7 +52,6 @@ import ly.kite.R;
 import ly.kite.app.ARetainedDialogFragment;
 import ly.kite.app.RetainedFragmentHelper;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -62,278 +60,268 @@ import ly.kite.app.RetainedFragmentHelper;
  * catalogue.
  *
  *****************************************************/
-public class CatalogueLoaderFragment extends ARetainedDialogFragment implements ICatalogueConsumer
-  {
-  ////////// Static Constant(s) //////////
+public class CatalogueLoaderFragment extends ARetainedDialogFragment implements ICatalogueConsumer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static public final String  TAG = "CatalogueLoaderFragment";
+    @SuppressWarnings("unused")
+    public static final String TAG = "CatalogueLoaderFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private ProgressDialog mProgressDialog;
 
-  ////////// Member Variable(s) //////////
+    private CatalogueLoader mCatalogueLoader;
 
-  private ProgressDialog   mProgressDialog;
+    ////////// Static Initialiser(s) //////////
 
-  private CatalogueLoader  mCatalogueLoader;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Attaches the fragment to the activity, and then
+     * submits the order.
+     *
+     *****************************************************/
+    private static CatalogueLoaderFragment start(Activity activity, CatalogueLoaderFragment catalogueLoaderFragment, String...
+            filterProductIds) {
 
-  ////////// Static Initialiser(s) //////////
+        catalogueLoaderFragment.addTo(activity, TAG);
 
+        catalogueLoaderFragment.loadCatalogue(activity, filterProductIds);
 
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Attaches the fragment to the activity, and then
-   * submits the order.
-   *
-   *****************************************************/
-  static private CatalogueLoaderFragment start( Activity activity, CatalogueLoaderFragment catalogueLoaderFragment, String... filterProductIds )
-    {
-    catalogueLoaderFragment.addTo( activity, TAG );
-
-    catalogueLoaderFragment.loadCatalogue( activity, filterProductIds );
-
-    return ( catalogueLoaderFragment );
+        return catalogueLoaderFragment;
     }
 
+    /*****************************************************
+     *
+     * Attaches this fragment to the activity, and then
+     * submits the order.
+     *
+     *****************************************************/
+    private static CatalogueLoaderFragment start(Activity activity, String... filterProductIds) {
 
-  /*****************************************************
-   *
-   * Attaches this fragment to the activity, and then
-   * submits the order.
-   *
-   *****************************************************/
-  static private CatalogueLoaderFragment start( Activity activity, String... filterProductIds )
-    {
-    CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
+        CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
 
-    return ( start( activity, catalogueLoaderFragment, filterProductIds ) );
+        return start(activity, catalogueLoaderFragment, filterProductIds);
     }
 
+    /*****************************************************
+     *
+     * Attaches this fragment to the activity, and then
+     * submits the order.
+     *
+     *****************************************************/
+    private static <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment start(F catalogueConsumerFragment, String...
+            filterProductIds) {
 
-  /*****************************************************
-   *
-   * Attaches this fragment to the activity, and then
-   * submits the order.
-   *
-   *****************************************************/
-  static private <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment start( F catalogueConsumerFragment, String... filterProductIds )
-    {
-    CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
+        CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
 
-    catalogueLoaderFragment.setTargetFragment( catalogueConsumerFragment, 0 );
+        catalogueLoaderFragment.setTargetFragment(catalogueConsumerFragment, 0);
 
-    return ( start( catalogueConsumerFragment.getActivity(), catalogueLoaderFragment, filterProductIds ) );
+        return start(catalogueConsumerFragment.getActivity(), catalogueLoaderFragment, filterProductIds);
     }
 
+    /*****************************************************
+     *
+     * Tries to find this fragment, and returns it.
+     *
+     *****************************************************/
+    public static CatalogueLoaderFragment find(Activity activity) {
 
-  /*****************************************************
-   *
-   * Tries to find this fragment, and returns it.
-   *
-   *****************************************************/
-  static public CatalogueLoaderFragment find( Activity activity )
-    {
-    return ( (CatalogueLoaderFragment)find( activity, TAG, CatalogueLoaderFragment.class ) );
+        return (CatalogueLoaderFragment) find(activity, TAG, CatalogueLoaderFragment.class);
     }
 
+    /*****************************************************
+     *
+     * Returns this fragment, if it is already attached to
+     * the activity. Otherwise will create and display a
+     * new fragment.
+     *
+     *****************************************************/
+    public static CatalogueLoaderFragment findOrStart(Activity activity, String... filterProductIds) {
 
-  /*****************************************************
-   *
-   * Returns this fragment, if it is already attached to
-   * the activity. Otherwise will create and display a
-   * new fragment.
-   *
-   *****************************************************/
-  static public CatalogueLoaderFragment findOrStart( Activity activity, String... filterProductIds )
-    {
-    CatalogueLoaderFragment fragment = find( activity );
+        CatalogueLoaderFragment fragment = find(activity);
 
-    if ( fragment != null ) return ( fragment );
+        if (fragment != null) {
+            return fragment;
+        }
 
-    return ( start( activity, filterProductIds ) );
+        return start(activity, filterProductIds);
     }
 
+    /*****************************************************
+     *
+     * Returns this fragment, if it is already attached to
+     * the activity. Otherwise will create and display a
+     * new fragment.
+     *
+     *****************************************************/
+    public static <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment findOrStart(F catalogueConsumerFragment, String...
+            filterProductIds) {
 
-  /*****************************************************
-   *
-   * Returns this fragment, if it is already attached to
-   * the activity. Otherwise will create and display a
-   * new fragment.
-   *
-   *****************************************************/
-  static public <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment findOrStart( F catalogueConsumerFragment, String... filterProductIds )
-    {
-    CatalogueLoaderFragment foundFragment = find( catalogueConsumerFragment.getActivity() );
+        CatalogueLoaderFragment foundFragment = find(catalogueConsumerFragment.getActivity());
 
-    if ( foundFragment != null ) return ( foundFragment );
+        if (foundFragment != null) {
+            return foundFragment;
+        }
 
-    return ( start( catalogueConsumerFragment, filterProductIds ) );
+        return start(catalogueConsumerFragment, filterProductIds);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public CatalogueLoaderFragment() {
 
-  public CatalogueLoaderFragment()
-    {
-    super( ICatalogueConsumer.class );
+        super(ICatalogueConsumer.class);
     }
 
+    ////////// DialogFragment Method(s) //////////
 
-  ////////// DialogFragment Method(s) //////////
+    /*****************************************************
+     *
+     * Called to create a dialog.
+     *
+     *****************************************************/
+    @Override
+    public AlertDialog onCreateDialog(Bundle savedInstanceState) {
+        // If there isn't already a progress dialog - create one now
 
-  /*****************************************************
-   *
-   * Called to create a dialog.
-   *
-   *****************************************************/
-  @Override
-  public AlertDialog onCreateDialog( Bundle savedInstanceState )
-    {
-    // If there isn't already a progress dialog - create one now
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
 
-    if ( mProgressDialog == null )
-      {
-      mProgressDialog = new ProgressDialog( getActivity() );
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setProgressPercentFormat(null);
+            mProgressDialog.setProgressNumberFormat(null);   // Don't display the "N/100" text
+            mProgressDialog.setTitle(R.string.Loading_catalogue);
+        }
 
-      mProgressDialog.setIndeterminate( true );
-      mProgressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
-      mProgressDialog.setProgressPercentFormat( null );
-      mProgressDialog.setProgressNumberFormat( null );   // Don't display the "N/100" text
-      mProgressDialog.setTitle( R.string.Loading_catalogue );
-      }
+        setCancelable(true);
 
-    setCancelable( true );
-
-    return ( mProgressDialog );
+        return mProgressDialog;
     }
 
+    /*****************************************************
+     *
+     * Called when the dialog is cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
 
-  /*****************************************************
-   *
-   * Called when the dialog is cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void onCancel( DialogInterface dialogInterface )
-    {
-    onCatalogueCancelled();
+        onCatalogueCancelled();
     }
 
+    ////////// CatalogueLoader.ICatalogueConsumer Method(s) //////////
 
-  ////////// CatalogueLoader.ICatalogueConsumer Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the catalogue is loaded successfully.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueSuccess(final Catalogue catalogue) {
 
-  /*****************************************************
-   *
-   * Called when the catalogue is loaded successfully.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueSuccess( final Catalogue catalogue )
-    {
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object catalogueConsumerObject )
-        {
-        if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - success" );
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object catalogueConsumerObject) {
 
-        ( (ICatalogueConsumer)catalogueConsumerObject ).onCatalogueSuccess( catalogue );
+                if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+                    Log.d(TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - success");
+                }
+
+                ((ICatalogueConsumer) catalogueConsumerObject).onCatalogueSuccess(catalogue);
+
+                remove();
+            }
+        });
+    }
+
+    /*****************************************************
+     *
+     * Called when the catalogue load is cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueCancelled() {
+
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object catalogueConsumerObject) {
+
+                if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+                    Log.d(TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - cancelled");
+                }
+
+                ((ICatalogueConsumer) catalogueConsumerObject).onCatalogueCancelled();
+
+                cancel();
+            }
+        });
+    }
+
+    /*****************************************************
+     *
+     * Called when the catalogue load fails.
+     *
+     *****************************************************/
+    @Override
+    public void onCatalogueError(final Exception exception) {
+
+        setStateNotifier(new RetainedFragmentHelper.AStateNotifier() {
+            @Override
+            public void notify(Object catalogueConsumerObject) {
+
+                if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
+                    Log.d(TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - success");
+                }
+
+                ((ICatalogueConsumer) catalogueConsumerObject).onCatalogueError(exception);
+
+                remove();
+            }
+        });
+    }
+
+    ////////// Method(s) //////////
+
+    /*****************************************************
+     *
+     * Requests the catalogue load.
+     *
+     *****************************************************/
+    private void loadCatalogue(Context context, String[] filterProductIds) {
+
+        if (mCatalogueLoader == null) {
+            mCatalogueLoader = KiteSDK.getInstance(context).getCatalogueLoader();
+        }
+
+        mCatalogueLoader.requestCatalogue(KiteSDK.MAX_ACCEPTED_PRODUCT_AGE_MILLIS, filterProductIds, this);
+    }
+
+    /*****************************************************
+     *
+     * Cancels any running requests.
+     *
+     *****************************************************/
+    public void cancel() {
+
+        if (mCatalogueLoader != null) {
+            mCatalogueLoader.cancelRequests();
+        }
 
         remove();
-        }
-      } );
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Called when the catalogue load is cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueCancelled()
-    {
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object catalogueConsumerObject )
-        {
-        if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - cancelled" );
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-        ( (ICatalogueConsumer)catalogueConsumerObject ).onCatalogueCancelled();
-
-        cancel();
-        }
-      } );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when the catalogue load fails.
-   *
-   *****************************************************/
-  @Override
-  public void onCatalogueError( final Exception exception )
-    {
-    setStateNotifier( new RetainedFragmentHelper.AStateNotifier()
-      {
-      @Override
-      public void notify( Object catalogueConsumerObject )
-        {
-        if ( KiteSDK.DEBUG_RETAINED_FRAGMENT ) Log.d( TAG, "notify( catalogueConsumerObject = " + catalogueConsumerObject + " ) - success" );
-
-        ( (ICatalogueConsumer)catalogueConsumerObject ).onCatalogueError( exception );
-
-        remove();
-        }
-      } );
-    }
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Requests the catalogue load.
-   *
-   *****************************************************/
-  private void loadCatalogue( Context context, String[] filterProductIds )
-    {
-    if ( mCatalogueLoader == null )
-      {
-      mCatalogueLoader = KiteSDK.getInstance( context ).getCatalogueLoader();
-      }
-
-    mCatalogueLoader.requestCatalogue( KiteSDK.MAX_ACCEPTED_PRODUCT_AGE_MILLIS, filterProductIds, this );
-    }
-
-
-  /*****************************************************
-   *
-   * Cancels any running requests.
-   *
-   *****************************************************/
-  public void cancel()
-    {
-    if ( mCatalogueLoader != null ) mCatalogueLoader.cancelRequests();
-
-    remove();
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

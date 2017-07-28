@@ -36,22 +36,15 @@
 
 package ly.kite;
 
-
 ///// Import(s) /////
 
 import android.test.AndroidTestCase;
 
 import junit.framework.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ly.kite.catalogue.Product;
 import ly.kite.ordering.ImageSpec;
 import ly.kite.util.Asset;
-import ly.kite.util.AssetFragment;
 import ly.kite.util.AssetHelper;
-
 
 ///// Class Declaration /////
 
@@ -60,61 +53,52 @@ import ly.kite.util.AssetHelper;
  * This is the parent of Kite unit test cases.
  *
  *****************************************************/
-public class KiteTestCase extends AndroidTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class KiteTestCase extends AndroidTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "KiteTestCase";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "KiteTestCase";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// AndroidTestCase Method(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Checks the asset file name and quantity of an image spec.
+     *
+     *****************************************************/
+    protected void assertProperties(ImageSpec imageSpec, String filePath, String borderText, int quantity) {
 
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// AndroidTestCase Method(s) //////////
-
-
-  ////////// Method(s) //////////
-
-
-  /*****************************************************
-   *
-   * Checks the asset file name and quantity of an image spec.
-   *
-   *****************************************************/
-  protected void assertProperties( ImageSpec imageSpec, String filePath, String borderText, int quantity )
-    {
-    if ( filePath != null ) Assert.assertEquals( filePath, imageSpec.getAsset().getImageFilePath() );
-    Assert.assertEquals( borderText, imageSpec.getBorderText() );
-    Assert.assertEquals( quantity, imageSpec.getQuantity() );
+        if (filePath != null) {
+            Assert.assertEquals(filePath, imageSpec.getAsset().getImageFilePath());
+        }
+        Assert.assertEquals(borderText, imageSpec.getBorderText());
+        Assert.assertEquals(quantity, imageSpec.getQuantity());
     }
 
+    /*****************************************************
+     *
+     * Populates a dummy asset.
+     *
+     *****************************************************/
+    protected Asset createSessionAssetFile() {
 
-  /*****************************************************
-   *
-   * Populates a dummy asset.
-   *
-   *****************************************************/
-  protected Asset createSessionAssetFile()
-    {
-    byte[] dummyBytes = new byte[] { 0x3f, 0x12, 0x45 };
+        byte[] dummyBytes = new byte[]{0x3f, 0x12, 0x45};
 
-    return ( AssetHelper.createAsSessionAsset( getContext(), dummyBytes, Asset.MIMEType.JPEG ) );
+        return AssetHelper.createAsSessionAsset(getContext(), dummyBytes, Asset.MIMEType.JPEG);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}

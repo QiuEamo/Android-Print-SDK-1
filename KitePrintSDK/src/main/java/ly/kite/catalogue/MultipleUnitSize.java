@@ -36,9 +36,7 @@
 
 package ly.kite.catalogue;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -53,148 +51,131 @@ import java.util.HashMap;
  * This class represents a size in multiple units.
  *
  *****************************************************/
-public class MultipleUnitSize implements Parcelable
-  {
-  ////////// Static Constant(s) //////////
+public class MultipleUnitSize implements Parcelable {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "MultipleUnitSize";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MultipleUnitSize";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    public static final Parcelable.Creator<MultipleUnitSize> CREATOR =
+            new Parcelable.Creator<MultipleUnitSize>() {
+                public MultipleUnitSize createFromParcel(Parcel sourceParcel) {
 
-  public static final Parcelable.Creator<MultipleUnitSize> CREATOR =
-    new Parcelable.Creator<MultipleUnitSize>()
-      {
-      public MultipleUnitSize createFromParcel( Parcel sourceParcel )
-        {
-        return ( new MultipleUnitSize( sourceParcel ) );
+                    return new MultipleUnitSize(sourceParcel);
+                }
+
+                public MultipleUnitSize[] newArray(int size) {
+
+                    return new MultipleUnitSize[size];
+                }
+            };
+
+    ////////// Member Variable(s) //////////
+
+    private HashMap<UnitOfLength, SingleUnitSize> mUnitSizeTable;
+
+    ////////// Static Initialiser(s) //////////
+
+    ////////// Static Method(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public MultipleUnitSize() {
+
+        mUnitSizeTable = new HashMap<>();
+    }
+
+    // Constructor used by parcelable interface
+    private MultipleUnitSize(Parcel sourceParcel) {
+
+        this();
+
+        int count = sourceParcel.readInt();
+
+        for (int index = 0; index < count; index++) {
+            add((SingleUnitSize) sourceParcel.readParcelable(SingleUnitSize.class.getClassLoader()));
         }
+    }
 
-      public MultipleUnitSize[] newArray( int size )
-        {
-        return ( new MultipleUnitSize[ size ] );
+    ////////// Parcelable Method(s) //////////
+
+    /*****************************************************
+     *
+     * Describes the contents of this parcelable.
+     *
+     *****************************************************/
+    @Override
+    public int describeContents() {
+
+        return 0;
+    }
+
+    /*****************************************************
+     *
+     * Write the contents of this product to a parcel.
+     *
+     *****************************************************/
+    @Override
+    public void writeToParcel(Parcel targetParcel, int flags) {
+
+        targetParcel.writeInt(mUnitSizeTable.size());
+
+        for (SingleUnitSize singleUnitSize : mUnitSizeTable.values()) {
+            targetParcel.writeParcelable(singleUnitSize, flags);
         }
-      };
-
-
-  ////////// Member Variable(s) //////////
-
-  private HashMap<UnitOfLength,SingleUnitSize>  mUnitSizeTable;
-
-
-  ////////// Static Initialiser(s) //////////
-
-
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-  public MultipleUnitSize()
-    {
-    mUnitSizeTable = new HashMap<>();
     }
 
+    ////////// Method(s) //////////
 
-  // Constructor used by parcelable interface
-  private MultipleUnitSize( Parcel sourceParcel )
-    {
-    this();
+    /*****************************************************
+     *
+     * Adds a size in a single unit.
+     *
+     *****************************************************/
+    public void add(SingleUnitSize singleUnitSize) {
 
-    int count = sourceParcel.readInt();
-
-    for ( int index = 0; index < count; index ++ )
-      {
-      add( (SingleUnitSize)sourceParcel.readParcelable( SingleUnitSize.class.getClassLoader() ) );
-      }
+        mUnitSizeTable.put(singleUnitSize.getUnit(), singleUnitSize);
     }
 
+    /*****************************************************
+     *
+     * Returns the size for a unit.
+     *
+     *****************************************************/
+    public SingleUnitSize get(UnitOfLength unit) {
 
-  ////////// Parcelable Method(s) //////////
-
-  /*****************************************************
-   *
-   * Describes the contents of this parcelable.
-   *
-   *****************************************************/
-  @Override
-  public int describeContents()
-    {
-    return ( 0 );
+        return mUnitSizeTable.get(unit);
     }
 
+    /*****************************************************
+     *
+     * Returns the size at a position.
+     *
+     *****************************************************/
+    public SingleUnitSize get(int position) {
 
-  /*****************************************************
-   *
-   * Write the contents of this product to a parcel.
-   *
-   *****************************************************/
-  @Override
-  public void writeToParcel( Parcel targetParcel, int flags )
-    {
-    targetParcel.writeInt( mUnitSizeTable.size() );
-
-    for ( SingleUnitSize singleUnitSize : mUnitSizeTable.values() )
-      {
-      targetParcel.writeParcelable( singleUnitSize, flags );
-      }
+        return mUnitSizeTable.get(position);
     }
 
+    /*****************************************************
+     *
+     * Returns a list of the sizes.
+     *
+     *****************************************************/
+    public Collection<SingleUnitSize> getAll() {
 
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Adds a size in a single unit.
-   *
-   *****************************************************/
-  public void add( SingleUnitSize singleUnitSize )
-    {
-    mUnitSizeTable.put( singleUnitSize.getUnit(), singleUnitSize );
+        return mUnitSizeTable.values();
     }
 
+    ////////// Inner Class(es) //////////
 
-  /*****************************************************
-   *
-   * Returns the size for a unit.
-   *
-   *****************************************************/
-  public SingleUnitSize get( UnitOfLength unit )
-    {
-    return ( mUnitSizeTable.get( unit ) );
-    }
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-
-  /*****************************************************
-   *
-   * Returns the size at a position.
-   *
-   *****************************************************/
-  public SingleUnitSize get( int position )
-    {
-    return ( mUnitSizeTable.get( position ) );
-    }
-
-
-  /*****************************************************
-   *
-   * Returns a list of the sizes.
-   *
-   *****************************************************/
-  public Collection<SingleUnitSize> getAll()
-    {
-    return ( mUnitSizeTable.values() );
-    }
-
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

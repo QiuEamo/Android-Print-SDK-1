@@ -36,7 +36,6 @@
 
 package ly.kite.app;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -45,9 +44,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
-
-import ly.kite.KiteSDK;
-
 
 ///// Class Declaration /////
 
@@ -58,175 +54,156 @@ import ly.kite.KiteSDK;
  * and providing callbacks.
  *
  *****************************************************/
-abstract public class ARetainedDialogFragment extends DialogFragment
-  {
-  ////////// Static Constant(s) //////////
+abstract public class ARetainedDialogFragment extends DialogFragment {
+    ////////// Static Constant(s) //////////
 
-  static private final String LOG_TAG = "ARetainedDialogFragment";
+    private static final String LOG_TAG = "ARetainedDialogFragment";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    protected RetainedFragmentHelper mRetainedFragmentHelper;
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Initialiser(s) //////////
 
-  protected RetainedFragmentHelper  mRetainedFragmentHelper;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Tries to find this fragment, and returns it.
+     *
+     *****************************************************/
+    static protected Fragment find(Activity activity, String tag, Class<? extends ARetainedDialogFragment> fragmentClass) {
 
-  ////////// Static Initialiser(s) //////////
+        if (activity == null) {
+            Log.e(LOG_TAG, "Null activity supplied");
 
-
-  ////////// Static Method(s) //////////
-
-  /*****************************************************
-   *
-   * Tries to find this fragment, and returns it.
-   *
-   *****************************************************/
-  static protected Fragment find( Activity activity, String tag, Class<? extends ARetainedDialogFragment> fragmentClass )
-    {
-    if ( activity == null )
-      {
-      Log.e( LOG_TAG, "Null activity supplied" );
-
-      return ( null );
-      }
-
-
-    FragmentManager fragmentManager = activity.getFragmentManager();
-
-    if ( fragmentManager != null )
-      {
-      Fragment foundFragment = fragmentManager.findFragmentByTag( tag );
-
-      if ( foundFragment != null )
-        {
-        Class<?> foundFragmentClass = foundFragment.getClass();
-
-        if ( foundFragmentClass.equals( fragmentClass ) )
-          {
-          return ( foundFragment );
-          }
+            return null;
         }
-      }
 
-    return ( null );
+        FragmentManager fragmentManager = activity.getFragmentManager();
+
+        if (fragmentManager != null) {
+            Fragment foundFragment = fragmentManager.findFragmentByTag(tag);
+
+            if (foundFragment != null) {
+                Class<?> foundFragmentClass = foundFragment.getClass();
+
+                if (foundFragmentClass.equals(fragmentClass)) {
+                    return foundFragment;
+                }
+            }
+        }
+
+        return null;
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public ARetainedDialogFragment(Class<?> callbackClass) {
 
-  public ARetainedDialogFragment( Class<?> callbackClass )
-    {
-    mRetainedFragmentHelper = new RetainedFragmentHelper( this, callbackClass );
+        mRetainedFragmentHelper = new RetainedFragmentHelper(this, callbackClass);
     }
 
+    ////////// DialogFragment Method(s) //////////
 
-  ////////// DialogFragment Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the fragment is created.
+     *
+     *****************************************************/
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called when the fragment is created.
-   *
-   *****************************************************/
-  @Override
-  public void onCreate( Bundle savedInstanceState )
-    {
-    super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
 
-    mRetainedFragmentHelper.onCreate( savedInstanceState );
+        mRetainedFragmentHelper.onCreate(savedInstanceState);
     }
 
+    /*****************************************************
+     *
+     * Called when the fragment is attached to an activity.
+     *
+     *****************************************************/
+    @Override
+    public void onAttach(Activity activity) {
 
-  /*****************************************************
-   *
-   * Called when the fragment is attached to an activity.
-   *
-   *****************************************************/
-  @Override
-  public void onAttach( Activity activity )
-    {
-    super.onAttach( activity );
+        super.onAttach(activity);
 
-    mRetainedFragmentHelper.onAttach( activity );
+        mRetainedFragmentHelper.onAttach(activity);
     }
 
+    /*****************************************************
+     *
+     * Called when a target fragment is set.
+     *
+     *****************************************************/
+    @Override
+    public void setTargetFragment(Fragment fragment, int requestCode) {
 
-  /*****************************************************
-   *
-   * Called when a target fragment is set.
-   *
-   *****************************************************/
-  @Override
-  public void setTargetFragment( Fragment fragment, int requestCode )
-    {
-    super.setTargetFragment( fragment, requestCode );
+        super.setTargetFragment(fragment, requestCode);
 
-    mRetainedFragmentHelper.onSetTargetFragment( fragment, requestCode );
+        mRetainedFragmentHelper.onSetTargetFragment(fragment, requestCode);
     }
 
+    /*****************************************************
+     *
+     * Called when the view is destroyed.
+     *
+     *****************************************************/
+    @Override
+    public void onDestroyView() {
+        // Work-around for dialog fragment not being retained
+        // following orientation change.
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setDismissMessage(null);
+        }
 
-  /*****************************************************
-   *
-   * Called when the view is destroyed.
-   *
-   *****************************************************/
-  @Override
-  public void onDestroyView()
-    {
-    // Work-around for dialog fragment not being retained
-    // following orientation change.
-    if ( getDialog() != null && getRetainInstance() )
-      {
-      getDialog().setDismissMessage( null );
-      }
-
-    super.onDestroyView();
+        super.onDestroyView();
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Adds this fragment to the activity.
+     *
+     *****************************************************/
+    public void addTo(Activity activity, String tag) {
 
-  /*****************************************************
-   *
-   * Adds this fragment to the activity.
-   *
-   *****************************************************/
-  public void addTo( Activity activity, String tag )
-    {
-    mRetainedFragmentHelper.addTo( activity, tag );
+        mRetainedFragmentHelper.addTo(activity, tag);
     }
 
+    /*****************************************************
+     *
+     * Sets the current state notifier. The notifier may
+     * get called twice, if there is both an attached activity
+     * and a target fragment of the correct callback type.
+     *
+     *****************************************************/
+    protected void setStateNotifier(RetainedFragmentHelper.AStateNotifier stateNotifier) {
 
-  /*****************************************************
-   *
-   * Sets the current state notifier. The notifier may
-   * get called twice, if there is both an attached activity
-   * and a target fragment of the correct callback type.
-   *
-   *****************************************************/
-  protected void setStateNotifier( RetainedFragmentHelper.AStateNotifier stateNotifier )
-    {
-    mRetainedFragmentHelper.setState( stateNotifier );
+        mRetainedFragmentHelper.setState(stateNotifier);
     }
 
+    /*****************************************************
+     *
+     * Removes this fragment from the activity.
+     *
+     *****************************************************/
+    public void remove() {
 
-  /*****************************************************
-   *
-   * Removes this fragment from the activity.
-   *
-   *****************************************************/
-  public void remove()
-    {
-    Activity activity = getActivity();
+        Activity activity = getActivity();
 
-    if ( activity != null ) mRetainedFragmentHelper.removeFrom( activity );
+        if (activity != null) {
+            mRetainedFragmentHelper.removeFrom(activity);
+        }
 
-    super.setTargetFragment( null, 0 );
+        super.setTargetFragment(null, 0);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

@@ -34,12 +34,12 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-
 public class SecurePreferences {
 
     public static class SecurePreferencesException extends RuntimeException {
 
         public SecurePreferencesException(Throwable e) {
+
             super(e);
         }
 
@@ -52,26 +52,31 @@ public class SecurePreferences {
     private Cipher writer;
     private Cipher reader;
 
-    private boolean encryptData=true;
+    private boolean encryptData = true;
     private final String secureKey;
 
     /**
      * This will initialize an instance of the SecurePreferences class
+     *
      * @param secureKey the key used for encryption, finding a good key scheme is hard.
-     * Hardcoding your key in the application is bad, but better than plaintext preferences. Having the user enter the key upon application launch is a safe(r) alternative, but annoying to the user.
-     * true will encrypt both values and keys. Keys can contain a lot of information about
-     * the plaintext value of the value which can be used to decipher the value.
+     *                  Hardcoding your key in the application is bad, but better than plaintext preferences. Having the user enter the
+     *                  key upon application launch is a safe(r) alternative, but annoying to the user.
+     *                  true will encrypt both values and keys. Keys can contain a lot of information about
+     *                  the plaintext value of the value which can be used to decipher the value.
      * @throws SecurePreferencesException
      */
     public SecurePreferences(String secureKey) throws SecurePreferencesException {
-        if(secureKey.equals("off"))
+
+        if (secureKey.equals("off")) {
             encryptData = false;
+        }
 
         this.secureKey = secureKey;
         reset();
     }
 
     public void reset() {
+
         try {
             this.writer = Cipher.getInstance(TRANSFORMATION);
             this.reader = Cipher.getInstance(TRANSFORMATION);
@@ -85,6 +90,7 @@ public class SecurePreferences {
 
     protected void initCiphers(String secureKey) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException,
             InvalidAlgorithmParameterException {
+
         IvParameterSpec ivSpec = getIv();
         SecretKeySpec secretKey = getSecretKey(secureKey);
 
@@ -93,30 +99,34 @@ public class SecurePreferences {
     }
 
     protected IvParameterSpec getIv() {
+
         byte[] iv = new byte[writer.getBlockSize()];
         System.arraycopy("CHANGE_ME_IF_YOU_WANT".getBytes(), 0, iv, 0, writer.getBlockSize());
         return new IvParameterSpec(iv);
     }
 
     protected SecretKeySpec getSecretKey(String key) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
         byte[] keyBytes = createKeyBytes(key);
         return new SecretKeySpec(keyBytes, TRANSFORMATION);
     }
 
     protected byte[] createKeyBytes(String key) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
         MessageDigest md = MessageDigest.getInstance(SECRET_KEY_HASH_TRANSFORMATION);
         md.reset();
         byte[] keyBytes = md.digest(key.getBytes(CHARSET));
         return keyBytes;
     }
 
-
     public String encrypt(String value) throws SecurePreferencesException {
-        if(encryptData == false)
+
+        if (encryptData == false) {
             return value;
-        else {
-            if (value == null)
+        } else {
+            if (value == null) {
                 return null;
+            }
             byte[] secureValue;
             try {
                 secureValue = convert(writer, value.getBytes(CHARSET));
@@ -129,11 +139,13 @@ public class SecurePreferences {
     }
 
     public String decrypt(String securedEncodedValue) {
-        if(encryptData==false)
+
+        if (encryptData == false) {
             return securedEncodedValue;
-        else {
-            if (securedEncodedValue == null)
+        } else {
+            if (securedEncodedValue == null) {
                 return null;
+            }
             byte[] securedValue = Base64.decode(securedEncodedValue, Base64.NO_WRAP);
             byte[] value = convert(reader, securedValue);
             try {
@@ -145,10 +157,10 @@ public class SecurePreferences {
     }
 
     private static byte[] convert(Cipher cipher, byte[] bs) throws SecurePreferencesException {
+
         try {
             return cipher.doFinal(bs);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SecurePreferencesException(e);
         }
     }

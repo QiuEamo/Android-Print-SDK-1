@@ -36,7 +36,6 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -46,7 +45,6 @@ import ly.kite.journey.AKiteFragment;
 import ly.kite.ordering.Order;
 import ly.kite.pricing.OrderPricing;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -54,160 +52,148 @@ import ly.kite.pricing.OrderPricing;
  * This is the parent class of payment fragments.
  *
  *****************************************************/
-abstract public class APaymentFragment extends AKiteFragment implements View.OnClickListener
-  {
-  ////////// Static Constant(s) //////////
+abstract public class APaymentFragment extends AKiteFragment implements View.OnClickListener {
+    ////////// Static Constant(s) //////////
 
-  static public final String  TAG = "APaymentFragment";
+    public static final String TAG = "APaymentFragment";
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    protected Order mOrder;
+    protected OrderPricing mOrderPricing;
 
-  protected Order         mOrder;
-  protected OrderPricing  mOrderPricing;
+    protected boolean mPayPalAvailable;
 
-  protected boolean       mPayPalAvailable;
+    ////////// Static Method(s) //////////
 
+    ////////// Method(s) //////////
 
-  ////////// Static Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the payment activity.
+     *
+     *****************************************************/
+    protected PaymentActivity getPaymentActivity() {
 
+        Activity activity = getActivity();
 
-  ////////// Method(s) //////////
+        if (activity != null && activity instanceof PaymentActivity) {
+            return (PaymentActivity) activity;
+        }
 
-  /*****************************************************
-   *
-   * Returns the payment activity.
-   *
-   *****************************************************/
-  protected PaymentActivity getPaymentActivity()
-    {
-    Activity activity = getActivity();
-
-    if ( activity != null && activity instanceof PaymentActivity )
-      {
-      return ( (PaymentActivity)activity );
-      }
-
-    return ( null );
+        return null;
     }
 
+    /*****************************************************
+     *
+     * Called to enable / disable buttons.
+     *
+     *****************************************************/
+    abstract public void onEnableButtons(boolean enabled);
 
-  /*****************************************************
-   *
-   * Called to enable / disable buttons.
-   *
-   *****************************************************/
-  abstract public void onEnableButtons( boolean enabled );
+    /*****************************************************
+     *
+     * Called with the order pricing.
+     *
+     *****************************************************/
+    public void onOrderUpdate(Order order, OrderPricing orderPricing) {
 
-
-  /*****************************************************
-   *
-   * Called with the order pricing.
-   *
-   *****************************************************/
-  public void onOrderUpdate( Order order, OrderPricing orderPricing )
-    {
-    mOrder        = order;
-    mOrderPricing = orderPricing;
+        mOrder = order;
+        mOrderPricing = orderPricing;
     }
 
+    /*****************************************************
+     *
+     * Called to set / unset free checkout.
+     *
+     *****************************************************/
+    abstract public void onCheckoutFree(boolean free);
 
-  /*****************************************************
-   *
-   * Called to set / unset free checkout.
-   *
-   *****************************************************/
-  abstract public void onCheckoutFree( boolean free );
+    /*****************************************************
+     *
+     * Displays an error dialog.
+     *
+     *****************************************************/
+    protected void showErrorDialog(int titleResourceId, String message) {
 
+        PaymentActivity paymentActivity = getPaymentActivity();
 
-  /*****************************************************
-   *
-   * Displays an error dialog.
-   *
-   *****************************************************/
-  protected void showErrorDialog( int titleResourceId, String message )
-    {
-    PaymentActivity paymentActivity = getPaymentActivity();
-
-    if ( paymentActivity != null ) paymentActivity.showErrorDialog( titleResourceId, message );
+        if (paymentActivity != null) {
+            paymentActivity.showErrorDialog(titleResourceId, message);
+        }
     }
 
+    /*****************************************************
+     *
+     * Displays an error dialog.
+     *
+     *****************************************************/
+    protected void showErrorDialog(String message) {
 
-  /*****************************************************
-   *
-   * Displays an error dialog.
-   *
-   *****************************************************/
-  protected void showErrorDialog( String message )
-    {
-    PaymentActivity paymentActivity = getPaymentActivity();
+        PaymentActivity paymentActivity = getPaymentActivity();
 
-    if ( paymentActivity != null ) paymentActivity.showErrorDialog( message );
+        if (paymentActivity != null) {
+            paymentActivity.showErrorDialog(message);
+        }
     }
 
+    /*****************************************************
+     *
+     * Displays an error dialog.
+     *
+     *****************************************************/
+    protected void showErrorDialog(int messageResourceId) {
 
-  /*****************************************************
-   *
-   * Displays an error dialog.
-   *
-   *****************************************************/
-  protected void showErrorDialog( int messageResourceId )
-    {
-    PaymentActivity paymentActivity = getPaymentActivity();
+        PaymentActivity paymentActivity = getPaymentActivity();
 
-    if ( paymentActivity != null ) paymentActivity.showErrorDialog( messageResourceId );
+        if (paymentActivity != null) {
+            paymentActivity.showErrorDialog(messageResourceId);
+        }
     }
 
+    /*****************************************************
+     *
+     * Submits the order for printing.
+     *
+     *****************************************************/
+    abstract public void submitOrderForPrinting(String paymentId, String accountId, PaymentMethod paymentMethod);
 
-  /*****************************************************
-   *
-   * Submits the order for printing.
-   *
-   *****************************************************/
-  abstract public void submitOrderForPrinting( String paymentId, String accountId, PaymentMethod paymentMethod );
+    /*****************************************************
+     *
+     * Called just before the order is submitted.
+     *
+     *****************************************************/
+    public void onPreSubmission(Order order) {
 
-
-  /*****************************************************
-   *
-   * Called just before the order is submitted.
-   *
-   *****************************************************/
-  public void onPreSubmission( Order order )
-    {
     }
 
-
-  /*****************************************************
-   *
-   * Called when the order succeeds.
-   *
-   *****************************************************/
-  public void onOrderSuccess( Activity activity, Order order, int requestCode )
-    {
-    // The default action is to go to the receipt screen
-    OrderReceiptActivity.startForResult( activity, order, requestCode );
+    /*****************************************************
+     *
+     * Called when the order succeeds.
+     *
+     *****************************************************/
+    public void onOrderSuccess(Activity activity, Order order, int requestCode) {
+        // The default action is to go to the receipt screen
+        OrderReceiptActivity.startForResult(activity, order, requestCode);
     }
 
-
-  /*****************************************************
-   *
-   * Called when the order fails.
-   *
-   *****************************************************/
-  public void onOrderFailure( Activity activity, long localOrderId, Order order, Exception exception, int requestCode )
-    {
-    // The default action is to go to the receipt screen
-    OrderReceiptActivity.startForResult( activity, localOrderId, order, requestCode );
+    /*****************************************************
+     *
+     * Called when the order fails.
+     *
+     *****************************************************/
+    public void onOrderFailure(Activity activity, long localOrderId, Order order, Exception exception, int requestCode) {
+        // The default action is to go to the receipt screen
+        OrderReceiptActivity.startForResult(activity, localOrderId, order, requestCode);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

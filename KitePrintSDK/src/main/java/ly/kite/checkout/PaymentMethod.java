@@ -36,9 +36,7 @@
 
 package ly.kite.checkout;
 
-
 ///// Import(s) /////
-
 
 ///// Class Declaration /////
 
@@ -47,60 +45,54 @@ package ly.kite.checkout;
  * This enum describes the payment types.
  *
  *****************************************************/
-public enum PaymentMethod
-  {
-  PAYPAL       ( "PayPal",       "PAYPAL" ),
-  CREDIT_CARD  ( "Credit Card",  "CREDIT_CARD" ),
-  FREE         ( "Free",         "FREE" ),
-  PAY_AT_TILL  ( "Pay At Till",  "PAY_AT_TILL" );
+public enum PaymentMethod {
+    PAYPAL("PayPal", "PAYPAL"),
+    CREDIT_CARD("Credit Card", "CREDIT_CARD"),
+    FREE("Free", "FREE"),
+    PAY_AT_TILL("Pay At Till", "PAY_AT_TILL");
 
+    ////////// Member Variable(s) //////////
 
-  ////////// Member Variable(s) //////////
+    private String mAnalyticsPaymentMethod;
+    private String mOrderPaymentGateway;
 
-  private String  mAnalyticsPaymentMethod;
-  private String  mOrderPaymentGateway;
+    ////////// Constructor(s) //////////
 
+    private PaymentMethod(String analyticsPaymentMethod, String orderPaymentGateway) {
 
-  ////////// Constructor(s) //////////
-
-  private PaymentMethod( String analyticsPaymentMethod, String orderPaymentGateway )
-    {
-    mAnalyticsPaymentMethod = analyticsPaymentMethod;
-    mOrderPaymentGateway    = orderPaymentGateway;
+        mAnalyticsPaymentMethod = analyticsPaymentMethod;
+        mOrderPaymentGateway = orderPaymentGateway;
     }
 
+    ////////// Method(s) //////////
 
-  ////////// Method(s) //////////
+    /*****************************************************
+     *
+     * Returns the analytics payment method.
+     *
+     *****************************************************/
+    public String analyticsPaymentMethod() {
 
-  /*****************************************************
-   *
-   * Returns the analytics payment method.
-   *
-   *****************************************************/
-  public String analyticsPaymentMethod()
-    {
-    return ( mAnalyticsPaymentMethod );
+        return mAnalyticsPaymentMethod;
     }
 
+    /*****************************************************
+     *
+     * Returns the order payment type.
+     *
+     *****************************************************/
+    public String orderPaymentGateway() {
 
-  /*****************************************************
-   *
-   * Returns the order payment type.
-   *
-   *****************************************************/
-  public String orderPaymentGateway()
-    {
-    return ( mOrderPaymentGateway );
+        return mOrderPaymentGateway;
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

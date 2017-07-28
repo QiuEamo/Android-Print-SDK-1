@@ -5,5 +5,6 @@ package ly.kite.payment;
  */
 public interface PayPalCardVaultStorageListener {
     void onStoreSuccess(PayPalCard card);
+
     void onError(PayPalCard card, Exception ex);
 }

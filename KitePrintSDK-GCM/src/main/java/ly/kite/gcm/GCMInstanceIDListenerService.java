@@ -36,11 +36,9 @@
 
 package ly.kite.gcm;
 
-
 ///// Import(s) /////
 
 import com.google.android.gms.iid.InstanceIDListenerService;
-
 
 ///// Class Declaration /////
 
@@ -50,52 +48,43 @@ import com.google.android.gms.iid.InstanceIDListenerService;
  * an instance id.
  *
  *****************************************************/
-public class GCMInstanceIDListenerService extends InstanceIDListenerService
-  {
-  ////////// Static Constant(s) //////////
+public class GCMInstanceIDListenerService extends InstanceIDListenerService {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "GCMInstanceIDListenerService";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "GCMInstanceIDListenerService";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Called to refresh the token.
+     *
+     *****************************************************/
+    @Override
+    public void onTokenRefresh() {
+        // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
 
-  ////////// Static Method(s) //////////
-
-
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Called to refresh the token.
-   *
-   *****************************************************/
-  @Override
-  public void onTokenRefresh()
-    {
-    // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
-
-    GCMRegistrationService.start( this );
+        GCMRegistrationService.start(this);
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
+    /*****************************************************
+     *
+     * ...
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * ...
-   *
-   *****************************************************/
-
-  }
+}
 

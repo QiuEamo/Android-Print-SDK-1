@@ -36,7 +36,6 @@
 
 package ly.kite.instagramphotopicker;
 
-
 ///// Import(s) /////
 
 import android.app.Activity;
@@ -55,7 +54,6 @@ import java.util.List;
 
 import ly.kite.imagepicker.AImagePickerActivity;
 
-
 ///// Class Declaration /////
 
 /*****************************************************
@@ -63,381 +61,354 @@ import ly.kite.imagepicker.AImagePickerActivity;
  * This activity is the Facebook photo picker.
  *
  *****************************************************/
-public class InstagramPhotoPickerActivity extends AImagePickerActivity implements InstagramAgent.ICallback
-  {
-  ////////// Static Constant(s) //////////
+public class InstagramPhotoPickerActivity extends AImagePickerActivity implements InstagramAgent.ICallback {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG                           = "InstagramPhotoPicker...";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "InstagramPhotoPicker...";
 
-  static private final boolean DEBUGGING_ENABLED                 = false;
+    private static final boolean DEBUGGING_ENABLED = false;
 
-  static private final String  INTENT_EXTRA_PREFIX               = "ly.kite.instagramimagepicker";
-  static private final String  INTENT_EXTRA_NAME_CLIENT_ID       = INTENT_EXTRA_PREFIX + ".clientId";
-  static private final String  INTENT_EXTRA_NAME_REDIRECT_URI    = INTENT_EXTRA_PREFIX + ".redirectUri";
+    private static final String INTENT_EXTRA_PREFIX = "ly.kite.instagramimagepicker";
+    private static final String INTENT_EXTRA_NAME_CLIENT_ID = INTENT_EXTRA_PREFIX + ".clientId";
+    private static final String INTENT_EXTRA_NAME_REDIRECT_URI = INTENT_EXTRA_PREFIX + ".redirectUri";
 
-  static private final int     REQUEST_CODE_LOGIN                = 37;
+    private static final int REQUEST_CODE_LOGIN = 37;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    private String mClientId;
+    private String mRedirectUri;
+    private InstagramAgent mInstagramAgent;
 
-  ////////// Member Variable(s) //////////
+    private Menu mOptionsMenu;
 
-  private String                                mClientId;
-  private String                                mRedirectUri;
-  private InstagramAgent                        mInstagramAgent;
+    ////////// Static Initialiser(s) //////////
 
-  private Menu                                  mOptionsMenu;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns an intent to start this activity, with the max
+     * image count added as an extra.
+     *
+     *****************************************************/
+    private static Intent getIntent(Context context, String clientId, String redirectUri, int maxImageCount) {
 
-  ////////// Static Initialiser(s) //////////
+        Intent intent = new Intent(context, InstagramPhotoPickerActivity.class);
 
+        intent.putExtra(INTENT_EXTRA_NAME_CLIENT_ID, clientId);
+        intent.putExtra(INTENT_EXTRA_NAME_REDIRECT_URI, redirectUri);
 
-  ////////// Static Method(s) //////////
+        addExtras(intent, maxImageCount);
 
-  /*****************************************************
-   *
-   * Returns an intent to start this activity, with the max
-   * image count added as an extra.
-   *
-   *****************************************************/
-  static private Intent getIntent( Context context, String clientId, String redirectUri, int maxImageCount )
-    {
-    Intent intent = new Intent( context, InstagramPhotoPickerActivity.class );
-
-    intent.putExtra( INTENT_EXTRA_NAME_CLIENT_ID, clientId );
-    intent.putExtra( INTENT_EXTRA_NAME_REDIRECT_URI, redirectUri );
-
-    addExtras( intent, maxImageCount );
-
-    return ( intent );
+        return intent;
     }
 
+    /*****************************************************
+     *
+     * Starts this activity, returning the result to a calling
+     * activity.
+     *
+     *****************************************************/
+    public static void startForResult(Activity activity, String clientId, String redirectUri, int maxImageCount, int activityRequestCode) {
 
-  /*****************************************************
-   *
-   * Starts this activity, returning the result to a calling
-   * activity.
-   *
-   *****************************************************/
-  static public void startForResult( Activity activity, String clientId, String redirectUri, int maxImageCount, int activityRequestCode )
-    {
-    Intent intent = getIntent( activity, clientId, redirectUri, maxImageCount );
+        Intent intent = getIntent(activity, clientId, redirectUri, maxImageCount);
 
-    activity.startActivityForResult( intent, activityRequestCode );
+        activity.startActivityForResult(intent, activityRequestCode);
     }
 
+    /*****************************************************
+     *
+     * Starts this activity, returning the result to a calling
+     * fragment.
+     *
+     *****************************************************/
+    public static void startForResult(Fragment fragment, String clientId, String redirectUri, int maxImageCount, int activityRequestCode) {
 
-  /*****************************************************
-   *
-   * Starts this activity, returning the result to a calling
-   * fragment.
-   *
-   *****************************************************/
-  static public void startForResult( Fragment fragment, String clientId, String redirectUri, int maxImageCount, int activityRequestCode )
-    {
-    Intent intent = getIntent( fragment.getActivity(), clientId, redirectUri, maxImageCount );
+        Intent intent = getIntent(fragment.getActivity(), clientId, redirectUri, maxImageCount);
 
-    fragment.startActivityForResult( intent, activityRequestCode );
+        fragment.startActivityForResult(intent, activityRequestCode);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public InstagramPhotoPickerActivity() {
 
-  public InstagramPhotoPickerActivity()
-    {
-    super();
+        super();
     }
 
+    ////////// Activity Method(s) //////////
 
-  ////////// Activity Method(s) //////////
+    /*****************************************************
+     *
+     * Called when the activity is created.
+     *
+     *****************************************************/
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
 
-  /*****************************************************
-   *
-   * Called when the activity is created.
-   *
-   *****************************************************/
-  @Override
-  protected void onCreate( Bundle savedInstanceState )
-    {
-    Intent intent = getIntent();
+        Intent intent = getIntent();
 
-    if ( intent == null )
-      {
-      Log.e( LOG_TAG, "No intent supplied" );
+        if (intent == null) {
+            Log.e(LOG_TAG, "No intent supplied");
 
-      finish();
+            finish();
 
-      return;
-      }
+            return;
+        }
 
+        mClientId = intent.getStringExtra(INTENT_EXTRA_NAME_CLIENT_ID);
+        mRedirectUri = intent.getStringExtra(INTENT_EXTRA_NAME_REDIRECT_URI);
 
-    mClientId    = intent.getStringExtra( INTENT_EXTRA_NAME_CLIENT_ID );
-    mRedirectUri = intent.getStringExtra( INTENT_EXTRA_NAME_REDIRECT_URI );
+        mInstagramAgent = InstagramAgent.getInstance(this, mClientId, mRedirectUri, this);
 
-    mInstagramAgent = InstagramAgent.getInstance( this, mClientId, mRedirectUri, this );
+        super.onCreate(savedInstanceState);
 
-
-    super.onCreate( savedInstanceState );
-
-
-    setTitle( R.string.title_instagram_photo_picker );
+        setTitle(R.string.title_instagram_photo_picker);
     }
 
+    /*****************************************************
+     *
+     * Called when the options menu is created.
+     *
+     *****************************************************/
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-  /*****************************************************
-   *
-   * Called when the options menu is created.
-   *
-   *****************************************************/
-  public boolean onCreateOptionsMenu ( Menu menu )
-    {
-    super.onCreateOptionsMenu( menu );
+        super.onCreateOptionsMenu(menu);
 
-    getMenuInflater().inflate( R.menu.action_bar_menu, menu );
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
 
-    mOptionsMenu = menu;
+        mOptionsMenu = menu;
 
-    checkLoggedInState();
+        checkLoggedInState();
 
-    return ( true );
+        return true;
     }
 
+    /*****************************************************
+     *
+     * Called when an options menu item (action) is selected.
+     *
+     *****************************************************/
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-  /*****************************************************
-   *
-   * Called when an options menu item (action) is selected.
-   *
-   *****************************************************/
-  public boolean onOptionsItemSelected ( MenuItem item )
-    {
-    if ( item.getItemId() == R.id.item_logout )
-      {
-      ///// Log out /////
+        if (item.getItemId() == R.id.item_logout) {
+            ///// Log out /////
 
-      mInstagramAgent.clearAccessToken( this );
+            mInstagramAgent.clearAccessToken(this);
 
-      InstagramLoginActivity.logOut( this );
+            InstagramLoginActivity.logOut(this);
 
-      checkLoggedInState();
+            checkLoggedInState();
 
-      finish();
+            finish();
 
-      return ( true );
-      }
+            return true;
+        }
 
-    return ( super.onOptionsItemSelected( item ) );
+        return super.onOptionsItemSelected(item);
     }
 
+    /*****************************************************
+     *
+     * Called when the activity gains focus.
+     *
+     *****************************************************/
+    @Override
+    protected void onResume() {
 
-  /*****************************************************
-   *
-   * Called when the activity gains focus.
-   *
-   *****************************************************/
-  @Override
-  protected void onResume()
-    {
-    super.onResume();
+        super.onResume();
 
-    checkLoggedInState();
+        checkLoggedInState();
     }
 
+    /*****************************************************
+     *
+     * Called when an activity returns a result.
+     *
+     *****************************************************/
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 
-  /*****************************************************
-   *
-   * Called when an activity returns a result.
-   *
-   *****************************************************/
-  @Override
-  protected void onActivityResult( final int requestCode, final int resultCode, final Intent data )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "onActivityResult( requestCode = " + requestCode + ", resultCode = " + resultCode + ", data = " + data + " )" );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "onActivityResult( requestCode = " + requestCode + ", resultCode = " + resultCode + ", data = " + data + " )");
+        }
 
-    super.onActivityResult( requestCode, resultCode, data );
+        super.onActivityResult(requestCode, resultCode, data);
 
-    if ( requestCode == REQUEST_CODE_LOGIN )
-      {
-      if ( resultCode == Activity.RESULT_OK )
-        {
-        String accessToken = InstagramLoginActivity.getAccessToken( data );
+        if (requestCode == REQUEST_CODE_LOGIN) {
+            if (resultCode == Activity.RESULT_OK) {
+                String accessToken = InstagramLoginActivity.getAccessToken(data);
 
-        InstagramAgent.saveAccessToken( this, accessToken );
+                InstagramAgent.saveAccessToken(this, accessToken);
+
+                mImagePickerGridView.reload();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                finish();
+            }
+        }
+    }
+
+    ////////// InstagramAgent.ICallback Method(s) //////////
+
+    /*****************************************************
+     *
+     * Called to restart.
+     *
+     *****************************************************/
+    @Override
+    public void iaRestart() {
+
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "iaRestart()");
+        }
 
         mImagePickerGridView.reload();
+    }
+
+    /*****************************************************
+     *
+     * Called when photos were successfully retrieved.
+     *
+     *****************************************************/
+    @Override
+    public void iaOnPhotosSuccess(List<InstagramAgent.InstagramPhoto> photoList, boolean morePhotos) {
+
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "iaOnPhotosSuccess( photoList = " + (photoList != null ? photoList : "null") + " ( " + (photoList != null ?
+                    photoList.size() : "0") + " ), morePhotos = " + morePhotos + " )");
         }
-      else if ( resultCode == Activity.RESULT_CANCELED )
-        {
+
+        mImagePickerGridView.onFinishedLoading(photoList, morePhotos);
+    }
+
+    /*****************************************************
+     *
+     * Called when there was an error retrieving photos.
+     *
+     *****************************************************/
+    @Override
+    public void iaOnError(Exception exception) {
+
+        Log.e(LOG_TAG, "Instagram error", exception);
+
+        RetryListener retryListener = new RetryListener();
+        CancelListener cancelListener = new CancelListener();
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.instagram_alert_dialog_title)
+                .setMessage(getString(R.string.instagram_alert_dialog_message, exception.toString()))
+                .setPositiveButton(R.string.button_text_retry, retryListener)
+                .setNegativeButton(R.string.button_text_cancel, cancelListener)
+                .setOnCancelListener(cancelListener)
+                .create()
+                .show();
+    }
+
+    /*****************************************************
+     *
+     * Called when photo retrieval was cancelled.
+     *
+     *****************************************************/
+    @Override
+    public void iaOnCancel() {
+
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "iaOnCancel()");
+        }
+
         finish();
+    }
+
+    ////////// AImagePickerActivity Method(s) //////////
+
+    @Override
+    public void onSetDepth(int depth, String parentKey) {
+
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "onSetDepth( depth = " + depth + ", parentKey = " + parentKey + " )");
         }
-      }
-    }
 
+        // If we don't already have an access token, launch the log-in
+        // activity.
 
-  ////////// InstagramAgent.ICallback Method(s) //////////
+        String accessToken = mInstagramAgent.getAccessToken(this);
 
-  /*****************************************************
-   *
-   * Called to restart.
-   *
-   *****************************************************/
-  @Override
-  public void iaRestart()
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "iaRestart()" );
-
-    mImagePickerGridView.reload();
-    }
-
-
-  /*****************************************************
-   *
-   * Called when photos were successfully retrieved.
-   *
-   *****************************************************/
-  @Override
-  public void iaOnPhotosSuccess( List<InstagramAgent.InstagramPhoto> photoList, boolean morePhotos )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "iaOnPhotosSuccess( photoList = " + ( photoList != null ? photoList : "null" ) + " ( " + ( photoList != null ? photoList.size() : "0" ) + " ), morePhotos = " + morePhotos + " )" );
-
-    mImagePickerGridView.onFinishedLoading( photoList, morePhotos );
-    }
-
-
-  /*****************************************************
-   *
-   * Called when there was an error retrieving photos.
-   *
-   *****************************************************/
-  @Override
-  public void iaOnError( Exception exception )
-    {
-    Log.e( LOG_TAG, "Instagram error", exception );
-
-    RetryListener  retryListener  = new RetryListener();
-    CancelListener cancelListener = new CancelListener();
-
-    new AlertDialog.Builder( this )
-        .setTitle( R.string.instagram_alert_dialog_title )
-        .setMessage( getString( R.string.instagram_alert_dialog_message, exception.toString() ) )
-        .setPositiveButton( R.string.button_text_retry, retryListener )
-        .setNegativeButton( R.string.button_text_cancel, cancelListener )
-        .setOnCancelListener( cancelListener )
-        .create()
-      .show();
-    }
-
-
-  /*****************************************************
-   *
-   * Called when photo retrieval was cancelled.
-   *
-   *****************************************************/
-  @Override
-  public void iaOnCancel()
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "iaOnCancel()" );
-
-    finish();
-    }
-
-
-  ////////// AImagePickerActivity Method(s) //////////
-
-  @Override
-  public void onSetDepth( int depth, String parentKey )
-    {
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "onSetDepth( depth = " + depth + ", parentKey = " + parentKey + " )" );
-
-
-    // If we don't already have an access token, launch the log-in
-    // activity.
-
-    String accessToken = mInstagramAgent.getAccessToken( this );
-
-    if ( DEBUGGING_ENABLED ) Log.d( LOG_TAG, "accessToken = " + accessToken );
-
-    if ( accessToken != null )
-      {
-      mInstagramAgent.resetPhotos();
-
-      mInstagramAgent.getPhotos();
-      }
-    else
-      {
-      InstagramLoginActivity.startLoginForResult( this, mClientId, mRedirectUri, REQUEST_CODE_LOGIN );
-
-      return;
-      }
-    }
-
-
-  @Override
-  public void onLoadMoreItems( int depth, String parentKey )
-    {
-    mInstagramAgent.getPhotos();
-    }
-
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Checks the logged in state and sets the log out
-   * icon accordingly.
-   *
-   *****************************************************/
-  private void checkLoggedInState()
-    {
-    if ( mOptionsMenu != null )
-      {
-      MenuItem logOutMenuItem = mOptionsMenu.findItem( R.id.item_logout );
-
-      if ( logOutMenuItem != null )
-        {
-        logOutMenuItem.setEnabled( mInstagramAgent.haveAccessToken( this ) );
+        if (DEBUGGING_ENABLED) {
+            Log.d(LOG_TAG, "accessToken = " + accessToken);
         }
-      }
+
+        if (accessToken != null) {
+            mInstagramAgent.resetPhotos();
+
+            mInstagramAgent.getPhotos();
+        } else {
+            InstagramLoginActivity.startLoginForResult(this, mClientId, mRedirectUri, REQUEST_CODE_LOGIN);
+
+            return;
+        }
     }
 
-
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * The alert dialog retry button listener.
-   *
-   *****************************************************/
-  private class RetryListener implements Dialog.OnClickListener
-    {
     @Override
-    public void onClick( DialogInterface dialog, int which )
-      {
-      mImagePickerGridView.reload();
-      }
+    public void onLoadMoreItems(int depth, String parentKey) {
+
+        mInstagramAgent.getPhotos();
     }
 
+    ////////// Method(s) //////////
 
-  /*****************************************************
-   *
-   * The alert dialog cancel (button) listener.
-   *
-   *****************************************************/
-  private class CancelListener implements Dialog.OnClickListener, Dialog.OnCancelListener
-    {
-    @Override
-    public void onClick( DialogInterface dialog, int which )
-      {
-      finish();
-      }
+    /*****************************************************
+     *
+     * Checks the logged in state and sets the log out
+     * icon accordingly.
+     *
+     *****************************************************/
+    private void checkLoggedInState() {
 
-    @Override
-    public void onCancel( DialogInterface dialog )
-      {
-      finish();
-      }
+        if (mOptionsMenu != null) {
+            MenuItem logOutMenuItem = mOptionsMenu.findItem(R.id.item_logout);
+
+            if (logOutMenuItem != null) {
+                logOutMenuItem.setEnabled(mInstagramAgent.haveAccessToken(this));
+            }
+        }
     }
 
-  }
+    ////////// Inner Class(es) //////////
+
+    /*****************************************************
+     *
+     * The alert dialog retry button listener.
+     *
+     *****************************************************/
+    private class RetryListener implements Dialog.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+            mImagePickerGridView.reload();
+        }
+    }
+
+    /*****************************************************
+     *
+     * The alert dialog cancel (button) listener.
+     *
+     *****************************************************/
+    private class CancelListener implements Dialog.OnClickListener, Dialog.OnCancelListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+            finish();
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog) {
+
+            finish();
+        }
+    }
+
+}

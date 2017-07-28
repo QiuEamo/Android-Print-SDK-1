@@ -36,13 +36,11 @@
 
 package ly.kite.util;
 
-
 ///// Import(s) /////
 
 import junit.framework.Assert;
 
 import ly.kite.KiteTestCase;
-
 
 ///// Class Declaration /////
 
@@ -51,139 +49,124 @@ import ly.kite.KiteTestCase;
  * This class tests the delimited string builder class.
  *
  *****************************************************/
-public class DelimitedStringBuilderTests extends KiteTestCase
-  {
-  ////////// Static Constant(s) //////////
+public class DelimitedStringBuilderTests extends KiteTestCase {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  private static final String  LOG_TAG = "DelimitedStringBuilderTests";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "DelimitedStringBuilderTests";
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    ////////// Static Initialiser(s) //////////
 
-  ////////// Member Variable(s) //////////
+    ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
 
-  ////////// Static Initialiser(s) //////////
+    ////////// Method(s) //////////
 
+    /*****************************************************
+     *
+     * Constructor tests
+     *
+     *****************************************************/
 
-  ////////// Static Method(s) //////////
+    public void testConstructor1() {
 
+        try {
+            new DelimitedStringBuilder(null);
 
-  ////////// Constructor(s) //////////
-
-
-  ////////// Method(s) //////////
-
-  /*****************************************************
-   *
-   * Constructor tests
-   *
-   *****************************************************/
-
-  public void testConstructor1()
-    {
-    try
-      {
-      new DelimitedStringBuilder( null );
-
-      Assert.fail();
-      }
-    catch ( IllegalArgumentException iae )
-      {
-      // Test passed
-      }
+            Assert.fail();
+        } catch (IllegalArgumentException iae) {
+            // Test passed
+        }
     }
 
-  public void testConstructor2()
-    {
-    try
-      {
-      new DelimitedStringBuilder( "" );
+    public void testConstructor2() {
 
-      Assert.fail();
-      }
-    catch ( IllegalArgumentException iae )
-      {
-      // Test passed
-      }
+        try {
+            new DelimitedStringBuilder("");
+
+            Assert.fail();
+        } catch (IllegalArgumentException iae) {
+            // Test passed
+        }
     }
 
+    /*****************************************************
+     *
+     * Builder tests
+     *
+     *****************************************************/
 
-  /*****************************************************
-   *
-   * Builder tests
-   *
-   *****************************************************/
+    public void test1() {
 
-  public void test1()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "|" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("|");
 
-    Assert.assertEquals( "", builder.toString() );
+        Assert.assertEquals("", builder.toString());
     }
 
-  public void test2()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "|" );
+    public void test2() {
 
-    builder.append( "cat" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("|");
 
-    Assert.assertEquals( "cat", builder.toString() );
+        builder.append("cat");
+
+        Assert.assertEquals("cat", builder.toString());
     }
 
-  public void test3()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "|" );
+    public void test3() {
 
-    builder.append( "the" );
-    builder.append( "cat" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("|");
 
-    Assert.assertEquals( "the|cat", builder.toString() );
+        builder.append("the");
+        builder.append("cat");
+
+        Assert.assertEquals("the|cat", builder.toString());
     }
 
-  public void test4()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "|" );
+    public void test4() {
 
-    builder.append( "the" );
-    builder.append( "cat" );
-    builder.append( "sat" );
-    builder.append( "on" );
-    builder.append( "the" );
-    builder.append( "mat" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("|");
 
-    Assert.assertEquals( "the|cat|sat|on|the|mat", builder.toString() );
+        builder.append("the");
+        builder.append("cat");
+        builder.append("sat");
+        builder.append("on");
+        builder.append("the");
+        builder.append("mat");
+
+        Assert.assertEquals("the|cat|sat|on|the|mat", builder.toString());
     }
 
-  public void test5()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "blah" );
+    public void test5() {
 
-    builder.append( "who" );
-    builder.append( "goes" );
-    builder.append( "there" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("blah");
 
-    Assert.assertEquals( "whoblahgoesblahthere", builder.toString() );
+        builder.append("who");
+        builder.append("goes");
+        builder.append("there");
+
+        Assert.assertEquals("whoblahgoesblahthere", builder.toString());
     }
 
-  public void test6()
-    {
-    DelimitedStringBuilder builder = new DelimitedStringBuilder( "[]" );
+    public void test6() {
 
-    builder.append( "one" );
-    builder.append( "" );
-    builder.append( "two" );
-    builder.append( null );
-    builder.append( "three" );
-    builder.append( "" );
+        DelimitedStringBuilder builder = new DelimitedStringBuilder("[]");
 
-    Assert.assertEquals( "one[][]two[][]three[]", builder.toString() );
+        builder.append("one");
+        builder.append("");
+        builder.append("two");
+        builder.append(null);
+        builder.append("three");
+        builder.append("");
+
+        Assert.assertEquals("one[][]two[][]three[]", builder.toString());
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  }
+}
 

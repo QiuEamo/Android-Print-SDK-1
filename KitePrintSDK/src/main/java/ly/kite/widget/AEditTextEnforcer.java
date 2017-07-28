@@ -36,11 +36,9 @@
 
 package ly.kite.widget;
 
-
 ///// Import(s) /////
 
 import android.widget.EditText;
-
 
 ///// Class Declaration /////
 
@@ -49,183 +47,206 @@ import android.widget.EditText;
  * This class is the parent of text enforcers.
  *
  *****************************************************/
-public class AEditTextEnforcer
-  {
-  ////////// Static Constant(s) //////////
+public class AEditTextEnforcer {
+    ////////// Static Constant(s) //////////
 
-  @SuppressWarnings( "unused" )
-  static private final String  LOG_TAG      = "AEditTextEnforcer";
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AEditTextEnforcer";
 
-  static public final int TEXT_COLOUR_ERROR = 0xffff0000;
+    public static final int TEXT_COLOUR_ERROR = 0xffff0000;
 
+    ////////// Static Variable(s) //////////
 
-  ////////// Static Variable(s) //////////
+    ////////// Member Variable(s) //////////
 
+    protected EditText mEditText;
+    protected ICallback mCallback;
 
-  ////////// Member Variable(s) //////////
+    protected int mOKTextColour;
 
-  protected EditText   mEditText;
-  protected ICallback  mCallback;
+    ////////// Static Initialiser(s) //////////
 
-  protected int        mOKTextColour;
+    ////////// Static Method(s) //////////
 
+    /*****************************************************
+     *
+     * Returns just the digits from a character sequence.
+     *
+     *****************************************************/
+    static protected String getDigits(CharSequence originalCharSequence) {
 
-  ////////// Static Initialiser(s) //////////
+        if (originalCharSequence == null) {
+            return "";
+        }
 
+        StringBuilder stringBuilder = new StringBuilder(originalCharSequence.length());
 
-  ////////// Static Method(s) //////////
+        for (int charIndex = 0; charIndex < originalCharSequence.length(); charIndex++) {
+            char c = originalCharSequence.charAt(charIndex);
 
-  /*****************************************************
-   *
-   * Returns just the digits from a character sequence.
-   *
-   *****************************************************/
-  static protected String getDigits( CharSequence originalCharSequence )
-    {
-    if ( originalCharSequence == null ) return ( "" );
+            if (c >= '0' && c <= '9') {
+                stringBuilder.append(c);
+            }
+        }
 
-
-    StringBuilder stringBuilder = new StringBuilder( originalCharSequence.length() );
-
-    for ( int charIndex = 0; charIndex < originalCharSequence.length(); charIndex ++ )
-      {
-      char c = originalCharSequence.charAt( charIndex );
-
-      if ( c >= '0' && c <= '9' ) stringBuilder.append( c );
-      }
-
-    return ( stringBuilder.toString() );
+        return stringBuilder.toString();
     }
 
+    /*****************************************************
+     *
+     * Returns true if the digits string starts with the supplied
+     * range.
+     *
+     *****************************************************/
+    static protected boolean digitsStartBetween(String digitsString, int rangeFirst, int rangeLast) {
 
-  /*****************************************************
-   *
-   * Returns true if the digits string starts with the supplied
-   * range.
-   *
-   *****************************************************/
-  static protected boolean digitsStartBetween( String digitsString, int rangeFirst, int rangeLast )
-    {
-    if ( digitsString == null || digitsString.length() < 1 || rangeFirst < 1 || rangeLast < 1 || rangeFirst > rangeLast ) return ( false );
+        if (digitsString == null || digitsString.length() < 1 || rangeFirst < 1 || rangeLast < 1 || rangeFirst > rangeLast) {
+            return false;
+        }
 
-    int prefixSize = 0;
+        int prefixSize = 0;
 
-    if      ( rangeLast <         10 ) prefixSize = 1;
-    else if ( rangeLast <        100 ) prefixSize = 2;
-    else if ( rangeLast <       1000 ) prefixSize = 3;
-    else if ( rangeLast <      10000 ) prefixSize = 4;
-    else if ( rangeLast <     100000 ) prefixSize = 5;
-    else if ( rangeLast <    1000000 ) prefixSize = 6;
-    else if ( rangeLast <   10000000 ) prefixSize = 7;
-    else if ( rangeLast <  100000000 ) prefixSize = 8;
+        if (rangeLast < 10) {
+            prefixSize = 1;
+        } else if (rangeLast < 100) {
+            prefixSize = 2;
+        } else if (rangeLast < 1000) {
+            prefixSize = 3;
+        } else if (rangeLast < 10000) {
+            prefixSize = 4;
+        } else if (rangeLast < 100000) {
+            prefixSize = 5;
+        } else if (rangeLast < 1000000) {
+            prefixSize = 6;
+        } else if (rangeLast < 10000000) {
+            prefixSize = 7;
+        } else if (rangeLast < 100000000) {
+            prefixSize = 8;
+        }
 
-    if ( digitsString.length() < prefixSize ) return ( false );
+        if (digitsString.length() < prefixSize) {
+            return false;
+        }
 
-    int prefix = Integer.parseInt( digitsString.substring( 0, prefixSize ) );
+        int prefix = Integer.parseInt(digitsString.substring(0, prefixSize));
 
-    if ( prefix >= rangeFirst && prefix <= rangeLast ) return ( true );
+        if (prefix >= rangeFirst && prefix <= rangeLast) {
+            return true;
+        }
 
-    return ( false );
+        return false;
     }
 
+    /*****************************************************
+     *
+     * Formats a card number according to the supplied groups.
+     *
+     *****************************************************/
+    static protected String formatNumber(String digitString, int... numberGroupings) {
 
-  /*****************************************************
-   *
-   * Formats a card number according to the supplied groups.
-   *
-   *****************************************************/
-  static protected String formatNumber( String digitString, int... numberGroupings )
-    {
-    int digitStringLength;
+        int digitStringLength;
 
-    if ( digitString == null || ( digitStringLength = digitString.length() ) < 1 ) return ( "" );
+        if (digitString == null || (digitStringLength = digitString.length()) < 1) {
+            return "";
+        }
 
-    if ( numberGroupings == null || numberGroupings.length < 1 ) return ( digitString );
+        if (numberGroupings == null || numberGroupings.length < 1) {
+            return digitString;
+        }
 
+        StringBuilder stringBuilder = new StringBuilder();
 
-    StringBuilder stringBuilder = new StringBuilder();
+        int digitIndex = 0;
+        int groupingIndex = 0;
 
-    int digitIndex    = 0;
-    int groupingIndex = 0;
+        while (digitIndex < digitStringLength && groupingIndex < numberGroupings.length) {
+            int end = digitIndex + numberGroupings[groupingIndex];
 
-    while ( digitIndex < digitStringLength && groupingIndex < numberGroupings.length )
-      {
-      int end = digitIndex + numberGroupings[ groupingIndex ];
+            stringBuilder.append(safeSubstring(digitString, digitIndex, end));
 
-      stringBuilder.append( safeSubstring( digitString, digitIndex, end ) );
+            if (end < digitStringLength) {
+                stringBuilder.append(" ");
+            }
 
-      if ( end < digitStringLength ) stringBuilder.append( " " );
+            digitIndex += numberGroupings[groupingIndex];
+            groupingIndex++;
+        }
 
-      digitIndex    += numberGroupings[ groupingIndex ];
-      groupingIndex ++;
-      }
+        if (digitIndex < digitString.length()) {
+            stringBuilder.append(safeSubstring(digitString, digitIndex));
+        }
 
-    if ( digitIndex < digitString.length() ) stringBuilder.append( safeSubstring( digitString, digitIndex ) );
-
-    return ( stringBuilder.toString() );
+        return stringBuilder.toString();
     }
 
+    /*****************************************************
+     *
+     * Returns a substring, correcting any bounds.
+     *
+     *****************************************************/
+    static protected String safeSubstring(String sourceString, int start, int end) {
 
-  /*****************************************************
-   *
-   * Returns a substring, correcting any bounds.
-   *
-   *****************************************************/
-  static protected String safeSubstring( String sourceString, int start, int end )
-    {
-    int sourceStringLength;
+        int sourceStringLength;
 
-    if ( sourceString == null || ( sourceStringLength = sourceString.length() ) < 1 ) return ( "" );
+        if (sourceString == null || (sourceStringLength = sourceString.length()) < 1) {
+            return "";
+        }
 
-    if ( start >= sourceStringLength ) return ( "" );
+        if (start >= sourceStringLength) {
+            return "";
+        }
 
-    if ( start < 0 ) start = 0;
+        if (start < 0) {
+            start = 0;
+        }
 
-    if ( end < start ) return ( "" );
+        if (end < start) {
+            return "";
+        }
 
-    if ( end >= sourceStringLength ) end = sourceStringLength;
+        if (end >= sourceStringLength) {
+            end = sourceStringLength;
+        }
 
-    return ( sourceString.substring( start, end ) );
+        return sourceString.substring(start, end);
     }
 
+    /*****************************************************
+     *
+     * Returns a substring, correcting any bounds.
+     *
+     *****************************************************/
+    static protected String safeSubstring(String sourceString, int start) {
 
-  /*****************************************************
-   *
-   * Returns a substring, correcting any bounds.
-   *
-   *****************************************************/
-  static protected String safeSubstring( String sourceString, int start )
-    {
-    int sourceStringLength;
+        int sourceStringLength;
 
-    if ( sourceString == null || ( sourceStringLength = sourceString.length() ) < 1 ) return ( "" );
+        if (sourceString == null || (sourceStringLength = sourceString.length()) < 1) {
+            return "";
+        }
 
-    return ( safeSubstring( sourceString, start, sourceStringLength - 1 ) );
+        return safeSubstring(sourceString, start, sourceStringLength - 1);
     }
 
+    ////////// Constructor(s) //////////
 
-  ////////// Constructor(s) //////////
+    public AEditTextEnforcer(EditText editText, ICallback callback) {
 
-  public AEditTextEnforcer( EditText editText, ICallback callback )
-    {
-    mEditText = editText;
-    mCallback = callback;
+        mEditText = editText;
+        mCallback = callback;
 
-    // Save the current text colour
-    mOKTextColour = editText.getCurrentTextColor();
+        // Save the current text colour
+        mOKTextColour = editText.getCurrentTextColor();
     }
 
+    ////////// Inner Class(es) //////////
 
-  ////////// Inner Class(es) //////////
-
-  /*****************************************************
-   *
-   * A callback
-   *
-   *****************************************************/
-  public interface ICallback
-    {
-    public void eteOnTextComplete( EditText editText );
+    /*****************************************************
+     *
+     * A callback
+     *
+     *****************************************************/
+    public interface ICallback {
+        public void eteOnTextComplete(EditText editText);
     }
 
-  }
+}
