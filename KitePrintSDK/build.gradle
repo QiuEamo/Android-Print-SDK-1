@@ -46,7 +46,7 @@ android {
 }
 
 task checkstyle(type: Checkstyle) {
-    ignoreFailures = true
+    ignoreFailures = false
     configFile file("${project.rootDir}/KitePrintSDK/config/checkstyle/checkstyle.xml") // Where my checkstyle config is...
     configProperties.checkstyleSuppressionsPath = file("${project.rootDir}/KitePrintSDK/config/checkstyle/surpression.xml").absolutePath //
     // Where
