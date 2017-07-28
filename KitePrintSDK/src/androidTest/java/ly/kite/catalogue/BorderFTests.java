@@ -78,10 +78,10 @@ public class BorderFTests extends TestCase {
 
         BorderF borderF = new BorderF(1f, 2f, 3f, 4f);
 
-        Assert.assertEquals(1f, borderF.top);
-        Assert.assertEquals(2f, borderF.right);
-        Assert.assertEquals(3f, borderF.bottom);
-        Assert.assertEquals(4f, borderF.left);
+        Assert.assertEquals(1f, borderF.mTop);
+        Assert.assertEquals(2f, borderF.mRight);
+        Assert.assertEquals(3f, borderF.mBottom);
+        Assert.assertEquals(4f, borderF.mLeft);
     }
 
     /*****************************************************
@@ -102,10 +102,10 @@ public class BorderFTests extends TestCase {
 
         BorderF readBorderF = BorderF.CREATOR.createFromParcel(parcel);
 
-        Assert.assertEquals(10f, readBorderF.top);
-        Assert.assertEquals(11f, readBorderF.right);
-        Assert.assertEquals(12f, readBorderF.bottom);
-        Assert.assertEquals(13f, readBorderF.left);
+        Assert.assertEquals(10f, readBorderF.mTop);
+        Assert.assertEquals(11f, readBorderF.mRight);
+        Assert.assertEquals(12f, readBorderF.mBottom);
+        Assert.assertEquals(13f, readBorderF.mLeft);
 
         parcel.recycle();
     }
