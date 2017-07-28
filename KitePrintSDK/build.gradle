@@ -53,7 +53,7 @@ task checkstyle(type: Checkstyle) {
     source 'src/main/java'
     include '**/*.java'//*
     exclude '**/gen/**'
-    
+
     classpath = files()
 }
 

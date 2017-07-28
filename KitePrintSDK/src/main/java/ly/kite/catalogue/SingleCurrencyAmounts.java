@@ -100,8 +100,7 @@ public class SingleCurrencyAmounts implements Parcelable {
      *         or the amount is null.
      *
      *****************************************************/
-    public SingleCurrencyAmounts(Currency currency, BigDecimal amount, String formattedAmount, BigDecimal originalAmount)
-    {
+    public SingleCurrencyAmounts(Currency currency, BigDecimal amount, String formattedAmount, BigDecimal originalAmount) {
 
         if (currency == null) {
             throw new IllegalArgumentException("Currency must be supplied");
