@@ -78,10 +78,10 @@ public class BleedTests extends TestCase {
 
         Bleed bleed = new Bleed(1, 2, 3, 4);
 
-        Assert.assertEquals(1, bleed.topPixels);
-        Assert.assertEquals(2, bleed.rightPixels);
-        Assert.assertEquals(3, bleed.bottomPixels);
-        Assert.assertEquals(4, bleed.leftPixels);
+        Assert.assertEquals(1, bleed.mTopPixels);
+        Assert.assertEquals(2, bleed.mRightPixels);
+        Assert.assertEquals(3, bleed.mBottomPixels);
+        Assert.assertEquals(4, bleed.mLeftPixels);
     }
 
     /*****************************************************
@@ -102,10 +102,10 @@ public class BleedTests extends TestCase {
 
         Bleed readBleed = Bleed.CREATOR.createFromParcel(parcel);
 
-        Assert.assertEquals(10, readBleed.topPixels);
-        Assert.assertEquals(11, readBleed.rightPixels);
-        Assert.assertEquals(12, readBleed.bottomPixels);
-        Assert.assertEquals(13, readBleed.leftPixels);
+        Assert.assertEquals(10, readBleed.mTopPixels);
+        Assert.assertEquals(11, readBleed.mRightPixels);
+        Assert.assertEquals(12, readBleed.mBottomPixels);
+        Assert.assertEquals(13, readBleed.mLeftPixels);
 
         parcel.recycle();
     }

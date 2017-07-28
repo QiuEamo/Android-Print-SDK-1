@@ -58,12 +58,12 @@ import ly.kite.util.AssetHelper;
 public class OrderingDataAgent {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "OrderingDataAgent";
-
     public static final int CREATE_NEW_ITEM_ID = -1;
     public static final long BASKET_ID_DEFAULT = 0;
     public static final long NO_ORDER_ID = -1;
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "OrderingDataAgent";
 
     ////////// Static Variable(s) //////////
 
@@ -75,6 +75,14 @@ public class OrderingDataAgent {
     private OrderingDatabaseAgent mOrderingDatabaseAgent;
 
     ////////// Static Initialiser(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    private OrderingDataAgent(Context context) {
+
+        mApplicationContext = context.getApplicationContext();
+        mOrderingDatabaseAgent = new OrderingDatabaseAgent(mApplicationContext, null);
+    }
 
     ////////// Static Method(s) //////////
 
@@ -90,14 +98,6 @@ public class OrderingDataAgent {
         }
 
         return sDataAgent;
-    }
-
-    ////////// Constructor(s) //////////
-
-    private OrderingDataAgent(Context context) {
-
-        mApplicationContext = context.getApplicationContext();
-        mOrderingDatabaseAgent = new OrderingDatabaseAgent(mApplicationContext, null);
     }
 
     ////////// Method(s) //////////
@@ -197,7 +197,7 @@ public class OrderingDataAgent {
         // We need to create a basket item per <mProduct.getQuantityPerSheet()> images, i.e.
         // split the images into multiple jobs.
 
-        List<List<ImageSpec>> splitImageSpecLists = product.getUserJourneyType().dbItemsFromCreationItems(mApplicationContext,
+        final List<List<ImageSpec>> splitImageSpecLists = product.getUserJourneyType().dbItemsFromCreationItems(mApplicationContext,
                 imageSpecList, product);
 
         if (splitImageSpecLists != null) {
@@ -267,7 +267,7 @@ public class OrderingDataAgent {
      *****************************************************/
     public int decrementOrderQuantity(long itemId) {
 
-        int orderQuantity = mOrderingDatabaseAgent.updateOrderQuantity(itemId, -1);
+        final int orderQuantity = mOrderingDatabaseAgent.updateOrderQuantity(itemId, -1);
 
         // If the order quantity has gone to zero - delete the item
         if (orderQuantity < 1) {
@@ -302,7 +302,7 @@ public class OrderingDataAgent {
             //   - Remove its basket (assets & database entries)
             //   - Clear all order details except those required for a successful order history entry
 
-            long basketId = mOrderingDatabaseAgent.selectBasketIdForOrder(previousOrderId);
+            final long basketId = mOrderingDatabaseAgent.selectBasketIdForOrder(previousOrderId);
 
             if (basketId >= 0) {
                 clearBasket(basketId);
@@ -335,7 +335,7 @@ public class OrderingDataAgent {
             return mOrderingDatabaseAgent.selectBasketIdForOrder(previousOrderId);
         } else {
             // Get a new basket id
-            long newBasketId = mOrderingDatabaseAgent.insertBasket(-1);
+            final long newBasketId = mOrderingDatabaseAgent.insertBasket(-1);
 
             // Move items and assets from the default basket to the new basket
 

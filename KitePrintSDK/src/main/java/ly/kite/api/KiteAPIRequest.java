@@ -62,11 +62,11 @@ import ly.kite.util.HTTPJSONRequest;
 public class KiteAPIRequest extends HTTPJSONRequest {
     ////////// Static Constant(s) //////////
 
-    private static final String LOG_TAG = "KiteAPIRequest";
-
     public static final String ERROR_RESPONSE_JSON_OBJECT_NAME = "error";
     public static final String ERROR_RESPONSE_MESSAGE_JSON_NAME = "message";
     public static final String ERROR_RESPONSE_CODE_JSON_NAME = "code";
+
+    private static final String LOG_TAG = "KiteAPIRequest";
 
     ////////// Static Variable(s) //////////
 
@@ -94,7 +94,7 @@ public class KiteAPIRequest extends HTTPJSONRequest {
     public void start(IJSONResponseListener listener) {
         // Add Kite headers to the request
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(mApplicationContext);
+        final KiteSDK kiteSDK = KiteSDK.getInstance(mApplicationContext);
 
         setHeader("Authorization", "ApiKey " + kiteSDK.getAPIKey() + ":");
         setHeader("User-Agent", "Kite SDK Android v" + BuildConfig.VERSION_NAME);
@@ -102,7 +102,7 @@ public class KiteAPIRequest extends HTTPJSONRequest {
         setHeader("X-App-Name", mApplicationContext.getString(mApplicationContext.getApplicationInfo().labelRes));
         setHeader("X-Person-UUID", kiteSDK.getUniqueUserId());
 
-        String languageCode = Locale.getDefault().getLanguage();
+        final String languageCode = Locale.getDefault().getLanguage();
 
         if (languageCode != null && (!languageCode.trim().equals(""))) {
             setHeader("Accept-Language", languageCode);

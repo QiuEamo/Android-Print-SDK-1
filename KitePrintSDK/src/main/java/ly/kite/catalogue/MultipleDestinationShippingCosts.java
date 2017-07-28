@@ -56,28 +56,29 @@ import ly.kite.address.Country;
  *
  *****************************************************/
 public class MultipleDestinationShippingCosts implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "MultipleDestinationShippingCosts";
-
-//  public  static final String  DESTINATION_CODE_EUROPE        = "europe";
-//  public  static final String  DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
 
     ////////// Static Variable(s) //////////
 
     public static final Parcelable.Creator<MultipleDestinationShippingCosts> CREATOR =
-            new Parcelable.Creator<MultipleDestinationShippingCosts>() {
-                public MultipleDestinationShippingCosts createFromParcel(Parcel sourceParcel) {
+        new Parcelable.Creator<MultipleDestinationShippingCosts>() {
+            public MultipleDestinationShippingCosts createFromParcel(Parcel sourceParcel) {
 
-                    return new MultipleDestinationShippingCosts(sourceParcel);
-                }
+                return new MultipleDestinationShippingCosts(sourceParcel);
+            }
 
-                public MultipleDestinationShippingCosts[] newArray(int size) {
+            public MultipleDestinationShippingCosts[] newArray(int size) {
 
-                    return new MultipleDestinationShippingCosts[size];
-                }
-            };
+                return new MultipleDestinationShippingCosts[size];
+            }
+        };
+
+    ////////// Static Constant(s) //////////
+
+    //  public  static final String  DESTINATION_CODE_EUROPE        = "europe";
+    //  public  static final String  DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "MultipleDestinationShippingCosts";
 
     ////////// Member Variable(s) //////////
 
@@ -99,7 +100,7 @@ public class MultipleDestinationShippingCosts implements Parcelable {
 
         this();
 
-        int count = sourceParcel.readInt();
+        final int count = sourceParcel.readInt();
 
         for (int index = 0; index < count; index++) {
             add((SingleDestinationShippingCost) sourceParcel.readParcelable(SingleDestinationShippingCost.class.getClassLoader()));
@@ -200,9 +201,9 @@ public class MultipleDestinationShippingCosts implements Parcelable {
     public String getDisplayCost(Locale locale) {
         // Get the cost for shipping
 
-        Country country = Country.getInstance(locale);
+        final Country country = Country.getInstance(locale);
 
-        SingleDestinationShippingCost shippingCost = getCost(country);
+        final SingleDestinationShippingCost shippingCost = getCost(country);
 
         // Now get a formatted string for the amount
         return shippingCost.getCost().getDisplayAmountWithFallback(locale);

@@ -82,14 +82,14 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
         View.OnClickListener {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "PaymentActivity";
-
     public static final String KEY_ORDER = "ly.kite.Order";
     public static final String KEY_PAYPAL_SUPPORTED_CURRENCY_CODES = "ly.kite.PayPalAcceptedCurrencies";
 
     private static final String PARAMETER_NAME_PAYMENT_ACCOUNT_ID = "payment_account_id";
     private static final String PARAMETER_NAME_PAYMENT_GATEWAY = "payment_gateway";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "PaymentActivity";
 
     ////////// Static Variable(s) //////////
 
@@ -125,7 +125,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
      *****************************************************/
     public static void startForResult(Activity activity, Order order, ArrayList<String> payPalSupportedCurrencyCodes, int requestCode) {
 
-        Intent intent = new Intent(activity, PaymentActivity.class);
+        final Intent intent = new Intent(activity, PaymentActivity.class);
 
         intent.putExtra(KEY_ORDER, order);
 
@@ -171,7 +171,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
             mWaitingForInstanceStateRestore = false;
         }
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         if (intent != null) {
             if (mOrder == null) {
@@ -186,19 +186,18 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
                     "Payment Activity");
         }
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(this);
-
+        final KiteSDK kiteSDK = KiteSDK.getInstance(this);
 
         /*
          * Start PayPal Service
          */
 
-        PayPalConfiguration payPalConfiguration = new PayPalConfiguration()
+        final PayPalConfiguration payPalConfiguration = new PayPalConfiguration()
                 .clientId(kiteSDK.getPayPalClientId())
                 .environment(kiteSDK.getPayPalEnvironment())
                 .acceptCreditCards(false);
 
-        Intent payPalServiceIntent = new Intent(this, PayPalService.class);
+        final Intent payPalServiceIntent = new Intent(this, PayPalService.class);
 
         payPalServiceIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, payPalConfiguration);
 
@@ -216,7 +215,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
         // Add the payment fragment
 
         if (savedInstanceState == null) {
-            ViewGroup paymentFragmentContainer = (ViewGroup) findViewById(R.id.payment_fragment_container);
+            final ViewGroup paymentFragmentContainer = (ViewGroup) findViewById(R.id.payment_fragment_container);
 
             if (paymentFragmentContainer != null) {
                 mPaymentFragment = mSDKCustomiser.getPaymentFragment();
@@ -238,7 +237,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
             setTitle(R.string.title_payment);
         }
 
-        Resources resources = getResources();
+        final Resources resources = getResources();
 
         // The prices are requested once the payment fragment has had its view created
 
@@ -325,15 +324,14 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
 
         mLastPriceRetrievalSucceeded = false;
 
-        displayModalDialog
-                (
+        displayModalDialog(
                         R.string.alert_dialog_title_oops,
                         getString(R.string.alert_dialog_message_pricing_format_string, exception.getMessage()),
                         R.string.Retry,
                         new RetrievePricingRunnable(),
                         R.string.Cancel,
                         new FinishRunnable()
-                );
+        );
     }
 
     /*****************************************************
@@ -459,7 +457,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
 
         // Verify that amy promo code was accepted
 
-        String promoCodeInvalidMessage = mOrderPricing.getPromoCodeInvalidMessage();
+        final String promoCodeInvalidMessage = mOrderPricing.getPromoCodeInvalidMessage();
 
         if (promoCodeInvalidMessage != null) {
             mLastPriceRetrievalSucceeded = false;
@@ -510,9 +508,9 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
 
         // Get the total cost in the most appropriate currency
 
-        String preferredCurrencyCode = KiteSDK.getInstance(this).getLockedCurrencyCode();
-        MultipleCurrencyAmounts totalCostMultiple = mOrderPricing.getTotalCost();
-        SingleCurrencyAmounts totalCostSingle = totalCostMultiple.getAmountsWithFallback(preferredCurrencyCode);
+        final String preferredCurrencyCode = KiteSDK.getInstance(this).getLockedCurrencyCode();
+        final MultipleCurrencyAmounts totalCostMultiple = mOrderPricing.getTotalCost();
+        final SingleCurrencyAmounts totalCostSingle = totalCostMultiple.getAmountsWithFallback(preferredCurrencyCode);
 
         // If the cost is zero, we change the button text
         if (totalCostSingle.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
@@ -529,7 +527,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
             mPaymentFragment.onEnableButtons(true);
         }
 
-        OrderPricingAdaptor adaptor = new OrderPricingAdaptor(this, mOrderPricing);
+        final OrderPricingAdaptor adaptor = new OrderPricingAdaptor(this, mOrderPricing);
 
         mOrderSummaryListView.setAdapter(adaptor);
     }
@@ -543,7 +541,7 @@ public class PaymentActivity extends AOrderSubmissionActivity implements Pricing
      *****************************************************/
     private boolean setPromoButtonEnabledState() {
 
-        boolean isEnabled = (mPromoEditText.getText().length() > 0);
+        final boolean isEnabled = mPromoEditText.getText().length() > 0;
 
         mPromoTextView.setEnabled(isEnabled);
 

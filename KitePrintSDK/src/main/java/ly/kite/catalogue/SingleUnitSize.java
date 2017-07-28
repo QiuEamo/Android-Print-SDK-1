@@ -51,27 +51,27 @@ import ly.kite.KiteSDK;
  *
  *****************************************************/
 public class SingleUnitSize implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "SingleUnitSize";
-
-    public static final float DEFAULT_ASPECT_RATIO = 1.0f;
 
     ////////// Static Variable(s) //////////
 
-    public static final Parcelable.Creator<SingleUnitSize> CREATOR =
-            new Parcelable.Creator<SingleUnitSize>() {
-                public SingleUnitSize createFromParcel(Parcel sourceParcel) {
+    public static final Parcelable.Creator<SingleUnitSize> CREATOR = new Parcelable.Creator<SingleUnitSize>() {
+        public SingleUnitSize createFromParcel(Parcel sourceParcel) {
 
-                    return new SingleUnitSize(sourceParcel);
-                }
+            return new SingleUnitSize(sourceParcel);
+        }
 
-                public SingleUnitSize[] newArray(int size) {
+        public SingleUnitSize[] newArray(int size) {
 
-                    return new SingleUnitSize[size];
-                }
-            };
+            return new SingleUnitSize[size];
+        }
+    };
+
+    ////////// Static Constant(s) //////////
+
+    public static final float DEFAULT_ASPECT_RATIO = 1.0f;
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SingleUnitSize";
 
     ////////// Member Variable(s) //////////
 

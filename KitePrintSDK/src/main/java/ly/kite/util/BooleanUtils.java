@@ -75,12 +75,12 @@ public class BooleanUtils {
             return null;
         }
 
-        boolean[] booleanArray = new boolean[booleanList.size()];
+        final boolean[] booleanArray = new boolean[booleanList.size()];
 
         int index = 0;
 
         for (Boolean booleanObject : booleanList) {
-            booleanArray[index] = (booleanObject != null ? booleanObject : false);  // Unboxing
+            booleanArray[index] = booleanObject != null ? booleanObject : false;  // Unboxing
 
             index++;
         }
@@ -100,7 +100,7 @@ public class BooleanUtils {
             return null;
         }
 
-        ArrayList<Boolean> booleanList = new ArrayList<>(booleanArray.length);
+        final ArrayList<Boolean> booleanList = new ArrayList<>(booleanArray.length);
 
         for (boolean booleanValue : booleanArray) {
             booleanList.add(booleanValue);  // Boxing

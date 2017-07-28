@@ -130,22 +130,23 @@ public class PromptTextFrame extends FrameLayout {
     private void initialise(Context context, AttributeSet attributeSet, int defaultStyle) {
         // Inflate the view
 
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        final LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        View view = layoutInflater.inflate(R.layout.prompt_text_frame, this, true);
+        final View view = layoutInflater.inflate(R.layout.prompt_text_frame, this, true);
 
         mPromptTextView = (TextView) view.findViewById(R.id.prompt_text_view);
 
         // Check the XML attributes
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.PromptTextFrame, defaultStyle, defaultStyle);
+            final TypedArray typedArray =
+                    context.obtainStyledAttributes(attributeSet, R.styleable.PromptTextFrame, defaultStyle, defaultStyle);
 
             // If a prompt was defined in the XML then set it now, respecting any tags.
 
-            TypedValue value = new TypedValue();
+            final TypedValue value = new TypedValue();
 
-            String prompt = typedArray.getString(R.styleable.PromptTextFrame_promptText);
+            final String prompt = typedArray.getString(R.styleable.PromptTextFrame_promptText);
 
             if (prompt != null) {
                 mPromptTextView.setText(Html.fromHtml(prompt));
@@ -227,7 +228,7 @@ public class PromptTextFrame extends FrameLayout {
             // Create and start the out animation. Once the out animation
             // has finished, we clear the animation and hide the view.
 
-            Animation outAnimation = new TranslateAnimation(
+            final Animation outAnimation = new TranslateAnimation(
                     Animation.RELATIVE_TO_SELF, 0,
                     Animation.RELATIVE_TO_SELF, 0,
                     Animation.RELATIVE_TO_SELF, 0,

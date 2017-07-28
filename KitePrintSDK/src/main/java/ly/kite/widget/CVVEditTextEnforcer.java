@@ -53,12 +53,12 @@ import android.widget.EditText;
 public class CVVEditTextEnforcer extends AEditTextEnforcer implements TextWatcher {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "CVVEditTextEnforcer";
-
     public static final int DEFAULT_REQUIRED_DIGIT_COUNT = 3;
 
     public static final String HINT_DIGITS = "123456789";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "CVVEditTextEnforcer";
 
     ////////// Static Variable(s) //////////
 

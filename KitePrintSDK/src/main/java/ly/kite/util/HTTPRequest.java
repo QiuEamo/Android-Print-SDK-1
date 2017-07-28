@@ -65,10 +65,10 @@ import java.util.Map;
 public class HTTPRequest {
     ////////// Static Constant(s) //////////
 
+    protected static final boolean DEBUGGING_ENABLED = false;
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "HTTPRequest";
-
-    static protected final boolean DEBUGGING_ENABLED = false;
 
     ////////// Static Variable(s) //////////
 
@@ -123,7 +123,7 @@ public class HTTPRequest {
     public void start(IResponseListener listener) {
 
         if (mRequestTask != null) {
-            throw (new IllegalStateException("This HTTP JSON request has already been started"));
+            throw new IllegalStateException("This HTTP JSON request has already been started");
         }
 
         // Create and start a new request task
@@ -196,11 +196,11 @@ public class HTTPRequest {
         GET("GET"),
         PATCH("PATCH");
 
-        private final String methodName;
+        private final String mMethodName;
 
         private HttpMethod(String method) {
 
-            this.methodName = method;
+            this.mMethodName = method;
         }
     }
 
@@ -209,7 +209,7 @@ public class HTTPRequest {
      * An HTTP PATCH method.
      *
      *****************************************************/
-    static protected class HttpPatch extends HttpPost {
+    protected static class HttpPatch extends HttpPost {
         public static final String METHOD_PATCH = "PATCH";
 
         public HttpPatch(final String url) {
@@ -230,8 +230,8 @@ public class HTTPRequest {
      *
      *****************************************************/
     private static class HTTPRequestResult {
-        private int httpStatusCode;
-        private Exception exception;
+        private int mHttpStatusCode;
+        private Exception mException;
     }
 
     /*****************************************************
@@ -254,15 +254,15 @@ public class HTTPRequest {
         @Override
         protected HTTPRequestResult doInBackground(Void... voids) {
 
-            HTTPRequestResult httpRequestResult = new HTTPRequestResult();
+            final HTTPRequestResult httpRequestResult = new HTTPRequestResult();
 
-            HttpClient httpclient = new DefaultHttpClient();
+            final HttpClient httpclient = new DefaultHttpClient();
             HttpRequestBase request = null;
 
             if (mHTTPMethod == HttpMethod.GET) {
                 request = new HttpGet(mURLString);
             } else if (mHTTPMethod == HttpMethod.POST || mHTTPMethod == HttpMethod.PATCH) {
-                HttpPost postReq = (mHTTPMethod == HttpMethod.POST ? new HttpPost(mURLString) : new HttpPatch(mURLString));
+                final HttpPost postReq = mHTTPMethod == HttpMethod.POST ? new HttpPost(mURLString) : new HttpPatch(mURLString);
 
                 postReq.setHeader("Content-Type", "application/json; charset=utf-8");
 
@@ -273,7 +273,7 @@ public class HTTPRequest {
                 try {
                     postReq.setEntity(new StringEntity(mRequestBodyString, "utf-8"));
                 } catch (UnsupportedEncodingException e) {
-                    httpRequestResult.exception = e;
+                    httpRequestResult.mException = e;
 
                     return httpRequestResult;
                 }
@@ -290,25 +290,25 @@ public class HTTPRequest {
             if (DEBUGGING_ENABLED) {
                 Log.d(LOG_TAG, "URI: " + request.getURI());
 
-                Header[] headerArray = request.getAllHeaders();
+                final Header[] headerArray = request.getAllHeaders();
 
                 for (Header header : headerArray) {
                     Log.d(LOG_TAG, header.getName() + " : " + header.getValue());
                 }
             }
 
-            String bodyJSONString = null;
+            final String bodyJSONString = null;
 
             try {
-                HttpResponse response = httpclient.execute(request);
+                final HttpResponse response = httpclient.execute(request);
 
-                httpRequestResult.httpStatusCode = response.getStatusLine().getStatusCode();
+                httpRequestResult.mHttpStatusCode = response.getStatusLine().getStatusCode();
 
                 processResponseInBackground(response);
             } catch (Exception exception) {
                 Log.e(LOG_TAG, "Unable to process response", exception);
 
-                httpRequestResult.exception = exception;
+                httpRequestResult.mException = exception;
             }
 
             return httpRequestResult;
@@ -321,10 +321,10 @@ public class HTTPRequest {
                 return;
             }
 
-            if (response.exception != null) {
-                onResponseError(response.exception);
+            if (response.mException != null) {
+                onResponseError(response.mException);
             } else {
-                onResponseSuccess(response.httpStatusCode);
+                onResponseSuccess(response.mHttpStatusCode);
             }
         }
     }

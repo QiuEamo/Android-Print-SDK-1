@@ -83,6 +83,13 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    private PricingAgent() {
+
+        super();
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -99,13 +106,6 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
         return sPricingAgent;
     }
 
-    ////////// Constructor(s) //////////
-
-    private PricingAgent() {
-
-        super();
-    }
-
     ////////// Method(s) //////////
 
     /*****************************************************
@@ -119,7 +119,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
                                        IPricingConsumer consumer, int requestId) {
         // Get the request body first, because we also use it as the caching key
 
-        String requestBodyString = getRequestBody(context, order, promoCode);
+        final String requestBodyString = getRequestBody(context, order, promoCode);
 
         if (KiteSDK.DEBUG_PRICING) {
             Log.d(LOG_TAG, "Request body:\n" + requestBodyString);
@@ -130,7 +130,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
 
         // If we already have the price information cached from a previous retrieval - return it now
 
-        OrderPricing cachedPricing = getCachedValue(requestBodyString);
+        final OrderPricing cachedPricing = getCachedValue(requestBodyString);
 
         if (cachedPricing != null) {
             return cachedPricing;
@@ -141,11 +141,12 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
         // a new request.
 
         if (!registerForValue(requestBodyString, new ConsumerHolder(consumer, requestId))) {
-            KiteSDK kiteSDK = KiteSDK.getInstance(context);
+            final KiteSDK kiteSDK = KiteSDK.getInstance(context);
 
-            String requestURLString = String.format(PRICING_ENDPOINT_FORMAT_STRING, kiteSDK.getAPIEndpoint());
+            final String requestURLString = String.format(PRICING_ENDPOINT_FORMAT_STRING, kiteSDK.getAPIEndpoint());
 
-            KiteAPIRequest request = new KiteAPIRequest(context, KiteAPIRequest.HttpMethod.POST, requestURLString, null, requestBodyString);
+            final KiteAPIRequest request =
+                    new KiteAPIRequest(context, KiteAPIRequest.HttpMethod.POST, requestURLString, null, requestBodyString);
 
             request.start(new PriceRequestListener(context, requestBodyString, payPalSupportedCurrencyCodeList));
         }
@@ -176,11 +177,11 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
      *****************************************************/
     private String getRequestBody(Context context, Order order, String promoCode) {
 
-        JSONObject bodyJSONObject = new JSONObject();
+        final JSONObject bodyJSONObject = new JSONObject();
 
-        Address shippingAddress;
-        Country country;
-        String shippingCountryCode;
+        final Address shippingAddress;
+        final Country country;
+        final String shippingCountryCode;
 
         if ((shippingAddress = order.getShippingAddress()) != null &&
                 (country = shippingAddress.getCountry()) != null) {
@@ -193,7 +194,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
             promoCode = "";
         }
 
-        JSONArray basketJSONArray = order.asBasketJSONArray(shippingCountryCode);
+        final JSONArray basketJSONArray = order.asBasketJSONArray(shippingCountryCode);
 
         try {
             bodyJSONObject.put(JSON_NAME_BASKET, basketJSONArray);
@@ -202,7 +203,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
 
             // Add in any additional parameters
 
-            HashMap<String, String> additionalParametersMap = order.getAdditionalParameters();
+            final HashMap<String, String> additionalParametersMap = order.getAdditionalParameters();
 
             if (additionalParametersMap != null) {
                 for (String parameterName : additionalParametersMap.keySet()) {
@@ -238,7 +239,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
      *****************************************************/
     protected void onValueAvailable(OrderPricing pricing, ConsumerHolder consumerHolder) {
 
-        consumerHolder.consumer.paOnSuccess(consumerHolder.requestId, pricing);
+        consumerHolder.mConsumer.paOnSuccess(consumerHolder.mRequestId, pricing);
     }
 
     /*****************************************************
@@ -249,7 +250,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
      *****************************************************/
     protected void onError(Exception exception, ConsumerHolder consumerHolder) {
 
-        consumerHolder.consumer.paOnError(consumerHolder.requestId, exception);
+        consumerHolder.mConsumer.paOnError(consumerHolder.mRequestId, exception);
     }
 
     ////////// Inner Class(es) //////////
@@ -266,13 +267,13 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
      *
      *****************************************************/
     class ConsumerHolder {
-        IPricingConsumer consumer;
-        int requestId;
+        IPricingConsumer mConsumer;
+        int mRequestId;
 
         ConsumerHolder(IPricingConsumer consumer, int requestId) {
 
-            this.consumer = consumer;
-            this.requestId = requestId;
+            this.mConsumer = consumer;
+            this.mRequestId = requestId;
         }
     }
 
@@ -306,7 +307,7 @@ public class PricingAgent extends ACache<String, OrderPricing, PricingAgent.Cons
             }
 
             try {
-                OrderPricing orderPricing = new OrderPricing(jsonObject);
+                final OrderPricing orderPricing = new OrderPricing(jsonObject);
 
                 PricingAgent.this.saveAndDistributeValue(mRequestBodyString, orderPricing);
             } catch (Exception exception) {

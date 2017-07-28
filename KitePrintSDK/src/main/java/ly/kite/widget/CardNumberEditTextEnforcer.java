@@ -56,10 +56,10 @@ import ly.kite.R;
 public class CardNumberEditTextEnforcer extends AEditTextEnforcer implements TextWatcher {
     ////////// Static Constant(s) //////////
 
+    public static final int DEFAULT_REQUIRED_DIGIT_COUNT = 16;
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "CardNumberEditTextEnforcer";
-
-    public static final int DEFAULT_REQUIRED_DIGIT_COUNT = 16;
 
     private static final int NO_LOGO_RESOURCE_ID = 0;
 
@@ -131,7 +131,7 @@ public class CardNumberEditTextEnforcer extends AEditTextEnforcer implements Tex
         }
 
         // Format the card number according to the type of credit card
-        String formattedString = processCardNumber(digitsString);
+        final String formattedString = processCardNumber(digitsString);
 
         // Only change the original string if it doesn't already match this formatted string - to avoid triggering
         // another text changed event (and an infinite loop).

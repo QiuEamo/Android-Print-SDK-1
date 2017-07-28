@@ -74,9 +74,6 @@ import ly.kite.util.AssetHelper;
 public class ImageProcessingService extends Service {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "ImageProcessingService";
-
     public static final int WHAT_CROP_TO_ASPECT_RATIO = 23;
     public static final int WHAT_FLIP_HORIZONTALLY = 27;
     public static final int WHAT_ROTATE_ANTICLOCKWISE = 29;
@@ -91,6 +88,9 @@ public class ImageProcessingService extends Service {
     public static final String BUNDLE_KEY_CROP_BOUNDS = "cropBounds";
 
     public static final float DEFAULT_ASPECT_RATIO = 1.0f;
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageProcessingService";
 
     ////////// Static Variable(s) //////////
 
@@ -110,7 +110,7 @@ public class ImageProcessingService extends Service {
      *****************************************************/
     public static void bind(Context context, ServiceConnection serviceConnection) {
 
-        Intent intent = new Intent(context, ImageProcessingService.class);
+        final Intent intent = new Intent(context, ImageProcessingService.class);
 
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -157,22 +157,22 @@ public class ImageProcessingService extends Service {
         public void handleMessage(Message message) {
             // Get common values from the message
 
-            Messenger responseMessenger = message.replyTo;
+            final Messenger responseMessenger = message.replyTo;
 
-            Bundle messageData = message.getData();
+            final Bundle messageData = message.getData();
 
             messageData.setClassLoader(Asset.class.getClassLoader());
-            Asset sourceAsset = messageData.getParcelable(BUNDLE_KEY_SOURCE_ASSET);
-            Asset targetAsset = messageData.getParcelable(BUNDLE_KEY_TARGET_ASSET);
+            final Asset sourceAsset = messageData.getParcelable(BUNDLE_KEY_SOURCE_ASSET);
+            final Asset targetAsset = messageData.getParcelable(BUNDLE_KEY_TARGET_ASSET);
 
-            IImageTransformer transformer;
+            final IImageTransformer transformer;
 
             switch (message.what) {
                 case WHAT_CROP_TO_ASPECT_RATIO:
 
                     ///// Crop to aspect ratio /////
 
-                    float aspectRatio = messageData.getFloat(BUNDLE_KEY_ASPECT_RATIO, DEFAULT_ASPECT_RATIO);
+                    final float aspectRatio = messageData.getFloat(BUNDLE_KEY_ASPECT_RATIO, DEFAULT_ASPECT_RATIO);
 
                     if (KiteSDK.DEBUG_IMAGE_PROCESSING) {
                         Log.i(LOG_TAG, "Received CROP_TO_ASPECT_RATIO message: responseMessenger = " + responseMessenger + ", sourceAsset" +
@@ -214,7 +214,7 @@ public class ImageProcessingService extends Service {
                     ///// Crop to aspect ratio /////
 
                     messageData.setClassLoader(RectF.class.getClassLoader());
-                    RectF cropBounds = messageData.getParcelable(BUNDLE_KEY_CROP_BOUNDS);
+                    final RectF cropBounds = messageData.getParcelable(BUNDLE_KEY_CROP_BOUNDS);
 
                     if (KiteSDK.DEBUG_IMAGE_PROCESSING) {
                         Log.i(LOG_TAG, "Received CROP_TO_BOUNDS message: responseMessenger = " + responseMessenger + ", sourceAsset = " +
@@ -232,7 +232,7 @@ public class ImageProcessingService extends Service {
                     return;
             }
 
-            TransformedImageConsumer consumer = new TransformedImageConsumer(targetAsset, responseMessenger);
+            final TransformedImageConsumer consumer = new TransformedImageConsumer(targetAsset, responseMessenger);
 
             ImageAgent.with(ImageProcessingService.this)
                     .load(sourceAsset)
@@ -380,7 +380,7 @@ public class ImageProcessingService extends Service {
 
         private void sendResponseMessage(int what) {
 
-            Message responseMessage = Message.obtain();
+            final Message responseMessage = Message.obtain();
 
             responseMessage.what = what;
 

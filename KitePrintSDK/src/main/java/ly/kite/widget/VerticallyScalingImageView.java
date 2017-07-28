@@ -92,10 +92,10 @@ public class VerticallyScalingImageView extends ImageView {
 
         // Get the bitmap dimensions
         float widthAsFloat = bitmap.getWidth();
-        float heightAsFloat = bitmap.getHeight();
+        final float heightAsFloat = bitmap.getHeight();
 
         // Determine the scaled width of the bitmap
-        float scaledWidthAsFloat = getMeasuredWidth();
+        final float scaledWidthAsFloat = getMeasuredWidth();
 
         // Calculate the scaled height to keep the aspect ratio
 
@@ -103,11 +103,11 @@ public class VerticallyScalingImageView extends ImageView {
             widthAsFloat = 1.0f;
         }
 
-        float scaledHeightAsFloat = (scaledWidthAsFloat / widthAsFloat) * heightAsFloat;
+        final float scaledHeightAsFloat = (scaledWidthAsFloat / widthAsFloat) * heightAsFloat;
 
         // Now set the layout height to match the scaled height
 
-        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        final ViewGroup.LayoutParams layoutParams = getLayoutParams();
 
         layoutParams.height = (int) scaledHeightAsFloat;
 

@@ -54,28 +54,29 @@ import ly.kite.address.Country;
  *
  *****************************************************/
 public class SingleDestinationShippingCost implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "SingleDestinationShippingCost";
-
-    public static final String DESTINATION_CODE_EUROPE = "europe";
-    public static final String DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
 
     ////////// Static Variable(s) //////////
 
     public static final Parcelable.Creator<SingleDestinationShippingCost> CREATOR =
-            new Parcelable.Creator<SingleDestinationShippingCost>() {
-                public SingleDestinationShippingCost createFromParcel(Parcel sourceParcel) {
+        new Parcelable.Creator<SingleDestinationShippingCost>() {
+            public SingleDestinationShippingCost createFromParcel(Parcel sourceParcel) {
 
-                    return new SingleDestinationShippingCost(sourceParcel);
-                }
+                return new SingleDestinationShippingCost(sourceParcel);
+            }
 
-                public SingleDestinationShippingCost[] newArray(int size) {
+            public SingleDestinationShippingCost[] newArray(int size) {
 
-                    return new SingleDestinationShippingCost[size];
-                }
-            };
+                return new SingleDestinationShippingCost[size];
+            }
+        };
+
+    ////////// Static Constant(s) //////////
+
+    public static final String DESTINATION_CODE_EUROPE = "europe";
+    public static final String DESTINATION_CODE_REST_OF_WORLD = "rest_of_world";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "SingleDestinationShippingCost";
 
     ////////// Member Variable(s) //////////
 

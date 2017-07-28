@@ -91,9 +91,9 @@ public class ReviewAndEditFragment extends AProductCreationFragment implements I
      *****************************************************/
     public static ReviewAndEditFragment newInstance(Product product) {
 
-        ReviewAndEditFragment fragment = new ReviewAndEditFragment();
+        final ReviewAndEditFragment fragment = new ReviewAndEditFragment();
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
         arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
         fragment.setArguments(arguments);
@@ -128,7 +128,7 @@ public class ReviewAndEditFragment extends AProductCreationFragment implements I
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.screen_review_and_edit, container, false);
+        final View view = layoutInflator.inflate(R.layout.screen_review_and_edit, container, false);
 
         super.onViewCreated(view);
 
@@ -258,9 +258,9 @@ public class ReviewAndEditFragment extends AProductCreationFragment implements I
                     numberOfImages += imageSpec.getQuantity();
                 }
 
-                int quantityPerPack = mProduct.getQuantityPerSheet();
-                int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
-                int expectedNumberOfImages = numberOfPacks * quantityPerPack;
+                final int quantityPerPack = mProduct.getQuantityPerSheet();
+                final int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
+                final int expectedNumberOfImages = numberOfPacks * quantityPerPack;
                 if (numberOfImages < expectedNumberOfImages) {
                     displayNotFullDialog(expectedNumberOfImages, numberOfImages, new CallbackConfirmRunnable());
                 } else {
@@ -301,10 +301,10 @@ public class ReviewAndEditFragment extends AProductCreationFragment implements I
             numberOfImages += imageSpec.getQuantity();
         }
 
-        int quantityPerPack = mProduct.getQuantityPerSheet();
-        int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
+        final int quantityPerPack = mProduct.getQuantityPerSheet();
+        final int numberOfPacks = (numberOfImages + (quantityPerPack - 1)) / quantityPerPack;
 
-        mKiteActivity.setTitle(getString(R.string.review_and_edit_title_format_string, numberOfImages, (numberOfPacks * quantityPerPack)));
+        mKiteActivity.setTitle(getString(R.string.review_and_edit_title_format_string, numberOfImages, numberOfPacks * quantityPerPack));
     }
 
     ////////// Inner Class(es) //////////

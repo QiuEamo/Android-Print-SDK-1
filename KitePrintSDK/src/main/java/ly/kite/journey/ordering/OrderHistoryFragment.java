@@ -104,7 +104,7 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
      *****************************************************/
     public static void start(Context context) {
 
-        Intent intent = new Intent(context, OrderHistoryFragment.class);
+        final Intent intent = new Intent(context, OrderHistoryFragment.class);
 
         context.startActivity(intent);
     }
@@ -137,7 +137,7 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.screen_order_history, container, false);
+        final View view = layoutInflator.inflate(R.layout.screen_order_history, container, false);
 
         mListView = (ListView) view.findViewById(R.id.list_view);
 
@@ -167,15 +167,14 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
     @Override
     public void onCatalogueError(Exception exception) {
         // Display an error dialog
-        ((AKiteActivity) getActivity()).displayModalDialog
-                (
+        ((AKiteActivity) getActivity()).displayModalDialog(
                         R.string.alert_dialog_title_error_retrieving_products,
                         R.string.alert_dialog_message_error_retrieving_products,
                         R.string.Retry,
                         new RequestCatalogueRunnable(),
                         R.string.Cancel,
                         new FinishRunnable()
-                );
+        );
     }
 
     ////////// AdapterView.OnItemClickListener Method(s) //////////
@@ -188,20 +187,20 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // Get the order history item
-        OrderHistoryItem orderHistoryItem = mOrderHistoryItemList.get(position);
+        final OrderHistoryItem orderHistoryItem = mOrderHistoryItemList.get(position);
 
         try {
             // Create an order using all the information from the order history item
 
-            String userDataJSON = orderHistoryItem.getUserDataJSON();
+            final String userDataJSON = orderHistoryItem.getUserDataJSON();
 
-            Order order = new Order(
+            final Order order = new Order(
                     getActivity(),
                     orderHistoryItem.getBasket(),
                     orderHistoryItem.getShippingAddress(),
                     orderHistoryItem.getNotificationEmail(),
                     orderHistoryItem.getNotificationPhone(),
-                    (userDataJSON != null ? new JSONObject(userDataJSON) : null),
+                    userDataJSON != null ? new JSONObject(userDataJSON) : null,
                     orderHistoryItem.getAdditionalParametersMap(),
                     orderHistoryItem.getPromoCode(),
                     new OrderPricing(orderHistoryItem.getPricingJSON()),
@@ -256,7 +255,7 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
      *****************************************************/
     void onLoadCancelled() {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity != null && activity instanceof ICancelListener) {
             ((ICancelListener) activity).onLoadCancelled();
@@ -301,9 +300,9 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            Object tag;
-            View view;
-            ViewHolder viewHolder;
+            final Object tag;
+            final View view;
+            final ViewHolder viewHolder;
 
             if (convertView != null &&
                     (tag = convertView.getTag()) != null &&
@@ -317,7 +316,7 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
                 view.setTag(viewHolder);
             }
 
-            OrderHistoryItem orderHistoryItem = (OrderHistoryItem) getItem(position);
+            final OrderHistoryItem orderHistoryItem = (OrderHistoryItem) getItem(position);
 
             viewHolder.bind(orderHistoryItem);
 
@@ -325,21 +324,21 @@ public class OrderHistoryFragment extends AKiteFragment implements AdapterView.O
         }
 
         private class ViewHolder {
-            View view;
-            TextView dateTextView;
-            TextView descriptionTextView;
+            View mView;
+            TextView mDateTextView;
+            TextView mDescriptionTextView;
 
             ViewHolder(View view) {
 
-                this.view = view;
-                this.dateTextView = (TextView) view.findViewById(R.id.date_text_view);
-                this.descriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
+                this.mView = view;
+                this.mDateTextView = (TextView) view.findViewById(R.id.date_text_view);
+                this.mDescriptionTextView = (TextView) view.findViewById(R.id.description_text_view);
             }
 
             void bind(OrderHistoryItem orderHistoryItem) {
 
-                this.dateTextView.setText(orderHistoryItem.getDateString());
-                this.descriptionTextView.setText(orderHistoryItem.getDescription());
+                this.mDateTextView.setText(orderHistoryItem.getDateString());
+                this.mDescriptionTextView.setText(orderHistoryItem.getDescription());
             }
         }
     }

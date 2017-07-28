@@ -72,7 +72,7 @@ public class FeedbackEmailer {
      *****************************************************/
     public static void sendEmail(Context context) {
 
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(R.string
+        final Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(R.string
                 .feedback_email_recipient), null));
 
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.feedback_email_subject));

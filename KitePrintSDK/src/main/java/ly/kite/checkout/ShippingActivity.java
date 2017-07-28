@@ -114,7 +114,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
      *****************************************************/
     public static void startForResult(Activity activity, Order order, int requestCode) {
 
-        Intent intent = new Intent(activity, ShippingActivity.class);
+        final Intent intent = new Intent(activity, ShippingActivity.class);
 
         addExtras(order, intent);
 
@@ -147,7 +147,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
 
         // If some values weren't saved - try and get them from the intent
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         Order order = null;
 
@@ -183,7 +183,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
         mEmailEditText = (EditText) findViewById(R.id.email_edit_text);
         mPhoneView = findViewById(R.id.phone_view);
         mPhoneEditText = (EditText) findViewById(R.id.phone_edit_text);
-        TextView requirePhoneTextView = (TextView) findViewById(R.id.phone_require_reason);
+        final TextView requirePhoneTextView = (TextView) findViewById(R.id.phone_require_reason);
 
         // Set up the forwards button
 
@@ -245,12 +245,12 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
             outState.putParcelable(KEY_SHIPPING_ADDRESS, mShippingAddress);
         }
 
-        String email = getPopulatedStringOrNull(mEmailEditText);
+        final String email = getPopulatedStringOrNull(mEmailEditText);
         if (email != null) {
             outState.putString(KEY_EMAIL, email);
         }
 
-        String phone = getPopulatedStringOrNull(mPhoneEditText);
+        final String phone = getPopulatedStringOrNull(mPhoneEditText);
         if (phone != null) {
             outState.putString(KEY_PHONE, phone);
         }
@@ -327,7 +327,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
 
     public void onForwardsClicked() {
         // Prepare an intent to return
-        Intent resultIntent = new Intent();
+        final Intent resultIntent = new Intent();
 
         // Check that we have a shipping address
 
@@ -341,7 +341,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
 
         // Validate the email
 
-        String email = getPopulatedStringOrNull(mEmailEditText);
+        final String email = getPopulatedStringOrNull(mEmailEditText);
 
         if (!isEmailValid(email)) {
             showErrorDialog(R.string.alert_dialog_title_invalid_email_address, R.string.alert_dialog_message_invalid_email_address);
@@ -358,7 +358,7 @@ public class ShippingActivity extends AShippingActivity implements View.OnClickL
         // Check that we need and have a valid phone number
 
         if (mRequestPhoneNumber) {
-            String phone = getPopulatedStringOrNull(mPhoneEditText);
+            final String phone = getPopulatedStringOrNull(mPhoneEditText);
 
             if (phone == null || phone.trim().length() < 5) {
                 showErrorDialog(R.string.alert_dialog_title_invalid_phone_number, R.string.alert_dialog_message_invalid_phone_number);

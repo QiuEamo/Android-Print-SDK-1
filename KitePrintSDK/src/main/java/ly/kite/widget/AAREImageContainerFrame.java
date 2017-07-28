@@ -72,7 +72,7 @@ import ly.kite.util.AssetFragment;
  * The widget is also an image consumer.
  *
  *****************************************************/
-abstract public class AAREImageContainerFrame extends FrameLayout implements IImageConsumer, Animation.AnimationListener {
+public abstract class AAREImageContainerFrame extends FrameLayout implements IImageConsumer, Animation.AnimationListener {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -88,11 +88,13 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
 
     ////////// Member Variable(s) //////////
 
-    private int mWidth;
-    private int mHeight;
-
     protected ImageView mImageView;
     protected ProgressBar mProgressSpinner;
+
+    protected Animation mFadeInAnimation;
+
+    private int mWidth;
+    private int mHeight;
 
     private AspectRatioEnforcer mAspectRatioEnforcer;
 
@@ -102,8 +104,6 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
     private Object mPendingImageSource;
 
     private Object mExpectedKey;
-
-    protected Animation mFadeInAnimation;
 
     ////////// Static Initialiser(s) //////////
 
@@ -229,7 +229,6 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
 
         clearPendingImage();
 
-        // TODO
     }
 
     ////////// Animation.AnimationListener Method(s) //////////
@@ -280,7 +279,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
     protected void initialise(Context context, AttributeSet attributeSet, int defaultStyle) {
         // Get the view
 
-        View view = onCreateView(context, attributeSet, defaultStyle);
+        final View view = onCreateView(context, attributeSet, defaultStyle);
 
         mImageView = (ImageView) view.findViewById(R.id.image_view);
         mProgressSpinner = (ProgressBar) view.findViewById(R.id.progress_spinner);
@@ -290,7 +289,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
         // Check for specific XML attributes
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ImageContainerFrame, defaultStyle,
+            final TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.ImageContainerFrame, defaultStyle,
                     defaultStyle);
 
             setShowProgressSpinnerOnDownload(typedArray.getBoolean(R.styleable.ImageContainerFrame_showProgressSpinnerOnDownload,
@@ -307,7 +306,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
      * attached to this frame when this method returns.
      *
      *****************************************************/
-    abstract protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle);
+    protected abstract View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle);
 
     /*****************************************************
      *
@@ -474,7 +473,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
             if (mPendingImageSource instanceof AssetFragment) {
                 setExpectedKey(mPendingImageSource);
 
-                AssetFragment requestAssetFragment = (AssetFragment) mPendingImageSource;
+                final AssetFragment requestAssetFragment = (AssetFragment) mPendingImageSource;
 
                 ImageAgent.with(getContext())
                         .load(requestAssetFragment)
@@ -486,7 +485,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
             if (mPendingImageSource instanceof Asset) {
                 setExpectedKey(mPendingImageSource);
 
-                Asset requestAsset = (Asset) mPendingImageSource;
+                final Asset requestAsset = (Asset) mPendingImageSource;
 
                 ImageAgent.with(getContext())
                         .load(requestAsset)
@@ -497,7 +496,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
             } else if (mPendingImageSource instanceof URL) {
                 setExpectedKey(mPendingImageSource);
 
-                URL requestURL = (URL) mPendingImageSource;
+                final URL requestURL = (URL) mPendingImageSource;
 
                 ImageAgent.with(getContext())
                         .load(requestURL, mPendingImageCategory)
@@ -508,7 +507,7 @@ abstract public class AAREImageContainerFrame extends FrameLayout implements IIm
             } else if (mPendingImageSource instanceof Integer) {
                 setExpectedKey(mPendingImageSource);
 
-                int drawableResourceId = ((Integer) mPendingImageSource).intValue();
+                final int drawableResourceId = ((Integer) mPendingImageSource).intValue();
 
                 ImageAgent.with(getContext())
                         .load(drawableResourceId)

@@ -49,32 +49,32 @@ import android.os.Parcelable;
  *
  *****************************************************/
 public class Bleed implements Parcelable {
+
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<Bleed> CREATOR = new Parcelable.Creator<Bleed>() {
+        public Bleed createFromParcel(Parcel sourceParcel) {
+
+            return new Bleed(sourceParcel);
+        }
+
+        public Bleed[] newArray(int size) {
+
+            return new Bleed[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "Bleed";
 
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<Bleed> CREATOR =
-            new Parcelable.Creator<Bleed>() {
-                public Bleed createFromParcel(Parcel sourceParcel) {
-
-                    return new Bleed(sourceParcel);
-                }
-
-                public Bleed[] newArray(int size) {
-
-                    return new Bleed[size];
-                }
-            };
-
     ////////// Member Variable(s) //////////
 
-    public final int topPixels;
-    public final int leftPixels;
-    public final int rightPixels;
-    public final int bottomPixels;
+    public final int mTopPixels;
+    public final int mLeftPixels;
+    public final int mRightPixels;
+    public final int mBottomPixels;
 
     ////////// Static Initialiser(s) //////////
 
@@ -84,19 +84,19 @@ public class Bleed implements Parcelable {
 
     public Bleed(int topPixels, int rightPixels, int bottomPixels, int leftPixels) {
 
-        this.topPixels = topPixels;
-        this.leftPixels = leftPixels;
-        this.rightPixels = rightPixels;
-        this.bottomPixels = bottomPixels;
+        this.mTopPixels = topPixels;
+        this.mLeftPixels = leftPixels;
+        this.mRightPixels = rightPixels;
+        this.mBottomPixels = bottomPixels;
     }
 
     // Constructor used by parcelable interface
     private Bleed(Parcel sourceParcel) {
 
-        this.topPixels = sourceParcel.readInt();
-        this.leftPixels = sourceParcel.readInt();
-        this.rightPixels = sourceParcel.readInt();
-        this.bottomPixels = sourceParcel.readInt();
+        this.mTopPixels = sourceParcel.readInt();
+        this.mLeftPixels = sourceParcel.readInt();
+        this.mRightPixels = sourceParcel.readInt();
+        this.mBottomPixels = sourceParcel.readInt();
     }
 
     ////////// Parcelable Method(s) //////////
@@ -120,10 +120,10 @@ public class Bleed implements Parcelable {
     @Override
     public void writeToParcel(Parcel targetParcel, int flags) {
 
-        targetParcel.writeInt(this.topPixels);
-        targetParcel.writeInt(this.leftPixels);
-        targetParcel.writeInt(this.rightPixels);
-        targetParcel.writeInt(this.bottomPixels);
+        targetParcel.writeInt(this.mTopPixels);
+        targetParcel.writeInt(this.mLeftPixels);
+        targetParcel.writeInt(this.mRightPixels);
+        targetParcel.writeInt(this.mBottomPixels);
     }
 
     ////////// Method(s) //////////
@@ -136,13 +136,13 @@ public class Bleed implements Parcelable {
     @Override
     public String toString() {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder
-                .append("{ topPixels = ").append(this.topPixels)
-                .append(", leftPixels = ").append(this.leftPixels)
-                .append(", rightPixels = ").append(this.rightPixels)
-                .append(", bottomPixels = ").append(this.bottomPixels).append(" }");
+                .append("{ topPixels = ").append(this.mTopPixels)
+                .append(", leftPixels = ").append(this.mLeftPixels)
+                .append(", rightPixels = ").append(this.mRightPixels)
+                .append(", bottomPixels = ").append(this.mBottomPixels).append(" }");
 
         return stringBuilder.toString();
     }

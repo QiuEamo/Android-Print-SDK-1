@@ -53,14 +53,14 @@ import ly.kite.util.AssetHelper;
  * selection / shopping journey.
  *
  *****************************************************/
-abstract public class AHomeActivity extends ProductSelectionActivity {
+public abstract class AHomeActivity extends ProductSelectionActivity {
     ////////// Static Constant(s) //////////
+
+    protected static final long OPEN_MENU_DELAY_MILLIS = 500L;
+    protected  static final long CLOSE_MENU_DELAY_MILLIS = 100L;
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "AHomeActivity";
-
-    static protected final long OPEN_MENU_DELAY_MILLIS = 500L;
-    static protected final long CLOSE_MENU_DELAY_MILLIS = 100L;
 
     ////////// Static Variable(s) //////////
 

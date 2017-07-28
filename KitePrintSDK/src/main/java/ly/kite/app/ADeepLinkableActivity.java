@@ -49,7 +49,7 @@ import android.net.Uri;
  * implement deep linking into the SDK journey.
  *
  *****************************************************/
-abstract public class ADeepLinkableActivity extends APermissionsRequestingActivity {
+public abstract class ADeepLinkableActivity extends APermissionsRequestingActivity {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -86,13 +86,13 @@ abstract public class ADeepLinkableActivity extends APermissionsRequestingActivi
         // If the intent used to start this activity contains a URI, see if it matches
         // a deep link format.
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         if (intent != null) {
-            Uri uri = intent.getData();
+            final Uri uri = intent.getData();
 
             if (uri != null) {
-                String path = uri.getPath();
+                final String path = uri.getPath();
 
                 if (path != null) {
                     if (path.startsWith(URI_PATH_PREFIX_PRODUCT_GROUP_LABEL)) {

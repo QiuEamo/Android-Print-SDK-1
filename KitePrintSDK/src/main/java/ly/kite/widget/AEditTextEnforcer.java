@@ -50,10 +50,10 @@ import android.widget.EditText;
 public class AEditTextEnforcer {
     ////////// Static Constant(s) //////////
 
+    public static final int TEXT_COLOUR_ERROR = 0xffff0000;
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "AEditTextEnforcer";
-
-    public static final int TEXT_COLOUR_ERROR = 0xffff0000;
 
     ////////// Static Variable(s) //////////
 
@@ -66,6 +66,17 @@ public class AEditTextEnforcer {
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public AEditTextEnforcer(EditText editText, ICallback callback) {
+
+        mEditText = editText;
+        mCallback = callback;
+
+        // Save the current text colour
+        mOKTextColour = editText.getCurrentTextColor();
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -73,16 +84,16 @@ public class AEditTextEnforcer {
      * Returns just the digits from a character sequence.
      *
      *****************************************************/
-    static protected String getDigits(CharSequence originalCharSequence) {
+    protected static String getDigits(CharSequence originalCharSequence) {
 
         if (originalCharSequence == null) {
             return "";
         }
 
-        StringBuilder stringBuilder = new StringBuilder(originalCharSequence.length());
+        final StringBuilder stringBuilder = new StringBuilder(originalCharSequence.length());
 
         for (int charIndex = 0; charIndex < originalCharSequence.length(); charIndex++) {
-            char c = originalCharSequence.charAt(charIndex);
+            final char c = originalCharSequence.charAt(charIndex);
 
             if (c >= '0' && c <= '9') {
                 stringBuilder.append(c);
@@ -98,7 +109,7 @@ public class AEditTextEnforcer {
      * range.
      *
      *****************************************************/
-    static protected boolean digitsStartBetween(String digitsString, int rangeFirst, int rangeLast) {
+    protected static boolean digitsStartBetween(String digitsString, int rangeFirst, int rangeLast) {
 
         if (digitsString == null || digitsString.length() < 1 || rangeFirst < 1 || rangeLast < 1 || rangeFirst > rangeLast) {
             return false;
@@ -128,7 +139,7 @@ public class AEditTextEnforcer {
             return false;
         }
 
-        int prefix = Integer.parseInt(digitsString.substring(0, prefixSize));
+        final int prefix = Integer.parseInt(digitsString.substring(0, prefixSize));
 
         if (prefix >= rangeFirst && prefix <= rangeLast) {
             return true;
@@ -142,9 +153,9 @@ public class AEditTextEnforcer {
      * Formats a card number according to the supplied groups.
      *
      *****************************************************/
-    static protected String formatNumber(String digitString, int... numberGroupings) {
+    protected static String formatNumber(String digitString, int... numberGroupings) {
 
-        int digitStringLength;
+        final int digitStringLength;
 
         if (digitString == null || (digitStringLength = digitString.length()) < 1) {
             return "";
@@ -154,13 +165,13 @@ public class AEditTextEnforcer {
             return digitString;
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         int digitIndex = 0;
         int groupingIndex = 0;
 
         while (digitIndex < digitStringLength && groupingIndex < numberGroupings.length) {
-            int end = digitIndex + numberGroupings[groupingIndex];
+            final int end = digitIndex + numberGroupings[groupingIndex];
 
             stringBuilder.append(safeSubstring(digitString, digitIndex, end));
 
@@ -184,9 +195,9 @@ public class AEditTextEnforcer {
      * Returns a substring, correcting any bounds.
      *
      *****************************************************/
-    static protected String safeSubstring(String sourceString, int start, int end) {
+    protected static String safeSubstring(String sourceString, int start, int end) {
 
-        int sourceStringLength;
+        final int sourceStringLength;
 
         if (sourceString == null || (sourceStringLength = sourceString.length()) < 1) {
             return "";
@@ -216,9 +227,9 @@ public class AEditTextEnforcer {
      * Returns a substring, correcting any bounds.
      *
      *****************************************************/
-    static protected String safeSubstring(String sourceString, int start) {
+    protected static String safeSubstring(String sourceString, int start) {
 
-        int sourceStringLength;
+        final int sourceStringLength;
 
         if (sourceString == null || (sourceStringLength = sourceString.length()) < 1) {
             return "";
@@ -227,16 +238,6 @@ public class AEditTextEnforcer {
         return safeSubstring(sourceString, start, sourceStringLength - 1);
     }
 
-    ////////// Constructor(s) //////////
-
-    public AEditTextEnforcer(EditText editText, ICallback callback) {
-
-        mEditText = editText;
-        mCallback = callback;
-
-        // Save the current text colour
-        mOKTextColour = editText.getCurrentTextColor();
-    }
 
     ////////// Inner Class(es) //////////
 

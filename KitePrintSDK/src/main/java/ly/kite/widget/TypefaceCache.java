@@ -88,6 +88,7 @@ public class TypefaceCache {
 
                 sTypefaceTable.put(fileName, typeface);
             } catch (Exception exception) {
+                //Ignore
             }
         }
 

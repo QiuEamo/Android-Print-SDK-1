@@ -78,10 +78,10 @@ public class BorderTests extends TestCase {
 
         Border border = new Border(1, 2, 3, 4);
 
-        Assert.assertEquals(1, border.topPixels);
-        Assert.assertEquals(2, border.rightPixels);
-        Assert.assertEquals(3, border.bottomPixels);
-        Assert.assertEquals(4, border.leftPixels);
+        Assert.assertEquals(1, border.mTopPixels);
+        Assert.assertEquals(2, border.mRightPixels);
+        Assert.assertEquals(3, border.mBottomPixels);
+        Assert.assertEquals(4, border.mLeftPixels);
     }
 
     /*****************************************************
@@ -102,10 +102,10 @@ public class BorderTests extends TestCase {
 
         Border readBorder = Border.CREATOR.createFromParcel(parcel);
 
-        Assert.assertEquals(10, readBorder.topPixels);
-        Assert.assertEquals(11, readBorder.rightPixels);
-        Assert.assertEquals(12, readBorder.bottomPixels);
-        Assert.assertEquals(13, readBorder.leftPixels);
+        Assert.assertEquals(10, readBorder.mTopPixels);
+        Assert.assertEquals(11, readBorder.mRightPixels);
+        Assert.assertEquals(12, readBorder.mBottomPixels);
+        Assert.assertEquals(13, readBorder.mLeftPixels);
 
         parcel.recycle();
     }

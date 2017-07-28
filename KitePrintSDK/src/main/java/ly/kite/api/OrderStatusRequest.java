@@ -107,7 +107,7 @@ public class OrderStatusRequest implements HTTPJSONRequest.IJSONResponseListener
             try {
                 // Verify that the order id matches the one we requested
 
-                String orderId = jsonObject.optString(JSON_NAME_ORDER_ID);
+                final String orderId = jsonObject.optString(JSON_NAME_ORDER_ID);
 
                 if (orderId == null || !orderId.equals(mLastRequestedOrderId)) {
                     returnError("Response order id ( " + orderId + " ) does not match requested order id: " + mLastRequestedOrderId);
@@ -117,15 +117,15 @@ public class OrderStatusRequest implements HTTPJSONRequest.IJSONResponseListener
 
                 // See if there is an error
 
-                JSONObject errorJSONObject = jsonObject.optJSONObject(JSON_NAME_ERROR);
+                final JSONObject errorJSONObject = jsonObject.optJSONObject(JSON_NAME_ERROR);
 
                 if (errorJSONObject != null) {
-                    String errorCode = errorJSONObject.getString(JSON_NAME_CODE);
-                    String errorMessage = errorJSONObject.getString(JSON_NAME_MESSAGE);
+                    final String errorCode = errorJSONObject.getString(JSON_NAME_CODE);
+                    final String errorMessage = errorJSONObject.getString(JSON_NAME_MESSAGE);
 
                     // Check for special case of duplicate order
                     if (errorCode != null && errorCode.equals(ERROR_CODE_DUPLICATE_ORDER)) {
-                        String originalOrderId = errorJSONObject.getString(JSON_NAME_ORIGINAL_ORDER_ID);
+                        final String originalOrderId = errorJSONObject.getString(JSON_NAME_ORIGINAL_ORDER_ID);
 
                         returnError(ErrorType.DUPLICATE, originalOrderId, errorMessage);
                     } else {
@@ -134,9 +134,9 @@ public class OrderStatusRequest implements HTTPJSONRequest.IJSONResponseListener
                 } else {
                     // We couldn't find an error, so decode the order status
 
-                    String status = jsonObject.getString(JSON_NAME_STATUS);
+                    final String status = jsonObject.getString(JSON_NAME_STATUS);
 
-                    OrderState state = OrderState.fromJSONValue(status);
+                    final OrderState state = OrderState.fromJSONValue(status);
 
                     if (state != null) {
                         returnState(state);
@@ -175,9 +175,9 @@ public class OrderStatusRequest implements HTTPJSONRequest.IJSONResponseListener
 
         mLastRequestedOrderId = orderId;
 
-        String url = String.format(URL_FORMAT_STRING, KiteSDK.getInstance(mContext).getAPIEndpoint(), orderId);
+        final String url = String.format(URL_FORMAT_STRING, KiteSDK.getInstance(mContext).getAPIEndpoint(), orderId);
 
-        KiteAPIRequest request = new KiteAPIRequest(mContext, KiteAPIRequest.HttpMethod.GET, url, null, null);
+        final KiteAPIRequest request = new KiteAPIRequest(mContext, KiteAPIRequest.HttpMethod.GET, url, null, null);
 
         request.start(this);
     }

@@ -51,14 +51,14 @@ import ly.kite.journey.AKiteActivity;
  * This class is the parent class of address activities.
  *
  *****************************************************/
-abstract public class AAddressActivity extends AKiteActivity {
+public abstract class AAddressActivity extends AKiteActivity {
     ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "AddressActivity";
 
     public static final String KEY_ADDRESS = "ly.kite.address";
     public static final String KEY_EMAIL_ADDRESS = "ly.kite.emailaddress";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AddressActivity";
 
     ////////// Static Variable(s) //////////
 
@@ -131,7 +131,7 @@ abstract public class AAddressActivity extends AKiteActivity {
      *****************************************************/
     public void returnResult(Address address, String emailAddress) {
 
-        Intent data = new Intent();
+        final Intent data = new Intent();
 
         addAddressIfNotNull(address, data);
         addEmailAddressIfNotNull(emailAddress, data);

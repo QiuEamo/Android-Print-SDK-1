@@ -113,7 +113,7 @@ public class StringUtils {
             return "";
         }
 
-        StringBuilder stringBuilder = new StringBuilder(source.length());
+        final StringBuilder stringBuilder = new StringBuilder(source.length());
 
         for (char c : source.toCharArray()) {
             if (Character.isDigit(c)) {

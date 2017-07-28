@@ -73,7 +73,7 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
     public CustomTypefaceSpan(Context context, String typefaceAssetName, float textSize) {
 
         if (typefaceAssetName == null || typefaceAssetName.trim().equals("")) {
-            throw (new IllegalArgumentException("No typeface asset name supplied: " + typefaceAssetName));
+            throw new IllegalArgumentException("No typeface asset name supplied: " + typefaceAssetName);
         }
 
         mTypeface = TypefaceCache.getTypeface(context, typefaceAssetName);
@@ -108,9 +108,9 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
      *****************************************************/
     private void setTypeface(Paint paint) {
 
-        int previousStyle;
+        final int previousStyle;
 
-        Typeface previousTypeface = paint.getTypeface();
+        final Typeface previousTypeface = paint.getTypeface();
 
         if (previousTypeface == null) {
             previousStyle = 0;
@@ -118,9 +118,9 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
             previousStyle = previousTypeface.getStyle();
         }
 
-        Typeface newTypeface = Typeface.create(mTypeface, previousStyle);
+        final Typeface newTypeface = Typeface.create(mTypeface, previousStyle);
 
-        int fake = previousStyle & ~newTypeface.getStyle();
+        final int fake = previousStyle & ~newTypeface.getStyle();
 
         if ((fake & Typeface.BOLD) != 0) {
             paint.setFakeBoldText(true);

@@ -64,7 +64,7 @@ public class OrderReceiptActivity extends AReceiptActivity {
      *****************************************************/
     private static Intent getStartIntent(Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton) {
 
-        Intent intent = new Intent(context, OrderReceiptActivity.class);
+        final Intent intent = new Intent(context, OrderReceiptActivity.class);
 
         addPreviousOrder(previousOrderId, intent);
 
@@ -81,7 +81,7 @@ public class OrderReceiptActivity extends AReceiptActivity {
      *****************************************************/
     public static void start(Context context, long previousOrderId, Order order, boolean hideSuccessfulNextButton) {
 
-        Intent intent = getStartIntent(context, previousOrderId, order, hideSuccessfulNextButton);
+        final Intent intent = getStartIntent(context, previousOrderId, order, hideSuccessfulNextButton);
 
         context.startActivity(intent);
     }
@@ -103,7 +103,7 @@ public class OrderReceiptActivity extends AReceiptActivity {
      *****************************************************/
     public static void startForResult(Activity activity, long previousOrderId, Order order, int requestCode) {
 
-        Intent intent = getStartIntent(activity, previousOrderId, order, false);
+        final Intent intent = getStartIntent(activity, previousOrderId, order, false);
 
         activity.startActivityForResult(intent, requestCode);
     }

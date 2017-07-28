@@ -87,9 +87,9 @@ public class ImageSourceFragment extends AProductCreationFragment implements Ada
      *****************************************************/
     public static ImageSourceFragment newInstance(Product product) {
 
-        ImageSourceFragment fragment = new ImageSourceFragment();
+        final ImageSourceFragment fragment = new ImageSourceFragment();
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
         arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
         fragment.setArguments(arguments);
@@ -109,16 +109,17 @@ public class ImageSourceFragment extends AProductCreationFragment implements Ada
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.screen_image_source, container, false);
+        final View view = layoutInflator.inflate(R.layout.screen_image_source, container, false);
 
         mImageSourceGridView = (GridView) view.findViewById(R.id.image_source_grid_view);
 
         // Get the available image sources
-        ArrayList<AImageSource> imageSourceList = KiteSDK.getInstance(mKiteActivity).getAvailableImageSources();
+        final ArrayList<AImageSource> imageSourceList = KiteSDK.getInstance(mKiteActivity).getAvailableImageSources();
 
         // Set up the image source grid
 
-        ImageSourceAdaptor imageSourceAdaptor = new ImageSourceAdaptor(mKiteActivity, AImageSource.LayoutType.VERTICAL, imageSourceList);
+        final ImageSourceAdaptor imageSourceAdaptor =
+                new ImageSourceAdaptor(mKiteActivity, AImageSource.LayoutType.VERTICAL, imageSourceList);
 
         mImageSourceGridView.setAdapter(imageSourceAdaptor);
 
@@ -151,7 +152,7 @@ public class ImageSourceFragment extends AProductCreationFragment implements Ada
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         if (parent == mImageSourceGridView) {
-            AImageSource imageSource = (AImageSource) mImageSourceGridView.getItemAtPosition(position);
+            final AImageSource imageSource = (AImageSource) mImageSourceGridView.getItemAtPosition(position);
 
             imageSource.onPick(this, mProduct.getUserJourneyType().usesSingleImage());
         }

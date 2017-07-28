@@ -281,13 +281,13 @@ public class OrderSubmitter implements Order.ISubmissionProgressListener,
         // customiser-registered listener.
 
         if (state == OrderState.VALIDATED || state == OrderState.PROCESSED) {
-            IOrderSubmissionSuccessListener listener = KiteSDK
+            final IOrderSubmissionSuccessListener listener = KiteSDK
                     .getInstance(mApplicationContext)
                     .getCustomiser()
                     .getOrderSubmissionSuccessListener();
 
             if (listener != null) {
-                Order sanitisedOrder = order.createSanitisedCopy();
+                final Order sanitisedOrder = order.createSanitisedCopy();
 
                 listener.onOrderSubmissionSuccess(sanitisedOrder);
             }

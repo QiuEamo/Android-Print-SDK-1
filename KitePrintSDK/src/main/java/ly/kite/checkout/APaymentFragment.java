@@ -52,7 +52,7 @@ import ly.kite.pricing.OrderPricing;
  * This is the parent class of payment fragments.
  *
  *****************************************************/
-abstract public class APaymentFragment extends AKiteFragment implements View.OnClickListener {
+public abstract class APaymentFragment extends AKiteFragment implements View.OnClickListener {
     ////////// Static Constant(s) //////////
 
     public static final String TAG = "APaymentFragment";
@@ -75,7 +75,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      *****************************************************/
     protected PaymentActivity getPaymentActivity() {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity != null && activity instanceof PaymentActivity) {
             return (PaymentActivity) activity;
@@ -89,7 +89,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      * Called to enable / disable buttons.
      *
      *****************************************************/
-    abstract public void onEnableButtons(boolean enabled);
+    public abstract void onEnableButtons(boolean enabled);
 
     /*****************************************************
      *
@@ -107,7 +107,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      * Called to set / unset free checkout.
      *
      *****************************************************/
-    abstract public void onCheckoutFree(boolean free);
+    public abstract void onCheckoutFree(boolean free);
 
     /*****************************************************
      *
@@ -116,7 +116,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      *****************************************************/
     protected void showErrorDialog(int titleResourceId, String message) {
 
-        PaymentActivity paymentActivity = getPaymentActivity();
+        final PaymentActivity paymentActivity = getPaymentActivity();
 
         if (paymentActivity != null) {
             paymentActivity.showErrorDialog(titleResourceId, message);
@@ -130,7 +130,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      *****************************************************/
     protected void showErrorDialog(String message) {
 
-        PaymentActivity paymentActivity = getPaymentActivity();
+        final PaymentActivity paymentActivity = getPaymentActivity();
 
         if (paymentActivity != null) {
             paymentActivity.showErrorDialog(message);
@@ -144,7 +144,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      *****************************************************/
     protected void showErrorDialog(int messageResourceId) {
 
-        PaymentActivity paymentActivity = getPaymentActivity();
+        final PaymentActivity paymentActivity = getPaymentActivity();
 
         if (paymentActivity != null) {
             paymentActivity.showErrorDialog(messageResourceId);
@@ -156,7 +156,7 @@ abstract public class APaymentFragment extends AKiteFragment implements View.OnC
      * Submits the order for printing.
      *
      *****************************************************/
-    abstract public void submitOrderForPrinting(String paymentId, String accountId, PaymentMethod paymentMethod);
+    public abstract void submitOrderForPrinting(String paymentId, String accountId, PaymentMethod paymentMethod);
 
     /*****************************************************
      *

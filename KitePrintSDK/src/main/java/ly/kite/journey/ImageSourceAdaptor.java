@@ -153,13 +153,13 @@ public class ImageSourceAdaptor extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        AImageSource imageSource = (AImageSource) getItem(position);
+        final AImageSource imageSource = (AImageSource) getItem(position);
 
         // Either re-use the convert view, or create a new one.
 
-        Object tagObject;
-        View view;
-        ViewHolder viewHolder;
+        final Object tagObject;
+        final View view;
+        final ViewHolder viewHolder;
 
         if (convertView != null &&
                 (tagObject = convertView.getTag()) != null &&
@@ -186,30 +186,30 @@ public class ImageSourceAdaptor extends BaseAdapter {
      *
      *****************************************************/
     private class ViewHolder {
-        View view;
-        View backgroundView;
-        ImageView iconImageView;
-        TextView labelTextView;
+        View mView;
+        View mBackgroundView;
+        ImageView mIconImageView;
+        TextView mLabelTextView;
 
         ViewHolder(View view) {
 
-            this.view = view;
-            this.backgroundView = view.findViewById(R.id.background_view);
-            this.iconImageView = (ImageView) view.findViewById(R.id.icon_image_view);
-            this.labelTextView = (TextView) view.findViewById(R.id.label_text_view);
+            this.mView = view;
+            this.mBackgroundView = view.findViewById(R.id.background_view);
+            this.mIconImageView = (ImageView) view.findViewById(R.id.icon_image_view);
+            this.mLabelTextView = (TextView) view.findViewById(R.id.label_text_view);
         }
 
         void bind(AImageSource imageSource) {
 
-            if (this.backgroundView != null) {
-                this.backgroundView.setBackgroundColor(mContext.getResources().getColor(imageSource.getBackgroundColourResourceId
+            if (this.mBackgroundView != null) {
+                this.mBackgroundView.setBackgroundColor(mContext.getResources().getColor(imageSource.getBackgroundColourResourceId
                         (mLayoutType)));
             }
-            if (this.iconImageView != null) {
-                this.iconImageView.setImageResource(imageSource.getIconResourceId(mLayoutType));
+            if (this.mIconImageView != null) {
+                this.mIconImageView.setImageResource(imageSource.getIconResourceId(mLayoutType));
             }
-            if (this.labelTextView != null) {
-                this.labelTextView.setText(imageSource.getLabelResourceId());
+            if (this.mLabelTextView != null) {
+                this.mLabelTextView.setText(imageSource.getLabelResourceId());
             }
         }
     }

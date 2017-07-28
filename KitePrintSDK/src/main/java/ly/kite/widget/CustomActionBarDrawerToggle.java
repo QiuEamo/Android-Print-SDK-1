@@ -17,6 +17,7 @@
  * that we can define a custom indicator.
  *
  */
+
 package ly.kite.widget;
 
 import android.annotation.TargetApi;
@@ -130,7 +131,7 @@ public class CustomActionBarDrawerToggle implements DrawerLayout.DrawerListener 
     // used in toolbar mode when DrawerToggle is disabled
     private View.OnClickListener mToolbarNavigationClickListener;
     // If developer does not set displayHomeAsUp, DrawerToggle won't show up.
-// DrawerToggle logs a warning if this case is detected
+    // DrawerToggle logs a warning if this case is detected
     private boolean mWarnedForDisplayHomeAsUp = false;
 
     /**
@@ -151,13 +152,13 @@ public class CustomActionBarDrawerToggle implements DrawerLayout.DrawerListener 
      * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
      *                                  for accessibility
      */
-//  public CustomActionBarDrawerToggle( Activity activity, DrawerLayout drawerLayout,
-//                                      @StringRes int openDrawerContentDescRes,
-//                                      @StringRes int closeDrawerContentDescRes )
-//    {
-//    this( activity, null, drawerLayout, null, openDrawerContentDescRes,
-//            closeDrawerContentDescRes );
-//    }
+    //  public CustomActionBarDrawerToggle( Activity activity, DrawerLayout drawerLayout,
+    //                                      @StringRes int openDrawerContentDescRes,
+    //                                      @StringRes int closeDrawerContentDescRes )
+    //    {
+    //    this( activity, null, drawerLayout, null, openDrawerContentDescRes,
+    //            closeDrawerContentDescRes );
+    //    }
 
     /**
      * Construct a new ActionBarDrawerToggle.
@@ -213,13 +214,13 @@ public class CustomActionBarDrawerToggle implements DrawerLayout.DrawerListener 
      * @param closeDrawerContentDescRes A String resource to describe the "close drawer" action
      *                                  for accessibility
      */
-//  public CustomActionBarDrawerToggle( Activity activity, DrawerLayout drawerLayout,
-//                                      Toolbar toolbar, @StringRes int openDrawerContentDescRes,
-//                                      @StringRes int closeDrawerContentDescRes )
-//    {
-//    this( activity, toolbar, drawerLayout, null, openDrawerContentDescRes,
-//            closeDrawerContentDescRes );
-//    }
+    //  public CustomActionBarDrawerToggle( Activity activity, DrawerLayout drawerLayout,
+    //                                      Toolbar toolbar, @StringRes int openDrawerContentDescRes,
+    //                                      @StringRes int closeDrawerContentDescRes )
+    //    {
+    //    this( activity, toolbar, drawerLayout, null, openDrawerContentDescRes,
+    //            closeDrawerContentDescRes );
+    //    }
 
     /**
      * In the future, we can make this constructor public if we want to let developers customize
@@ -311,11 +312,11 @@ public class CustomActionBarDrawerToggle implements DrawerLayout.DrawerListener 
      * @param newConfig The new configuration
      */
     public void onConfigurationChanged(Configuration newConfig) {
-// Reload drawables that can change with configuration
-//    if ( !mHasCustomUpIndicator )
-//      {
-//      mHomeAsUpIndicator = getThemeUpIndicator();
-//      }
+        // Reload drawables that can change with configuration
+        //    if ( !mHasCustomUpIndicator )
+        //      {
+        //      mHomeAsUpIndicator = getThemeUpIndicator();
+        //      }
         syncState();
     }
 
@@ -339,7 +340,7 @@ public class CustomActionBarDrawerToggle implements DrawerLayout.DrawerListener 
 
     private void toggle() {
 
-        int drawerLockMode = mDrawerLayout.getDrawerLockMode(GravityCompat.START);
+        final int drawerLockMode = mDrawerLayout.getDrawerLockMode(GravityCompat.START);
         if (mDrawerLayout.isDrawerVisible(GravityCompat.START)
                 && (drawerLockMode != DrawerLayout.LOCK_MODE_LOCKED_OPEN)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);

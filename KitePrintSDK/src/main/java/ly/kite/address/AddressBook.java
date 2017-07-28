@@ -84,7 +84,7 @@ public class AddressBook {
      *****************************************************/
     public static String save(Context context, Address address) {
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(context);
+        final KiteSDK kiteSDK = KiteSDK.getInstance(context);
 
         // If the address doesn't already have an address id - create a new one:
         // Get a new UUID, then base64 it to remove any unwanted characters.
@@ -92,17 +92,17 @@ public class AddressBook {
         String addressId = address.getId();
 
         if (addressId == null) {
-            String uuid = UUID.randomUUID().toString();
+            final String uuid = UUID.randomUUID().toString();
 
             addressId = Base64.encodeToString(uuid.getBytes(), Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE);
         }
 
         // Get the current set of address ids
-        Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
+        final Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
 
         // Save the address to shared preferences
 
-        String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
+        final String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
 
         kiteSDK.setSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, parameterName, address);
 
@@ -125,19 +125,19 @@ public class AddressBook {
      *****************************************************/
     public static List<Address> selectAll(Context context) {
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(context);
+        final KiteSDK kiteSDK = KiteSDK.getInstance(context);
 
         // Get the current address ids
-        Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
+        final Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
 
-        ArrayList<Address> addressList = new ArrayList<>(addressIds.size());
+        final ArrayList<Address> addressList = new ArrayList<>(addressIds.size());
 
         // Get each address and add it to the list
 
         for (String addressId : addressIds) {
-            String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
+            final String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
 
-            Address address = kiteSDK.getAddressSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, parameterName);
+            final Address address = kiteSDK.getAddressSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, parameterName);
 
             if (address != null) {
                 address.setId(addressId);
@@ -158,14 +158,14 @@ public class AddressBook {
      *****************************************************/
     public static void delete(Context context, String addressId) {
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(context);
+        final KiteSDK kiteSDK = KiteSDK.getInstance(context);
 
         // Get the current address ids
-        Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
+        final Set<String> addressIds = kiteSDK.getStringSetSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, PARAMETER_NAME_ADDRESS_IDS);
 
         // Delete the address from shared preferences
 
-        String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
+        final String parameterName = PARAMETER_NAME_PREFIX_ADDRESS + addressId;
 
         kiteSDK.clearAddressSDKParameter(KiteSDK.Scope.CUSTOMER_SESSION, parameterName);
 
@@ -183,7 +183,7 @@ public class AddressBook {
      *****************************************************/
     public static void delete(Context context, Address address) {
 
-        String addressId = address.getId();
+        final String addressId = address.getId();
 
         if (addressId != null) {
             delete(context, addressId);

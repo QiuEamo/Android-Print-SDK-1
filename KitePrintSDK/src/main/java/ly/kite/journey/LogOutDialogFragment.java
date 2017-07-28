@@ -102,7 +102,7 @@ public class LogOutDialogFragment extends DialogFragment implements View.OnClick
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup parent, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.dialog_inactivity, parent, false);
+        final View view = layoutInflator.inflate(R.layout.dialog_inactivity, parent, false);
 
         mTimeRemainingTextView = (TextView) view.findViewById(R.id.time_remaining_text_view);
         mCancelButton = (Button) view.findViewById(R.id.cancel_button);
@@ -128,10 +128,10 @@ public class LogOutDialogFragment extends DialogFragment implements View.OnClick
     @Override
     public void onClick(View view) {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity instanceof ICallback) {
-            ICallback callback = (ICallback) activity;
+            final ICallback callback = (ICallback) activity;
 
             if (view == mCancelButton) {
                 ///// Cancel /////
@@ -166,7 +166,7 @@ public class LogOutDialogFragment extends DialogFragment implements View.OnClick
      *****************************************************/
     private void displayTimeRemaining() {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity != null) {
             mTimeRemainingTextView.setText(activity.getString(R.string.time_remaining_format_string, mTimeRemainingMillis / 1000));

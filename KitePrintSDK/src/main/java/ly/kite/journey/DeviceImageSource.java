@@ -73,32 +73,6 @@ public class DeviceImageSource extends AImageSource {
 
     ////////// Static Initialiser(s) //////////
 
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Returns any selected images as a list of assets.
-     *
-     *****************************************************/
-    public static ArrayList<Asset> getAssets(Intent data) {
-
-        ArrayList<Asset> assetList = new ArrayList<>();
-
-        List<String> photoURLStringList = DevicePhotoPicker.getResultPhotos(data);
-
-        if (photoURLStringList != null) {
-            for (String urlString : photoURLStringList) {
-                try {
-                    assetList.add(Asset.create(new URL(urlString)));
-                } catch (MalformedURLException mue) {
-                    Log.e(LOG_TAG, "Unable to create asset from device photo URL: " + urlString, mue);
-                }
-            }
-        }
-
-        return assetList;
-    }
-
     ////////// Constructor(s) //////////
 
     public DeviceImageSource() {
@@ -125,6 +99,32 @@ public class DeviceImageSource extends AImageSource {
                 labelResourceId,
                 menuItemId,
                 menuItemTitleResourceId);
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns any selected images as a list of assets.
+     *
+     *****************************************************/
+    public static ArrayList<Asset> getAssets(Intent data) {
+
+        final ArrayList<Asset> assetList = new ArrayList<>();
+
+        final List<String> photoURLStringList = DevicePhotoPicker.getResultPhotos(data);
+
+        if (photoURLStringList != null) {
+            for (String urlString : photoURLStringList) {
+                try {
+                    assetList.add(Asset.create(new URL(urlString)));
+                } catch (MalformedURLException mue) {
+                    Log.e(LOG_TAG, "Unable to create asset from device photo URL: " + urlString, mue);
+                }
+            }
+        }
+
+        return assetList;
     }
 
     ////////// AImageSource Method(s) //////////
@@ -158,9 +158,10 @@ public class DeviceImageSource extends AImageSource {
             case VERTICAL:
 
                 return R.layout.grid_item_image_source_device_vertical;
-        }
 
-        return 0;
+            default:
+                return 0;
+        }
     }
 
     /*****************************************************
@@ -183,7 +184,7 @@ public class DeviceImageSource extends AImageSource {
     @Override
     public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
 
-        ArrayList<Asset> assetList = getAssets(data);
+        final ArrayList<Asset> assetList = getAssets(data);
 
         if (assetList.size() > 0) {
             assetConsumer.isacOnAssets(assetList);

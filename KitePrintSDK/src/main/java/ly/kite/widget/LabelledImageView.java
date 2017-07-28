@@ -127,9 +127,9 @@ public class LabelledImageView extends AAREImageContainerFrame implements IImage
     protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
         // Inflate the layout and attach it to this view
 
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        final LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        View view = layoutInflater.inflate(R.layout.labelled_image_view, this, true);
+        final View view = layoutInflater.inflate(R.layout.labelled_image_view, this, true);
 
         // Save references to the child views
         mEmptyFrameImageView = (ImageView) view.findViewById(R.id.empty_frame_image_view);
@@ -143,7 +143,7 @@ public class LabelledImageView extends AAREImageContainerFrame implements IImage
 
         // Set up the overlay label
 
-        Resources resources = context.getResources();
+        final Resources resources = context.getResources();
 
         mOverlayLabel.setCornerRadius(resources.getDimension(R.dimen.labelled_image_label_corner_radius));
         mOverlayLabel.setBackgroundShadow(
@@ -154,17 +154,19 @@ public class LabelledImageView extends AAREImageContainerFrame implements IImage
         // Check the XML attributes
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.LabelledImageView, defaultStyle, defaultStyle);
+            final TypedArray typedArray =
+                    context.obtainStyledAttributes(attributeSet, R.styleable.LabelledImageView, defaultStyle, defaultStyle);
 
             if (mImageView != null && mImageView instanceof AnchorableImageView) {
-                AnchorableImageView anchorableImageView = (AnchorableImageView) mImageView;
+                final AnchorableImageView anchorableImageView = (AnchorableImageView) mImageView;
 
                 // See if there is an image anchor gravity. The SDK customiser overrides any XML defined value.
 
                 if (mImageViewAnchorGravity != Gravity.NO_GRAVITY) {
                     anchorableImageView.setAnchorGravity(mImageViewAnchorGravity);
                 } else {
-                    int imageAnchorGravity = typedArray.getInt(R.styleable.LabelledImageView_imageAnchorGravity, IMAGE_ANCHOR_GRAVITY_NONE);
+                    final int imageAnchorGravity =
+                            typedArray.getInt(R.styleable.LabelledImageView_imageAnchorGravity, IMAGE_ANCHOR_GRAVITY_NONE);
 
                     switch (imageAnchorGravity) {
                         case IMAGE_ANCHOR_GRAVITY_LEFT:
@@ -179,12 +181,14 @@ public class LabelledImageView extends AAREImageContainerFrame implements IImage
                         case IMAGE_ANCHOR_GRAVITY_BOTTOM:
                             anchorableImageView.setAnchorGravity(Gravity.BOTTOM);
                             break;
+                        default:
+                            break;
                     }
                 }
 
                 // Check the image anchor point
 
-                float imageAnchorPoint = typedArray.getFloat(R.styleable.LabelledImageView_imageAnchorPoint, 0f);
+                final float imageAnchorPoint = typedArray.getFloat(R.styleable.LabelledImageView_imageAnchorPoint, 0f);
 
                 anchorableImageView.setAnchorPoint(imageAnchorPoint);
             }

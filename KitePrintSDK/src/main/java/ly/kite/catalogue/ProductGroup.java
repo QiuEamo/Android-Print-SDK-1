@@ -159,8 +159,8 @@ public class ProductGroup implements IGroupOrProduct {
         // currencies, so we first need to find a currency that all prices are listed
         // in.
 
-        Locale locale = Locale.getDefault();
-        String currencyCode = chooseBestCurrency(preferredCurrency);
+        final Locale locale = Locale.getDefault();
+        final String currencyCode = chooseBestCurrency(preferredCurrency);
 
         if (currencyCode == null) {
             Log.e(LOG_TAG, "No currency is supported across all products");
@@ -171,8 +171,8 @@ public class ProductGroup implements IGroupOrProduct {
         SingleCurrencyAmounts lowestSingleCurrencyCost = null;
 
         for (Product product : mProductList) {
-            MultipleCurrencyAmounts candidateCost = product.getCost();
-            SingleCurrencyAmounts candidateSingleCurrencyCost = candidateCost.get(currencyCode);
+            final MultipleCurrencyAmounts candidateCost = product.getCost();
+            final SingleCurrencyAmounts candidateSingleCurrencyCost = candidateCost.get(currencyCode);
 
             // See if this is the lowest cost
             if (candidateSingleCurrencyCost != null &&
@@ -267,7 +267,7 @@ public class ProductGroup implements IGroupOrProduct {
         }
 
         for (Product product : mProductList) {
-            MultipleCurrencyAmounts multipleCurrencyCost = product.getCost();
+            final MultipleCurrencyAmounts multipleCurrencyCost = product.getCost();
 
             if (multipleCurrencyCost.get(currencyCode) == null) {
                 return false;
@@ -307,7 +307,7 @@ public class ProductGroup implements IGroupOrProduct {
      *****************************************************/
     public String toLogString() {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("Label        : ").append(mLabel).append("\n");
         stringBuilder.append("Label Colour : 0x").append(Integer.toHexString(mLabelColour)).append("\n");

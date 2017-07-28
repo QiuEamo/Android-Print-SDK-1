@@ -55,7 +55,7 @@ import java.util.List;
  * to a small range of strings.
  *
  *****************************************************/
-abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer implements InputFilter, TextWatcher {
+public abstract class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer implements InputFilter, TextWatcher {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -66,27 +66,6 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
     ////////// Member Variable(s) //////////
 
     ////////// Static Initialiser(s) //////////
-
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Returns a list of all the valid strings that contain the
-     * supplied (sub)string.
-     *
-     *****************************************************/
-    public static List<String> getValidStrings(String[] validStrings, String searchString) {
-
-        ArrayList<String> potentialStringList = new ArrayList<>();
-
-        for (String candidateString : validStrings) {
-            if (candidateString.contains(searchString)) {
-                potentialStringList.add(candidateString);
-            }
-        }
-
-        return potentialStringList;
-    }
 
     ////////// Constructor(s) //////////
 
@@ -100,6 +79,27 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
 
         // Set up the text change listener
         editText.addTextChangedListener(this);
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns a list of all the valid strings that contain the
+     * supplied (sub)string.
+     *
+     *****************************************************/
+    public static List<String> getValidStrings(String[] validStrings, String searchString) {
+
+        final ArrayList<String> potentialStringList = new ArrayList<>();
+
+        for (String candidateString : validStrings) {
+            if (candidateString.contains(searchString)) {
+                potentialStringList.add(candidateString);
+            }
+        }
+
+        return potentialStringList;
     }
 
     ////////// InputFilter Method(s) //////////
@@ -117,7 +117,7 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
         // See if there is a shortcut string
 
         if ((dest == null || dest.length() == 0) && (end - start) == 1) {
-            String shortcutString = getShortcutString(source.charAt(start));
+            final String shortcutString = getShortcutString(source.charAt(start));
 
             if (shortcutString != null) {
                 return shortcutString;
@@ -127,7 +127,7 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
         // Work out what the result string would be, and see if any of the valid strings
         // contain it.
 
-        StringBuilder stringBuilder = new StringBuilder(dest);
+        final StringBuilder stringBuilder = new StringBuilder(dest);
 
         stringBuilder.replace(dstart, dend, String.valueOf(source.subSequence(start, end)));
 
@@ -165,9 +165,9 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
         // If we find any single valid valid value containing the character sequence, change
         // the text to it
 
-        List<String> potentialStringList = getValidStringsContaining(charSequence.toString());
+        final List<String> potentialStringList = getValidStringsContaining(charSequence.toString());
 
-        int potentialStringCount = potentialStringList.size();
+        final int potentialStringCount = potentialStringList.size();
 
         if (potentialStringCount < 1) {
             // We found nothing so change the field to red
@@ -180,7 +180,7 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
                 // We found one match. If the field isn't already the one match (we don't want
                 // an infinite recursion), then change it now.
 
-                String matchingString = potentialStringList.get(0);
+                final String matchingString = potentialStringList.get(0);
 
                 if (!matchingString.equals(charSequence.toString())) {
                     mEditText.setText(matchingString);
@@ -224,7 +224,7 @@ abstract public class ALimitedRangeEditTextEnforcer extends AEditTextEnforcer im
      * supplied (sub)string.
      *
      *****************************************************/
-    abstract protected List<String> getValidStringsContaining(String searchString);
+    protected abstract List<String> getValidStringsContaining(String searchString);
 
     ////////// Inner Class(es) //////////
 

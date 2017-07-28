@@ -28,28 +28,23 @@ import ly.kite.util.UploadableImage;
  *
  *****************************************************/
 public class GreetingCardJob extends Job {
+
+    public static final Parcelable.Creator<GreetingCardJob> CREATOR = new Parcelable.Creator<GreetingCardJob>() {
+        public GreetingCardJob createFromParcel(Parcel in) {
+
+            return new GreetingCardJob(in);
+        }
+
+        public GreetingCardJob[] newArray(int size) {
+
+            return new GreetingCardJob[size];
+        }
+    };
+
     private UploadableImage mFrontUploadableImage;
     private UploadableImage mBackUploadableImage;
     private UploadableImage mInsideLeftUploadableImage;
     private UploadableImage mInsideRightUploadableImage;
-
-    /*****************************************************
-     *
-     * Returns an image spec containing the asset fragment frpm
-     * the supplied uploadable image, or null if the uploadable
-     * image is null.
-     *
-     *****************************************************/
-    private static ImageSpec imageSpecFrom(UploadableImage uploadableImage) {
-
-        AssetFragment assetFragment;
-
-        if (uploadableImage == null || (assetFragment = uploadableImage.getAssetFragment()) == null) {
-            return null;
-        }
-
-        return new ImageSpec(assetFragment);
-    }
 
     public GreetingCardJob(long jobId, Product product, int orderQuantity, HashMap<String, String> optionsMap, Object frontImage, Object
             backImage, Object insideLeftImage, Object insideRightImage, int shippingClass) {
@@ -66,6 +61,34 @@ public class GreetingCardJob extends Job {
                            Object insideLeftImage, Object insideRightImage, int shippingClass) {
 
         this(0, product, orderQuantity, optionsMap, frontImage, backImage, insideLeftImage, insideRightImage, shippingClass);
+    }
+
+    private GreetingCardJob(Parcel parcel) {
+
+        super(parcel);
+
+        mFrontUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+        mBackUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+        mInsideLeftUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+        mInsideRightUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+    }
+
+    /*****************************************************
+     *
+     * Returns an image spec containing the asset fragment frpm
+     * the supplied uploadable image, or null if the uploadable
+     * image is null.
+     *
+     *****************************************************/
+    private static ImageSpec imageSpecFrom(UploadableImage uploadableImage) {
+
+        final AssetFragment assetFragment;
+
+        if (uploadableImage == null || (assetFragment = uploadableImage.getAssetFragment()) == null) {
+            return null;
+        }
+
+        return new ImageSpec(assetFragment);
     }
 
     @Override
@@ -129,7 +152,7 @@ public class GreetingCardJob extends Job {
     @Override
     List<UploadableImage> getImagesForUploading() {
 
-        ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
+        final ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
 
         if (mFrontUploadableImage != null) {
             uploadableImageArrayList.add(mFrontUploadableImage);
@@ -150,12 +173,12 @@ public class GreetingCardJob extends Job {
     @Override
     JSONObject getJSONRepresentation() {
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         try {
             json.put("template_id", getProductId());
             addProductOptions(json);
 
-            JSONObject assets = new JSONObject();
+            final JSONObject assets = new JSONObject();
 
             json.put("assets", assets);
 
@@ -173,7 +196,7 @@ public class GreetingCardJob extends Job {
             }
 
         } catch (JSONException e) {
-            // ignore - won't happen ;)
+            //Ignore - won't happen ;)
         }
 
         return json;
@@ -195,29 +218,6 @@ public class GreetingCardJob extends Job {
         parcel.writeParcelable(mInsideRightUploadableImage, flags);
     }
 
-    private GreetingCardJob(Parcel parcel) {
-
-        super(parcel);
-
-        mFrontUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-        mBackUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-        mInsideLeftUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-        mInsideRightUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<GreetingCardJob> CREATOR
-            = new Parcelable.Creator<GreetingCardJob>() {
-        public GreetingCardJob createFromParcel(Parcel in) {
-
-            return new GreetingCardJob(in);
-        }
-
-        public GreetingCardJob[] newArray(int size) {
-
-            return new GreetingCardJob[size];
-        }
-    };
-
     @Override
     public boolean equals(Object otherObject) {
 
@@ -225,7 +225,7 @@ public class GreetingCardJob extends Job {
             return false;
         }
 
-        GreetingCardJob otherGreetingCardJob = (GreetingCardJob) otherObject;
+        final GreetingCardJob otherGreetingCardJob = (GreetingCardJob) otherObject;
 
         if (!UploadableImage.areBothNullOrEqual(mFrontUploadableImage, otherGreetingCardJob.mFrontUploadableImage)) {
             return false;

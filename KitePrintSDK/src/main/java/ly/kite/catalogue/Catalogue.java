@@ -59,18 +59,17 @@ import java.util.List;
 public class Catalogue {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "Catalogue";
-
     // Dummy catalogue - used for testing
     public static final Catalogue DUMMY_CATALOGUE = new Catalogue().addProduct("Dummy Group", null, Product.DUMMY_PRODUCT);
-
-    private static final boolean DISPLAY_PRODUCT_GROUPS = false;
+    public static final int NO_COLOUR = 0x000000;
 
     static final String JSON_NAME_THEME_COLOUR_PRIMARY = "theme_colour_primary";
     static final String JSON_NAME_THEME_COLOUR_SECONDARY = "theme_colour_secondary";
 
-    public static final int NO_COLOUR = 0x000000;
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "Catalogue";
+
+    private static final boolean DISPLAY_PRODUCT_GROUPS = false;
 
     ////////// Static Variable(s) //////////
 
@@ -91,34 +90,6 @@ public class Catalogue {
 
     ////////// Static Initialiser(s) //////////
 
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Converts a colour string to a colour.
-     *
-     *****************************************************/
-    static int colourFromString(String colourString) {
-
-        if (colourString != null) {
-            int length = colourString.length();
-
-            try {
-                if (length == 7 && colourString.charAt(0) == '#') {
-                    return 0xff000000 | Integer.parseInt(colourString.substring(1), 16);
-                } else if (length == 9 && colourString.charAt(0) == '#') {
-                    // We need to parse the colour as a long and then convert to integer, because
-                    // the integer parse doesn't like values greater than 0x7fffffff.
-                    return (int) Long.parseLong(colourString.substring(1), 16);
-                }
-            } catch (NumberFormatException nfe) {
-                Log.e(LOG_TAG, "Invalid colour format: " + colourString);
-            }
-        }
-
-        return NO_COLOUR;
-    }
-
     ////////// Constructor(s) //////////
 
     public Catalogue() {
@@ -138,6 +109,34 @@ public class Catalogue {
         mAllImagesURLList = new ArrayList<>();
     }
 
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Converts a colour string to a colour.
+     *
+     *****************************************************/
+    static int colourFromString(String colourString) {
+
+        if (colourString != null) {
+            final int length = colourString.length();
+
+            try {
+                if (length == 7 && colourString.charAt(0) == '#') {
+                    return 0xff000000 | Integer.parseInt(colourString.substring(1), 16);
+                } else if (length == 9 && colourString.charAt(0) == '#') {
+                    // We need to parse the colour as a long and then convert to integer, because
+                    // the integer parse doesn't like values greater than 0x7fffffff.
+                    return (int) Long.parseLong(colourString.substring(1), 16);
+                }
+            } catch (NumberFormatException nfe) {
+                Log.e(LOG_TAG, "Invalid colour format: " + colourString);
+            }
+        }
+
+        return NO_COLOUR;
+    }
+
     ////////// Method(s) //////////
 
     /*****************************************************
@@ -147,8 +146,7 @@ public class Catalogue {
      *****************************************************/
     void setUserConfigData(JSONObject userConfigJSONObject) {
         // Make sure we always have a JSON object, even if we weren't supplied one.
-        mUserConfigJSONObject = (userConfigJSONObject != null ? userConfigJSONObject
-                : new JSONObject());
+        mUserConfigJSONObject = userConfigJSONObject != null ? userConfigJSONObject : new JSONObject();
     }
 
     /*****************************************************
@@ -208,7 +206,7 @@ public class Catalogue {
      *****************************************************/
     public int getPrimaryThemeColour() {
 
-        String colourString = getUserConfigString(JSON_NAME_THEME_COLOUR_PRIMARY);
+        final String colourString = getUserConfigString(JSON_NAME_THEME_COLOUR_PRIMARY);
 
         if (colourString != null) {
             return colourFromString(colourString);
@@ -224,7 +222,7 @@ public class Catalogue {
      *****************************************************/
     public int getSecondaryThemeColour() {
 
-        String colourString = getUserConfigString(JSON_NAME_THEME_COLOUR_SECONDARY);
+        final String colourString = getUserConfigString(JSON_NAME_THEME_COLOUR_SECONDARY);
 
         if (colourString != null) {
             return colourFromString(colourString);
@@ -331,7 +329,7 @@ public class Catalogue {
      *****************************************************/
     public Product getProduct(int soughtProductIndex) {
 
-        Collection<Product> productCollection = getProducts();
+        final Collection<Product> productCollection = getProducts();
 
         if (productCollection == null || soughtProductIndex >= productCollection.size()) {
             return null;
@@ -378,7 +376,7 @@ public class Catalogue {
      *****************************************************/
     public ArrayList<Product> getProductsForGroup(String groupLabel) {
 
-        ProductGroup group = findGroupByLabel(groupLabel);
+        final ProductGroup group = findGroupByLabel(groupLabel);
 
         if (group != null) {
             return group.getProductList();
@@ -395,7 +393,7 @@ public class Catalogue {
     public Product findProductById(String productId) {
         // Check in both tables for the product
 
-        Product product;
+        final Product product;
 
         if ((product = mIdProductTable.get(productId)) != null) {
             return product;
@@ -424,7 +422,7 @@ public class Catalogue {
     public void confirmProductIdExistsOrThrow(String productId) {
 
         if (findProductById(productId) == null) {
-            throw (new IllegalStateException("Product id " + productId + " not found in catalogue"));
+            throw new IllegalStateException("Product id " + productId + " not found in catalogue");
         }
     }
 
@@ -450,7 +448,7 @@ public class Catalogue {
     public Catalogue createFiltered(String[] productIds) {
         // Create a catalogue with the same custom and user config data
 
-        Catalogue filteredCatalogue = new Catalogue();
+        final Catalogue filteredCatalogue = new Catalogue();
 
         filteredCatalogue.setCustomData(mCustomDataTable);
         filteredCatalogue.setUserConfigData(mUserConfigJSONObject);
@@ -465,8 +463,8 @@ public class Catalogue {
 
         if (productIds != null) {
             for (String productId : productIds) {
-                Product product = findProductById(productId);
-                ProductGroup productGroup = getGroupForProductId(productId);
+                final Product product = findProductById(productId);
+                final ProductGroup productGroup = getGroupForProductId(productId);
 
                 if (product != null && productGroup != null) {
                     filteredCatalogue.addProduct(productGroup.getDisplayLabel(), productGroup.getDisplayImageURL(), product);
@@ -485,17 +483,17 @@ public class Catalogue {
      *****************************************************/
     public void displayPreCachingInfo() {
 
-        ArrayList<String> curlList = new ArrayList<>();
-        ArrayList<String> mappingList = new ArrayList<>();
+        final ArrayList<String> curlList = new ArrayList<>();
+        final ArrayList<String> mappingList = new ArrayList<>();
 
         // Go through every group
 
         int groupIndex = 0;
 
         for (ProductGroup group : mGroupList) {
-            String urlString = group.getDisplayImageURL().toString();
-            String resourceName = "precached_group_" + String.valueOf(groupIndex);
-            String resourceFile = resourceName + ".jpg";
+            final String urlString = group.getDisplayImageURL().toString();
+            final String resourceName = "precached_group_" + String.valueOf(groupIndex);
+            final String resourceFile = resourceName + ".jpg";
 
             curlList.add("curl " + urlString + " > " + resourceFile);
             mappingList.add(".addResourceMapping( \"" + urlString + "\", R.drawable." + resourceName + " )");
@@ -508,9 +506,9 @@ public class Catalogue {
         int productIndex = 0;
 
         for (Product product : mIdProductTable.values()) {
-            String urlString = product.getDisplayImageURL().toString();
-            String resourceName = "precached_product_" + String.valueOf(productIndex);
-            String resourceFile = resourceName + ".jpg";
+            final String urlString = product.getDisplayImageURL().toString();
+            final String resourceName = "precached_product_" + String.valueOf(productIndex);
+            final String resourceFile = resourceName + ".jpg";
 
             curlList.add("curl " + urlString + " > " + resourceFile);
             mappingList.add(".addResourceMapping( \"" + urlString + "\", R.drawable." + resourceName + " )");

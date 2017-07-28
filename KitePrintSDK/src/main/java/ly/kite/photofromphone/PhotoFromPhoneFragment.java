@@ -135,7 +135,7 @@ public class PhotoFromPhoneFragment extends DialogFragment {
 
         // Create the upload / download URLs
 
-        String uuid = UUID.randomUUID().toString();
+        final String uuid = UUID.randomUUID().toString();
 
         try {
             mImageUploadURL = new URL(String.format(UPLOAD_URL_FORMAT_STRING, uuid));
@@ -166,7 +166,7 @@ public class PhotoFromPhoneFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.dialog_photo_from_phone, container, false);
+        final View view = layoutInflator.inflate(R.layout.dialog_photo_from_phone, container, false);
 
         mQRCodeView = (QRCodeView) view.findViewById(R.id.qr_code_view);
         mURLTextView = (TextView) view.findViewById(R.id.url_text_view);
@@ -280,7 +280,7 @@ public class PhotoFromPhoneFragment extends DialogFragment {
         @Override
         public void onError(Exception exception) {
 
-            String message = "Unable to get shortened URL: " + exception.getMessage();
+            final String message = "Unable to get shortened URL: " + exception.getMessage();
 
             Log.e(TAG, message, exception);
 
@@ -290,69 +290,69 @@ public class PhotoFromPhoneFragment extends DialogFragment {
         }
     }
 
-//  /*****************************************************
-//   *
-//   * QR share API response listener.
-//   *
-//   *****************************************************/
-//  private class ShareResponseListener implements HTTPRequest.IResponseListener
-//    {
-//    private URL  mShortURL;
-//    private URL  mDownloadURL;
-//
-//
-//    ShareResponseListener( URL shortURL, URL downloadURL )
-//      {
-//      mShortURL    = shortURL;
-//      mDownloadURL = downloadURL;
-//      }
-//
-//
-//    @Override
-//    public void onSuccess( int httpStatusCode )
-//      {
-//      onRequestComplete();
-//      }
-//
-//
-//    @Override
-//    public void onError( Exception exception )
-//      {
-//      onRequestComplete();
-//      }
-//
-//
-//    /*****************************************************
-//     *
-//     * Called when the share request has completed, regardless
-//     * of whether it succeeded or not.
-//     *
-//     *****************************************************/
-//    private void onRequestComplete()
-//      {
-//      if ( ! mRunAsNormal ) return;
-//
-//      try
-//        {
-//        // Try and construct the URL for the image
-//        mQRCodeImageURL = new URL( mShortURL.getProtocol(), IMAGES_HOST, mShortURL.getFile() );
-//
-//        tryToLoadQRImage();
-//
-//
-//        // Start polling for the photo
-//
-//        mHandler = new Handler();
-//
-//        new CheckForPhotoRunnable( mDownloadURL ).post();
-//        }
-//      catch ( MalformedURLException mue )
-//        {
-//        Log.e( TAG, "Unable to generate QR code image URL", mue );
-//        }
-//      }
-//
-//    }
+    //  /*****************************************************
+    //   *
+    //   * QR share API response listener.
+    //   *
+    //   *****************************************************/
+    //  private class ShareResponseListener implements HTTPRequest.IResponseListener
+    //    {
+    //    private URL  mShortURL;
+    //    private URL  mDownloadURL;
+    //
+    //
+    //    ShareResponseListener( URL shortURL, URL downloadURL )
+    //      {
+    //      mShortURL    = shortURL;
+    //      mDownloadURL = downloadURL;
+    //      }
+    //
+    //
+    //    @Override
+    //    public void onSuccess( int httpStatusCode )
+    //      {
+    //      onRequestComplete();
+    //      }
+    //
+    //
+    //    @Override
+    //    public void onError( Exception exception )
+    //      {
+    //      onRequestComplete();
+    //      }
+    //
+    //
+    //    /*****************************************************
+    //     *
+    //     * Called when the share request has completed, regardless
+    //     * of whether it succeeded or not.
+    //     *
+    //     *****************************************************/
+    //    private void onRequestComplete()
+    //      {
+    //      if ( ! mRunAsNormal ) return;
+    //
+    //      try
+    //        {
+    //        // Try and construct the URL for the image
+    //        mQRCodeImageURL = new URL( mShortURL.getProtocol(), IMAGES_HOST, mShortURL.getFile() );
+    //
+    //        tryToLoadQRImage();
+    //
+    //
+    //        // Start polling for the photo
+    //
+    //        mHandler = new Handler();
+    //
+    //        new CheckForPhotoRunnable( mDownloadURL ).post();
+    //        }
+    //      catch ( MalformedURLException mue )
+    //        {
+    //        Log.e( TAG, "Unable to generate QR code image URL", mue );
+    //        }
+    //      }
+    //
+    //    }
 
     /*****************************************************
      *
@@ -379,7 +379,7 @@ public class PhotoFromPhoneFragment extends DialogFragment {
 
             // Try to download the photo
 
-            File file = mAsset.getImageFile();
+            final File file = mAsset.getImageFile();
 
             FileDownloader.getInstance(getActivity()).requestFileDownload(mDownloadURL, file.getParentFile(), file, this);
         }
@@ -389,10 +389,10 @@ public class PhotoFromPhoneFragment extends DialogFragment {
             // If we successfully downloaded the photo, call back to the target fragment with the
             // image wrapped in an asset.
 
-            Fragment targetFragment = getTargetFragment();
+            final Fragment targetFragment = getTargetFragment();
 
             if (targetFragment != null && targetFragment instanceof AImageSource.IAssetConsumer) {
-                List<Asset> assetList = new ArrayList<>(1);
+                final List<Asset> assetList = new ArrayList<>(1);
 
                 assetList.add(mAsset);
 

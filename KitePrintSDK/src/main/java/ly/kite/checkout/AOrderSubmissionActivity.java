@@ -57,7 +57,7 @@ import ly.kite.ordering.OrderingDataAgent;
  * orders.
  *
  *****************************************************/
-abstract public class AOrderSubmissionActivity extends AKiteActivity implements IOrderSubmissionResultListener {
+public abstract class AOrderSubmissionActivity extends AKiteActivity implements IOrderSubmissionResultListener {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -84,7 +84,7 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
      * Adds a previous order id as an extra to an intent.
      *
      *****************************************************/
-    static protected void addPreviousOrder(long previousOrderId, Intent intent) {
+    protected static void addPreviousOrder(long previousOrderId, Intent intent) {
 
         if (previousOrderId >= 0) {
             intent.putExtra(KEY_PREVIOUS_ORDER_ID, previousOrderId);
@@ -107,7 +107,7 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
 
         // Check for a previous order id
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         if (intent != null) {
             mPreviousOrderId = intent.getLongExtra(KEY_PREVIOUS_ORDER_ID, OrderingDataAgent.NO_ORDER_ID);
@@ -115,7 +115,7 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
 
         // See if there is a retained order submission fragment already running
 
-        FragmentManager fragmentManager = getFragmentManager();
+        final FragmentManager fragmentManager = getFragmentManager();
 
         mOrderSubmissionFragment = OrderSubmissionFragment.findFragment(this);
     }
@@ -140,7 +140,6 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
                 // Fall through
 
             case PROCESSED:
-
                 // Fall through
 
             default:
@@ -149,15 +148,14 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
 
             case CANCELLED:
 
-                displayModalDialog
-                        (
+                displayModalDialog(
                                 R.string.alert_dialog_title_order_cancelled,
                                 R.string.alert_dialog_message_order_cancelled,
                                 R.string.OK,
                                 null,
                                 NO_BUTTON,
                                 null
-                        );
+                );
 
                 return;
         }
@@ -211,7 +209,7 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
 
         // When the order times out, behave as we would with a failed order
 
-        Exception timeoutException = new Exception(getString(R.string.order_timeout_message));
+        final Exception timeoutException = new Exception(getString(R.string.order_timeout_message));
 
         order.setError(timeoutException);
 
@@ -260,7 +258,7 @@ abstract public class AOrderSubmissionActivity extends AKiteActivity implements 
      *****************************************************/
     private void onOrderFailureInt(Order order, Exception exception) {
         // Save the failed order
-        long localOrderId = OrderingDataAgent.getInstance(this).onOrderFailure(mPreviousOrderId, order);
+        final long localOrderId = OrderingDataAgent.getInstance(this).onOrderFailure(mPreviousOrderId, order);
 
         // Deliver the failed order to the app
         onOrderFailure(localOrderId, order, exception);

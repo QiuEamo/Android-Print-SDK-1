@@ -74,6 +74,13 @@ public class OrderSubmissionFragment extends ARetainedDialogFragment implements 
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public OrderSubmissionFragment() {
+
+        super(IOrderSubmissionResultListener.class);
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -84,7 +91,7 @@ public class OrderSubmissionFragment extends ARetainedDialogFragment implements 
      *****************************************************/
     public static OrderSubmissionFragment start(Activity activity, Order order) {
 
-        OrderSubmissionFragment orderSubmissionFragment = new OrderSubmissionFragment();
+        final OrderSubmissionFragment orderSubmissionFragment = new OrderSubmissionFragment();
 
         orderSubmissionFragment.show(activity.getFragmentManager(), TAG);
 
@@ -101,13 +108,6 @@ public class OrderSubmissionFragment extends ARetainedDialogFragment implements 
     public static OrderSubmissionFragment findFragment(Activity activity) {
 
         return (OrderSubmissionFragment) find(activity, TAG, OrderSubmissionFragment.class);
-    }
-
-    ////////// Constructor(s) //////////
-
-    public OrderSubmissionFragment() {
-
-        super(IOrderSubmissionResultListener.class);
     }
 
     ////////// DialogFragment Method(s) //////////
@@ -148,7 +148,7 @@ public class OrderSubmissionFragment extends ARetainedDialogFragment implements 
     public void onOrderUpdate(Order order, OrderState state, int primaryProgressPercent, int secondaryProgressPercent) {
         // Determine what the order state is, and set the progress dialog accordingly
 
-        ProgressDialog progressDialog = (ProgressDialog) getDialog();
+        final ProgressDialog progressDialog = (ProgressDialog) getDialog();
 
         if (progressDialog == null) {
             return;

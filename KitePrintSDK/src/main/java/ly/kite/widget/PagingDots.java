@@ -165,20 +165,20 @@ public class PagingDots extends LinearLayout implements AdapterView.OnItemSelect
         removeAllViews();
 
         // Calculate what the padding will be in pixels (from DIPs)
-        int paddingPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, PADDING_IN_DIP, getResources().getDisplayMetrics
-                ());
+        final int paddingPixels =
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, PADDING_IN_DIP, getResources().getDisplayMetrics());
 
         // Create the correct number of child image views
         for (int childIndex = 0; childIndex < pageCount; childIndex++) {
             // Create an image view
-            ImageView imageView = new ImageView(getContext());
+            final ImageView imageView = new ImageView(getContext());
             imageView.setPadding(paddingPixels, paddingPixels, paddingPixels, paddingPixels);
 
             // Set the correct off/on image depending on whether this is the current page
             imageView.setImageResource(childIndex == mCurrentPageIndex ? onImageResourceId : offImageResourceId);
 
             // Create the layout params for this image view
-            LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            final LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER;
 
             // Add the image view to the layout
@@ -215,7 +215,7 @@ public class PagingDots extends LinearLayout implements AdapterView.OnItemSelect
      *****************************************************/
     public void setPageIndex(int pageIndex) {
 
-        int previousPageIndex = mCurrentPageIndex;
+        final int previousPageIndex = mCurrentPageIndex;
         mCurrentPageIndex = pageIndex;
 
         // Go through every child image view
@@ -223,10 +223,10 @@ public class PagingDots extends LinearLayout implements AdapterView.OnItemSelect
             // If the child is an image view, set its image depending on whether this is
             // the current page.
 
-            View childView = getChildAt(childIndex);
+            final View childView = getChildAt(childIndex);
 
             if (childView instanceof ImageView) {
-                ImageView imageView = (ImageView) childView;
+                final ImageView imageView = (ImageView) childView;
 
                 if (childIndex == previousPageIndex) {
                     // This is the previously selected page

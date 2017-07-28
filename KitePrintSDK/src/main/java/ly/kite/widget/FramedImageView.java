@@ -108,9 +108,9 @@ public class FramedImageView extends AAREImageContainerFrame {
     @Override
     protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-        LayoutInflater layoutInflator = LayoutInflater.from(context);
+        final LayoutInflater layoutInflator = LayoutInflater.from(context);
 
-        View view = layoutInflator.inflate(R.layout.framed_image_view, this, true);
+        final View view = layoutInflator.inflate(R.layout.framed_image_view, this, true);
 
         mStencilImageView = (StencilImageView) view.findViewById(R.id.image_view);
 
@@ -149,7 +149,7 @@ public class FramedImageView extends AAREImageContainerFrame {
      *****************************************************/
     public void setBorder(Border border) {
 
-        setBorder(border.leftPixels, border.topPixels, border.rightPixels, border.bottomPixels);
+        setBorder(border.mLeftPixels, border.mTopPixels, border.mRightPixels, border.mBottomPixels);
     }
 
     /*****************************************************

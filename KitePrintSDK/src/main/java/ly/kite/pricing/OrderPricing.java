@@ -59,6 +59,21 @@ import ly.kite.catalogue.MultipleCurrencyAmounts;
  *
  *****************************************************/
 public class OrderPricing implements Parcelable {
+
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<OrderPricing> CREATOR = new Parcelable.Creator<OrderPricing>() {
+        public OrderPricing createFromParcel(Parcel sourceParcel) {
+
+            return new OrderPricing(sourceParcel);
+        }
+
+        public OrderPricing[] newArray(int size) {
+
+            return new OrderPricing[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -79,21 +94,6 @@ public class OrderPricing implements Parcelable {
 
     private static final String JSON_VALUE_NULL = "null";
 
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<OrderPricing> CREATOR =
-            new Parcelable.Creator<OrderPricing>() {
-                public OrderPricing createFromParcel(Parcel sourceParcel) {
-
-                    return new OrderPricing(sourceParcel);
-                }
-
-                public OrderPricing[] newArray(int size) {
-
-                    return new OrderPricing[size];
-                }
-            };
-
     ////////// Member Variable(s) //////////
 
     private JSONObject mOrderPricingJSONObject;
@@ -107,42 +107,6 @@ public class OrderPricing implements Parcelable {
     private MultipleCurrencyAmounts mTotalShippingCost;
 
     ////////// Static Initialiser(s) //////////
-
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Returns true if the supplied currency can be used
-     * in all the line items.
-     *
-     *****************************************************/
-    static boolean currencyCanBeUsed(List<LineItem> lineItemList, String currencyCode) {
-
-        if (lineItemList != null) {
-            for (LineItem lineItem : lineItemList) {
-                if (lineItem != null) {
-                    if ((!currencyCanBeUsed(lineItem.getShippingCost(), currencyCode)) ||
-                            (!currencyCanBeUsed(lineItem.getProductCost(), currencyCode))) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /*****************************************************
-     *
-     * Returns true if the supplied currency is available
-     * in the multiple currency amount, of the multiple
-     * currency amount is null.
-     *
-     *****************************************************/
-    static boolean currencyCanBeUsed(MultipleCurrencyAmounts multipleCurrencyAmount, String currencyCode) {
-
-        return multipleCurrencyAmount == null || multipleCurrencyAmount.contains(currencyCode);
-    }
 
     ////////// Constructor(s) //////////
 
@@ -207,16 +171,16 @@ public class OrderPricing implements Parcelable {
         mOrderPricingJSONObject = orderPricingJSONObject;
 
         // Get the top level items
-        JSONObject promoCodeJSONObject = orderPricingJSONObject.optJSONObject(JSON_NAME_PROMO_CODE);
-        JSONObject totalProductCostJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL_PRODUCT_COST);
-        JSONArray lineItemsJSONArray = orderPricingJSONObject.getJSONArray(JSON_NAME_LINE_ITEMS);
-        JSONObject totalJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL);
-        JSONObject totalShippingCostJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL_SHIPPING_COST);
+        final JSONObject promoCodeJSONObject = orderPricingJSONObject.optJSONObject(JSON_NAME_PROMO_CODE);
+        final JSONObject totalProductCostJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL_PRODUCT_COST);
+        final JSONArray lineItemsJSONArray = orderPricingJSONObject.getJSONArray(JSON_NAME_LINE_ITEMS);
+        final JSONObject totalJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL);
+        final JSONObject totalShippingCostJSONObject = orderPricingJSONObject.getJSONObject(JSON_NAME_TOTAL_SHIPPING_COST);
 
         // Promo code
 
         if (promoCodeJSONObject != null) {
-            String promoCodeInvalidMessage = promoCodeJSONObject.getString(JSON_NAME_INVALID_MESSAGE);
+            final String promoCodeInvalidMessage = promoCodeJSONObject.getString(JSON_NAME_INVALID_MESSAGE);
 
             if (promoCodeInvalidMessage == null || promoCodeInvalidMessage.equals(JSON_VALUE_NULL)) {
                 mPromoCodeInvalidMessage = null;
@@ -236,7 +200,7 @@ public class OrderPricing implements Parcelable {
         mLineItemArrayList = new ArrayList<>(lineItemsJSONArray.length());
 
         for (int lineItemIndex = 0; lineItemIndex < lineItemsJSONArray.length(); lineItemIndex++) {
-            LineItem lineItem = new LineItem(lineItemsJSONArray.getJSONObject(lineItemIndex));
+            final LineItem lineItem = new LineItem(lineItemsJSONArray.getJSONObject(lineItemIndex));
 
             mLineItemArrayList.add(lineItem);
         }
@@ -274,7 +238,7 @@ public class OrderPricing implements Parcelable {
 
         // Read the line items
 
-        int lineItemCount = parcel.readInt();
+        final int lineItemCount = parcel.readInt();
 
         mLineItemArrayList = new ArrayList<LineItem>();
 
@@ -285,6 +249,42 @@ public class OrderPricing implements Parcelable {
         mTotalProductCost = (MultipleCurrencyAmounts) parcel.readParcelable(MultipleCurrencyAmounts.class.getClassLoader());
         mTotalCost = (MultipleCurrencyAmounts) parcel.readParcelable(MultipleCurrencyAmounts.class.getClassLoader());
         mTotalShippingCost = (MultipleCurrencyAmounts) parcel.readParcelable(MultipleCurrencyAmounts.class.getClassLoader());
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns true if the supplied currency can be used
+     * in all the line items.
+     *
+     *****************************************************/
+    static boolean currencyCanBeUsed(List<LineItem> lineItemList, String currencyCode) {
+
+        if (lineItemList != null) {
+            for (LineItem lineItem : lineItemList) {
+                if (lineItem != null) {
+                    if ((!currencyCanBeUsed(lineItem.getShippingCost(), currencyCode)) ||
+                            (!currencyCanBeUsed(lineItem.getProductCost(), currencyCode))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*****************************************************
+     *
+     * Returns true if the supplied currency is available
+     * in the multiple currency amount, of the multiple
+     * currency amount is null.
+     *
+     *****************************************************/
+    static boolean currencyCanBeUsed(MultipleCurrencyAmounts multipleCurrencyAmount, String currencyCode) {
+
+        return multipleCurrencyAmount == null || multipleCurrencyAmount.contains(currencyCode);
     }
 
     ////////// Parcelable Method(s) //////////
@@ -429,11 +429,11 @@ public class OrderPricing implements Parcelable {
      *****************************************************/
     private boolean currencyIsUbiquitous(String currencyCode) {
 
-        return (currencyCanBeUsed(mPromoCodeDiscount, currencyCode) &&
+        return currencyCanBeUsed(mPromoCodeDiscount, currencyCode) &&
                 currencyCanBeUsed(mLineItemArrayList, currencyCode) &&
                 currencyCanBeUsed(mTotalProductCost, currencyCode) &&
                 currencyCanBeUsed(mTotalCost, currencyCode) &&
-                currencyCanBeUsed(mTotalShippingCost, currencyCode));
+                currencyCanBeUsed(mTotalShippingCost, currencyCode);
     }
 
     ////////// Inner Class(es) //////////

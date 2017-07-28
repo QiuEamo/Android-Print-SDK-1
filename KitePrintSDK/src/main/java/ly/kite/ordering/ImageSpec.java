@@ -66,10 +66,6 @@ import ly.kite.widget.CheckableImageContainerFrame;
  *
  *****************************************************/
 public class ImageSpec implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "ImageSpec";
 
     ////////// Static Variable(s) //////////
 
@@ -85,6 +81,11 @@ public class ImageSpec implements Parcelable {
         }
     };
 
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ImageSpec";
+
     ////////// Member Variable(s) //////////
 
     private AssetFragment mAssetFragment;
@@ -96,6 +97,55 @@ public class ImageSpec implements Parcelable {
     private Asset mThumbnailAsset;
 
     ////////// Static Initialiser(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public ImageSpec(AssetFragment assetFragment, String borderText, int quantity) {
+
+        mAssetFragment = assetFragment;
+        mBorderText = borderText;
+        mQuantity = quantity;
+    }
+
+    public ImageSpec(AssetFragment assetFragment, int quantity) {
+
+        this(assetFragment, null, quantity);
+    }
+
+    public ImageSpec(AssetFragment assetFragment) {
+
+        this(assetFragment, 1);
+    }
+
+    public ImageSpec(Asset asset) {
+
+        this(new AssetFragment(asset));
+    }
+
+    public ImageSpec(Asset asset, RectF proportionalCropRectangle, int quantity) {
+
+        this(new AssetFragment(asset, proportionalCropRectangle), quantity);
+    }
+
+    public ImageSpec(Asset asset, RectF proportionalCropRectangle, String borderText, int quantity) {
+
+        this(new AssetFragment(asset, proportionalCropRectangle), borderText, quantity);
+    }
+
+    private ImageSpec(AssetFragment assetFragment, String borderText, int quantity, String croppedForProductId) {
+
+        this(assetFragment, borderText, quantity);
+
+        mCroppedForProductId = croppedForProductId;
+    }
+
+    private ImageSpec(Parcel sourceParcel) {
+
+        mAssetFragment = sourceParcel.readParcelable(AssetFragment.class.getClassLoader());
+        mBorderText = sourceParcel.readString();
+        mQuantity = sourceParcel.readInt();
+        mCroppedForProductId = sourceParcel.readString();
+    }
 
     ////////// Static Method(s) //////////
 
@@ -175,55 +225,6 @@ public class ImageSpec implements Parcelable {
         }
 
         return true;
-    }
-
-    ////////// Constructor(s) //////////
-
-    public ImageSpec(AssetFragment assetFragment, String borderText, int quantity) {
-
-        mAssetFragment = assetFragment;
-        mBorderText = borderText;
-        mQuantity = quantity;
-    }
-
-    public ImageSpec(AssetFragment assetFragment, int quantity) {
-
-        this(assetFragment, null, quantity);
-    }
-
-    public ImageSpec(AssetFragment assetFragment) {
-
-        this(assetFragment, 1);
-    }
-
-    public ImageSpec(Asset asset) {
-
-        this(new AssetFragment(asset));
-    }
-
-    public ImageSpec(Asset asset, RectF proportionalCropRectangle, int quantity) {
-
-        this(new AssetFragment(asset, proportionalCropRectangle), quantity);
-    }
-
-    public ImageSpec(Asset asset, RectF proportionalCropRectangle, String borderText, int quantity) {
-
-        this(new AssetFragment(asset, proportionalCropRectangle), borderText, quantity);
-    }
-
-    private ImageSpec(AssetFragment assetFragment, String borderText, int quantity, String croppedForProductId) {
-
-        this(assetFragment, borderText, quantity);
-
-        mCroppedForProductId = croppedForProductId;
-    }
-
-    private ImageSpec(Parcel sourceParcel) {
-
-        mAssetFragment = sourceParcel.readParcelable(AssetFragment.class.getClassLoader());
-        mBorderText = sourceParcel.readString();
-        mQuantity = sourceParcel.readInt();
-        mCroppedForProductId = sourceParcel.readString();
     }
 
     ////////// Parcelable Method(s) //////////
@@ -416,7 +417,7 @@ public class ImageSpec implements Parcelable {
      *****************************************************/
     public ImageSpec createCopyWithReplacedAsset(Asset newAsset) {
 
-        AssetFragment newAssetFragment = new AssetFragment(newAsset, mAssetFragment.getProportionalRectangle());
+        final AssetFragment newAssetFragment = new AssetFragment(newAsset, mAssetFragment.getProportionalRectangle());
 
         return new ImageSpec(newAssetFragment, mBorderText, mQuantity, mCroppedForProductId);
     }
@@ -434,15 +435,15 @@ public class ImageSpec implements Parcelable {
             return false;
         }
 
-        ImageSpec otherImageSpec = (ImageSpec) otherObject;
+        final ImageSpec otherImageSpec = (ImageSpec) otherObject;
 
         if (otherImageSpec == this) {
             return true;
         }
 
-        return (mAssetFragment.equals(otherImageSpec.mAssetFragment) &&
+        return mAssetFragment.equals(otherImageSpec.mAssetFragment) &&
                 mQuantity == otherImageSpec.mQuantity &&
-                StringUtils.areBothNullOrEqual(mCroppedForProductId, otherImageSpec.mCroppedForProductId));
+                StringUtils.areBothNullOrEqual(mCroppedForProductId, otherImageSpec.mCroppedForProductId);
     }
 
     ////////// Inner Class(es) //////////

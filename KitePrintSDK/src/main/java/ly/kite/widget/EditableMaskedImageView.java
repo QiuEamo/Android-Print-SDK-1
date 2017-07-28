@@ -894,8 +894,8 @@ public class EditableMaskedImageView extends View implements GestureDetector.OnG
         final float unscaledMaskWidth = mMaskWidth;
         final float unscaledMaskHeight = mMaskHeight;
 
-        final float unscaledMaskPlusBleedWidth = mMaskBleed.leftPixels + unscaledMaskWidth + mMaskBleed.rightPixels;
-        final float unscaledMaskPlusBleedHeight = mMaskBleed.topPixels + unscaledMaskHeight + mMaskBleed.bottomPixels;
+        final float unscaledMaskPlusBleedWidth = mMaskBleed.mLeftPixels + unscaledMaskWidth + mMaskBleed.mRightPixels;
+        final float unscaledMaskPlusBleedHeight = mMaskBleed.mTopPixels + unscaledMaskHeight + mMaskBleed.mBottomPixels;
 
         // The mask and bleed needs to fit entirely within the view (minus any translucent
         // border), like the centerInside scale type.

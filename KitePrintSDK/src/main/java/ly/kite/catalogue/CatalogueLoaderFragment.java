@@ -76,6 +76,13 @@ public class CatalogueLoaderFragment extends ARetainedDialogFragment implements 
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public CatalogueLoaderFragment() {
+
+        super(ICatalogueConsumer.class);
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -102,7 +109,7 @@ public class CatalogueLoaderFragment extends ARetainedDialogFragment implements 
      *****************************************************/
     private static CatalogueLoaderFragment start(Activity activity, String... filterProductIds) {
 
-        CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
+        final CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
 
         return start(activity, catalogueLoaderFragment, filterProductIds);
     }
@@ -116,7 +123,7 @@ public class CatalogueLoaderFragment extends ARetainedDialogFragment implements 
     private static <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment start(F catalogueConsumerFragment, String...
             filterProductIds) {
 
-        CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
+        final CatalogueLoaderFragment catalogueLoaderFragment = new CatalogueLoaderFragment();
 
         catalogueLoaderFragment.setTargetFragment(catalogueConsumerFragment, 0);
 
@@ -142,7 +149,7 @@ public class CatalogueLoaderFragment extends ARetainedDialogFragment implements 
      *****************************************************/
     public static CatalogueLoaderFragment findOrStart(Activity activity, String... filterProductIds) {
 
-        CatalogueLoaderFragment fragment = find(activity);
+        final CatalogueLoaderFragment fragment = find(activity);
 
         if (fragment != null) {
             return fragment;
@@ -161,20 +168,13 @@ public class CatalogueLoaderFragment extends ARetainedDialogFragment implements 
     public static <F extends Fragment & ICatalogueConsumer> CatalogueLoaderFragment findOrStart(F catalogueConsumerFragment, String...
             filterProductIds) {
 
-        CatalogueLoaderFragment foundFragment = find(catalogueConsumerFragment.getActivity());
+        final CatalogueLoaderFragment foundFragment = find(catalogueConsumerFragment.getActivity());
 
         if (foundFragment != null) {
             return foundFragment;
         }
 
         return start(catalogueConsumerFragment, filterProductIds);
-    }
-
-    ////////// Constructor(s) //////////
-
-    public CatalogueLoaderFragment() {
-
-        super(ICatalogueConsumer.class);
     }
 
     ////////// DialogFragment Method(s) //////////

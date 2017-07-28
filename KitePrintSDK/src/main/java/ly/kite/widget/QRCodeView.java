@@ -80,6 +80,23 @@ public class QRCodeView extends View {
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public QRCodeView(Context context) {
+
+        super(context);
+    }
+
+    public QRCodeView(Context context, AttributeSet attrs) {
+
+        super(context, attrs);
+    }
+
+    public QRCodeView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -89,21 +106,21 @@ public class QRCodeView extends View {
      *****************************************************/
     private static Bitmap createQRCodeBitmap(URL url, int size) {
 
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        final QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
-            BitMatrix bitMatrix = qrCodeWriter.encode(url.toExternalForm(), BarcodeFormat.QR_CODE, size, size, null);
+            final BitMatrix bitMatrix = qrCodeWriter.encode(url.toExternalForm(), BarcodeFormat.QR_CODE, size, size, null);
 
-            int matrixWidth = bitMatrix.getWidth();
-            int matrixHeight = bitMatrix.getHeight();
+            final int matrixWidth = bitMatrix.getWidth();
+            final int matrixHeight = bitMatrix.getHeight();
 
             // Create a bitmap and a canvas over it
 
-            Bitmap bitmap = Bitmap.createBitmap(matrixWidth, matrixHeight, Bitmap.Config.ARGB_8888);
+            final Bitmap bitmap = Bitmap.createBitmap(matrixWidth, matrixHeight, Bitmap.Config.ARGB_8888);
 
-            Canvas canvas = new Canvas(bitmap);
+            final Canvas canvas = new Canvas(bitmap);
 
-            Paint paint = new Paint();
+            final Paint paint = new Paint();
 
             paint.setColor(0xff000000);
             paint.setStyle(Paint.Style.FILL);
@@ -124,23 +141,6 @@ public class QRCodeView extends View {
         }
 
         return null;
-    }
-
-    ////////// Constructor(s) //////////
-
-    public QRCodeView(Context context) {
-
-        super(context);
-    }
-
-    public QRCodeView(Context context, AttributeSet attrs) {
-
-        super(context, attrs);
-    }
-
-    public QRCodeView(Context context, AttributeSet attrs, int defStyleAttr) {
-
-        super(context, attrs, defStyleAttr);
     }
 
     ////////// View Method(s) //////////
@@ -177,15 +177,15 @@ public class QRCodeView extends View {
         }
 
         if (mQRCodeBitmap != null) {
-            int width = getWidth();
-            int height = getHeight();
+            final int width = getWidth();
+            final int height = getHeight();
 
-            int halfWidth = width / 2;
-            int halfHeight = height / 2;
-            int halfSize = mSize / 2;
+            final int halfWidth = width / 2;
+            final int halfHeight = height / 2;
+            final int halfSize = mSize / 2;
 
-            Rect sourceRect = new Rect(0, 0, mQRCodeBitmap.getWidth(), mQRCodeBitmap.getHeight());
-            RectF targetRectF = new RectF(halfWidth - halfSize, halfHeight - halfSize, halfWidth + halfSize, halfHeight + halfSize);
+            final Rect sourceRect = new Rect(0, 0, mQRCodeBitmap.getWidth(), mQRCodeBitmap.getHeight());
+            final RectF targetRectF = new RectF(halfWidth - halfSize, halfHeight - halfSize, halfWidth + halfSize, halfHeight + halfSize);
 
             canvas.drawBitmap(mQRCodeBitmap, sourceRect, targetRectF, null);
         }

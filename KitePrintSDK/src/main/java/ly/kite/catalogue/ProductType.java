@@ -41,86 +41,86 @@ public enum ProductType {
     POSTER_A2_54("a2_poster_54", "A2 Collage (54)"),
     POSTER_A2_70("a2_poster_70", "A2 Collage (70)");
 
-    public String getDefaultTemplate() {
-
-        return defaultTemplate;
-    }
-
-    private final String defaultTemplate;
-    private final String productName; // TODO: don't do this in final public API.
+    private final String mDefaultTemplate;
+    private final String mProductName; // TODO: don't do this in final public API.
 
     private ProductType(String defaultTemplate, String productName) {
 
-        this.defaultTemplate = defaultTemplate;
-        this.productName = productName;
+        this.mDefaultTemplate = defaultTemplate;
+        this.mProductName = productName;
     }
 
     public static ProductType productTypeFromTemplate(String template) {
 
-        if (template.equals(POSTCARD.defaultTemplate)) {
+        if (template.equals(POSTCARD.mDefaultTemplate)) {
             return POSTCARD;
-        } else if (template.equals(POLAROIDS.defaultTemplate)) {
+        } else if (template.equals(POLAROIDS.mDefaultTemplate)) {
             return POLAROIDS;
-        } else if (template.equals(MINI_POLAROIDS.defaultTemplate)) {
+        } else if (template.equals(MINI_POLAROIDS.mDefaultTemplate)) {
             return MINI_POLAROIDS;
-        } else if (template.equals(SQUARES.defaultTemplate)) {
+        } else if (template.equals(SQUARES.mDefaultTemplate)) {
             return SQUARES;
-        } else if (template.equals(MINI_SQUARES.defaultTemplate)) {
+        } else if (template.equals(MINI_SQUARES.mDefaultTemplate)) {
             return MINI_SQUARES;
-        } else if (template.equals(MAGNETS.defaultTemplate)) {
+        } else if (template.equals(MAGNETS.mDefaultTemplate)) {
             return MAGNETS;
-        } else if (template.equals(SQUARE_STICKERS.defaultTemplate)) {
+        } else if (template.equals(SQUARE_STICKERS.mDefaultTemplate)) {
             return SQUARE_STICKERS;
-        } else if (template.equals(CIRCLE_STICKERS.defaultTemplate)) {
+        } else if (template.equals(CIRCLE_STICKERS.mDefaultTemplate)) {
             return CIRCLE_STICKERS;
-        } else if (template.equals(GREETINGS_CARDS.defaultTemplate)) {
+        } else if (template.equals(GREETINGS_CARDS.mDefaultTemplate)) {
             return GREETINGS_CARDS;
-        } else if (template.equals(FRAMES_1X1_20CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_1X1_20CM.mDefaultTemplate)) {
             return FRAMES_1X1_20CM;
-        } else if (template.equals(FRAMES_1X1_30CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_1X1_30CM.mDefaultTemplate)) {
             return FRAMES_1X1_30CM;
-        } else if (template.equals(FRAMES_1X1_50CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_1X1_50CM.mDefaultTemplate)) {
             return FRAMES_1X1_50CM;
-        } else if (template.equals(FRAMES_2x2_20CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_2x2_20CM.mDefaultTemplate)) {
             return FRAMES_2x2_20CM;
-        } else if (template.equals(FRAMES_2x2_30CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_2x2_30CM.mDefaultTemplate)) {
             return FRAMES_2x2_30CM;
-        } else if (template.equals(FRAMES_2x2_50CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_2x2_50CM.mDefaultTemplate)) {
             return FRAMES_2x2_50CM;
-        } else if (template.equals(FRAMES_3x3_30CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_3x3_30CM.mDefaultTemplate)) {
             return FRAMES_3x3_30CM;
-        } else if (template.equals(FRAMES_3x3_50CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_3x3_50CM.mDefaultTemplate)) {
             return FRAMES_3x3_50CM;
-        } else if (template.equals(FRAMES_4x4_50CM.defaultTemplate)) {
+        } else if (template.equals(FRAMES_4x4_50CM.mDefaultTemplate)) {
             return FRAMES_4x4_50CM;
-        } else if (template.equals(FRAMES_2x2.defaultTemplate)) {
+        } else if (template.equals(FRAMES_2x2.mDefaultTemplate)) {
             return FRAMES_2x2;
-        } else if (template.equals(PHOTOS_4x6.defaultTemplate)) {
+        } else if (template.equals(PHOTOS_4x6.mDefaultTemplate)) {
             return PHOTOS_4x6;
-        } else if (template.equals(POSTER_A1.defaultTemplate)) {
+        } else if (template.equals(POSTER_A1.mDefaultTemplate)) {
             return POSTER_A1;
-        } else if (template.equals(POSTER_A1_35CM.defaultTemplate)) {
+        } else if (template.equals(POSTER_A1_35CM.mDefaultTemplate)) {
             return POSTER_A1_35CM;
-        } else if (template.equals(POSTER_A1_54CM.defaultTemplate)) {
+        } else if (template.equals(POSTER_A1_54CM.mDefaultTemplate)) {
             return POSTER_A1_54CM;
-        } else if (template.equals(POSTER_A1_70CM.defaultTemplate)) {
+        } else if (template.equals(POSTER_A1_70CM.mDefaultTemplate)) {
             return POSTER_A1_70CM;
-        } else if (template.equals(POSTER_A2.defaultTemplate)) {
+        } else if (template.equals(POSTER_A2.mDefaultTemplate)) {
             return POSTER_A2;
-        } else if (template.equals(POSTER_A2_35.defaultTemplate)) {
+        } else if (template.equals(POSTER_A2_35.mDefaultTemplate)) {
             return POSTER_A2_35;
-        } else if (template.equals(POSTER_A2_54.defaultTemplate)) {
+        } else if (template.equals(POSTER_A2_54.mDefaultTemplate)) {
             return POSTER_A2_54;
-        } else if (template.equals(POSTER_A2_70.defaultTemplate)) {
+        } else if (template.equals(POSTER_A2_70.mDefaultTemplate)) {
             return POSTER_A2_70;
         }
 
         throw new IllegalArgumentException("Unrecognized template: " + template);
     }
 
+    public String getDefaultTemplate() {
+
+        return mDefaultTemplate;
+    }
+
     public String getProductName() {
 
-        return productName;
+        return mProductName;
     }
 
     @Override
@@ -128,4 +128,5 @@ public enum ProductType {
 
         return getProductName();
     }
+
 }

@@ -78,24 +78,6 @@ public class EditBorderTextImageFragment extends AEditImageFragment {
 
     ////////// Static Initialiser(s) //////////
 
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Creates a new instance of this fragment.
-     *
-     *****************************************************/
-    public static EditBorderTextImageFragment newInstance(Product product, AssetFragment imageAssetFragment, String borderText) {
-
-        EditBorderTextImageFragment fragment = new EditBorderTextImageFragment(product, imageAssetFragment);
-
-        if (borderText != null) {
-            fragment.getArguments().putString(BUNDLE_KEY_BORDER_TEXT, borderText);
-        }
-
-        return fragment;
-    }
-
     ////////// Constructor(s) //////////
 
     public EditBorderTextImageFragment() {
@@ -106,6 +88,24 @@ public class EditBorderTextImageFragment extends AEditImageFragment {
     private EditBorderTextImageFragment(Product product, AssetFragment imageAssetFragment) {
 
         super(product, imageAssetFragment);
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Creates a new instance of this fragment.
+     *
+     *****************************************************/
+    public static EditBorderTextImageFragment newInstance(Product product, AssetFragment imageAssetFragment, String borderText) {
+
+        final EditBorderTextImageFragment fragment = new EditBorderTextImageFragment(product, imageAssetFragment);
+
+        if (borderText != null) {
+            fragment.getArguments().putString(BUNDLE_KEY_BORDER_TEXT, borderText);
+        }
+
+        return fragment;
     }
 
     ////////// AEditImageFragment Method(s) //////////
@@ -124,7 +124,7 @@ public class EditBorderTextImageFragment extends AEditImageFragment {
         // text first, then fallback to any supplied as an argument.
 
         if (savedInstanceState == null) {
-            Bundle arguments = getArguments();
+            final Bundle arguments = getArguments();
 
             mInitialBorderText = arguments.getString(BUNDLE_KEY_BORDER_TEXT);
         }
@@ -151,7 +151,7 @@ public class EditBorderTextImageFragment extends AEditImageFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = super.onCreateView(layoutInflator, R.layout.screen_edit_border_text_image, container, savedInstanceState);
+        final View view = super.onCreateView(layoutInflator, R.layout.screen_edit_border_text_image, container, savedInstanceState);
 
         mBorderEditText = (EditText) view.findViewById(R.id.border_edit_text);
 
@@ -181,7 +181,7 @@ public class EditBorderTextImageFragment extends AEditImageFragment {
         // last one in the list - the most recently selected.
 
         if (mUnmodifiedImageAssetFragment == null) {
-            int imageSpecCount = (mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0);
+            final int imageSpecCount = mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0;
 
             if (imageSpecCount > 0) {
                 mUnmodifiedImageAssetFragment = mImageSpecArrayList.get(imageSpecCount - 1).getAssetFragment();

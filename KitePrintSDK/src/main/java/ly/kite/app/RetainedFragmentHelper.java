@@ -101,7 +101,7 @@ public class RetainedFragmentHelper {
      *****************************************************/
     public void addTo(Activity activity, String tag) {
 
-        FragmentManager fragmentManager = activity.getFragmentManager();
+        final FragmentManager fragmentManager = activity.getFragmentManager();
 
         if (fragmentManager != null) {
             fragmentManager
@@ -154,7 +154,7 @@ public class RetainedFragmentHelper {
             // If we are attached to an activity that is the correct callback type -
             // notify it of the current state.
 
-            Object callbackActivity = getCallbackActivity();
+            final Object callbackActivity = getCallbackActivity();
 
             if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
                 Log.d(LOG_TAG, "  callbackActivity = " + callbackActivity);
@@ -167,7 +167,7 @@ public class RetainedFragmentHelper {
             // If we have a target fragment that is the correct callback type -
             // notify it of the current state.
 
-            Object callbackFragment = getCallbackFragment();
+            final Object callbackFragment = getCallbackFragment();
 
             if (KiteSDK.DEBUG_RETAINED_FRAGMENT) {
                 Log.d(LOG_TAG, "  callbackFragment = " + callbackFragment);
@@ -245,7 +245,7 @@ public class RetainedFragmentHelper {
      *****************************************************/
     public void removeFrom(Activity activity) {
 
-        FragmentManager fragmentManager = activity.getFragmentManager();
+        final FragmentManager fragmentManager = activity.getFragmentManager();
 
         if (fragmentManager != null) {
             fragmentManager

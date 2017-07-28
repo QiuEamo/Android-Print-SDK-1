@@ -71,14 +71,15 @@ import ly.kite.widget.LabelledImageView;
  * This is the parent class of Kite SDK fragments.
  *
  *****************************************************/
-abstract public class AKiteFragment extends Fragment {
+public abstract class AKiteFragment extends Fragment {
     ////////// Static Constant(s) //////////
+
+    protected static final String BUNDLE_KEY_PRODUCT = "product";
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "AKiteFragment";
 
     private static final String BUNDLE_KEY_MANAGED_ADAPTOR_VIEW_POSITION = "managedAdaptorViewPosition";
-    static protected final String BUNDLE_KEY_PRODUCT = "product";
 
     ////////// Static Variable(s) //////////
 
@@ -152,7 +153,7 @@ abstract public class AKiteFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
 
-        int itemId = menuItem.getItemId();
+        final int itemId = menuItem.getItemId();
 
         if (itemId == R.id.basket_menu_item) {
             BasketActivity.startForResult(mKiteActivity, AKiteActivity.ACTIVITY_REQUEST_CODE_GO_TO_BASKET);
@@ -301,25 +302,25 @@ abstract public class AKiteFragment extends Fragment {
     protected Drawable getBasketActionIcon() {
         // Get the number of items in the basket
 
-        int itemCount = OrderingDataAgent.getInstance(getActivity()).getItemCount();
+        final int itemCount = OrderingDataAgent.getInstance(getActivity()).getItemCount();
 
-        Resources resources = getResources();
+        final Resources resources = getResources();
 
-        Bitmap basketBitmap = BitmapFactory.decodeResource(resources, (itemCount > 0 ? R.drawable.ic_basket_items : R.drawable
-                .ic_basket_empty));
+        final Bitmap basketBitmap =
+                BitmapFactory.decodeResource(resources, itemCount > 0 ? R.drawable.ic_basket_items : R.drawable.ic_basket_empty);
 
         if (basketBitmap == null) {
             return null;
         }
 
-        int width = basketBitmap.getWidth();
-        int height = basketBitmap.getHeight();
+        final int width = basketBitmap.getWidth();
+        final int height = basketBitmap.getHeight();
 
-        Bitmap targetBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        final Bitmap targetBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-        Canvas targetCanvas = new Canvas(targetBitmap);
+        final Canvas targetCanvas = new Canvas(targetBitmap);
 
-        Rect rect = new Rect(0, 0, width, height);
+        final Rect rect = new Rect(0, 0, width, height);
 
         // Draw the base bitmap
         targetCanvas.drawBitmap(basketBitmap, rect, rect, null);
@@ -327,20 +328,20 @@ abstract public class AKiteFragment extends Fragment {
         if (itemCount > 0) {
             // Draw the quantity text
 
-            float quantityTextSize = resources.getDimension(R.dimen.basket_action_icon_quantity_text_size);
+            final float quantityTextSize = resources.getDimension(R.dimen.basket_action_icon_quantity_text_size);
 
-            Paint paint = new Paint();
+            final Paint paint = new Paint();
             paint.setTextSize(quantityTextSize);
             paint.setColor(resources.getColor(R.color.basket_action_icon_quantity_text));
             paint.setTextAlign(Paint.Align.CENTER);
 
-            TypedValue insetValue = new TypedValue();
+            final TypedValue insetValue = new TypedValue();
 
             resources.getValue(R.dimen.basket_action_icon_quantity_text_horizontal_inset, insetValue, true);
-            float horizontalInsetProportion = insetValue.getFloat();
+            final float horizontalInsetProportion = insetValue.getFloat();
 
             resources.getValue(R.dimen.basket_action_icon_quantity_text_vertical_inset, insetValue, true);
-            float verticalInsetProportion = insetValue.getFloat();
+            final float verticalInsetProportion = insetValue.getFloat();
 
             targetCanvas.drawText(String.valueOf(itemCount), width - (horizontalInsetProportion * width), verticalInsetProportion *
                     height, paint);
@@ -381,7 +382,7 @@ abstract public class AKiteFragment extends Fragment {
     protected void setThemeColour(int themeColour, View contentView, int viewId) {
 
         if (contentView != null) {
-            View view = contentView.findViewById(viewId);
+            final View view = contentView.findViewById(viewId);
 
             setThemeColour(themeColour, view);
         }

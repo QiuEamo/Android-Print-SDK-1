@@ -56,17 +56,17 @@ import ly.kite.ordering.Order;
  * This class is the parent of shipping activities.
  *
  *****************************************************/
-abstract public class AShippingActivity extends AKiteActivity {
+public abstract class AShippingActivity extends AKiteActivity {
     ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "AShippingActivity";
 
     public static final String KEY_ORDER = "ly.kite.order";
     public static final String KEY_SHIPPING_ADDRESS = "ly.kite.shippingaddress";
     public static final String KEY_EMAIL = "ly.kite.email";
     public static final String KEY_PHONE = "ly.kite.phone";
     public static final String KEY_ADDITIONAL_PARAMETERS = "ly.kite.additionalparameters";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AShippingActivity";
 
     ////////// Static Variable(s) //////////
 
@@ -116,7 +116,7 @@ abstract public class AShippingActivity extends AKiteActivity {
 
             addShippingAddress(order.getShippingAddress(), intent);
 
-            JSONObject userData = order.getUserData();
+            final JSONObject userData = order.getUserData();
 
             if (userData != null) {
                 addEmail(userData.optString("email"), intent);
@@ -125,7 +125,7 @@ abstract public class AShippingActivity extends AKiteActivity {
 
             // Add any additional parameters
 
-            HashMap<String, String> additionalParametersMap = order.getAdditionalParameters();
+            final HashMap<String, String> additionalParametersMap = order.getAdditionalParameters();
 
             if (additionalParametersMap != null) {
                 intent.putExtra(KEY_ADDITIONAL_PARAMETERS, additionalParametersMap);

@@ -52,7 +52,7 @@ import android.os.Bundle;
  * and providing callbacks.
  *
  *****************************************************/
-abstract public class ARetainedFragment extends Fragment {
+public abstract class ARetainedFragment extends Fragment {
     ////////// Static Constant(s) //////////
 
     private static final String LOG_TAG = "ARetainedFragment";
@@ -65,6 +65,13 @@ abstract public class ARetainedFragment extends Fragment {
 
     ////////// Static Initialiser(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public ARetainedFragment(Class<?> callbackClass) {
+
+        mRetainedFragmentHelper = new RetainedFragmentHelper(this, callbackClass);
+    }
+
     ////////// Static Method(s) //////////
 
     /*****************************************************
@@ -72,15 +79,15 @@ abstract public class ARetainedFragment extends Fragment {
      * Tries to find this fragment, and returns it.
      *
      *****************************************************/
-    static protected Fragment findFragment(Activity activity, String tag, Class<? extends ARetainedFragment> fragmentClass) {
+    protected static Fragment findFragment(Activity activity, String tag, Class<? extends ARetainedFragment> fragmentClass) {
 
-        FragmentManager fragmentManager = activity.getFragmentManager();
+        final FragmentManager fragmentManager = activity.getFragmentManager();
 
         if (fragmentManager != null) {
-            Fragment foundFragment = fragmentManager.findFragmentByTag(tag);
+            final Fragment foundFragment = fragmentManager.findFragmentByTag(tag);
 
             if (foundFragment != null) {
-                Class<?> foundFragmentClass = foundFragment.getClass();
+                final Class<?> foundFragmentClass = foundFragment.getClass();
 
                 if (foundFragmentClass.equals(fragmentClass)) {
                     return foundFragment;
@@ -89,13 +96,6 @@ abstract public class ARetainedFragment extends Fragment {
         }
 
         return null;
-    }
-
-    ////////// Constructor(s) //////////
-
-    public ARetainedFragment(Class<?> callbackClass) {
-
-        mRetainedFragmentHelper = new RetainedFragmentHelper(this, callbackClass);
     }
 
     ////////// DialogFragment Method(s) //////////
@@ -183,7 +183,7 @@ abstract public class ARetainedFragment extends Fragment {
 
         super.setTargetFragment(null, 0);
 
-        Activity activity = fragment.getActivity();
+        final Activity activity = fragment.getActivity();
 
         if (activity != null) {
             removeFrom(activity);

@@ -140,22 +140,22 @@ public class PosterAdaptor extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        ImageViewHolder imageViewHolder = (ImageViewHolder) viewHolder;
+        final ImageViewHolder imageViewHolder = (ImageViewHolder) viewHolder;
 
         // We don't need to remove any previously visible images, because everything is always visible
 
         // Set up the new image
 
-        imageViewHolder.imageIndex = position;
+        imageViewHolder.mImageIndex = position;
 
-        CheckableImageContainerFrame checkableImageContainerFrame = imageViewHolder.checkableImageContainerFrame;
-        ImageView addImageView = imageViewHolder.addImageView;
+        final CheckableImageContainerFrame checkableImageContainerFrame = imageViewHolder.mCheckableImageContainerFrame;
+        final ImageView addImageView = imageViewHolder.mAddImageView;
 
         mVisibleCheckableImageSet.add(checkableImageContainerFrame);
         mVisibleCheckableImageArray.put(position, checkableImageContainerFrame);
 
         // Get the matching image spec
-        ImageSpec imageSpec = getImageSpecAt(position);
+        final ImageSpec imageSpec = getImageSpecAt(position);
 
         if (imageSpec != null) {
             addImageView.setVisibility(View.INVISIBLE);
@@ -205,7 +205,7 @@ public class PosterAdaptor extends RecyclerView.Adapter {
         if (inSelectionMode != mInSelectionMode) {
             mInSelectionMode = inSelectionMode;
 
-            CheckableImageContainerFrame.State newState;
+            final CheckableImageContainerFrame.State newState;
 
             if (inSelectionMode) {
                 mSelectedAssetIndexHashSet.clear();
@@ -217,10 +217,10 @@ public class PosterAdaptor extends RecyclerView.Adapter {
 
             // Check all the visible check image containers to show their check circle
 
-            Iterator<CheckableImageContainerFrame> visibleCheckableImageIterator = mVisibleCheckableImageSet.iterator();
+            final Iterator<CheckableImageContainerFrame> visibleCheckableImageIterator = mVisibleCheckableImageSet.iterator();
 
             while (visibleCheckableImageIterator.hasNext()) {
-                CheckableImageContainerFrame checkableImage = visibleCheckableImageIterator.next();
+                final CheckableImageContainerFrame checkableImage = visibleCheckableImageIterator.next();
 
                 checkableImage.setState(newState);
             }
@@ -234,14 +234,14 @@ public class PosterAdaptor extends RecyclerView.Adapter {
      *****************************************************/
     public void selectImage(int imageIndex) {
 
-        ImageSpec imageSpec = mImageSpecArrayList.get(imageIndex);
+        final ImageSpec imageSpec = mImageSpecArrayList.get(imageIndex);
 
         if (imageSpec != null) {
             mSelectedAssetIndexHashSet.add(imageIndex);
 
             // If the image for this asset is visible, set its state
 
-            CheckableImageContainerFrame visibleCheckableImage = mVisibleCheckableImageArray.get(imageIndex);
+            final CheckableImageContainerFrame visibleCheckableImage = mVisibleCheckableImageArray.get(imageIndex);
 
             if (visibleCheckableImage != null) {
                 visibleCheckableImage.setState(CheckableImageContainerFrame.State.CHECKED);
@@ -281,10 +281,10 @@ public class PosterAdaptor extends RecyclerView.Adapter {
         if (assetIndex != mCurrentlyHighlightedAssetIndex) {
             clearHighlightedAsset();
 
-            CheckableImageContainerFrame newHighlightedCheckableImage = mVisibleCheckableImageArray.get(assetIndex);
+            final CheckableImageContainerFrame newHighlightedCheckableImage = mVisibleCheckableImageArray.get(assetIndex);
 
             if (newHighlightedCheckableImage != null) {
-                Resources resources = mActivity.getResources();
+                final Resources resources = mActivity.getResources();
 
                 newHighlightedCheckableImage.setHighlightBorderSizePixels(resources.getDimensionPixelSize(R.dimen
                         .checkable_image_highlight_border_size));
@@ -304,8 +304,8 @@ public class PosterAdaptor extends RecyclerView.Adapter {
     public void clearHighlightedAsset() {
 
         if (mCurrentlyHighlightedAssetIndex >= 0) {
-            CheckableImageContainerFrame currentlyHighlightedCheckableImage = mVisibleCheckableImageArray.get
-                    (mCurrentlyHighlightedAssetIndex, null);
+            final CheckableImageContainerFrame currentlyHighlightedCheckableImage
+                    = mVisibleCheckableImageArray.get(mCurrentlyHighlightedAssetIndex, null);
 
             if (currentlyHighlightedCheckableImage != null) {
                 currentlyHighlightedCheckableImage.setHighlightBorderShowing(false);
@@ -323,7 +323,7 @@ public class PosterAdaptor extends RecyclerView.Adapter {
      *****************************************************/
     void rejectAddImage(ImageView imageView) {
         // Get the animation set and start it
-        Animation animation = AnimationUtils.loadAnimation(mActivity, R.anim.reject_add_image);
+        final Animation animation = AnimationUtils.loadAnimation(mActivity, R.anim.reject_add_image);
 
         imageView.startAnimation(animation);
     }
@@ -350,19 +350,19 @@ public class PosterAdaptor extends RecyclerView.Adapter {
      *****************************************************/
     private class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
-        int imageIndex;
-        CheckableImageContainerFrame checkableImageContainerFrame;
-        ImageView addImageView;
+        int mImageIndex;
+        CheckableImageContainerFrame mCheckableImageContainerFrame;
+        ImageView mAddImageView;
 
         ImageViewHolder(View view) {
 
             super(view);
 
-            this.checkableImageContainerFrame = (CheckableImageContainerFrame) view.findViewById(R.id.checkable_image_container_frame);
-            this.addImageView = (ImageView) view.findViewById(R.id.add_image_view);
+            this.mCheckableImageContainerFrame = (CheckableImageContainerFrame) view.findViewById(R.id.checkable_image_container_frame);
+            this.mAddImageView = (ImageView) view.findViewById(R.id.add_image_view);
 
-            this.checkableImageContainerFrame.setOnClickListener(this);
-            this.checkableImageContainerFrame.setOnLongClickListener(this);
+            this.mCheckableImageContainerFrame.setOnClickListener(this);
+            this.mCheckableImageContainerFrame.setOnLongClickListener(this);
         }
 
         ////////// View.OnClickListener Method(s) //////////
@@ -370,27 +370,27 @@ public class PosterAdaptor extends RecyclerView.Adapter {
         @Override
         public void onClick(View view) {
 
-            if (view == this.checkableImageContainerFrame) {
+            if (view == this.mCheckableImageContainerFrame) {
                 if (mInSelectionMode) {
-                    ImageSpec imageSpec = getImageSpecAt(this.imageIndex);
+                    final ImageSpec imageSpec = getImageSpecAt(this.mImageIndex);
 
                     if (imageSpec != null) {
-                        if (!mSelectedAssetIndexHashSet.contains(this.imageIndex)) {
-                            mSelectedAssetIndexHashSet.add(this.imageIndex);
+                        if (!mSelectedAssetIndexHashSet.contains(this.mImageIndex)) {
+                            mSelectedAssetIndexHashSet.add(this.mImageIndex);
 
-                            this.checkableImageContainerFrame.setChecked(true);
+                            this.mCheckableImageContainerFrame.setChecked(true);
                         } else {
-                            mSelectedAssetIndexHashSet.remove(this.imageIndex);
+                            mSelectedAssetIndexHashSet.remove(this.mImageIndex);
 
-                            this.checkableImageContainerFrame.setChecked(false);
+                            this.mCheckableImageContainerFrame.setChecked(false);
                         }
 
                         onSelectedImagesChanged();
                     } else {
-                        rejectAddImage(this.addImageView);
+                        rejectAddImage(this.mAddImageView);
                     }
                 } else {
-                    mListener.onClickImage(this.imageIndex, view);
+                    mListener.onClickImage(this.mImageIndex, view);
                 }
             }
         }
@@ -401,9 +401,9 @@ public class PosterAdaptor extends RecyclerView.Adapter {
         public boolean onLongClick(View view) {
 
             if (!mInSelectionMode) {
-                if (view == this.checkableImageContainerFrame) {
-                    if (getImageSpecAt(this.imageIndex) != null) {
-                        mListener.onLongClickImage(this.imageIndex, this.checkableImageContainerFrame);
+                if (view == this.mCheckableImageContainerFrame) {
+                    if (getImageSpecAt(this.mImageIndex) != null) {
+                        mListener.onLongClickImage(this.mImageIndex, this.mCheckableImageContainerFrame);
 
                         return true;
                     }

@@ -52,25 +52,25 @@ import java.util.HashMap;
  *
  *****************************************************/
 public class MultipleUnitSize implements Parcelable {
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<MultipleUnitSize> CREATOR = new Parcelable.Creator<MultipleUnitSize>() {
+        public MultipleUnitSize createFromParcel(Parcel sourceParcel) {
+
+            return new MultipleUnitSize(sourceParcel);
+        }
+
+        public MultipleUnitSize[] newArray(int size) {
+
+            return new MultipleUnitSize[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "MultipleUnitSize";
 
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<MultipleUnitSize> CREATOR =
-            new Parcelable.Creator<MultipleUnitSize>() {
-                public MultipleUnitSize createFromParcel(Parcel sourceParcel) {
-
-                    return new MultipleUnitSize(sourceParcel);
-                }
-
-                public MultipleUnitSize[] newArray(int size) {
-
-                    return new MultipleUnitSize[size];
-                }
-            };
 
     ////////// Member Variable(s) //////////
 
@@ -92,7 +92,7 @@ public class MultipleUnitSize implements Parcelable {
 
         this();
 
-        int count = sourceParcel.readInt();
+        final int count = sourceParcel.readInt();
 
         for (int index = 0; index < count; index++) {
             add((SingleUnitSize) sourceParcel.readParcelable(SingleUnitSize.class.getClassLoader()));

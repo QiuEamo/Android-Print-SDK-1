@@ -91,16 +91,16 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
         EditImageFragment.ICallback,
         EditBorderTextImageFragment.ICallback,
         OrderingDataAgent.IAddListener {
-    ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "ProductCreationActivity";
+    ////////// Static Constant(s) //////////
 
     public static final String INTENT_EXTRA_NAME_BASKET_ITEM_ID = KiteSDK.INTENT_PREFIX + ".basketItemId";
     public static final String INTENT_EXTRA_NAME_ORDER_QUANTITY = KiteSDK.INTENT_PREFIX + ".orderQuantity";
     public static final String INTENT_EXTRA_NAME_PRODUCT = KiteSDK.INTENT_PREFIX + ".product";
     public static final String INTENT_EXTRA_NAME_OPTIONS_MAP = KiteSDK.INTENT_PREFIX + ".optionsMap";
 
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "ProductCreationActivity";
     private static final String BUNDLE_KEY_IMAGE_SPEC_LIST = "imageSpecList";
     private static final String BUNDLE_KEY_LAST_EDITED_IMAGE_INDEX = "lastEditedImageIndex";
 
@@ -147,9 +147,11 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
 
             case FRAME:
             case POSTCARD:
+
+            default:
+                return false;
         }
 
-        return false;
     }
 
     /*****************************************************
@@ -165,7 +167,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
                                       int orderQuantity,
                                       int requestCode) {
 
-        Intent intent = new Intent(activity, ProductCreationActivity.class);
+        final Intent intent = new Intent(activity, ProductCreationActivity.class);
 
         intent.putExtra(INTENT_EXTRA_NAME_BASKET_ITEM_ID, basketItemId);
         intent.putExtra(INTENT_EXTRA_NAME_PRODUCT, product);
@@ -231,7 +233,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
 
         // Get the intent extras
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         if (intent == null) {
             Log.e(LOG_TAG, "No intent found");
@@ -348,7 +350,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
         // Check for a custom image editor result
 
         if (requestCode == ACTIVITY_REQUEST_CODE_EDIT_IMAGE && resultCode == RESULT_OK) {
-            AssetFragment assetFragment = mCustomImageEditorAgent.getAssetFragment(resultIntent);
+            final AssetFragment assetFragment = mCustomImageEditorAgent.getAssetFragment(resultIntent);
 
             onImageEdited(assetFragment);
 
@@ -418,7 +420,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
     public void isOnNext() {
         // Move forward to the review and edit screen
 
-        ReviewAndEditFragment reviewAndEditFragment = ReviewAndEditFragment.newInstance(mProduct);
+        final ReviewAndEditFragment reviewAndEditFragment = ReviewAndEditFragment.newInstance(mProduct);
 
         addFragment(reviewAndEditFragment, ReviewAndEditFragment.TAG);
     }
@@ -622,6 +624,9 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
             case POSTER:
                 addFragment(PosterFragment.newInstance(mProduct), PosterFragment.TAG);
                 break;
+
+            default:
+                break;
         }
     }
 
@@ -656,12 +661,12 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
         mLastEditedImageIndex = imageIndex;
 
         // Get the asset we want to edit
-        ImageSpec imageSpec = mImageSpecArrayList.get(imageIndex);
+        final ImageSpec imageSpec = mImageSpecArrayList.get(imageIndex);
 
         // Start the edit fragment. By default we use the edit image fragment, but this can be
         // overridden within an app to use a custom editor.
 
-        ICustomImageEditorAgent customImageEditorAgent = mSDKCustomiser.getCustomImageEditorAgent();
+        final ICustomImageEditorAgent customImageEditorAgent = mSDKCustomiser.getCustomImageEditorAgent();
 
         if (customImageEditorAgent != null) {
             mCustomImageEditorAgent = customImageEditorAgent;
@@ -671,7 +676,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
 
         // If the product supports border text - launch the border text image editor
         else if (mProduct.flagIsSet(Product.Flag.SUPPORTS_TEXT_ON_BORDER)) {
-            EditBorderTextImageFragment borderTextImageFragment = EditBorderTextImageFragment.newInstance(mProduct, imageSpec
+            final EditBorderTextImageFragment borderTextImageFragment = EditBorderTextImageFragment.newInstance(mProduct, imageSpec
                     .getAssetFragment(), imageSpec.getBorderText());
 
             addFragment(borderTextImageFragment, EditBorderTextImageFragment.TAG);
@@ -679,7 +684,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
 
         // Fall back to the standard image editor
         else {
-            EditImageFragment editImageFragment = EditImageFragment.newInstance(mProduct, imageSpec.getAssetFragment());
+            final EditImageFragment editImageFragment = EditImageFragment.newInstance(mProduct, imageSpec.getAssetFragment());
 
             addFragment(editImageFragment, EditImageFragment.TAG);
         }
@@ -693,7 +698,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
     public void onImageEdited(AssetFragment assetFragment, String borderText) {
         // Replace the edited asset with the new one
 
-        ImageSpec imageSpec = mImageSpecArrayList.get(mLastEditedImageIndex);
+        final ImageSpec imageSpec = mImageSpecArrayList.get(mLastEditedImageIndex);
 
         imageSpec.setImage(assetFragment, mProduct.getId());
         imageSpec.setBorderText(borderText);
@@ -702,15 +707,15 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
         // identifies itself as wanting to be notified by implementing the IUpdatedAssetListener
         // interface.
 
-        int entryCount = mFragmentManager.getBackStackEntryCount();
+        final int entryCount = mFragmentManager.getBackStackEntryCount();
 
         for (int entryIndex = 0; entryIndex < entryCount; entryIndex++) {
-            FragmentManager.BackStackEntry entry = mFragmentManager.getBackStackEntryAt(entryIndex);
+            final FragmentManager.BackStackEntry entry = mFragmentManager.getBackStackEntryAt(entryIndex);
 
             if (entry != null) {
-                String fragmentName = entry.getName();
+                final String fragmentName = entry.getName();
 
-                Fragment fragment = mFragmentManager.findFragmentByTag(fragmentName);
+                final Fragment fragment = mFragmentManager.findFragmentByTag(fragmentName);
 
                 if (fragment != null && fragment instanceof IUpdatedImageListener) {
                     ((IUpdatedImageListener) fragment).onImageUpdated(mLastEditedImageIndex, imageSpec);
@@ -751,7 +756,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
      *****************************************************/
     private void onNewBasketItem(List<ImageSpec> imageSpecList) {
 
-        OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(this);
+        final OrderingDataAgent orderingDataAgent = OrderingDataAgent.getInstance(this);
 
         if (mInEditMode) {
             showProgressDialog(R.string.progress_dialog_title_updating_basket);
@@ -774,7 +779,7 @@ public class ProductCreationActivity extends AKiteActivity implements IImageSpec
      *****************************************************/
     private void onNewBasketItem(AssetFragment assetFragment) {
 
-        List<ImageSpec> imageSpecList = new ArrayList<>(1);
+        final List<ImageSpec> imageSpecList = new ArrayList<>(1);
 
         imageSpecList.add(new ImageSpec(assetFragment, 1));
 

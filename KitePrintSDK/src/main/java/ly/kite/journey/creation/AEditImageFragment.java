@@ -73,11 +73,11 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
         AImageSource.IAssetConsumer {
     ////////// Static Constant(s) //////////
 
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "AEditImageFragment";
-
     public static final String BUNDLE_KEY_PRODUCT = "product";
     private static final String BUNDLE_KEY_IMAGE_ASSET_FRAGMENT = "imageAssetFragment";
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AEditImageFragment";
 
     ////////// Static Variable(s) //////////
 
@@ -115,7 +115,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
      *****************************************************/
     protected AEditImageFragment(Product product, AssetFragment imageAssetFragment) {
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
 
         arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
@@ -150,7 +150,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
 
         // Check for arguments
 
-        Bundle arguments = getArguments();
+        final Bundle arguments = getArguments();
 
         if (arguments == null) {
             Log.e(LOG_TAG, "No arguments found");
@@ -206,7 +206,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
      *****************************************************/
     public View onCreateView(LayoutInflater layoutInflator, int layoutResourceId, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(layoutResourceId, container, false);
+        final View view = layoutInflator.inflate(layoutResourceId, container, false);
 
         super.onViewCreated(view);
 
@@ -411,7 +411,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
     @Override
     public void isacOnAssets(List<Asset> assetList) {
 
-        Asset replacementAsset = Asset.findFirst(assetList);
+        final Asset replacementAsset = Asset.findFirst(assetList);
 
         if (replacementAsset != null) {
             mUnmodifiedImageAssetFragment = new AssetFragment(replacementAsset);
@@ -447,14 +447,14 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
     @Override
     protected boolean onCheckCustomOptionItem(MenuItem item) {
 
-        int itemId = item.getItemId();
+        final int itemId = item.getItemId();
 
         if (!mTransformOperationInProgress) {
             if (itemId == R.id.rotate_anticlockwise_menu_item) {
                 ///// Rotate /////
 
                 if (mEditableImageContainerFrame != null) {
-                    ImageProcessingRequest.Builder builder;
+                    final ImageProcessingRequest.Builder builder;
 
                     if (mModifiedAsset != null) {
                         builder = ImageAgent.with(mKiteActivity)
@@ -478,7 +478,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
                 ///// Flip /////
 
                 if (mEditableImageContainerFrame != null) {
-                    ImageProcessingRequest.Builder builder;
+                    final ImageProcessingRequest.Builder builder;
 
                     if (mModifiedAsset != null) {
                         builder = ImageAgent.with(mKiteActivity)
@@ -565,7 +565,8 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
             return;
         }
 
-        RectF imageProportionalCropRectangle = mEditableImageContainerFrame.getEditableImageView().getImageProportionalCropRectangle();
+        final RectF imageProportionalCropRectangle =
+                mEditableImageContainerFrame.getEditableImageView().getImageProportionalCropRectangle();
 
         // Sometimes users can hit the next button before we've actually got all the images, so check
         // for this.
@@ -576,7 +577,7 @@ public abstract class AEditImageFragment extends AProductCreationFragment implem
             return;
         }
 
-        Asset asset = (mModifiedAsset != null ? mModifiedAsset : mUnmodifiedImageAssetFragment.getAsset());
+        final Asset asset = mModifiedAsset != null ? mModifiedAsset : mUnmodifiedImageAssetFragment.getAsset();
 
         onEditingComplete(new AssetFragment(asset, imageProportionalCropRectangle));
     }

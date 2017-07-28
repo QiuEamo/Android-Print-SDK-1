@@ -54,10 +54,6 @@ import ly.kite.image.ImageAgent;
  *
  *****************************************************/
 public class AssetFragment implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "AssetFragment";
 
     ////////// Static Variable(s) //////////
 
@@ -73,6 +69,11 @@ public class AssetFragment implements Parcelable {
         }
     };
 
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "AssetFragment";
+
     ////////// Member Variable(s) //////////
 
     private Asset mAsset;
@@ -82,25 +83,6 @@ public class AssetFragment implements Parcelable {
     private RectF mProportionalRectangle;
 
     ////////// Static Initialiser(s) //////////
-
-    ////////// Static Method(s) //////////
-
-    /*****************************************************
-     *
-     * Returns true if both the asset fragments are null, or equal.
-     *
-     *****************************************************/
-    public static boolean areBothNullOrEqual(AssetFragment assetFragment1, AssetFragment assetFragment2) {
-
-        if (assetFragment1 == null && assetFragment2 == null) {
-            return true;
-        }
-        if (assetFragment1 == null || assetFragment2 == null) {
-            return false;
-        }
-
-        return assetFragment1.equals(assetFragment2);
-    }
 
     ////////// Constructor(s) //////////
 
@@ -120,6 +102,25 @@ public class AssetFragment implements Parcelable {
 
         mAsset = sourceParcel.readParcelable(Asset.class.getClassLoader());
         mProportionalRectangle = sourceParcel.readParcelable(RectF.class.getClassLoader());
+    }
+
+    ////////// Static Method(s) //////////
+
+    /*****************************************************
+     *
+     * Returns true if both the asset fragments are null, or equal.
+     *
+     *****************************************************/
+    public static boolean areBothNullOrEqual(AssetFragment assetFragment1, AssetFragment assetFragment2) {
+
+        if (assetFragment1 == null && assetFragment2 == null) {
+            return true;
+        }
+        if (assetFragment1 == null || assetFragment2 == null) {
+            return false;
+        }
+
+        return assetFragment1.equals(assetFragment2);
     }
 
     ////////// Parcelable Method(s) //////////
@@ -156,7 +157,7 @@ public class AssetFragment implements Parcelable {
      *****************************************************/
     public AssetFragment setProportionalRectangle(RectF proportionalRectangle) {
 
-        mProportionalRectangle = (proportionalRectangle != null ? proportionalRectangle : ImageAgent.FULL_PROPORTIONAL_RECTANGLE);
+        mProportionalRectangle = proportionalRectangle != null ? proportionalRectangle : ImageAgent.FULL_PROPORTIONAL_RECTANGLE;
 
         return this;
     }
@@ -178,10 +179,10 @@ public class AssetFragment implements Parcelable {
      *****************************************************/
     public boolean isFullSize() {
 
-        return (mProportionalRectangle.left <= 0.0f &&
+        return mProportionalRectangle.left <= 0.0f &&
                 mProportionalRectangle.top <= 0.0f &&
                 mProportionalRectangle.right >= 1.0f &&
-                mProportionalRectangle.bottom >= 1.0f);
+                mProportionalRectangle.bottom >= 1.0f;
     }
 
     /*****************************************************
@@ -192,7 +193,7 @@ public class AssetFragment implements Parcelable {
     @Override
     public String toString() {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder
                 .append(mAsset.toString())
@@ -219,14 +220,14 @@ public class AssetFragment implements Parcelable {
             return false;
         }
 
-        AssetFragment otherAssetFragment = (AssetFragment) otherObject;
+        final AssetFragment otherAssetFragment = (AssetFragment) otherObject;
 
         if (otherAssetFragment == this) {
             return true;
         }
 
-        return (mAsset.equals(otherAssetFragment.mAsset) &&
-                mProportionalRectangle.equals(otherAssetFragment.mProportionalRectangle));
+        return mAsset.equals(otherAssetFragment.mAsset) &&
+                mProportionalRectangle.equals(otherAssetFragment.mProportionalRectangle);
     }
 
     ////////// Inner Class(es) //////////

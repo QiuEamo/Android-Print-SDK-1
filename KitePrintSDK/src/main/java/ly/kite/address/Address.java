@@ -51,10 +51,6 @@ import ly.kite.util.StringUtils;
  *
  *****************************************************/
 public class Address implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "Address";
 
     ////////// Static Variable(s) //////////
 
@@ -70,6 +66,11 @@ public class Address implements Parcelable {
         }
     };
 
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "Address";
+
     ////////// Member Variable(s) //////////
 
     private String mId;
@@ -82,6 +83,36 @@ public class Address implements Parcelable {
     private Country mCountry;
 
     ////////// Static Initialiser(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public Address() {
+
+    }
+
+    public Address(String recipientName, String line1, String line2, String city, String stateOrCounty, String zipOrPostalCode, Country
+            country) {
+
+        mRecipientName = recipientName;
+        mLine1 = line1;
+        mLine2 = line2;
+        mCity = city;
+        mStateOrCounty = stateOrCounty;
+        mZIPOrPostalCode = zipOrPostalCode;
+        mCountry = country;
+    }
+
+    private Address(Parcel parcel) {
+
+        mId = parcel.readString();
+        mRecipientName = parcel.readString();
+        mLine1 = parcel.readString();
+        mLine2 = parcel.readString();
+        mCity = parcel.readString();
+        mStateOrCounty = parcel.readString();
+        mZIPOrPostalCode = parcel.readString();
+        mCountry = Country.getInstance(parcel.readString());
+    }
 
     ////////// Static Method(s) //////////
 
@@ -120,44 +151,14 @@ public class Address implements Parcelable {
      *****************************************************/
     public static Address getKiteTeamAddress() {
 
-        return (new Address(
+        return new Address(
                 "Kite Tech Ltd.",
                 "6-8 Bonhill Street",
                 null,
                 "London",
                 null,
                 "EC2A 4BX",
-                Country.getInstance("GBR")));
-    }
-
-    ////////// Constructor(s) //////////
-
-    public Address() {
-
-    }
-
-    public Address(String recipientName, String line1, String line2, String city, String stateOrCounty, String zipOrPostalCode, Country
-            country) {
-
-        mRecipientName = recipientName;
-        mLine1 = line1;
-        mLine2 = line2;
-        mCity = city;
-        mStateOrCounty = stateOrCounty;
-        mZIPOrPostalCode = zipOrPostalCode;
-        mCountry = country;
-    }
-
-    private Address(Parcel parcel) {
-
-        mId = parcel.readString();
-        mRecipientName = parcel.readString();
-        mLine1 = parcel.readString();
-        mLine2 = parcel.readString();
-        mCity = parcel.readString();
-        mStateOrCounty = parcel.readString();
-        mZIPOrPostalCode = parcel.readString();
-        mCountry = Country.getInstance(parcel.readString());
+                Country.getInstance("GBR"));
     }
 
     ////////// Parcelable Method(s) //////////
@@ -281,7 +282,7 @@ public class Address implements Parcelable {
     public String toDisplayText(String newlineString) {
         //if ( displayName != null ) return  displayName ;
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         String separator = "";
 
@@ -331,7 +332,7 @@ public class Address implements Parcelable {
             separator = newlineString;
         }
 
-        String countryDisplayName;
+        final String countryDisplayName;
 
         if (mCountry != null && isPopulated(countryDisplayName = mCountry.displayName())) {
             stringBuilder
@@ -344,7 +345,7 @@ public class Address implements Parcelable {
 
     String getDisplayAddressWithoutRecipient() {
 
-        StringBuilder strBuilder = new StringBuilder();
+        final StringBuilder strBuilder = new StringBuilder();
 
         if (mLine1 != null && mLine1.trim().length() > 0) {
             strBuilder.append(strBuilder.length() > 0 ? ", " : "").append(mLine1);
@@ -371,12 +372,12 @@ public class Address implements Parcelable {
     @Override
     public String toString() {
 
-        StringBuilder strBuilder = new StringBuilder();
+        final StringBuilder strBuilder = new StringBuilder();
 
         if (mRecipientName != null && mRecipientName.trim().length() > 0) {
             strBuilder.append(mRecipientName);
         }
-        String addressWithoutRecipient = getDisplayAddressWithoutRecipient();
+        final String addressWithoutRecipient = getDisplayAddressWithoutRecipient();
         if (addressWithoutRecipient != null && addressWithoutRecipient.trim().length() > 0) {
             strBuilder.append(strBuilder.length() > 0 ? ", " : "").append(addressWithoutRecipient);
         }
@@ -391,15 +392,15 @@ public class Address implements Parcelable {
             return false;
         }
 
-        Address otherAddress = (Address) otherObject;
+        final Address otherAddress = (Address) otherObject;
 
-        return (StringUtils.areBothNullOrEqual(mRecipientName, otherAddress.mRecipientName) &&
+        return StringUtils.areBothNullOrEqual(mRecipientName, otherAddress.mRecipientName) &&
                 StringUtils.areBothNullOrEqual(mLine1, otherAddress.mLine1) &&
                 StringUtils.areBothNullOrEqual(mLine2, otherAddress.mLine2) &&
                 StringUtils.areBothNullOrEqual(mCity, otherAddress.mCity) &&
                 StringUtils.areBothNullOrEqual(mStateOrCounty, otherAddress.mStateOrCounty) &&
                 StringUtils.areBothNullOrEqual(mZIPOrPostalCode, otherAddress.mZIPOrPostalCode) &&
-                Country.areBothNullOrEqual(mCountry, otherAddress.mCountry));
+                Country.areBothNullOrEqual(mCountry, otherAddress.mCountry);
     }
 
     ////////// Inner Class(es) //////////
