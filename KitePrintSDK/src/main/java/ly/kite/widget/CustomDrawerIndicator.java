@@ -37,10 +37,6 @@ import java.lang.annotation.RetentionPolicy;
  * a 'burger'-style menu icon and an arrow, and will animate between them.
  */
 public class CustomDrawerIndicator extends Drawable {
-    private static final String LOG_TAG = "DrawerIndicator";
-
-    private static final boolean DEBUGGING_ENABLED = false;
-
     /**
      * Direction to make the arrow point towards the left.
      */
@@ -60,6 +56,9 @@ public class CustomDrawerIndicator extends Drawable {
      * Direction to make the arrow point to the end.
      */
     public static final int ARROW_DIRECTION_END = 3;
+
+    private static final String LOG_TAG = "DrawerIndicator";
+    private static final boolean DEBUGGING_ENABLED = false;
 
     /**
      * @hide
@@ -87,7 +86,7 @@ public class CustomDrawerIndicator extends Drawable {
      */
     public CustomDrawerIndicator(Context context, int showDrawableResourceId, int hideDrawableResourceId) {
 
-        Resources resources = context.getResources();
+        final Resources resources = context.getResources();
 
         mShowDrawable = resources.getDrawable(showDrawableResourceId);
         mHideDrawable = resources.getDrawable(hideDrawableResourceId);
@@ -153,7 +152,7 @@ public class CustomDrawerIndicator extends Drawable {
             Log.d(LOG_TAG, "draw( canvas = " + canvas + " )");
         }
 
-        Rect bounds = getBounds();
+        final Rect bounds = getBounds();
 
         final boolean flipToPointRight;
         switch (mDirection) {
@@ -174,14 +173,14 @@ public class CustomDrawerIndicator extends Drawable {
                 break;
         }
 
-// The whole canvas rotates as the transition happens
+        // The whole canvas rotates as the transition happens
         final float canvasRotate = lerp(
                 flipToPointRight ? 0 : -180,
                 flipToPointRight ? 180 : 0,
                 mProgress);
 
-        int centerX = bounds.centerX();
-        int centerY = bounds.centerY();
+        final int centerX = bounds.centerX();
+        final int centerY = bounds.centerY();
 
         if (DEBUGGING_ENABLED) {
             Log.d(LOG_TAG, "  mVerticalMirror = " + mVerticalMirror + ", flipToPointRight = " + flipToPointRight + ", canvasRotate = " +
@@ -192,7 +191,7 @@ public class CustomDrawerIndicator extends Drawable {
 
         canvasRotationForHideDrawable = canvasRotate * ((mVerticalMirror ^ flipToPointRight) ? -1 : 1);
 
-        float canvasRotationForShowDrawable = canvasRotationForHideDrawable + 180;
+        final float canvasRotationForShowDrawable = canvasRotationForHideDrawable + 180;
 
         canvas.save();
 

@@ -53,13 +53,10 @@ import java.util.List;
 public class MonthEditTextEnforcer extends ALimitedRangeEditTextEnforcer {
     ////////// Static Constant(s) //////////
 
+    public static final String[] VALID_STRINGS = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" };
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "MonthEditTextEnforcer";
-
-    public static final String[] VALID_STRINGS =
-            {
-                    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
-            };
 
     ////////// Static Variable(s) //////////
 

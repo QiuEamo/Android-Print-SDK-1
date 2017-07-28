@@ -61,10 +61,6 @@ import ly.kite.util.UploadableImage;
  *
  *****************************************************/
 public class PhotobookJob extends ImagesJob {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "PhotobookJob";
 
     ////////// Static Variable(s) //////////
 
@@ -79,6 +75,11 @@ public class PhotobookJob extends ImagesJob {
             return new PhotobookJob[size];
         }
     };
+
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "PhotobookJob";
 
     ////////// Member Variable(s) //////////
 
@@ -132,7 +133,7 @@ public class PhotobookJob extends ImagesJob {
     public List<UploadableImage> getImagesForUploading() {
         // Create a new list, and add the front cover to it
 
-        ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
+        final ArrayList<UploadableImage> uploadableImageArrayList = new ArrayList<>();
 
         if (mFrontCoverUploadableImage != null) {
             uploadableImageArrayList.add(mFrontCoverUploadableImage);
@@ -173,7 +174,7 @@ public class PhotobookJob extends ImagesJob {
     @Override
     protected void putAssetsJSON(List<UploadableImage> uploadableImageList, JSONObject jsonObject) throws JSONException {
 
-        JSONObject assetsJSONObject = new JSONObject();
+        final JSONObject assetsJSONObject = new JSONObject();
 
         assetsJSONObject.put("back_cover", JSONObject.NULL);
         assetsJSONObject.put("inside_pdf", JSONObject.NULL);
@@ -189,7 +190,7 @@ public class PhotobookJob extends ImagesJob {
 
         // Add the content pages
 
-        JSONArray pagesJSONArray = new JSONArray();
+        final JSONArray pagesJSONArray = new JSONArray();
 
         for (UploadableImage uploadableImage : uploadableImageList) {
             pagesJSONArray.put(getPageJSONObject(uploadableImage));
@@ -207,7 +208,7 @@ public class PhotobookJob extends ImagesJob {
      *****************************************************/
     protected JSONObject getPageJSONObject(UploadableImage uploadableImage) throws JSONException {
 
-        JSONObject pageJSONObject = new JSONObject();
+        final JSONObject pageJSONObject = new JSONObject();
 
         if (uploadableImage != null) {
             pageJSONObject.put("layout", "single_centered");
@@ -237,7 +238,7 @@ public class PhotobookJob extends ImagesJob {
     @Override
     public int getQuantity() {
 
-        int quantity = super.getQuantity();
+        final int quantity = super.getQuantity();
 
         if (quantity < 1) {
             return mFrontCoverUploadableImage != null ? 1 : 0;
@@ -271,7 +272,7 @@ public class PhotobookJob extends ImagesJob {
             return false;
         }
 
-        PhotobookJob otherPhotobookJob = (PhotobookJob) otherObject;
+        final PhotobookJob otherPhotobookJob = (PhotobookJob) otherObject;
 
         if (!UploadableImage.areBothNullOrEqual(mFrontCoverUploadableImage, otherPhotobookJob.mFrontCoverUploadableImage)) {
             return false;

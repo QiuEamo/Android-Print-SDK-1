@@ -111,9 +111,9 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
      *****************************************************/
     public static PhotobookFragment newInstance(Product product) {
 
-        PhotobookFragment fragment = new PhotobookFragment();
+        final PhotobookFragment fragment = new PhotobookFragment();
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
         arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
         fragment.setArguments(arguments);
@@ -146,7 +146,7 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.screen_photobook, container, false);
+        final View view = layoutInflator.inflate(R.layout.screen_photobook, container, false);
 
         super.onViewCreated(view);
 
@@ -276,7 +276,7 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
     @Override
     public void onClick(View view) {
 
-        TextView proceedTextView = getForwardsTextView();
+        final TextView proceedTextView = getForwardsTextView();
 
         if (view == proceedTextView) {
             ///// Checkout /////
@@ -285,7 +285,7 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
                 mKiteActivity.displayModalDialog(R.string.alert_dialog_title_oops, R.string.alert_dialog_message_no_images_selected, R
                         .string.OK, null, 0, null);
             } else if (mKiteActivity instanceof ICallback) {
-                int expectedImageCount = mFrontCoverPlaceableImageCount + mProduct.getQuantityPerSheet();
+                final int expectedImageCount = mFrontCoverPlaceableImageCount + mProduct.getQuantityPerSheet();
 
                 // Pages can be blank, so to calculate the actual number of images we need to go through
                 // them all.
@@ -413,18 +413,18 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
     @Override
     public boolean onDrag(View view, DragEvent event) {
 
-        int action = event.getAction();
+        final int action = event.getAction();
 
         if (action == DragEvent.ACTION_DRAG_STARTED) {
             return true;
         } else if (action == DragEvent.ACTION_DRAG_LOCATION) {
             // Get the location
-            float x = event.getX();
-            float y = event.getY();
+            final float x = event.getX();
+            final float y = event.getY();
 
             // Get the asset that we are currently dragged over
 
-            int currentAssetIndex = imageIndexFromPoint((int) x, (int) y);
+            final int currentAssetIndex = imageIndexFromPoint((int) x, (int) y);
 
             if (currentAssetIndex >= 0) {
                 // We only highlight the target image if it is different from the dragged one
@@ -441,8 +441,8 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
             return true;
         } else if (action == DragEvent.ACTION_DROP) {
             // Get the location
-            float x = event.getX();
-            float y = event.getY();
+            final float x = event.getX();
+            final float y = event.getY();
 
             onEndDrag((int) x, (int) y);
 
@@ -465,7 +465,7 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
         // action, in case more images are selected and we want to disable
         // it.
 
-        MenuInflater inflator = mode.getMenuInflater();
+        final MenuInflater inflator = mode.getMenuInflater();
 
         inflator.inflate(R.menu.photobook_action_mode, menu);
 
@@ -497,10 +497,10 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-        int itemId = item.getItemId();
+        final int itemId = item.getItemId();
 
         // Get the selected assets
-        HashSet<Integer> selectedAssetIndexHashSet = mPhotobookAdaptor.getSelectedAssets();
+        final HashSet<Integer> selectedAssetIndexHashSet = mPhotobookAdaptor.getSelectedAssets();
 
         // Determine which action was clicked
 
@@ -510,10 +510,10 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
             // Launch the edit screen for the chosen asset. There should be only one selected asset
             // so just grab the first.
 
-            Iterator<Integer> assetIndexIterator = selectedAssetIndexHashSet.iterator();
+            final Iterator<Integer> assetIndexIterator = selectedAssetIndexHashSet.iterator();
 
             if (assetIndexIterator.hasNext()) {
-                int selectedAssetIndex = assetIndexIterator.next();
+                final int selectedAssetIndex = assetIndexIterator.next();
 
                 if (selectedAssetIndex >= 0) {
                     if (mKiteActivity instanceof ICallback) {
@@ -589,7 +589,7 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
         mPhotobookAdaptor.clearHighlightedAsset();
 
         // Determine which asset the drag ended on
-        int dropImageIndex = imageIndexFromPoint(dropX, dropY);
+        final int dropImageIndex = imageIndexFromPoint(dropX, dropY);
 
         if (dropImageIndex >= 0) {
             // Make sure we haven't dropped the image back on itself
@@ -597,8 +597,8 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
             if (dropImageIndex != mDraggedImageIndex) {
                 // Simply swap the two positions
 
-                ImageSpec draggedImageSpec = mImageSpecArrayList.get(mDraggedImageIndex);
-                ImageSpec dropImageSpec = mImageSpecArrayList.get(dropImageIndex);
+                final ImageSpec draggedImageSpec = mImageSpecArrayList.get(mDraggedImageIndex);
+                final ImageSpec dropImageSpec = mImageSpecArrayList.get(dropImageIndex);
 
                 mImageSpecArrayList.set(dropImageIndex, draggedImageSpec);
                 mImageSpecArrayList.set(mDraggedImageIndex, dropImageSpec);
@@ -616,14 +616,14 @@ public class PhotobookFragment extends AProductCreationFragment implements Photo
      *****************************************************/
     private int imageIndexFromPoint(int x, int y) {
 
-        int position = mPhotobookView.positionFromPoint(x, y);
+        final int position = mPhotobookView.positionFromPoint(x, y);
 
         if (position == PhotobookAdaptor.FRONT_COVER_POSITION) {
             return mFrontCoverPlaceableImageCount - 1;
         } else if (position >= PhotobookAdaptor.CONTENT_START_POSITION) {
-            return (mFrontCoverPlaceableImageCount +
+            return mFrontCoverPlaceableImageCount +
                     ((position - PhotobookAdaptor.CONTENT_START_POSITION) * 2) +
-                    (x > (mPhotobookView.getWidth() / 2) ? 1 : 0));
+                    (x > (mPhotobookView.getWidth() / 2) ? 1 : 0);
         }
 
         return -1;

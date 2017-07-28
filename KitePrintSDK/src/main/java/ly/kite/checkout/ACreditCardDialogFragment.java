@@ -67,7 +67,7 @@ import ly.kite.widget.YearEditTextEnforcer;
  * collect credit card details.
  *
  *****************************************************/
-abstract public class ACreditCardDialogFragment extends ARetainedDialogFragment implements AEditTextEnforcer.ICallback,
+public abstract class ACreditCardDialogFragment extends ARetainedDialogFragment implements AEditTextEnforcer.ICallback,
         View.OnClickListener {
     ////////// Static Constant(s) //////////
 
@@ -124,7 +124,7 @@ abstract public class ACreditCardDialogFragment extends ARetainedDialogFragment 
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.dialog_credit_card, container, false);
+        final View view = layoutInflator.inflate(R.layout.dialog_credit_card, container, false);
 
         mCardNumberEditText = (EditText) view.findViewById(R.id.card_number_edit_text);
         mExpiryMonthEditText = (EditText) view.findViewById(R.id.expiry_month_edit_text);
@@ -155,7 +155,7 @@ abstract public class ACreditCardDialogFragment extends ARetainedDialogFragment 
         if (mExpiryYearEditText != null) {
             // The valid years are from now until the maximum allowed expiry
 
-            int firstYear = Calendar.getInstance().get(Calendar.YEAR);
+            final int firstYear = Calendar.getInstance().get(Calendar.YEAR);
 
             new YearEditTextEnforcer(mExpiryYearEditText, firstYear, firstYear + MAX_CARD_VALIDITY_IN_YEARS, this);
         }
@@ -242,10 +242,10 @@ abstract public class ACreditCardDialogFragment extends ARetainedDialogFragment 
      *****************************************************/
     private void onProceed() {
 
-        String cardNumberString = StringUtils.getDigitString(mCardNumberEditText.getText().toString());
-        String expiryMonthString = StringUtils.getDigitString(mExpiryMonthEditText.getText().toString());
-        String expiryYearString = StringUtils.getDigitString(mExpiryYearEditText.getText().toString());
-        String cvvString = StringUtils.getDigitString(mCVVEditText.getText().toString());
+        final String cardNumberString = StringUtils.getDigitString(mCardNumberEditText.getText().toString());
+        final String expiryMonthString = StringUtils.getDigitString(mExpiryMonthEditText.getText().toString());
+        final String expiryYearString = StringUtils.getDigitString(mExpiryYearEditText.getText().toString());
+        final String cvvString = StringUtils.getDigitString(mCVVEditText.getText().toString());
 
         onProceed(cardNumberString,
                 expiryMonthString,

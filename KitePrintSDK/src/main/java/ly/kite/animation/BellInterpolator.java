@@ -92,9 +92,9 @@ public class BellInterpolator implements Interpolator {
     @Override
     public float getInterpolation(float input) {
 
-        float xMinusHalf = input - 0.5f;
+        final float xMinusHalf = input - 0.5f;
 
-        float interpolation = (float) (mConstantMultiplier * Math.exp(mExponentMultiplier * (xMinusHalf * xMinusHalf)));
+        final float interpolation = (float) (mConstantMultiplier * Math.exp(mExponentMultiplier * (xMinusHalf * xMinusHalf)));
 
         //if ( mShowDebugOutput ) Log.d( TAG, "f(" + input + ") = " + interpolation );
 

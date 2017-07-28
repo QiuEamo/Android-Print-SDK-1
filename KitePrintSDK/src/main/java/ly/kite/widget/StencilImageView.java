@@ -142,13 +142,13 @@ public class StencilImageView extends ImageView {
      * Draws the image view.
      *
      *****************************************************/
-//  @Override
-//  public void onDraw( Canvas canvas )
-//    {
-//    Drawable imageDrawable = getDrawable();
-//
-//    imageDrawable.draw( canvas );
-//    }
+    //  @Override
+    //  public void onDraw( Canvas canvas )
+    //    {
+    //    Drawable imageDrawable = getDrawable();
+    //
+    //    imageDrawable.draw( canvas );
+    //    }
 
     ////////// Method(s) //////////
 
@@ -193,8 +193,8 @@ public class StencilImageView extends ImageView {
 
         // Create a bitmap and canvas for drawing the stencilled image
 
-        Bitmap blendedBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
-        Canvas blendCanvas = new Canvas(blendedBitmap);
+        final Bitmap blendedBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.ARGB_8888);
+        final Canvas blendCanvas = new Canvas(blendedBitmap);
 
         blendCanvas.drawColor(0x00000000);
 
@@ -205,12 +205,12 @@ public class StencilImageView extends ImageView {
         // Draw the bitmap on the canvas using the stencil alpha. Make sure the bitmap maintains its aspect
         // ratio, but is cropped if necessary.
 
-        Paint paint = new Paint();
+        final Paint paint = new Paint();
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
 
-        Rect sourceRect = ImageAgent.getCropRectangle(mOriginalImageBitmap.getWidth(), mOriginalImageBitmap.getHeight(), (float)
+        final Rect sourceRect = ImageAgent.getCropRectangle(mOriginalImageBitmap.getWidth(), mOriginalImageBitmap.getHeight(), (float)
                 mViewWidth / (float) mViewHeight);
-        Rect targetRect = new Rect(0, 0, mViewWidth, mViewHeight);
+        final Rect targetRect = new Rect(0, 0, mViewWidth, mViewHeight);
 
         blendCanvas.drawBitmap(mOriginalImageBitmap, sourceRect, targetRect, paint);
 

@@ -85,7 +85,7 @@ public class ChooseProductGroupFragment extends AGroupOrProductFragment {
      *****************************************************/
     public static ChooseProductGroupFragment newInstance(String... productIds) {
 
-        ChooseProductGroupFragment fragment = new ChooseProductGroupFragment();
+        final ChooseProductGroupFragment fragment = new ChooseProductGroupFragment();
 
         addCommonArguments(fragment, productIds);
 
@@ -117,10 +117,10 @@ public class ChooseProductGroupFragment extends AGroupOrProductFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
         // Get the parent grid view
-        View view = super.onCreateView(layoutInflator, R.layout.screen_choose_product_group, container, savedInstanceState);
+        final View view = super.onCreateView(layoutInflator, R.layout.screen_choose_product_group, container, savedInstanceState);
 
         if (savedInstanceState == null) {
-            Analytics analytics = Analytics.getInstance(mKiteActivity);
+            final Analytics analytics = Analytics.getInstance(mKiteActivity);
 
             analytics.trackSDKLoaded(Analytics.ENTRY_POINT_JSON_PROPERTY_VALUE_HOME_SCREEN);
             analytics.trackCategoryListScreenViewed();
@@ -196,10 +196,10 @@ public class ChooseProductGroupFragment extends AGroupOrProductFragment {
         onSaveManagedAdaptorViewPosition(position);
 
         if (mKiteActivity instanceof ChooseProductFragment.ICallback) {
-            ICallback callback = (ICallback) mKiteActivity;
+            final ICallback callback = (ICallback) mKiteActivity;
 
             // Convert the position into an adaptor index
-            int adaptorIndex = mGridView.adaptorIndexFromPosition(position);
+            final int adaptorIndex = mGridView.adaptorIndexFromPosition(position);
 
             // If a header / footer image is clicked - call back to the activity
 
@@ -211,7 +211,7 @@ public class ChooseProductGroupFragment extends AGroupOrProductFragment {
 
             // Get the product group and call back to the activity with it
 
-            ProductGroup chosenProductGroup = mProductGroupList.get(adaptorIndex);
+            final ProductGroup chosenProductGroup = mProductGroupList.get(adaptorIndex);
 
             callback.pgOnProductGroupChosen(chosenProductGroup);
         }

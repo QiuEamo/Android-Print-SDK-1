@@ -64,6 +64,22 @@ public class ImageViewConsumer implements IImageConsumer {
 
     private ImageView mImageView;
 
+    ////////// Constructor(s) //////////
+
+    public ImageViewConsumer(Object key, ImageView imageView) {
+
+        if (key == null) {
+            throw new IllegalArgumentException("No key supplied");
+        }
+        if (imageView == null) {
+            throw new IllegalArgumentException("No image view supplied");
+        }
+
+        mImageView = imageView;
+
+        imageView.setTag(R.id.image_view_consumer_key, key);
+    }
+
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
@@ -78,22 +94,6 @@ public class ImageViewConsumer implements IImageConsumer {
         imageView.setTag(R.id.image_view_consumer_key, null);
     }
 
-    ////////// Constructor(s) //////////
-
-    public ImageViewConsumer(Object key, ImageView imageView) {
-
-        if (key == null) {
-            throw (new IllegalArgumentException("No key supplied"));
-        }
-        if (imageView == null) {
-            throw (new IllegalArgumentException("No image view supplied"));
-        }
-
-        mImageView = imageView;
-
-        imageView.setTag(R.id.image_view_consumer_key, key);
-    }
-
     ////////// IImageConsumer Method(s) //////////
 
     /*****************************************************
@@ -104,7 +104,7 @@ public class ImageViewConsumer implements IImageConsumer {
     @Override
     public void onImageDownloading(Object key) {
 
-        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
+        final Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
         if (imageViewKey != null && imageViewKey.equals(key)) {
             // Currently do nothing, although we could display
@@ -115,7 +115,7 @@ public class ImageViewConsumer implements IImageConsumer {
     @Override
     public void onImageAvailable(Object key, Bitmap bitmap) {
 
-        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
+        final Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
         if (imageViewKey != null && imageViewKey.equals(key)) {
             clearKey(mImageView);
@@ -127,7 +127,7 @@ public class ImageViewConsumer implements IImageConsumer {
     @Override
     public void onImageUnavailable(Object key, Exception exception) {
 
-        Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
+        final Object imageViewKey = mImageView.getTag(R.id.image_view_consumer_key);
 
         if (imageViewKey != null && imageViewKey.equals(key)) {
             Log.e(LOG_TAG, "Unable to load image for key: " + key, exception);

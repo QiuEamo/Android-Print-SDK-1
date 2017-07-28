@@ -78,8 +78,8 @@ public class BasketItem {
     public BasketItem(long id, Product product, int orderQuantity, HashMap<String, String> optionsMap, ArrayList<ImageSpec>
             imageSpecList, int shippingClass) {
 
-        int i;
-        Catalogue catalogue;
+        final int i;
+        final Catalogue catalogue;
         mId = id;
         mProduct = product;
         mOrderQuantity = orderQuantity;
@@ -185,7 +185,7 @@ public class BasketItem {
         if (mImageSpecList != null) {
             for (ImageSpec imageSpec : mImageSpecList) {
                 if (imageSpec != null) {
-                    AssetFragment assetFragment = imageSpec.getAssetFragment();
+                    final AssetFragment assetFragment = imageSpec.getAssetFragment();
 
                     if (assetFragment != null) {
                         return assetFragment;

@@ -71,6 +71,18 @@ public class PhoneCaseFragment extends AEditImageFragment {
 
     ////////// Member Variable(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public PhoneCaseFragment() {
+
+    }
+
+    @SuppressLint("ValidFragment")
+    private PhoneCaseFragment(Product product) {
+
+        super(product);
+    }
+
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
@@ -83,18 +95,6 @@ public class PhoneCaseFragment extends AEditImageFragment {
     public static PhoneCaseFragment newInstance(Product product) {
 
         return new PhoneCaseFragment(product);
-    }
-
-    ////////// Constructor(s) //////////
-
-    public PhoneCaseFragment() {
-
-    }
-
-    @SuppressLint("ValidFragment")
-    private PhoneCaseFragment(Product product) {
-
-        super(product);
     }
 
     ////////// AEditImageFragment Method(s) //////////
@@ -131,7 +131,7 @@ public class PhoneCaseFragment extends AEditImageFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = super.onCreateView(layoutInflator, container, savedInstanceState);
+        final View view = super.onCreateView(layoutInflator, container, savedInstanceState);
 
         setBackwardsTextViewVisibility(View.GONE);
 
@@ -155,7 +155,7 @@ public class PhoneCaseFragment extends AEditImageFragment {
         // last one in the list - the most recently selected.
 
         if (mUnmodifiedImageAssetFragment == null) {
-            int imageSpecCount = (mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0);
+            final int imageSpecCount = mImageSpecArrayList != null ? mImageSpecArrayList.size() : 0;
 
             if (imageSpecCount > 0) {
                 mUnmodifiedImageAssetFragment = mImageSpecArrayList.get(imageSpecCount - 1).getAssetFragment();
@@ -163,9 +163,9 @@ public class PhoneCaseFragment extends AEditImageFragment {
         }
 
         if (mEditableImageContainerFrame != null) {
-            Resources resources = getResources();
+            final Resources resources = getResources();
 
-            TypedValue anchorPointValue = new TypedValue();
+            final TypedValue anchorPointValue = new TypedValue();
 
             resources.getValue(R.dimen.edit_phone_case_anchor_point, anchorPointValue, true);
 

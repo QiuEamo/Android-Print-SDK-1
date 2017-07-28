@@ -313,6 +313,17 @@ public enum Country {
     private String mISO3CurrencyCode;
     private boolean mIsInEurope;
 
+    ////////// Constructor(s) //////////
+
+    private Country(String displayName, String iso2Code, String iso3Code, String iso3CurrencyCode, boolean isInEurope) {
+
+        mDisplayName = displayName;
+        mISO2Code = iso2Code;
+        mISO3Code = iso3Code;
+        mISO3CurrencyCode = iso3CurrencyCode;
+        mIsInEurope = isInEurope;
+    }
+
     ////////// Static Initialiser(s) //////////
 
     static {
@@ -349,7 +360,7 @@ public enum Country {
     public static Country getInstance(Locale locale) {
 
         if (locale == null) {
-            throw (new IllegalArgumentException("Please provide a non null locale"));
+            throw new IllegalArgumentException("Please provide a non null locale");
         }
 
         return Country.getInstance(locale.getISO3Country());
@@ -385,17 +396,6 @@ public enum Country {
     public static boolean areBothNullOrEqual(Country country1, Country country2) {
 
         return country1 == country2;
-    }
-
-    ////////// Constructor(s) //////////
-
-    private Country(String displayName, String iso2Code, String iso3Code, String iso3CurrencyCode, boolean isInEurope) {
-
-        mDisplayName = displayName;
-        mISO2Code = iso2Code;
-        mISO3Code = iso3Code;
-        mISO3CurrencyCode = iso3CurrencyCode;
-        mIsInEurope = isInEurope;
     }
 
     ////////// Method(s) //////////

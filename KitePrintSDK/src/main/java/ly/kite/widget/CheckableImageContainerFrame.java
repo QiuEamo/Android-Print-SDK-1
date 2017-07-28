@@ -121,9 +121,9 @@ public class CheckableImageContainerFrame extends AAREImageContainerFrame {
     @Override
     protected View onCreateView(Context context, AttributeSet attributeSet, int defaultStyle) {
 
-        LayoutInflater layoutInflator = LayoutInflater.from(context);
+        final LayoutInflater layoutInflator = LayoutInflater.from(context);
 
-        View view = layoutInflator.inflate(R.layout.checkable_image_container_frame, this, true);
+        final View view = layoutInflator.inflate(R.layout.checkable_image_container_frame, this, true);
 
         mCheckImageView = (ImageView) view.findViewById(R.id.check_image_view);
 
@@ -196,6 +196,8 @@ public class CheckableImageContainerFrame extends AAREImageContainerFrame {
                 mCheckImageView.setImageResource(R.drawable.check_on);
                 mCheckImageView.setVisibility(View.VISIBLE);
                 break;
+
+            default:
         }
 
         invalidate();
@@ -255,8 +257,8 @@ public class CheckableImageContainerFrame extends AAREImageContainerFrame {
      *****************************************************/
     public void transitionChecked(boolean isChecked) {
 
-        State previousState = mState;
-        State newState = setChecked(isChecked);
+        final State previousState = mState;
+        final State newState = setChecked(isChecked);
 
         // We only animate for the following transitions:
         //   - UNCHECKED_INVISIBLE -> CHECKED

@@ -112,8 +112,8 @@ public class DefaultPaymentFragment extends APaymentFragment {
         // Find a suitable substitution
 
         if (originalProofOfPayment.startsWith(PAYPAL_PROOF_OF_PAYMENT_PREFIX_ORIGINAL)) {
-            return (PAYPAL_PROOF_OF_PAYMENT_PREFIX_AUTHORISATION + originalProofOfPayment.substring
-                    (PAYPAL_PROOF_OF_PAYMENT_PREFIX_ORIGINAL.length()));
+            return PAYPAL_PROOF_OF_PAYMENT_PREFIX_AUTHORISATION + originalProofOfPayment.substring
+                    (PAYPAL_PROOF_OF_PAYMENT_PREFIX_ORIGINAL.length());
         }
 
         // If we can't find a substitution - return the original unchanged
@@ -132,7 +132,7 @@ public class DefaultPaymentFragment extends APaymentFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflater.inflate(R.layout.fragment_default_payment, container, false);
+        final View view = layoutInflater.inflate(R.layout.fragment_default_payment, container, false);
 
         mPayPalTextView = (TextView) view.findViewById(R.id.paypal_text_view);
 
@@ -278,16 +278,16 @@ public class DefaultPaymentFragment extends APaymentFragment {
 
         if (requestCode == ACTIVITY_REQUEST_CODE_PAYPAL) {
             if (resultCode == Activity.RESULT_OK) {
-                PaymentConfirmation paymentConfirmation = data.getParcelableExtra(com.paypal.android.sdk.payments.PaymentActivity
+                final PaymentConfirmation paymentConfirmation = data.getParcelableExtra(com.paypal.android.sdk.payments.PaymentActivity
                         .EXTRA_RESULT_CONFIRMATION);
 
                 if (paymentConfirmation != null) {
                     try {
 
-                        ProofOfPayment proofOfPayment = paymentConfirmation.getProofOfPayment();
+                        final ProofOfPayment proofOfPayment = paymentConfirmation.getProofOfPayment();
 
                         if (proofOfPayment != null) {
-                            String paymentId = proofOfPayment.getPaymentId();
+                            final String paymentId = proofOfPayment.getPaymentId();
 
                             if (paymentId != null) {
                                 submitOrderForPrinting(paymentId, KiteSDK.getInstance(getActivity()).getPayPalAccountId(), PaymentMethod
@@ -339,7 +339,7 @@ public class DefaultPaymentFragment extends APaymentFragment {
      *****************************************************/
     private SingleCurrencyAmounts getTotalCost() {
 
-        MultipleCurrencyAmounts totalCostMultiple = mOrderPricing.getTotalCost();
+        final MultipleCurrencyAmounts totalCostMultiple = mOrderPricing.getTotalCost();
 
         if (totalCostMultiple == null) {
             return null;
@@ -355,18 +355,17 @@ public class DefaultPaymentFragment extends APaymentFragment {
      *****************************************************/
     protected ShippingAddress getShippingAddress() {
 
-        Address shippingAddress = mOrder.getShippingAddress();
+        final Address shippingAddress = mOrder.getShippingAddress();
 
         if (shippingAddress != null) {
-            return (
-                    new ShippingAddress()
-                            .recipientName(shippingAddress.getRecipientName())
-                            .line1(shippingAddress.getLine1())
-                            .line2(shippingAddress.getLine2())
-                            .city(shippingAddress.getCity())
-                            .state(shippingAddress.getStateOrCounty())
-                            .postalCode(shippingAddress.getZipOrPostalCode())
-                            .countryCode(shippingAddress.getCountry().iso2Code().toUpperCase()));
+            return new ShippingAddress()
+                    .recipientName(shippingAddress.getRecipientName())
+                    .line1(shippingAddress.getLine1())
+                    .line2(shippingAddress.getLine2())
+                    .city(shippingAddress.getCity())
+                    .state(shippingAddress.getStateOrCounty())
+                    .postalCode(shippingAddress.getZipOrPostalCode())
+                    .countryCode(shippingAddress.getCountry().iso2Code().toUpperCase());
         }
 
         return null;
@@ -379,13 +378,13 @@ public class DefaultPaymentFragment extends APaymentFragment {
      *****************************************************/
     public void onPayPalClicked(View view) {
 
-        SingleCurrencyAmounts totalCost = getTotalCost();
+        final SingleCurrencyAmounts totalCost = getTotalCost();
 
         if (totalCost != null) {
             // Authorise the payment. Payment is actually taken on the server
 
             // TODO: Remove the credit card payment option
-            PayPalPayment payment = new PayPalPayment(
+            final PayPalPayment payment = new PayPalPayment(
                     totalCost.getAmount(),
                     totalCost.getCurrencyCode(),
                     "Product",
@@ -393,13 +392,13 @@ public class DefaultPaymentFragment extends APaymentFragment {
 
             // Add any shipping address
 
-            ShippingAddress shippingAddress = getShippingAddress();
+            final ShippingAddress shippingAddress = getShippingAddress();
 
             if (shippingAddress != null) {
                 payment.providedShippingAddress(getShippingAddress());
             }
 
-            Intent intent = new Intent(getActivity(), com.paypal.android.sdk.payments.PaymentActivity.class);
+            final Intent intent = new Intent(getActivity(), com.paypal.android.sdk.payments.PaymentActivity.class);
 
             intent.putExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_PAYMENT, payment);
 

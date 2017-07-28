@@ -56,13 +56,13 @@ import ly.kite.util.Asset;
  * An image source.
  *
  *****************************************************/
-abstract public class AImageSource {
+public abstract class AImageSource {
     ///// Static Constant(s) /////
-
-    private static final String LOG_TAG = "AImageSource";
 
     public static final int UNLIMITED_IMAGES = 0;
     public static final int SINGLE_IMAGE = 1;
+
+    private static final String LOG_TAG = "AImageSource";
 
     ///// Member Variable(s) /////
 
@@ -125,12 +125,12 @@ abstract public class AImageSource {
 
         switch (layoutType) {
             case HORIZONTAL:
-
                 return mHorizontalBackgroundColourResourceId;
 
             case VERTICAL:
-
                 return mVerticalBackgroundColourResourceId;
+
+            default:
         }
 
         return 0;
@@ -146,12 +146,12 @@ abstract public class AImageSource {
 
         switch (layoutType) {
             case HORIZONTAL:
-
                 return mHorizontalLayoutIconResourceId;
 
             case VERTICAL:
-
                 return mVerticalLayoutIconResourceId;
+
+            default:
         }
 
         return 0;
@@ -216,7 +216,7 @@ abstract public class AImageSource {
      * Returns true if this image source is available.
      *
      *****************************************************/
-    abstract public boolean isAvailable(Context context);
+    public abstract boolean isAvailable(Context context);
 
     /*****************************************************
      *
@@ -228,12 +228,12 @@ abstract public class AImageSource {
 
         switch (layoutType) {
             case HORIZONTAL:
-
                 return R.layout.grid_item_image_source_horizontal;
 
             case VERTICAL:
-
                 return R.layout.grid_item_image_source_vertical;
+
+            default:
         }
 
         return 0;
@@ -244,7 +244,7 @@ abstract public class AImageSource {
      * Called when this image source is clicked.
      *
      *****************************************************/
-    abstract public void onPick(Fragment fragment, int maxImageCount);
+    public abstract void onPick(Fragment fragment, int maxImageCount);
 
     /*****************************************************
      *
@@ -263,7 +263,7 @@ abstract public class AImageSource {
      *****************************************************/
     public void onPick(Fragment fragment, boolean selectSingleImage) {
 
-        onPick(fragment, (selectSingleImage ? 1 : UNLIMITED_IMAGES));
+        onPick(fragment, selectSingleImage ? 1 : UNLIMITED_IMAGES);
     }
 
     /*****************************************************
@@ -274,7 +274,7 @@ abstract public class AImageSource {
      *****************************************************/
     protected void requestPermissions(String[] permissions, AStartPickerRunnable runnable) {
 
-        Activity activity = runnable.getActivity();
+        final Activity activity = runnable.getActivity();
 
         if (activity instanceof AKiteActivity) {
             ((AKiteActivity) activity).callRunnableWithPermissions(permissions, runnable);
@@ -301,7 +301,7 @@ abstract public class AImageSource {
      * within this method).
      *
      *****************************************************/
-    abstract public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer);
+    public abstract void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer);
 
     /*****************************************************
      *

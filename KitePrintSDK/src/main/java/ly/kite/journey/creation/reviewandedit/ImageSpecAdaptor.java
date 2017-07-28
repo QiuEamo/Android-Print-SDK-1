@@ -145,9 +145,9 @@ public class ImageSpecAdaptor extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // Either re-use the convert view, or create a new one.
 
-        Object tagObject;
-        View view;
-        ViewHolder viewHolder;
+        final Object tagObject;
+        final View view;
+        final ViewHolder viewHolder;
 
         if (convertView != null &&
                 (tagObject = convertView.getTag()) != null &&
@@ -189,8 +189,8 @@ public class ImageSpecAdaptor extends BaseAdapter {
 
         // Set up the view
 
-        ImageSpec imageSpec = (ImageSpec) getItem(position);
-        AssetFragment assetFragment = imageSpec.getAssetFragment();
+        final ImageSpec imageSpec = (ImageSpec) getItem(position);
+        final AssetFragment assetFragment = imageSpec.getAssetFragment();
 
         viewHolder.framedImageView.requestScaledImageOnceSized(assetFragment);
 
@@ -237,56 +237,56 @@ public class ImageSpecAdaptor extends BaseAdapter {
      *
      *****************************************************/
     private class ViewHolder implements View.OnClickListener {
-        FramedImageView framedImageView;
-        TextView borderTextView;
-        TextView quantityTextView;
-        Button decreaseButton;
-        Button increaseButton;
-        TextView editTextView;
+        FramedImageView mFramedImageView;
+        TextView mBorderTextView;
+        TextView mQuantityTextView;
+        Button mDecreaseButton;
+        Button mIncreaseButton;
+        TextView mEditTextView;
 
-        int imageIndex;
+        int mImageIndex;
 
         ViewHolder(View view) {
 
-            this.framedImageView = (FramedImageView) view.findViewById(R.id.framed_image_view);
-            this.borderTextView = (TextView) view.findViewById(R.id.border_text_view);
-            this.quantityTextView = (TextView) view.findViewById(R.id.quantity_text_view);
-            this.decreaseButton = (Button) view.findViewById(R.id.decrease_button);
-            this.increaseButton = (Button) view.findViewById(R.id.increase_button);
-            this.editTextView = (TextView) view.findViewById(R.id.edit_text_view);
+            this.mFramedImageView = (FramedImageView) view.findViewById(R.id.framed_image_view);
+            this.mBorderTextView = (TextView) view.findViewById(R.id.border_text_view);
+            this.mQuantityTextView = (TextView) view.findViewById(R.id.quantity_text_view);
+            this.mDecreaseButton = (Button) view.findViewById(R.id.decrease_button);
+            this.mIncreaseButton = (Button) view.findViewById(R.id.increase_button);
+            this.mEditTextView = (TextView) view.findViewById(R.id.edit_text_view);
         }
 
         @Override
         public void onClick(View view) {
 
-            ImageSpec imageSpec = mImageSpecList.get(this.imageIndex);
+            final ImageSpec imageSpec = mImageSpecList.get(this.mImageIndex);
 
-            if (view == this.framedImageView) {
+            if (view == this.mFramedImageView) {
                 ///// (Image) /////
 
-                mListener.onEdit(this.imageIndex);
-            } else if (view == this.decreaseButton) {
+                mListener.onEdit(this.mImageIndex);
+            } else if (view == this.mDecreaseButton) {
                 ///// Decrease /////
 
                 // If the quantity would go to zero, notify the listener first.
 
                 if (imageSpec.getQuantity() <= 1) {
-                    mListener.onWantsToBeZero(this.imageIndex);
+                    mListener.onWantsToBeZero(this.mImageIndex);
                 } else {
-                    this.quantityTextView.setText(String.valueOf(imageSpec.decrementQuantity()));
+                    this.mQuantityTextView.setText(String.valueOf(imageSpec.decrementQuantity()));
 
-                    mListener.onQuantityChanged(this.imageIndex);
+                    mListener.onQuantityChanged(this.mImageIndex);
                 }
-            } else if (view == this.increaseButton) {
+            } else if (view == this.mIncreaseButton) {
                 ///// Increase /////
 
-                this.quantityTextView.setText(String.valueOf(imageSpec.incrementQuantity()));
+                this.mQuantityTextView.setText(String.valueOf(imageSpec.incrementQuantity()));
 
-                mListener.onQuantityChanged(this.imageIndex);
-            } else if (view == this.editTextView) {
+                mListener.onQuantityChanged(this.mImageIndex);
+            } else if (view == this.mEditTextView) {
                 ///// Edit /////
 
-                mListener.onEdit(this.imageIndex);
+                mListener.onEdit(this.mImageIndex);
             }
         }
     }

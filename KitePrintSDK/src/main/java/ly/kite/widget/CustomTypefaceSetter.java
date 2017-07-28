@@ -58,10 +58,10 @@ import ly.kite.R;
 public class CustomTypefaceSetter {
     ////////// Static Constant(s) //////////
 
+    public static final String CUSTOM_TYPEFACE_STYLE_PREFIX = "custom_typeface_style_";
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "CustomTypefaceSetter";
-
-    public static final String CUSTOM_TYPEFACE_STYLE_PREFIX = "custom_typeface_style_";
 
     ////////// Static Variable(s) //////////
 
@@ -87,15 +87,15 @@ public class CustomTypefaceSetter {
         //   2. The "customTypefaceStyle" attribute ( -> "custom_typeface_style_x" )
         //   3. The R.string.custom_typeface_file_name string
 
-        Resources resources = context.getResources();
+        final Resources resources = context.getResources();
 
         Typeface customTypeface = null;
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CustomTypefaceWidget, defaultStyle,
+            final TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CustomTypefaceWidget, defaultStyle,
                     defaultStyle);
 
-            TypedValue value = new TypedValue();
+            final TypedValue value = new TypedValue();
 
             // 1
             customTypeface = loadTypeface(context, typedArray.getString(R.styleable.CustomTypefaceWidget_customTypefaceAssetName));
@@ -103,12 +103,12 @@ public class CustomTypefaceSetter {
             if (customTypeface == null) {
                 // 2
 
-                String customTypefaceStyle = typedArray.getString(R.styleable.CustomTypefaceWidget_customTypefaceStyle);
+                final String customTypefaceStyle = typedArray.getString(R.styleable.CustomTypefaceWidget_customTypefaceStyle);
 
                 if (customTypefaceStyle != null && !customTypefaceStyle.trim().equals("")) {
-                    String customTypefaceResourceName = CUSTOM_TYPEFACE_STYLE_PREFIX + customTypefaceStyle;
+                    final String customTypefaceResourceName = CUSTOM_TYPEFACE_STYLE_PREFIX + customTypefaceStyle;
 
-                    int customTypefaceAssetNameResourceId = resources.getIdentifier(customTypefaceResourceName, "string", context
+                    final int customTypefaceAssetNameResourceId = resources.getIdentifier(customTypefaceResourceName, "string", context
                             .getPackageName());
 
                     if (customTypefaceAssetNameResourceId != 0) {
@@ -129,10 +129,10 @@ public class CustomTypefaceSetter {
         // current style.
 
         if (customTypeface != null) {
-            Typeface currentTypeface = textView.getTypeface();
+            final Typeface currentTypeface = textView.getTypeface();
 
             if (currentTypeface != null) {
-                int style = currentTypeface.getStyle();
+                final int style = currentTypeface.getStyle();
 
                 textView.setTypeface(customTypeface, style);
             } else {

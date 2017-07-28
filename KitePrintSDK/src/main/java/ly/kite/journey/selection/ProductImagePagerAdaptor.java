@@ -115,17 +115,17 @@ public class ProductImagePagerAdaptor extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         // Get the image URL for the position
-        URL imageURL = mImageURLList.get(position);
+        final URL imageURL = mImageURLList.get(position);
 
         // Inflate the view
 
-        View view = mLayoutInflator.inflate(R.layout.pager_item_product_overview_image, container, false);
+        final View view = mLayoutInflator.inflate(R.layout.pager_item_product_overview_image, container, false);
 
         container.addView(view);
 
         // Set up the view
 
-        LabelledImageView labelledImageView = (LabelledImageView) view.findViewById(R.id.labelled_image_view);
+        final LabelledImageView labelledImageView = (LabelledImageView) view.findViewById(R.id.labelled_image_view);
 
         labelledImageView.setOnClickListener(mOnClickListener);  // The view pager won't respond to click events, so we need to add them
         // to each page

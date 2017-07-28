@@ -51,32 +51,28 @@ import java.util.ArrayList;
  *
  *****************************************************/
 public class ProductOption implements Parcelable {
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<ProductOption> CREATOR = new Parcelable.Creator<ProductOption>() {
+        public ProductOption createFromParcel(Parcel sourceParcel) {
+            return new ProductOption(sourceParcel);
+        }
+
+        public ProductOption[] newArray(int size) {
+            return new ProductOption[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "ProductOption";
 
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<ProductOption> CREATOR =
-            new Parcelable.Creator<ProductOption>() {
-                public ProductOption createFromParcel(Parcel sourceParcel) {
-
-                    return new ProductOption(sourceParcel);
-                }
-
-                public ProductOption[] newArray(int size) {
-
-                    return new ProductOption[size];
-                }
-            };
-
     ////////// Member Variable(s) //////////
 
-    final private String mCode;
-    final private String mName;
-
-    final private ArrayList<Value> mValueList;
+    private final String mCode;
+    private final String mName;
+    private final ArrayList<Value> mValueList;
 
     ////////// Static Initialiser(s) //////////
 
@@ -182,18 +178,15 @@ public class ProductOption implements Parcelable {
     public static class Value implements Parcelable {
         ////////// Static Variable(s) //////////
 
-        public static final Parcelable.Creator<Value> CREATOR =
-                new Parcelable.Creator<Value>() {
-                    public Value createFromParcel(Parcel sourceParcel) {
+        public static final Parcelable.Creator<Value> CREATOR = new Parcelable.Creator<Value>() {
+            public Value createFromParcel(Parcel sourceParcel) {
+                return new Value(sourceParcel);
+            }
 
-                        return new Value(sourceParcel);
-                    }
-
-                    public Value[] newArray(int size) {
-
-                        return new Value[size];
-                    }
-                };
+            public Value[] newArray(int size) {
+                return new Value[size];
+            }
+        };
 
         ////////// Member Variable(s) //////////
 

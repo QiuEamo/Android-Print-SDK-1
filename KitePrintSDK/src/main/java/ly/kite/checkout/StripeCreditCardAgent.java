@@ -147,7 +147,7 @@ public class StripeCreditCardAgent extends ACreditCardDialogFragment implements 
 
         // Create a Stripe card and perform additional validation. If it's OK, use it for payment.
 
-        Card card = getValidatedCard(cardNumberString, expiryMonthString, expiryYearString, cvvString);
+        final Card card = getValidatedCard(cardNumberString, expiryMonthString, expiryYearString, cvvString);
 
         if (card != null) {
             onUseCard(card);
@@ -164,7 +164,11 @@ public class StripeCreditCardAgent extends ACreditCardDialogFragment implements 
         // Create a Stripe card and validate it
 
         try {
-            Card card = new Card(cardNumberString, Integer.parseInt(expiryMonthString), Integer.parseInt(expiryYearString), cvvString);
+            final Card card = new Card(
+                    cardNumberString,
+                    Integer.parseInt(expiryMonthString),
+                    Integer.parseInt(expiryYearString),
+                    cvvString);
 
             if (!card.validateNumber()) {
                 onDisplayError(R.string.card_error_invalid_number);
@@ -202,7 +206,7 @@ public class StripeCreditCardAgent extends ACreditCardDialogFragment implements 
         // we need to do the processing ourselves, and then return the token as the payment id to the
         // Payment Activity.
 
-        String stripePublicKey = KiteSDK.getInstance(mContext).getStripePublicKey();
+        final String stripePublicKey = KiteSDK.getInstance(mContext).getStripePublicKey();
 
         Stripe stripe = null;
 
@@ -240,7 +244,7 @@ public class StripeCreditCardAgent extends ACreditCardDialogFragment implements 
                 @Override
                 public void notify(Object callback) {
 
-                    APaymentFragment paymentFragment = (APaymentFragment) callback;
+                    final APaymentFragment paymentFragment = (APaymentFragment) callback;
 
                     paymentFragment.submitOrderForPrinting(token.getId(), KiteSDK.getInstance(mContext).getStripeAccountId(),
                             PaymentMethod.CREDIT_CARD);
@@ -262,6 +266,7 @@ public class StripeCreditCardAgent extends ACreditCardDialogFragment implements 
             try {
                 onDisplayError(mResources.getString(R.string.stripe_error_retrieve_token) + ": " + exception.getMessage());
             } catch (Exception ignore) {
+                //Ignore
             }
         }
     }

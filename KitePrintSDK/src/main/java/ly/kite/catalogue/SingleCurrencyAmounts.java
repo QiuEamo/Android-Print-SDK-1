@@ -54,27 +54,24 @@ import java.util.Locale;
  *
  *****************************************************/
 public class SingleCurrencyAmounts implements Parcelable {
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<SingleCurrencyAmounts> CREATOR = new Parcelable.Creator<SingleCurrencyAmounts>() {
+        public SingleCurrencyAmounts createFromParcel(Parcel sourceParcel) {
+            return new SingleCurrencyAmounts(sourceParcel);
+        }
+
+        public SingleCurrencyAmounts[] newArray(int size) {
+            return new SingleCurrencyAmounts[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "SingleCurrencyAmounts";
 
     private static final String FORMAL_AMOUNT_FORMAT_STRING = "%1$s %2$.2f";
-
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<SingleCurrencyAmounts> CREATOR =
-            new Parcelable.Creator<SingleCurrencyAmounts>() {
-                public SingleCurrencyAmounts createFromParcel(Parcel sourceParcel) {
-
-                    return new SingleCurrencyAmounts(sourceParcel);
-                }
-
-                public SingleCurrencyAmounts[] newArray(int size) {
-
-                    return new SingleCurrencyAmounts[size];
-                }
-            };
 
     ////////// Member Variable(s) //////////
 
@@ -106,10 +103,10 @@ public class SingleCurrencyAmounts implements Parcelable {
     public SingleCurrencyAmounts(Currency currency, BigDecimal amount, String formattedAmount, BigDecimal originalAmount) {
 
         if (currency == null) {
-            throw (new IllegalArgumentException("Currency must be supplied"));
+            throw new IllegalArgumentException("Currency must be supplied");
         }
         if (amount == null) {
-            throw (new IllegalArgumentException("Amount must be supplied"));
+            throw new IllegalArgumentException("Amount must be supplied");
         }
 
         mCurrency = currency;
@@ -311,17 +308,17 @@ public class SingleCurrencyAmounts implements Parcelable {
             // The locale may not be supported by this device.
             try {
                 // Get the currency used by the locale
-                Currency localeCurrency = Currency.getInstance(locale);
+                final Currency localeCurrency = Currency.getInstance(locale);
 
                 // If the currency matches the current locale's currency, use the number formatter to
                 // format the amount.
                 if (mCurrency.equals(localeCurrency)) {
-                    NumberFormat numberFormatter = NumberFormat.getCurrencyInstance(locale);
+                    final NumberFormat numberFormatter = NumberFormat.getCurrencyInstance(locale);
 
                     return numberFormatter.format(amountAsDouble);
                 }
             } catch (IllegalArgumentException iae) {
-                // Fall through
+                //Ignore
             }
         }
 
@@ -388,9 +385,9 @@ public class SingleCurrencyAmounts implements Parcelable {
      *****************************************************/
     public SingleCurrencyAmounts multipliedBy(int quantity) {
 
-        BigDecimal quantityBigDecimal = BigDecimal.valueOf(quantity);
+        final BigDecimal quantityBigDecimal = BigDecimal.valueOf(quantity);
 
-        BigDecimal multipliedOriginalAmount = (hasOriginalAmount() ? mOriginalAmount.multiply(quantityBigDecimal) : null);
+        final BigDecimal multipliedOriginalAmount = hasOriginalAmount() ? mOriginalAmount.multiply(quantityBigDecimal) : null;
 
         return new SingleCurrencyAmounts(mCurrency, mAmount.multiply(quantityBigDecimal), multipliedOriginalAmount);
     }

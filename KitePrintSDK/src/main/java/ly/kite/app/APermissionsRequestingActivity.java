@@ -56,7 +56,7 @@ import ly.kite.util.StringUtils;
  * This is a parent for activities that request permissions.
  *
  *****************************************************/
-abstract public class APermissionsRequestingActivity extends Activity {
+public abstract class APermissionsRequestingActivity extends Activity {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -137,7 +137,7 @@ abstract public class APermissionsRequestingActivity extends Activity {
 
         // Create a list of the permissions we need
 
-        ArrayList<String> requiredPermissionList = new ArrayList<>(permissions.length);
+        final ArrayList<String> requiredPermissionList = new ArrayList<>(permissions.length);
 
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -147,7 +147,7 @@ abstract public class APermissionsRequestingActivity extends Activity {
 
         // See if we already have the permissions we need
 
-        int requiredPermissionCount = requiredPermissionList.size();
+        final int requiredPermissionCount = requiredPermissionList.size();
 
         if (requiredPermissionCount < 1) {
             runnable.run();
@@ -157,7 +157,7 @@ abstract public class APermissionsRequestingActivity extends Activity {
 
         // Request the permissions we need
 
-        String[] requiredPermissions = new String[requiredPermissionCount];
+        final String[] requiredPermissions = new String[requiredPermissionCount];
 
         requiredPermissionList.toArray(requiredPermissions);
 

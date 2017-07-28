@@ -71,6 +71,18 @@ public class EditImageFragment extends AEditImageFragment {
 
     ////////// Member Variable(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    public EditImageFragment() {
+
+    }
+
+    @SuppressLint("ValidFragment")
+    private EditImageFragment(Product product, AssetFragment imageAssetFragment) {
+
+        super(product, imageAssetFragment);
+    }
+
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
@@ -83,18 +95,6 @@ public class EditImageFragment extends AEditImageFragment {
     public static EditImageFragment newInstance(Product product, AssetFragment imageAssetFragment) {
 
         return new EditImageFragment(product, imageAssetFragment);
-    }
-
-    ////////// Constructor(s) //////////
-
-    public EditImageFragment() {
-
-    }
-
-    @SuppressLint("ValidFragment")
-    private EditImageFragment(Product product, AssetFragment imageAssetFragment) {
-
-        super(product, imageAssetFragment);
     }
 
     ////////// AEditImageFragment Method(s) //////////
@@ -120,11 +120,11 @@ public class EditImageFragment extends AEditImageFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = super.onCreateView(layoutInflator, container, savedInstanceState);
+        final View view = super.onCreateView(layoutInflator, container, savedInstanceState);
 
         // Set the text of the backwards (cancel) button. If it is blank - hide the button.
 
-        String backwardsText = getString(R.string.edit_image_backwards_button_text);
+        final String backwardsText = getString(R.string.edit_image_backwards_button_text);
 
         if (backwardsText != null && backwardsText.trim().length() > 0) {
             setBackwardsTextViewVisibility(View.VISIBLE);
@@ -153,10 +153,10 @@ public class EditImageFragment extends AEditImageFragment {
         if (mEditableImageContainerFrame != null) {
             // Set up the editable image
 
-            Resources resources = getResources();
+            final Resources resources = getResources();
 
-            UserJourneyType userJourneyType = mProduct.getUserJourneyType();
-            EditableMaskedImageView.BorderHighlight borderHighlight = userJourneyType.editBorderHighlight();
+            final UserJourneyType userJourneyType = mProduct.getUserJourneyType();
+            final EditableMaskedImageView.BorderHighlight borderHighlight = userJourneyType.editBorderHighlight();
 
             mEditableImageContainerFrame
                     .setImage(mUnmodifiedImageAssetFragment)

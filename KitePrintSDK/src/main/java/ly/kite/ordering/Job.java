@@ -34,20 +34,43 @@ import ly.kite.util.UploadableImage;
  *
  *****************************************************/
 public abstract class Job implements Parcelable {
+    protected static final String JSON_NAME_POLAROID_TEXT = "polaroid_text";
+
     private static final String JSON_NAME_OPTIONS = "options";
-    static protected final String JSON_NAME_POLAROID_TEXT = "polaroid_text";
 
     private long mId;  // The id from the basket database
-    transient private Product mProduct;  // Stop the product being serialised
+    private transient Product mProduct;  // Stop the product being serialised
     private int mOrderQuantity;
     private final HashMap<String, String> mOptionsMap;
     private int mShippingClass;
+
+    ////////// Constructor(s) //////////
+
+    protected Job(long id, Product product, int orderQuantity, HashMap<String, String> optionsMap, int shippingClass) {
+
+        mId = id;
+        mProduct = product;
+        mOrderQuantity = orderQuantity;
+        mOptionsMap = optionsMap != null ? optionsMap : new HashMap<String, String>(0);
+        mShippingClass = shippingClass;
+    }
+
+    protected Job(Parcel sourceParcel) {
+
+        mId = sourceParcel.readLong();
+        mProduct = Product.CREATOR.createFromParcel(sourceParcel);
+        mOrderQuantity = sourceParcel.readInt();
+        mOptionsMap = sourceParcel.readHashMap(HashMap.class.getClassLoader());
+        mShippingClass = sourceParcel.readInt();
+    }
+
+    ////////// Abstract Method(s) //////////
 
     public abstract BigDecimal getCost(String currencyCode);
 
     public abstract Set<String> getCurrenciesSupported();
 
-    abstract public int getQuantity();
+    public abstract int getQuantity();
 
     abstract List<UploadableImage> getImagesForUploading();
 
@@ -91,7 +114,7 @@ public abstract class Job implements Parcelable {
 
     public static Job createPrintJob(Product product, HashMap<String, String> optionsMap, Object image, int shippingClass) {
 
-        List<UploadableImage> singleImageSpecList = new ArrayList<>(1);
+        final List<UploadableImage> singleImageSpecList = new ArrayList<>(1);
 
         singleImageSpecList.add(singleUploadableImageFrom(image));
 
@@ -135,8 +158,8 @@ public abstract class Job implements Parcelable {
     public static GreetingCardJob createGreetingCardJob(Product product, int orderQuantity, HashMap<String, String> optionsMap, Object
             frontImage, Object backImage, Object insideLeftImage, Object insideRightImage, int shippingClass) {
 
-        return (new GreetingCardJob(product, orderQuantity, optionsMap, frontImage, backImage, insideLeftImage, insideRightImage,
-                shippingClass));
+        return new GreetingCardJob(product, orderQuantity, optionsMap, frontImage, backImage, insideLeftImage, insideRightImage,
+                shippingClass);
     }
 
     public static GreetingCardJob createGreetingCardJob(Product product, int orderQuantity, HashMap<String, String> optionsMap, Object
@@ -195,7 +218,7 @@ public abstract class Job implements Parcelable {
      * Adds uploadable images and any border text to two lists.
      *
      *****************************************************/
-    static protected void addUploadableImages(Object object, List<UploadableImage> uploadableImageList, List<String> borderTextList,
+    protected static void addUploadableImages(Object object, List<UploadableImage> uploadableImageList, List<String> borderTextList,
                                               boolean nullObjectsAreBlankPages) {
 
         if (object == null && nullObjectsAreBlankPages) {
@@ -210,11 +233,11 @@ public abstract class Job implements Parcelable {
         // track of any border text.
 
         else if (object instanceof ImageSpec) {
-            ImageSpec imageSpec = (ImageSpec) object;
+            final ImageSpec imageSpec = (ImageSpec) object;
 
-            AssetFragment assetFragment = imageSpec.getAssetFragment();
-            String borderText = imageSpec.getBorderText();
-            int quantity = imageSpec.getQuantity();
+            final AssetFragment assetFragment = imageSpec.getAssetFragment();
+            final String borderText = imageSpec.getBorderText();
+            final int quantity = imageSpec.getQuantity();
 
             for (int index = 0; index < quantity; index++) {
                 uploadableImageList.add(new UploadableImage(assetFragment));
@@ -228,7 +251,7 @@ public abstract class Job implements Parcelable {
         // Anything else is just one image
 
         else {
-            UploadableImage uploadableImage = singleUploadableImageFrom(object);
+            final UploadableImage uploadableImage = singleUploadableImageFrom(object);
 
             if (uploadableImage != null) {
                 uploadableImageList.add(uploadableImage);
@@ -245,7 +268,7 @@ public abstract class Job implements Parcelable {
      * Returns an UploadableImage from an unknown image object.
      *
      *****************************************************/
-    static protected UploadableImage singleUploadableImageFrom(Object object) {
+    protected static UploadableImage singleUploadableImageFrom(Object object) {
 
         if (object == null) {
             return null;
@@ -264,27 +287,7 @@ public abstract class Job implements Parcelable {
             return new UploadableImage((Asset) object);
         }
 
-        throw (new IllegalArgumentException("Unable to convert " + object + " into UploadableImage"));
-    }
-
-    ////////// Constructor(s) //////////
-
-    protected Job(long id, Product product, int orderQuantity, HashMap<String, String> optionsMap, int shippingClass) {
-
-        mId = id;
-        mProduct = product;
-        mOrderQuantity = orderQuantity;
-        mOptionsMap = (optionsMap != null ? optionsMap : new HashMap<String, String>(0));
-        mShippingClass = shippingClass;
-    }
-
-    protected Job(Parcel sourceParcel) {
-
-        mId = sourceParcel.readLong();
-        mProduct = Product.CREATOR.createFromParcel(sourceParcel);
-        mOrderQuantity = sourceParcel.readInt();
-        mOptionsMap = sourceParcel.readHashMap(HashMap.class.getClassLoader());
-        mShippingClass = sourceParcel.readInt();
+        throw new IllegalArgumentException("Unable to convert " + object + " into UploadableImage");
     }
 
     public long getId() {
@@ -312,9 +315,9 @@ public abstract class Job implements Parcelable {
         mOrderQuantity = orderQuantity;
     }
 
-    public void setShippingClass(int ShippingClass) {
+    public void setShippingClass(int shippingClass) {
 
-        mShippingClass = ShippingClass;
+        mShippingClass = shippingClass;
     }
 
     public int getOrderQuantity() {
@@ -332,7 +335,7 @@ public abstract class Job implements Parcelable {
      *****************************************************/
     protected JSONObject addProductOptions(JSONObject jobJSONObject) throws JSONException {
 
-        JSONObject optionsJSONObject = new JSONObject();
+        final JSONObject optionsJSONObject = new JSONObject();
 
         if (mOptionsMap != null) {
             for (String optionCode : mOptionsMap.keySet()) {
@@ -395,9 +398,9 @@ public abstract class Job implements Parcelable {
             return false;
         }
 
-        Job otherJob = (Job) otherJobObject;
-        Product otherProduct = otherJob.getProduct();
-        HashMap<String, String> otherOptionMap = otherJob.getProductOptions();
+        final Job otherJob = (Job) otherJobObject;
+        final Product otherProduct = otherJob.getProduct();
+        final HashMap<String, String> otherOptionMap = otherJob.getProductOptions();
 
         if (!mProduct.getId().equals(otherProduct.getId())) {
             return false;
@@ -410,8 +413,8 @@ public abstract class Job implements Parcelable {
         }
 
         for (String name : mOptionsMap.keySet()) {
-            String value = mOptionsMap.get(name);
-            String otherValue = otherOptionMap.get(name);
+            final String value = mOptionsMap.get(name);
+            final String otherValue = otherOptionMap.get(name);
 
             if ((value == null && otherValue != null) ||
                     (value != null && !value.equals(otherValue))) {
