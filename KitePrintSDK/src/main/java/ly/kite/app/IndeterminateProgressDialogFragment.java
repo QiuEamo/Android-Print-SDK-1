@@ -87,9 +87,9 @@ public class IndeterminateProgressDialogFragment extends DialogFragment {
      *****************************************************/
     public static IndeterminateProgressDialogFragment newInstance(String message) {
 
-        IndeterminateProgressDialogFragment fragment = new IndeterminateProgressDialogFragment();
+        final IndeterminateProgressDialogFragment fragment = new IndeterminateProgressDialogFragment();
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
 
         arguments.putString(BUNDLE_KEY_MESSAGE, message);
 
@@ -138,7 +138,7 @@ public class IndeterminateProgressDialogFragment extends DialogFragment {
 
         // Get the message
 
-        Bundle arguments = getArguments();
+        final Bundle arguments = getArguments();
 
         if (arguments != null) {
             mMessage = arguments.getString(BUNDLE_KEY_MESSAGE);
@@ -153,9 +153,9 @@ public class IndeterminateProgressDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.dialog_indeterminate_progress, container, false);
+        final View view = layoutInflator.inflate(R.layout.dialog_indeterminate_progress, container, false);
 
-        TextView messageTextView = (TextView) view.findViewById(R.id.message_text_view);
+        final TextView messageTextView = (TextView) view.findViewById(R.id.message_text_view);
 
         // Set the message
         if (messageTextView != null) {
@@ -215,7 +215,7 @@ public class IndeterminateProgressDialogFragment extends DialogFragment {
      *****************************************************/
     public void show(Fragment fragment, ICancelListener cancelListener) {
 
-        Activity activity = fragment.getActivity();
+        final Activity activity = fragment.getActivity();
 
         if (activity != null) {
             show(activity, cancelListener);

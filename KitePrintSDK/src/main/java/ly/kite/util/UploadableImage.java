@@ -52,11 +52,6 @@ import java.util.List;
  *
  *****************************************************/
 public class UploadableImage implements Parcelable {
-    ////////// Static Constant(s) //////////
-
-    @SuppressWarnings("unused")
-    private static final String LOG_TAG = "UploadableImage";
-
     ////////// Static Variable(s) //////////
 
     public static final Parcelable.Creator<UploadableImage> CREATOR = new Parcelable.Creator<UploadableImage>() {
@@ -71,6 +66,11 @@ public class UploadableImage implements Parcelable {
         }
     };
 
+    ////////// Static Constant(s) //////////
+
+    @SuppressWarnings("unused")
+    private static final String LOG_TAG = "UploadableImage";
+
     ////////// Member Variable(s) //////////
 
     private AssetFragment mAssetFragment;
@@ -82,6 +82,26 @@ public class UploadableImage implements Parcelable {
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
+
+    ////////// Constructor(s) //////////
+
+    public UploadableImage(AssetFragment assetFragment) {
+
+        mAssetFragment = assetFragment;
+    }
+
+    public UploadableImage(Asset asset) {
+
+        this(new AssetFragment(asset));
+    }
+
+    UploadableImage(Parcel sourceParcel) {
+
+        mAssetFragment = sourceParcel.readParcelable(AssetFragment.class.getClassLoader());
+        mHasBeenUploaded = (Boolean) sourceParcel.readValue(Boolean.class.getClassLoader());
+        mUploadedAssetId = sourceParcel.readLong();
+        mPreviewURL = (URL) sourceParcel.readSerializable();
+    }
 
     /*****************************************************
      *
@@ -131,26 +151,6 @@ public class UploadableImage implements Parcelable {
         }
 
         return true;
-    }
-
-    ////////// Constructor(s) //////////
-
-    public UploadableImage(AssetFragment assetFragment) {
-
-        mAssetFragment = assetFragment;
-    }
-
-    public UploadableImage(Asset asset) {
-
-        this(new AssetFragment(asset));
-    }
-
-    UploadableImage(Parcel sourceParcel) {
-
-        mAssetFragment = sourceParcel.readParcelable(AssetFragment.class.getClassLoader());
-        mHasBeenUploaded = (Boolean) sourceParcel.readValue(Boolean.class.getClassLoader());
-        mUploadedAssetId = sourceParcel.readLong();
-        mPreviewURL = (URL) sourceParcel.readSerializable();
     }
 
     ////////// Parcelable Method(s) //////////
@@ -262,7 +262,7 @@ public class UploadableImage implements Parcelable {
     public long getUploadedAssetId() {
 
         if (!mHasBeenUploaded) {
-            throw (new IllegalStateException("The id cannot be returned if the asset fragment has not been uploaded"));
+            throw new IllegalStateException("The id cannot be returned if the asset fragment has not been uploaded");
         }
 
         return mUploadedAssetId;
@@ -276,7 +276,7 @@ public class UploadableImage implements Parcelable {
     public URL getPreviewURL() {
 
         if (!mHasBeenUploaded) {
-            throw (new IllegalStateException("The preview URL cannot be returned if the asset fragment has not been uploaded"));
+            throw new IllegalStateException("The preview URL cannot be returned if the asset fragment has not been uploaded");
         }
 
         return mPreviewURL;
@@ -295,16 +295,16 @@ public class UploadableImage implements Parcelable {
             return false;
         }
 
-        UploadableImage otherUploadableImage = (UploadableImage) otherObject;
+        final UploadableImage otherUploadableImage = (UploadableImage) otherObject;
 
         if (otherUploadableImage == this) {
             return true;
         }
 
-        return (mAssetFragment.equals(otherUploadableImage.mAssetFragment) &&
+        return mAssetFragment.equals(otherUploadableImage.mAssetFragment) &&
                 mHasBeenUploaded == otherUploadableImage.mHasBeenUploaded &&
                 mUploadedAssetId == otherUploadableImage.mUploadedAssetId &&
-                NetUtils.areBothNullOrEqual(mPreviewURL, otherUploadableImage.mPreviewURL));
+                NetUtils.areBothNullOrEqual(mPreviewURL, otherUploadableImage.mPreviewURL);
     }
 
     ////////// Inner Class(es) //////////

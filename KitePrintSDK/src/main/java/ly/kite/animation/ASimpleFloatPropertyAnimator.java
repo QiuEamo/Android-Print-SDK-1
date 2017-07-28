@@ -110,7 +110,7 @@ public abstract class ASimpleFloatPropertyAnimator implements Runnable {
         }
 
         // Get the current time
-        long currentTimeMillis = SystemClock.elapsedRealtime();
+        final long currentTimeMillis = SystemClock.elapsedRealtime();
 
         // If this is the first frame - initialise the animation
         if (mStartTimeMillis <= 0) {
@@ -136,8 +136,8 @@ public abstract class ASimpleFloatPropertyAnimator implements Runnable {
         // Otherwise this is an intermediate frame
         else {
             // Calculate the time fraction and the interpolated value
-            float proportion = (float) (currentTimeMillis - mStartTimeMillis) * mElapsedToProportionMultiplier;
-            float value = mInitialValue + (mInterpolator.getInterpolation(proportion) * mValueDifference);
+            final float proportion = (float) (currentTimeMillis - mStartTimeMillis) * mElapsedToProportionMultiplier;
+            final float value = mInitialValue + (mInterpolator.getInterpolation(proportion) * mValueDifference);
 
             // Set the intermediate property value
             onSetValue(value);

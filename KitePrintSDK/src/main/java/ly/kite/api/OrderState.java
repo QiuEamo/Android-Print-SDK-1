@@ -56,19 +56,6 @@ public enum OrderState {
 
     private String mJSONValue;
 
-    public static OrderState fromJSONValue(String jsonValue) {
-
-        for (OrderState candidateOrderState : values()) {
-            String candidateJSONValue = candidateOrderState.jsonValue();
-
-            if (candidateJSONValue != null && candidateJSONValue.equalsIgnoreCase(jsonValue)) {
-                return candidateOrderState;
-            }
-        }
-
-        return null;
-    }
-
     private OrderState(String jsonValue) {
 
         mJSONValue = jsonValue;
@@ -77,6 +64,19 @@ public enum OrderState {
     private OrderState() {
 
         this(null);
+    }
+
+    public static OrderState fromJSONValue(String jsonValue) {
+
+        for (OrderState candidateOrderState : values()) {
+            final String candidateJSONValue = candidateOrderState.jsonValue();
+
+            if (candidateJSONValue != null && candidateJSONValue.equalsIgnoreCase(jsonValue)) {
+                return candidateOrderState;
+            }
+        }
+
+        return null;
     }
 
     String jsonValue() {

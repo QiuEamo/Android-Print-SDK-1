@@ -109,8 +109,8 @@ public class HTTPJSONRequest extends HTTPRequest {
     @Override
     protected void processResponseInBackground(HttpResponse response) throws Exception {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-        StringBuilder builder = new StringBuilder();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+        final StringBuilder builder = new StringBuilder();
         for (String line = null; (line = reader.readLine()) != null; ) {
             builder.append(line).append("\n");
         }
@@ -118,11 +118,11 @@ public class HTTPJSONRequest extends HTTPRequest {
         // If we get a body - parse it as JSON. Some endpoints don't return anything, so
         // if this happens we just create an empty JSON object.
 
-        String bodyJSONString = builder.toString();
+        final String bodyJSONString = builder.toString();
 
         if (!bodyJSONString.trim().equals("")) {
             try {
-                JSONTokener tokener = new JSONTokener(bodyJSONString);
+                final JSONTokener tokener = new JSONTokener(bodyJSONString);
 
                 mJSONResponse = new JSONObject(tokener);
             } catch (JSONException je) {
@@ -134,14 +134,14 @@ public class HTTPJSONRequest extends HTTPRequest {
                 // error message.
                 if (bodyJSONString.contains("<!DOCTYPE html>")) {
                     if (bodyJSONString.contains("Offline for Maintenance")) {
-                        throw (new KiteSDKException(mApplicationContext.getString(R.string
-                                .alert_dialog_message_server_offline_maintenance)));
+                        throw new KiteSDKException(mApplicationContext.getString(R.string
+                                .alert_dialog_message_server_offline_maintenance));
                     } else {
-                        throw (new KiteSDKException(mApplicationContext.getString(R.string.alert_dialog_message_server_returned_html)));
+                        throw new KiteSDKException(mApplicationContext.getString(R.string.alert_dialog_message_server_returned_html));
                     }
                 } else {
                     // Re-throw the exception
-                    throw (je);
+                    throw je;
                 }
             }
         } else {

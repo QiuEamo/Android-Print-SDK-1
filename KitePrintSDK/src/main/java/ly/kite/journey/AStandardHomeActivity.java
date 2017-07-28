@@ -50,7 +50,7 @@ import ly.kite.journey.selection.ChooseProductGroupFragment;
  * standard menu indicator.
  *
  *****************************************************/
-abstract public class AStandardHomeActivity extends AHomeActivity {
+public abstract class AStandardHomeActivity extends AHomeActivity {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -86,7 +86,7 @@ abstract public class AStandardHomeActivity extends AHomeActivity {
 
         // Set up the action bar
 
-        ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getActionBar();
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -144,11 +144,11 @@ abstract public class AStandardHomeActivity extends AHomeActivity {
      *****************************************************/
     protected void onNotifyTop(AKiteFragment topFragment) {
 
-        ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getActionBar();
 
         // Determine which fragment is top-most
 
-        String tag = topFragment.getTag();
+        final String tag = topFragment.getTag();
 
         if (tag != null && tag.equals(ChooseProductGroupFragment.TAG)) {
             ///// Home page /////

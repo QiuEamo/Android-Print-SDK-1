@@ -148,7 +148,7 @@ public class OverlayLabel extends FrameLayout {
         // We intercept this and set the paint colour. The base text view
         // doesn't draw the background; we draw it ourselves.
 
-        int alpha = mSolidPaint.getAlpha();
+        final int alpha = mSolidPaint.getAlpha();
 
         mSolidPaint.setColor(colour);
         mSolidPaint.setAlpha(alpha);  // Restore the original alpha
@@ -201,9 +201,9 @@ public class OverlayLabel extends FrameLayout {
     private void initialise(Context context, AttributeSet attributeSet, int defaultStyle) {
         // Inflate the layout and get any view references
 
-        LayoutInflater layoutInflator = LayoutInflater.from(context);
+        final LayoutInflater layoutInflator = LayoutInflater.from(context);
 
-        View view = layoutInflator.inflate(R.layout.overlay_label, this, true);
+        final View view = layoutInflator.inflate(R.layout.overlay_label, this, true);
 
         mLabelTextView = (TextView) view.findViewById(R.id.label_text_view);
 
@@ -222,7 +222,11 @@ public class OverlayLabel extends FrameLayout {
         // Check the XML attributes
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.OverlayLabel, defaultStyle, defaultStyle);
+            final TypedArray typedArray = context.obtainStyledAttributes(
+                    attributeSet,
+                    R.styleable.OverlayLabel,
+                    defaultStyle,
+                    defaultStyle);
 
             // See if there is a background overlay drawable
             mBackgroundOverlayDrawable = typedArray.getDrawable(R.styleable.OverlayLabel_backgroundOverlayDrawable);
@@ -300,11 +304,11 @@ public class OverlayLabel extends FrameLayout {
      *****************************************************/
     private void prepare() {
 
-        int viewWidth = getWidth();
-        int viewHeight = getHeight();
+        final int viewWidth = getWidth();
+        final int viewHeight = getHeight();
 
-        int solidRectWidth = (int) (viewWidth - mShadowBlurRadius);
-        int solidRectHeight = (int) (viewHeight - mShadowBlurRadius - mShadowYOffset);
+        final int solidRectWidth = (int) (viewWidth - mShadowBlurRadius);
+        final int solidRectHeight = (int) (viewHeight - mShadowBlurRadius - mShadowYOffset);
 
         mSolidRect = new RectF(mShadowBlurRadius, mShadowBlurRadius, solidRectWidth, solidRectHeight);
         mShadowRect = new RectF(mSolidRect.left, mSolidRect.top + mShadowYOffset, mSolidRect.right, mSolidRect.bottom + mShadowYOffset);
@@ -317,8 +321,8 @@ public class OverlayLabel extends FrameLayout {
 
             // Convert the background overlay drawable into a bitmap
 
-            Bitmap drawableBitmap = Bitmap.createBitmap(solidRectWidth, solidRectHeight, Bitmap.Config.ARGB_8888);
-            Canvas drawableCanvas = new Canvas(drawableBitmap);
+            final Bitmap drawableBitmap = Bitmap.createBitmap(solidRectWidth, solidRectHeight, Bitmap.Config.ARGB_8888);
+            final Canvas drawableCanvas = new Canvas(drawableBitmap);
 
             mBackgroundOverlayDrawable.setBounds(0, 0, solidRectWidth, solidRectHeight);
             mBackgroundOverlayDrawable.draw(drawableCanvas);
@@ -327,15 +331,15 @@ public class OverlayLabel extends FrameLayout {
 
             mBackgroundOverlayBitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);
 
-            Canvas backgroundOverlayCanvas = new Canvas(mBackgroundOverlayBitmap);
+            final Canvas backgroundOverlayCanvas = new Canvas(mBackgroundOverlayBitmap);
 
             // Draw the solid rectangle shape on the overlay canvas to act as a mask
 
             mBackgroundOverlayBitmapRect = new Rect(0, 0, solidRectWidth, solidRectHeight);
 
-            RectF bitmapRectF = new RectF(0f, 0f, solidRectWidth, solidRectHeight);
+            final RectF bitmapRectF = new RectF(0f, 0f, solidRectWidth, solidRectHeight);
 
-            Paint paint = new Paint();
+            final Paint paint = new Paint();
             paint.setColor(0xffffffff);
             paint.setAntiAlias(true);
 

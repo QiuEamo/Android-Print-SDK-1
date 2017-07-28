@@ -100,7 +100,7 @@ public class ImageCache implements IImageConsumer {
     public void onImageDownloading(Object key) {
         // Find the corresponding pending image
 
-        PendingImage pendingImage = mPendingTable.remove(key);
+        final PendingImage pendingImage = mPendingTable.remove(key);
 
         if (pendingImage == null) {
             return;
@@ -125,7 +125,7 @@ public class ImageCache implements IImageConsumer {
     public void onImageAvailable(Object key, Bitmap bitmap) {
         // Find the corresponding pending image
 
-        PendingImage pendingImage = mPendingTable.remove(key);
+        final PendingImage pendingImage = mPendingTable.remove(key);
 
         if (pendingImage == null) {
             return;
@@ -150,7 +150,7 @@ public class ImageCache implements IImageConsumer {
     public void onImageUnavailable(Object key, Exception exception) {
         // Find the corresponding pending image
 
-        PendingImage pendingImage = mPendingTable.remove(key);
+        final PendingImage pendingImage = mPendingTable.remove(key);
 
         if (pendingImage == null) {
             return;
@@ -176,7 +176,7 @@ public class ImageCache implements IImageConsumer {
     public Bitmap getImage(Object key) {
         // Try and find the image
 
-        Holder holder = mHolderTable.get(key);
+        final Holder holder = mHolderTable.get(key);
 
         if (holder == null) {
             return null;
@@ -221,7 +221,7 @@ public class ImageCache implements IImageConsumer {
      *****************************************************/
     public void addImage(Object key, Bitmap bitmap) {
         // Create a new holder for the image
-        Holder newHolder = new Holder(key, bitmap);
+        final Holder newHolder = new Holder(key, bitmap);
 
         // Store the holder in the table and at the front of the list
         mHolderTable.put(key, newHolder);
@@ -236,7 +236,7 @@ public class ImageCache implements IImageConsumer {
         while (mSizeInBytes > mCapacityInBytes) {
             // Get the least recently used image and remove it
 
-            Holder lruHolder = mHolderList.removeLast();
+            final Holder lruHolder = mHolderList.removeLast();
 
             if (lruHolder == null) {
                 break;
@@ -257,18 +257,18 @@ public class ImageCache implements IImageConsumer {
      *
      *****************************************************/
     private class Holder {
-        Object key;
-        Bitmap bitmap;
-        int approximateSizeInBytes;
+        Object mKey;
+        Bitmap mBitmap;
+        int mApproximateSizeInBytes;
 
         Holder(Object key, Bitmap bitmap) {
 
-            this.key = key;
-            this.bitmap = bitmap;
+            this.mKey = key;
+            this.mBitmap = bitmap;
 
             // Calculate the approximate size in bytes. This only works if
             // the bitmap is not reconfigured.
-            this.approximateSizeInBytes = bitmap.getByteCount();
+            this.mApproximateSizeInBytes = bitmap.getByteCount();
         }
     }
 
@@ -278,13 +278,13 @@ public class ImageCache implements IImageConsumer {
      *
      *****************************************************/
     private class PendingImage {
-        Object key;
-        IImageConsumer consumer;
+        Object mKey;
+        IImageConsumer mConsumer;
 
         PendingImage(Object key, IImageConsumer consumer) {
 
-            this.key = key;
-            this.consumer = consumer;
+            this.mKey = key;
+            this.mConsumer = consumer;
         }
 
     }

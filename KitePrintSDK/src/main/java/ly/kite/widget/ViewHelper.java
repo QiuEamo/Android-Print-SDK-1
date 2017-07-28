@@ -53,15 +53,13 @@ import ly.kite.catalogue.Product;
 public class ViewHelper {
     ////////// Static Constant(s) //////////
 
+    public static final String TAG_EFFECT_VISIBLE_IF = "visibleif";
+    public static final String TAG_PROPERTY_PRODUCT_ID = "product.id";
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "ViewHelper";
-
-    public static final String TAG_EFFECT_VISIBLE_IF = "visibleif";
-
     private static final String TAG_EFFECT_SEPARATOR = ":";
     private static final String TAG_EQUALITY_OPERATOR = "=";
-
-    public static final String TAG_PROPERTY_PRODUCT_ID = "product.id";
 
     ////////// Static Variable(s) //////////
 
@@ -81,11 +79,11 @@ public class ViewHelper {
         // The root view is either a View or a ViewGroup
 
         if (view instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup) view;
+            final ViewGroup viewGroup = (ViewGroup) view;
 
             // Iterate through the view group's children, and recursively traverse each one.
 
-            int childCount = viewGroup.getChildCount();
+            final int childCount = viewGroup.getChildCount();
 
             for (int childIndex = 0; childIndex < childCount; childIndex++) {
                 traverseViewHierarchy(viewGroup.getChildAt(childIndex), callback);
@@ -154,20 +152,20 @@ public class ViewHelper {
         public void nextView(View view) {
             // Look for special tags
 
-            Object tagObject = view.getTag();
+            final Object tagObject = view.getTag();
 
             if (tagObject != null && tagObject instanceof String) {
-                String tagString = (String) tagObject;
+                final String tagString = (String) tagObject;
 
-                int effectSeparatorIndex = tagString.indexOf(TAG_EFFECT_SEPARATOR);
+                final int effectSeparatorIndex = tagString.indexOf(TAG_EFFECT_SEPARATOR);
 
                 if (effectSeparatorIndex > 0) {
-                    int equalitySeparatorIndex = tagString.indexOf(TAG_EQUALITY_OPERATOR, effectSeparatorIndex);
+                    final int equalitySeparatorIndex = tagString.indexOf(TAG_EQUALITY_OPERATOR, effectSeparatorIndex);
 
                     if (equalitySeparatorIndex > effectSeparatorIndex) {
-                        String effect = tagString.substring(0, effectSeparatorIndex);
-                        String property = tagString.substring(effectSeparatorIndex + 1, equalitySeparatorIndex);
-                        String value = tagString.substring(equalitySeparatorIndex + 1);
+                        final String effect = tagString.substring(0, effectSeparatorIndex);
+                        final String property = tagString.substring(effectSeparatorIndex + 1, equalitySeparatorIndex);
+                        final String value = tagString.substring(equalitySeparatorIndex + 1);
 
                         setViewProperties(view, effect, property, value);
                     }
@@ -183,7 +181,7 @@ public class ViewHelper {
          *****************************************************/
         private void setViewProperties(View view, String effect, String property, String value) {
             // Determine whether the condition is valid, i.e. the <property> = <value>
-            boolean propertySet = propertyIsEqual(property, value);
+            final boolean propertySet = propertyIsEqual(property, value);
 
             // Determine what effect needs to be set
 

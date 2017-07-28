@@ -63,12 +63,13 @@ import ly.kite.util.HTTPJSONRequest;
 public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
     ////////// Static Constant(s) //////////
 
+    public static final String API_TOKEN = "cdf64507670dd359c43aa8895fb87676";  // Live
+    //public  static final String  API_TOKEN           = "e08854f70bc6a97b9f14457cbbb29b24";  // JL Test
+
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "MixpanelAgent";
 
     private static final String ENDPOINT_URL_STRING = "https://api.mixpanel.com/track/";
-    public static final String API_TOKEN = "cdf64507670dd359c43aa8895fb87676";  // Live
-    //public  static final String  API_TOKEN           = "e08854f70bc6a97b9f14457cbbb29b24";  // JL Test
 
     ////////// Static Variable(s) //////////
 
@@ -82,6 +83,13 @@ public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
 
     ////////// Static Method(s) //////////
 
+    ////////// Constructor(s) //////////
+
+    private MixpanelAgent(Context context) {
+
+        mContext = context;
+    }
+
     /*****************************************************
      *
      * Returns a singleton instance of this class.
@@ -94,13 +102,6 @@ public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
         }
 
         return sMixpanelAgent;
-    }
-
-    ////////// Constructor(s) //////////
-
-    private MixpanelAgent(Context context) {
-
-        mContext = context;
     }
 
     ////////// BaseRequest.BaseRequestListener Method(s) //////////
@@ -136,18 +137,18 @@ public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
     public void trackEvent(JSONObject eventJSONObject) {
         // The JSON needs to be encoded as Base64
 
-        byte[] jsonBytes = eventJSONObject.toString().getBytes();
+        final byte[] jsonBytes = eventJSONObject.toString().getBytes();
 
         //Log.d( TAG, "JSON request:\n" + eventJSONObject.toString() );
 
-        String base64EncodedJSON = Base64.encodeToString(jsonBytes, Base64.NO_WRAP | Base64.URL_SAFE);
+        final String base64EncodedJSON = Base64.encodeToString(jsonBytes, Base64.NO_WRAP | Base64.URL_SAFE);
 
         // Perform the HTTP request
 
-        String requestURLString = ENDPOINT_URL_STRING + "?ip=1&data=" + base64EncodedJSON;
+        final String requestURLString = ENDPOINT_URL_STRING + "?ip=1&data=" + base64EncodedJSON;
 
         try {
-            URL requestURL = new URL(requestURLString);
+            final URL requestURL = new URL(requestURLString);
 
             new Thread(new HTTPRequest(requestURL)).start();
         } catch (MalformedURLException mue) {
@@ -175,14 +176,14 @@ public class MixpanelAgent implements HTTPJSONRequest.IJSONResponseListener {
             // Open a connection to the URL
 
             try {
-                URLConnection urlConnection = mURL.openConnection();
+                final URLConnection urlConnection = mURL.openConnection();
 
                 if (urlConnection instanceof HttpURLConnection) {
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+                    final HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
 
                     //httpURLConnection.setRequestMethod( HttpURLConnection.HTTP_GET );
 
-                    int statusCode = httpURLConnection.getResponseCode();
+                    final int statusCode = httpURLConnection.getResponseCode();
 
                     if (statusCode != 200) {
                         Log.e(LOG_TAG, "Invalid response code: " + statusCode);

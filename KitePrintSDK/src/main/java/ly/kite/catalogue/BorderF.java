@@ -49,32 +49,29 @@ import android.os.Parcelable;
  *
  *****************************************************/
 public class BorderF implements Parcelable {
+    ////////// Static Variable(s) //////////
+
+    public static final Parcelable.Creator<BorderF> CREATOR = new Parcelable.Creator<BorderF>() {
+        public BorderF createFromParcel(Parcel sourceParcel) {
+            return new BorderF(sourceParcel);
+        }
+
+        public BorderF[] newArray(int size) {
+            return new BorderF[size];
+        }
+    };
+
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "BorderF";
 
-    ////////// Static Variable(s) //////////
-
-    public static final Parcelable.Creator<BorderF> CREATOR =
-            new Parcelable.Creator<BorderF>() {
-                public BorderF createFromParcel(Parcel sourceParcel) {
-
-                    return new BorderF(sourceParcel);
-                }
-
-                public BorderF[] newArray(int size) {
-
-                    return new BorderF[size];
-                }
-            };
-
     ////////// Member Variable(s) //////////
 
-    public final float left;
-    public final float top;
-    public final float right;
-    public final float bottom;
+    public final float mLeft;
+    public final float mTop;
+    public final float mRight;
+    public final float mBottom;
 
     ////////// Static Initialiser(s) //////////
 
@@ -84,10 +81,10 @@ public class BorderF implements Parcelable {
 
     public BorderF(float top, float right, float bottom, float left) {
 
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
-        this.left = left;
+        this.mTop = top;
+        this.mRight = right;
+        this.mBottom = bottom;
+        this.mLeft = left;
     }
 
     public BorderF() {
@@ -98,10 +95,10 @@ public class BorderF implements Parcelable {
     // Constructor used by parcelable interface
     private BorderF(Parcel sourceParcel) {
 
-        this.top = sourceParcel.readFloat();
-        this.left = sourceParcel.readFloat();
-        this.right = sourceParcel.readFloat();
-        this.bottom = sourceParcel.readFloat();
+        this.mTop = sourceParcel.readFloat();
+        this.mLeft = sourceParcel.readFloat();
+        this.mRight = sourceParcel.readFloat();
+        this.mBottom = sourceParcel.readFloat();
     }
 
     ////////// Parcelable Method(s) //////////
@@ -125,10 +122,10 @@ public class BorderF implements Parcelable {
     @Override
     public void writeToParcel(Parcel targetParcel, int flags) {
 
-        targetParcel.writeFloat(this.top);
-        targetParcel.writeFloat(this.left);
-        targetParcel.writeFloat(this.right);
-        targetParcel.writeFloat(this.bottom);
+        targetParcel.writeFloat(this.mTop);
+        targetParcel.writeFloat(this.mLeft);
+        targetParcel.writeFloat(this.mRight);
+        targetParcel.writeFloat(this.mBottom);
     }
 
     ////////// Method(s) //////////
@@ -141,13 +138,13 @@ public class BorderF implements Parcelable {
     @Override
     public String toString() {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder
-                .append("{ top = ").append(this.top)
-                .append(", left = ").append(this.left)
-                .append(", right = ").append(this.right)
-                .append(", bottom = ").append(this.bottom).append(" }");
+                .append("{ top = ").append(this.mTop)
+                .append(", left = ").append(this.mLeft)
+                .append(", right = ").append(this.mRight)
+                .append(", bottom = ").append(this.mBottom).append(" }");
 
         return stringBuilder.toString();
     }

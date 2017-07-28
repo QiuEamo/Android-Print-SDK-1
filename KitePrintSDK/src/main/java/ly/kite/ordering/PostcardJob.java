@@ -30,6 +30,18 @@ import ly.kite.util.UploadableImage;
  *
  *****************************************************/
 public class PostcardJob extends Job {
+
+    public static final Parcelable.Creator<PostcardJob> CREATOR = new Parcelable.Creator<PostcardJob>() {
+        public PostcardJob createFromParcel(Parcel in) {
+            return new PostcardJob(in);
+        }
+
+        public PostcardJob[] newArray(int size) {
+
+            return new PostcardJob[size];
+        }
+    };
+
     private UploadableImage mFrontUploadableImage;
     private UploadableImage mBackUploadableImage;
     private String mMessage;
@@ -50,6 +62,16 @@ public class PostcardJob extends Job {
                        String message, Address address, int shippingClass) {
 
         this(0, product, orderQuantity, optionsMap, frontImage, backImage, message, address, shippingClass);
+    }
+
+    private PostcardJob(Parcel parcel) {
+        //super( ProductCache.getDirtyInstance().findProductById( parcel.readString() ) );
+        super(parcel);
+
+        mFrontUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+        mBackUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
+        mMessage = parcel.readString();
+        mAddress = (Address) parcel.readParcelable(Address.class.getClassLoader());
     }
 
     @Override
@@ -73,7 +95,7 @@ public class PostcardJob extends Job {
     @Override
     List<UploadableImage> getImagesForUploading() {
 
-        List<UploadableImage> uploadableImageList = new ArrayList<>();
+        final List<UploadableImage> uploadableImageList = new ArrayList<>();
 
         uploadableImageList.add(mFrontUploadableImage);
 
@@ -91,12 +113,12 @@ public class PostcardJob extends Job {
 
     private JSONObject getJSON() throws JSONException {
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         json.put("template_id", getProductId());
 
         addProductOptions(json);
 
-        JSONObject assets = new JSONObject();
+        final JSONObject assets = new JSONObject();
         json.put("assets", assets);
         assets.put("front_image", mFrontUploadableImage.getUploadedAssetId());
 
@@ -109,7 +131,7 @@ public class PostcardJob extends Job {
         }
 
         if (mAddress != null) {
-            JSONObject shippingAddr = new JSONObject();
+            final JSONObject shippingAddr = new JSONObject();
             json.put("shipping_address", shippingAddr);
 
             shippingAddr.put("recipient_name", getStringOrEmptyString(mAddress.getRecipientName()));
@@ -150,29 +172,6 @@ public class PostcardJob extends Job {
         parcel.writeParcelable(mAddress, flags);
     }
 
-    private PostcardJob(Parcel parcel) {
-        //super( ProductCache.getDirtyInstance().findProductById( parcel.readString() ) );
-        super(parcel);
-
-        mFrontUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-        mBackUploadableImage = parcel.readParcelable(AssetFragment.class.getClassLoader());
-        mMessage = parcel.readString();
-        mAddress = (Address) parcel.readParcelable(Address.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<PostcardJob> CREATOR
-            = new Parcelable.Creator<PostcardJob>() {
-        public PostcardJob createFromParcel(Parcel in) {
-
-            return new PostcardJob(in);
-        }
-
-        public PostcardJob[] newArray(int size) {
-
-            return new PostcardJob[size];
-        }
-    };
-
     public String getMessage() {
 
         return mMessage;
@@ -190,10 +189,10 @@ public class PostcardJob extends Job {
             return false;
         }
 
-        PostcardJob otherPostcardJob = (PostcardJob) otherObject;
+        final PostcardJob otherPostcardJob = (PostcardJob) otherObject;
 
-        String otherMessage = otherPostcardJob.mMessage;
-        Address otherAddress = otherPostcardJob.mAddress;
+        final String otherMessage = otherPostcardJob.mMessage;
+        final Address otherAddress = otherPostcardJob.mAddress;
 
         if (!UploadableImage.areBothNullOrEqual(mFrontUploadableImage, otherPostcardJob.mFrontUploadableImage)) {
             return false;

@@ -107,9 +107,9 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
      *****************************************************/
     public static PosterFragment newInstance(Product product) {
 
-        PosterFragment fragment = new PosterFragment();
+        final PosterFragment fragment = new PosterFragment();
 
-        Bundle arguments = new Bundle();
+        final Bundle arguments = new Bundle();
         arguments.putParcelable(BUNDLE_KEY_PRODUCT, product);
 
         fragment.setArguments(arguments);
@@ -142,13 +142,13 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
     @Override
     public View onCreateView(LayoutInflater layoutInflator, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = layoutInflator.inflate(R.layout.screen_poster, container, false);
+        final View view = layoutInflator.inflate(R.layout.screen_poster, container, false);
 
         super.onViewCreated(view);
 
         mPosterView = (ExtendedRecyclerView) view.findViewById(R.id.poster_view);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mKiteActivity, mProduct.getGridCountX());
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mKiteActivity, mProduct.getGridCountX());
         mPosterView.setLayoutManager(gridLayoutManager);
 
         // Set up the forwards button
@@ -265,7 +265,7 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
     @Override
     public void onClick(View view) {
 
-        TextView proceedTextView = getForwardsTextView();
+        final TextView proceedTextView = getForwardsTextView();
 
         if (view == proceedTextView) {
             ///// Checkout /////
@@ -274,7 +274,7 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
                 mKiteActivity.displayModalDialog(R.string.alert_dialog_title_oops, R.string.alert_dialog_message_no_images_selected, R
                         .string.OK, null, 0, null);
             } else if (mKiteActivity instanceof ICallback) {
-                int expectedImageCount = mProduct.getQuantityPerSheet();
+                final int expectedImageCount = mProduct.getQuantityPerSheet();
 
                 // Pages can be blank, so to calculate the actual number of images we need to go through
                 // them all.
@@ -402,17 +402,17 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
     @Override
     public boolean onDrag(View view, DragEvent event) {
 
-        int action = event.getAction();
+        final int action = event.getAction();
 
         if (action == DragEvent.ACTION_DRAG_STARTED) {
             return true;
         } else if (action == DragEvent.ACTION_DRAG_LOCATION) {
             // Get the location
-            float x = event.getX();
-            float y = event.getY();
+            final float x = event.getX();
+            final float y = event.getY();
 
             // Get the asset that we are currently dragged over
-            int currentAssetIndex = imageIndexFromPoint((int) x, (int) y);
+            final int currentAssetIndex = imageIndexFromPoint((int) x, (int) y);
 
             // We only highlight the target image if it is different from the dragged one
             if (currentAssetIndex >= 0 && currentAssetIndex != mDraggedImageIndex) {
@@ -427,8 +427,8 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
             return true;
         } else if (action == DragEvent.ACTION_DROP) {
             // Get the location
-            float x = event.getX();
-            float y = event.getY();
+            final float x = event.getX();
+            final float y = event.getY();
 
             onEndDrag((int) x, (int) y);
 
@@ -451,7 +451,7 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
         // action, in case more images are selected and we want to disable
         // it.
 
-        MenuInflater inflator = mode.getMenuInflater();
+        final MenuInflater inflator = mode.getMenuInflater();
 
         inflator.inflate(R.menu.calendar_action_mode, menu);
 
@@ -483,10 +483,10 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-        int itemId = item.getItemId();
+        final int itemId = item.getItemId();
 
         // Get the selected assets
-        HashSet<Integer> selectedAssetIndexHashSet = mPosterAdaptor.getSelectedAssets();
+        final HashSet<Integer> selectedAssetIndexHashSet = mPosterAdaptor.getSelectedAssets();
 
         // Determine which action was clicked
 
@@ -496,10 +496,10 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
             // Launch the edit screen for the chosen asset. There should be only one selected asset
             // so just grab the first.
 
-            Iterator<Integer> assetIndexIterator = selectedAssetIndexHashSet.iterator();
+            final Iterator<Integer> assetIndexIterator = selectedAssetIndexHashSet.iterator();
 
             if (assetIndexIterator.hasNext()) {
-                int selectedAssetIndex = assetIndexIterator.next();
+                final int selectedAssetIndex = assetIndexIterator.next();
 
                 if (selectedAssetIndex >= 0) {
                     if (mKiteActivity instanceof ICallback) {
@@ -575,7 +575,7 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
         mPosterAdaptor.clearHighlightedAsset();
 
         // Determine which asset the drag ended on
-        int dropImageIndex = imageIndexFromPoint(dropX, dropY);
+        final int dropImageIndex = imageIndexFromPoint(dropX, dropY);
 
         if (dropImageIndex >= 0) {
             // Make sure we haven't dropped the image back on itself
@@ -583,8 +583,8 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
             if (dropImageIndex != mDraggedImageIndex) {
                 // Simply swap the two positions
 
-                ImageSpec draggedImageSpec = mImageSpecArrayList.get(mDraggedImageIndex);
-                ImageSpec dropImageSpec = mImageSpecArrayList.get(dropImageIndex);
+                final ImageSpec draggedImageSpec = mImageSpecArrayList.get(mDraggedImageIndex);
+                final ImageSpec dropImageSpec = mImageSpecArrayList.get(dropImageIndex);
 
                 mImageSpecArrayList.set(dropImageIndex, draggedImageSpec);
                 mImageSpecArrayList.set(mDraggedImageIndex, dropImageSpec);
@@ -602,8 +602,8 @@ public class PosterFragment extends AProductCreationFragment implements PosterAd
      *****************************************************/
     private int imageIndexFromPoint(int x, int y) {
 
-        int imageIndex = mPosterView.positionFromPoint(x, y);
-        View view = mPosterView.findChildViewUnder(x, y);
+        final int imageIndex = mPosterView.positionFromPoint(x, y);
+        final View view = mPosterView.findChildViewUnder(x, y);
 
         if (imageIndex >= 0 && imageIndex < mProduct.getQuantityPerSheet() && view != null) {
             return imageIndex;

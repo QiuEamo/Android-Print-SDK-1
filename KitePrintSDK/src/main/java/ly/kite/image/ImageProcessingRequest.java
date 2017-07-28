@@ -117,7 +117,7 @@ public class ImageProcessingRequest implements ServiceConnection {
 
         mRequestMessage.replyTo = mResponseMessenger;
 
-        Bundle messageData = mRequestMessage.getData();
+        final Bundle messageData = mRequestMessage.getData();
         messageData.putParcelable(ImageProcessingService.BUNDLE_KEY_SOURCE_ASSET, mSourceAsset);
         messageData.putParcelable(ImageProcessingService.BUNDLE_KEY_TARGET_ASSET, mTargetAsset);
 
@@ -152,15 +152,15 @@ public class ImageProcessingRequest implements ServiceConnection {
         // Make sure we have all the bits we need
 
         if (mSourceAsset == null) {
-            throw (new IllegalStateException("No source asset specified"));
+            throw new IllegalStateException("No source asset specified");
         }
 
         if (mRequestMessage == null) {
-            throw (new IllegalStateException("No transform request (message) specified"));
+            throw new IllegalStateException("No transform request (message) specified");
         }
 
         if (mTargetAsset == null) {
-            throw (new IllegalStateException("No target asset specified"));
+            throw new IllegalStateException("No target asset specified");
         }
 
         // Connect to the image processing service
@@ -226,7 +226,7 @@ public class ImageProcessingRequest implements ServiceConnection {
         public Builder byCroppingToAspectRatio(float aspectRatio) {
             // Create the data for the message
 
-            Bundle messageData = new Bundle();
+            final Bundle messageData = new Bundle();
 
             messageData.putFloat(ImageProcessingService.BUNDLE_KEY_ASPECT_RATIO, aspectRatio);
 
@@ -280,7 +280,7 @@ public class ImageProcessingRequest implements ServiceConnection {
         public Builder byCroppingTo(RectF cropBounds) {
             // Create the data for the message
 
-            Bundle messageData = new Bundle();
+            final Bundle messageData = new Bundle();
 
             messageData.putParcelable(ImageProcessingService.BUNDLE_KEY_CROP_BOUNDS, cropBounds);
 

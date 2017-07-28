@@ -127,12 +127,12 @@ public class InstagramImageSource extends AImageSource {
 
         switch (layoutType) {
             case HORIZONTAL:
-
                 return R.layout.grid_item_image_source_instagram_horizontal;
 
             case VERTICAL:
-
                 return R.layout.grid_item_image_source_instagram_vertical;
+
+            default:
         }
 
         return 0;
@@ -147,10 +147,10 @@ public class InstagramImageSource extends AImageSource {
     public void onPick(Fragment fragment, int maxImageCount) {
         // Clicking on the Instagram image source starts our Instagram image picker library
 
-        KiteSDK kiteSDK = KiteSDK.getInstance(fragment.getActivity());
+        final KiteSDK kiteSDK = KiteSDK.getInstance(fragment.getActivity());
 
-        String instagramClientId = kiteSDK.getInstagramClientId();
-        String instagramRedirectURI = kiteSDK.getInstagramRedirectURI();
+        final String instagramClientId = kiteSDK.getInstagramClientId();
+        final String instagramRedirectURI = kiteSDK.getInstagramRedirectURI();
 
         InstagramPhotoPicker.startPhotoPickerForResult(fragment, instagramClientId, instagramRedirectURI, maxImageCount,
                 getActivityRequestCode());
@@ -164,12 +164,12 @@ public class InstagramImageSource extends AImageSource {
     @Override
     public void getAssetsFromPickerResult(Activity activity, Intent data, IAssetConsumer assetConsumer) {
 
-        List<String> photoURLStringList = InstagramPhotoPicker.getResultPhotos(data);
+        final List<String> photoURLStringList = InstagramPhotoPicker.getResultPhotos(data);
 
         if (photoURLStringList != null) {
             // Create an asset list, populate it, and call back to the consumer immediately.
 
-            List<Asset> assetList = new ArrayList<>(photoURLStringList.size());
+            final List<Asset> assetList = new ArrayList<>(photoURLStringList.size());
 
             for (String urlString : photoURLStringList) {
                 try {

@@ -54,7 +54,7 @@ import android.util.Log;
  * and providing callbacks.
  *
  *****************************************************/
-abstract public class ARetainedDialogFragment extends DialogFragment {
+public abstract class ARetainedDialogFragment extends DialogFragment {
     ////////// Static Constant(s) //////////
 
     private static final String LOG_TAG = "ARetainedDialogFragment";
@@ -65,6 +65,13 @@ abstract public class ARetainedDialogFragment extends DialogFragment {
 
     protected RetainedFragmentHelper mRetainedFragmentHelper;
 
+    ////////// Constructor(s) //////////
+
+    public ARetainedDialogFragment(Class<?> callbackClass) {
+
+        mRetainedFragmentHelper = new RetainedFragmentHelper(this, callbackClass);
+    }
+
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
@@ -74,7 +81,7 @@ abstract public class ARetainedDialogFragment extends DialogFragment {
      * Tries to find this fragment, and returns it.
      *
      *****************************************************/
-    static protected Fragment find(Activity activity, String tag, Class<? extends ARetainedDialogFragment> fragmentClass) {
+    protected static Fragment find(Activity activity, String tag, Class<? extends ARetainedDialogFragment> fragmentClass) {
 
         if (activity == null) {
             Log.e(LOG_TAG, "Null activity supplied");
@@ -82,13 +89,13 @@ abstract public class ARetainedDialogFragment extends DialogFragment {
             return null;
         }
 
-        FragmentManager fragmentManager = activity.getFragmentManager();
+        final FragmentManager fragmentManager = activity.getFragmentManager();
 
         if (fragmentManager != null) {
-            Fragment foundFragment = fragmentManager.findFragmentByTag(tag);
+            final Fragment foundFragment = fragmentManager.findFragmentByTag(tag);
 
             if (foundFragment != null) {
-                Class<?> foundFragmentClass = foundFragment.getClass();
+                final Class<?> foundFragmentClass = foundFragment.getClass();
 
                 if (foundFragmentClass.equals(fragmentClass)) {
                     return foundFragment;
@@ -97,13 +104,6 @@ abstract public class ARetainedDialogFragment extends DialogFragment {
         }
 
         return null;
-    }
-
-    ////////// Constructor(s) //////////
-
-    public ARetainedDialogFragment(Class<?> callbackClass) {
-
-        mRetainedFragmentHelper = new RetainedFragmentHelper(this, callbackClass);
     }
 
     ////////// DialogFragment Method(s) //////////
@@ -194,7 +194,7 @@ abstract public class ARetainedDialogFragment extends DialogFragment {
      *****************************************************/
     public void remove() {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity != null) {
             mRetainedFragmentHelper.removeFrom(activity);

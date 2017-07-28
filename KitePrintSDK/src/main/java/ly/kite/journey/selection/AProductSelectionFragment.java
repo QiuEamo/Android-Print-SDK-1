@@ -52,7 +52,7 @@ import ly.kite.journey.AKiteFragment;
  * fragments.
  *
  *****************************************************/
-abstract public class AProductSelectionFragment extends AKiteFragment implements ICatalogueConsumer {
+public abstract class AProductSelectionFragment extends AKiteFragment implements ICatalogueConsumer {
     ////////// Static Constant(s) //////////
 
     @SuppressWarnings("unused")
@@ -114,7 +114,7 @@ abstract public class AProductSelectionFragment extends AKiteFragment implements
      *****************************************************/
     protected void requestCatalogue() {
 
-        Activity activity = getActivity();
+        final Activity activity = getActivity();
 
         if (activity != null && activity instanceof ICatalogueHolder) {
             ((ICatalogueHolder) activity).requestCatalogue(this);

@@ -194,9 +194,9 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
      *****************************************************/
     private void initialise(Context context) {
 
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        final LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        View view = layoutInflater.inflate(R.layout.editable_image_container_frame, this, true);
+        final View view = layoutInflater.inflate(R.layout.editable_image_container_frame, this, true);
 
         mEditableMaskedImageView = (EditableMaskedImageView) view.findViewById(R.id.editable_image_view);
         mProgressSpinner = (ProgressBar) view.findViewById(R.id.progress_bar);
@@ -448,7 +448,7 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
     public EditableImageContainerFrame setCornerOverlays(int topLeftImageResourceId, int topRightImageResourceId, int
             bottomLeftImageResourceId, int bottomRightImageResourceId) {
 
-        Resources resources = getContext().getResources();
+        final Resources resources = getContext().getResources();
 
         mEditableMaskedImageView.setCornerOverlays(
                 BitmapFactory.decodeResource(resources, topLeftImageResourceId),
@@ -505,27 +505,27 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
 
         mExpectedImageCount = 0;
 
-        boolean loadImage;
+        final boolean loadImage;
 
-        if (loadImage = (mImageAsset != null && mExpectedImageKey != mImageAsset)) {
+        if (loadImage = mImageAsset != null && mExpectedImageKey != mImageAsset) {
             mExpectedImageCount++;
         }
 
-        boolean loadMask;
+        final boolean loadMask;
 
-        if (loadMask = (mMaskURL != null && mExpectedMaskKey != mMaskURL)) {
+        if (loadMask = mMaskURL != null && mExpectedMaskKey != mMaskURL) {
             mExpectedImageCount++;
         }
 
-        boolean loadUnderImages;
+        final boolean loadUnderImages;
 
-        if (loadUnderImages = (mUnderImageURLList != null && mUnderImageURLList.size() > 0)) {
+        if (loadUnderImages = mUnderImageURLList != null && mUnderImageURLList.size() > 0) {
             mExpectedImageCount += mUnderImageURLList.size();
         }
 
-        boolean loadOverImages;
+        final boolean loadOverImages;
 
-        if (loadOverImages = (mOverImageURLList != null && mOverImageURLList.size() > 0)) {
+        if (loadOverImages = mOverImageURLList != null && mOverImageURLList.size() > 0) {
             mExpectedImageCount += mOverImageURLList.size();
         }
 
@@ -546,7 +546,7 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
 
         if (loadUnderImages) {
             for (int underImageIndex = 0; underImageIndex < mUnderImageURLList.size(); underImageIndex++) {
-                URL underImageURL = mUnderImageURLList.get(underImageIndex);
+                final URL underImageURL = mUnderImageURLList.get(underImageIndex);
 
                 if (underImageURL != null && mExpectedUnderImageKeys[underImageIndex] != underImageURL) {
                     mExpectedUnderImageKeys[underImageIndex] = underImageURL;
@@ -563,7 +563,7 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
 
         if (loadOverImages) {
             for (int overImageIndex = 0; overImageIndex < mUnderImageURLList.size(); overImageIndex++) {
-                URL overImageURL = mOverImageURLList.get(overImageIndex);
+                final URL overImageURL = mOverImageURLList.get(overImageIndex);
 
                 if (overImageURL != null && mExpectedOverImageKeys[overImageIndex] != overImageURL) {
                     mExpectedOverImageKeys[overImageIndex] = overImageURL;
@@ -682,8 +682,8 @@ public class EditableImageContainerFrame extends FrameLayout implements IImageCo
             // The result depends on whether the image and mask loaded OK. we check with the
             // container, because it may have been supplied a mask from a resource.
 
-            Bitmap imageBitmap = mEditableMaskedImageView.getImageBitmap();
-            Drawable maskDrawable = mEditableMaskedImageView.getMaskDrawable();
+            final Bitmap imageBitmap = mEditableMaskedImageView.getImageBitmap();
+            final Drawable maskDrawable = mEditableMaskedImageView.getMaskDrawable();
 
             if (KiteSDK.DEBUG_IMAGE_CONTAINERS) {
                 Log.d(LOG_TAG, "Image bitmap  = " + imageBitmap);

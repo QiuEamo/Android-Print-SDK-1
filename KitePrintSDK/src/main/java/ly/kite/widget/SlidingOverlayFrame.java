@@ -161,7 +161,7 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
         // If we have attributes, try and getCost the ones we are interested in.
 
         if (attributeSet != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SlidingOverlayFrame, defaultStyle,
+            final TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SlidingOverlayFrame, defaultStyle,
                     defaultStyle);
 
             mExpandDirection = ExpandDirection.values()[typedArray.getInteger(R.styleable.SlidingOverlayFrame_expandDirection,
@@ -193,13 +193,13 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
         ///// Always visible view /////
 
         // If we haven't been provided a view - create a dummy one
-        View alwaysVisibleView = (mAlwaysVisibleView != null ? mAlwaysVisibleView : new View(getContext()));
+        final View alwaysVisibleView = mAlwaysVisibleView != null ? mAlwaysVisibleView : new View(getContext());
 
         setAlwaysVisibleView(alwaysVisibleView);
 
         ///// Revealed view /////
 
-        View revealedView = (mRevealedView != null ? mRevealedView : new View(getContext()));
+        final View revealedView = mRevealedView != null ? mRevealedView : new View(getContext());
 
         setRevealedView(revealedView);
     }
@@ -233,18 +233,18 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
      *****************************************************/
     private View getViewFromLayoutResource(int layoutResourceId) {
 
-        Context context = getContext();
+        final Context context = getContext();
 
         // If the supplied layout resource id is zero - create a
         // dummy view.
 
-        View view;
+        final View view;
 
         if (layoutResourceId != 0) {
             view = inflate(getContext(), layoutResourceId, new FrameLayout(context));
 
             if (view == null) {
-                throw (new RuntimeException("Failed to inflate always visible view from layout resource"));
+                throw new RuntimeException("Failed to inflate always visible view from layout resource");
             }
         } else {
             view = new View(context);
@@ -391,10 +391,10 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
         }
 
         // Get the frame size
-        int frameWidth = getWidth();
-        int frameHeight = getHeight();
+        final int frameWidth = getWidth();
+        final int frameHeight = getHeight();
 
-        Animation animation;
+        final Animation animation;
 
         // If the slider is to be expanded:
         //   1. Make the revealed view visible
@@ -504,13 +504,13 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
 
             protected FrameLayout.LayoutParams getSliderLayoutParams() {
 
-                return (new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity
-                        .BOTTOM));
+                return new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity
+                        .BOTTOM);
             }
 
             protected void addChildViews(ViewGroup viewGroup, View alwaysVisibleView, View revealedView) {
 
-                ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup
+                final ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup
                         .LayoutParams.WRAP_CONTENT);
 
                 viewGroup.addView(alwaysVisibleView, childLayoutParams);
@@ -554,7 +554,7 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
 
             protected void addChildViews(ViewGroup viewGroup, View alwaysVisibleView, View revealedView) {
 
-                ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup
+                final ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup
                         .LayoutParams.WRAP_CONTENT);
 
                 viewGroup.addView(revealedView, childLayoutParams);
@@ -593,13 +593,13 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
 
             protected FrameLayout.LayoutParams getSliderLayoutParams() {
 
-                return (new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, Gravity
-                        .RIGHT));
+                return new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, Gravity
+                        .RIGHT);
             }
 
             protected void addChildViews(ViewGroup viewGroup, View alwaysVisibleView, View revealedView) {
 
-                ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+                final ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                         .LayoutParams.FILL_PARENT);
 
                 viewGroup.addView(alwaysVisibleView, childLayoutParams);
@@ -638,13 +638,13 @@ public class SlidingOverlayFrame extends FrameLayout implements View.OnClickList
 
             protected FrameLayout.LayoutParams getSliderLayoutParams() {
 
-                return (new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, Gravity
-                        .LEFT));
+                return new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT, Gravity
+                        .LEFT);
             }
 
             protected void addChildViews(ViewGroup viewGroup, View alwaysVisibleView, View revealedView) {
 
-                ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
+                final ViewGroup.LayoutParams childLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup
                         .LayoutParams.FILL_PARENT);
 
                 viewGroup.addView(revealedView, childLayoutParams);

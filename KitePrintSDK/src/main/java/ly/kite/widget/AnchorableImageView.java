@@ -130,7 +130,7 @@ public class AnchorableImageView extends ImageView {
         if (mAnchored) {
             // Get the image
 
-            Drawable drawable = getDrawable();
+            final Drawable drawable = getDrawable();
 
             if (drawable == null) {
                 return;
@@ -202,37 +202,37 @@ public class AnchorableImageView extends ImageView {
             return;
         }
 
-        Drawable drawable = getDrawable();
+        final Drawable drawable = getDrawable();
 
         if (drawable == null) {
             return;
         }
 
-        int drawableWidth = drawable.getIntrinsicWidth();
-        int drawableHeight = drawable.getIntrinsicHeight();
+        final int drawableWidth = drawable.getIntrinsicWidth();
+        final int drawableHeight = drawable.getIntrinsicHeight();
 
         if (drawableWidth < 1 || drawableHeight < 1) {
             return;
         }
 
-        int viewHalfWidth = (int) (viewWidth * 0.5f);
-        int viewHalfHeight = (int) (viewHeight * 0.5f);
+        final int viewHalfWidth = (int) (viewWidth * 0.5f);
+        final int viewHalfHeight = (int) (viewHeight * 0.5f);
 
         // Since we are being anchored, we have the option of filling the entire view, or
         // fitting inside it. Work out which from the scale type.
 
-        ScaleType scaleType = getScaleType();
+        final ScaleType scaleType = getScaleType();
 
-        boolean fillView = (scaleType == ScaleType.CENTER_CROP ||
+        final boolean fillView = scaleType == ScaleType.CENTER_CROP ||
                 scaleType == ScaleType.CENTER.FIT_END ||
-                scaleType == ScaleType.FIT_XY);
+                scaleType == ScaleType.FIT_XY;
 
         // Calculate the scale factor according to whether we're filling the view or not
 
-        float widthScaleFactor = (float) viewWidth / (float) drawableWidth;
-        float heightScaleFactor = (float) viewHeight / (float) drawableHeight;
+        final float widthScaleFactor = (float) viewWidth / (float) drawableWidth;
+        final float heightScaleFactor = (float) viewHeight / (float) drawableHeight;
 
-        float scaleFactor;
+        final float scaleFactor;
 
         if (fillView) {
             scaleFactor = Math.max(widthScaleFactor, heightScaleFactor);
@@ -240,11 +240,11 @@ public class AnchorableImageView extends ImageView {
             scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
         }
 
-        int scaledDrawableWidth = (int) (drawableWidth * scaleFactor);
-        int scaledDrawableHeight = (int) (drawableHeight * scaleFactor);
+        final int scaledDrawableWidth = (int) (drawableWidth * scaleFactor);
+        final int scaledDrawableHeight = (int) (drawableHeight * scaleFactor);
 
-        int scaledDrawableHalfWidth = (int) (scaledDrawableWidth * 0.5f);
-        int scaledDrawableHalfHeight = (int) (scaledDrawableHeight * 0.5f);
+        final int scaledDrawableHalfWidth = (int) (scaledDrawableWidth * 0.5f);
+        final int scaledDrawableHalfHeight = (int) (scaledDrawableHeight * 0.5f);
 
         // Once we've determined what the anchor gravity is, calculate the bounds
         // of the image to match.

@@ -85,6 +85,15 @@ public class FileDownloader {
 
     private Map<URL, DownloaderTask> mInProgressDownloadTasks;
 
+    ////////// Constructor(s) //////////
+
+    private FileDownloader(Context context) {
+
+        mContext = context;
+        mThreadPoolExecutor = Executors.newFixedThreadPool(MAX_CONCURRENT_DOWNLOADS);
+        mInProgressDownloadTasks = new HashMap<>();
+    }
+
     ////////// Static Initialiser(s) //////////
 
     ////////// Static Method(s) //////////
@@ -135,7 +144,7 @@ public class FileDownloader {
 
             fileOutputStream = new FileOutputStream(tempTargetFile);
 
-            byte[] downloadBuffer = new byte[BUFFER_SIZE_IN_BYTES];
+            final byte[] downloadBuffer = new byte[BUFFER_SIZE_IN_BYTES];
 
             int numberOfBytesRead;
             int totalBytesRead = 0;
@@ -187,15 +196,6 @@ public class FileDownloader {
         }
     }
 
-    ////////// Constructor(s) //////////
-
-    private FileDownloader(Context context) {
-
-        mContext = context;
-        mThreadPoolExecutor = Executors.newFixedThreadPool(MAX_CONCURRENT_DOWNLOADS);
-        mInProgressDownloadTasks = new HashMap<>();
-    }
-
     ////////// Method(s) //////////
 
     /*****************************************************
@@ -226,7 +226,7 @@ public class FileDownloader {
         if (mInProgressDownloadTasks.get(sourceURL) == null) {
             // No in-progress task downloading this file, let's kick one off
 
-            DownloaderTask downloaderTask = new DownloaderTask(sourceURL, targetDirectory, targetFile, forceDownload, callback);
+            final DownloaderTask downloaderTask = new DownloaderTask(sourceURL, targetDirectory, targetFile, forceDownload, callback);
 
             mInProgressDownloadTasks.put(sourceURL, downloaderTask);
 
