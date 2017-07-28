@@ -170,19 +170,19 @@ public class ImageSpecAdaptor extends BaseAdapter {
             }
 
             if (imageBorder != null) {
-                viewHolder.framedImageView.setBackgroundColor(mContext.getResources().getColor(android.R.color.white));
+                viewHolder.mFramedImageView.setBackgroundColor(mContext.getResources().getColor(android.R.color.white));
 
-                viewHolder.framedImageView.setPaddingProportions(
-                        imageBorder.left,
-                        imageBorder.top,
-                        imageBorder.right,
-                        imageBorder.bottom);
+                viewHolder.mFramedImageView.setPaddingProportions(
+                        imageBorder.mLeft,
+                        imageBorder.mTop,
+                        imageBorder.mRight,
+                        imageBorder.mBottom);
             }
 
-            viewHolder.framedImageView.setStencil(mProduct.getUserJourneyType().editMaskResourceId());
+            viewHolder.mFramedImageView.setStencil(mProduct.getUserJourneyType().editMaskResourceId());
 
             // Set the aspect ratio of the review image to match the image aspect ratio
-            viewHolder.framedImageView.setImageAspectRatio(mProduct.getImageAspectRatio());
+            viewHolder.mFramedImageView.setImageAspectRatio(mProduct.getImageAspectRatio());
 
             view.setTag(viewHolder);
         }
@@ -192,19 +192,19 @@ public class ImageSpecAdaptor extends BaseAdapter {
         final ImageSpec imageSpec = (ImageSpec) getItem(position);
         final AssetFragment assetFragment = imageSpec.getAssetFragment();
 
-        viewHolder.framedImageView.requestScaledImageOnceSized(assetFragment);
+        viewHolder.mFramedImageView.requestScaledImageOnceSized(assetFragment);
 
-        if (viewHolder.borderTextView != null) {
-            viewHolder.borderTextView.setText(imageSpec.getBorderText());
+        if (viewHolder.mBorderTextView != null) {
+            viewHolder.mBorderTextView.setText(imageSpec.getBorderText());
         }
 
-        viewHolder.quantityTextView.setText(String.valueOf(imageSpec.getQuantity()));
-        viewHolder.imageIndex = position;
+        viewHolder.mQuantityTextView.setText(String.valueOf(imageSpec.getQuantity()));
+        viewHolder.mImageIndex = position;
 
-        viewHolder.framedImageView.setOnClickListener(viewHolder);
-        viewHolder.decreaseButton.setOnClickListener(viewHolder);
-        viewHolder.increaseButton.setOnClickListener(viewHolder);
-        viewHolder.editTextView.setOnClickListener(viewHolder);
+        viewHolder.mFramedImageView.setOnClickListener(viewHolder);
+        viewHolder.mDecreaseButton.setOnClickListener(viewHolder);
+        viewHolder.mIncreaseButton.setOnClickListener(viewHolder);
+        viewHolder.mEditTextView.setOnClickListener(viewHolder);
 
         // Scan through the view hierarchy and set any special properties. This allows apps to apply
         // special features to the view, such as an overlay for certain products. This is either a stroke

@@ -107,7 +107,7 @@ public class ImageCache implements IImageConsumer {
         }
 
         // Notify the end consumer
-        pendingImage.consumer.onImageDownloading(key);
+        pendingImage.mConsumer.onImageDownloading(key);
     }
 
     /*****************************************************
@@ -135,7 +135,7 @@ public class ImageCache implements IImageConsumer {
         addImage(key, bitmap);
 
         // Pass the image to the end consumer
-        pendingImage.consumer.onImageAvailable(key, bitmap);
+        pendingImage.mConsumer.onImageAvailable(key, bitmap);
     }
 
     /*****************************************************
@@ -157,7 +157,7 @@ public class ImageCache implements IImageConsumer {
         }
 
         // Notify the end consumer
-        pendingImage.consumer.onImageUnavailable(key, exception);
+        pendingImage.mConsumer.onImageUnavailable(key, exception);
     }
 
     ////////// Method(s) //////////
@@ -188,7 +188,7 @@ public class ImageCache implements IImageConsumer {
         mHolderList.remove(holder);
         mHolderList.addFirst(holder);
 
-        return holder.bitmap;
+        return holder.mBitmap;
     }
 
     /*****************************************************
@@ -231,7 +231,7 @@ public class ImageCache implements IImageConsumer {
         // exceeds the capacity, then remove images from the end until we get
         // back down within the capacity.
 
-        mSizeInBytes += newHolder.approximateSizeInBytes;
+        mSizeInBytes += newHolder.mApproximateSizeInBytes;
 
         while (mSizeInBytes > mCapacityInBytes) {
             // Get the least recently used image and remove it
@@ -242,9 +242,9 @@ public class ImageCache implements IImageConsumer {
                 break;
             }
 
-            mHolderTable.remove(lruHolder.key);
+            mHolderTable.remove(lruHolder.mKey);
 
-            mSizeInBytes -= lruHolder.approximateSizeInBytes;
+            mSizeInBytes -= lruHolder.mApproximateSizeInBytes;
         }
     }
 
