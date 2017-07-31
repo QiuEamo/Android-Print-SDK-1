@@ -685,7 +685,7 @@ public class PhotobookAdaptor extends RecyclerView.Adapter {
      * Instructions view holder.
      *
      *****************************************************/
-    private class InstructionsViewHolder extends RecyclerView.ViewHolder {
+    private class InstructionsViewHolder extends RecyclerView.ViewHolder{
         InstructionsViewHolder(View view) {
             super(view);
             TextView instructions= (TextView) view.findViewById(R.id.photobook_instructions_text_view);

@@ -43,6 +43,7 @@ import android.test.AndroidTestCase;
 import junit.framework.Assert;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.Executor;
 
 ///// Class Declaration /////
 
@@ -58,6 +59,8 @@ public class KiteSampleTestCase extends AndroidTestCase {
     private static final String LOG_TAG = "KiteSampleTestCase";
 
     public void testAPIKeyPlaceholder() {
-        Assert.assertTrue(MainActivity.isPlaceholderSet());
+
+        if(!MainActivity.isPlaceholderSet())
+            fail("API keys not removed from MainActivity");
     }
 }
