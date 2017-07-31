@@ -23,7 +23,6 @@ test:
     # starting the tests.
     - circle-android wait-for-boot
     # Run the tests on the emulator, and create a coverage report
-    - ./gradlew  KiteSampleTestCase
     - ./gradlew checkstyle
     - ./gradlew createDebugCoverageReport
     # Copy the coverage reports
