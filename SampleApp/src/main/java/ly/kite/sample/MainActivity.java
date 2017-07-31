@@ -97,7 +97,8 @@ public class MainActivity extends ADeepLinkableActivity {
      * Insert your Kite API keys here. These are found under your profile
      * by logging in to the developer portal at https://www.kite.ly
      **********************************************************************/
-    private static String API_KEY_TEST = "2408339a7bb4ce5fdb594d59c6a85444e7601ab7";
+
+    private static String API_KEY_TEST = REPLACE_DETAILS_HERE;
     private static String API_KEY_STAGING = REPLACE_DETAILS_HERE;
     private static String API_KEY_LIVE = REPLACE_DETAILS_HERE;
 
@@ -265,7 +266,7 @@ public class MainActivity extends ADeepLinkableActivity {
 //    environment = KiteSDK.DefaultEnvironment.STAGING_DO_NOT_USE;
 
         // Check that the API has been set in code
-        if (apiKey.equals(REPLACE_DETAILS_HERE)) {
+        if (!isPlaceholderSet()) {
             showError("Set API Keys", "Please set your Kite API keys at the top of the SampleApp's MainActivity.java. You can find these " +
                     "by logging into https://www.kite.ly.");
 
@@ -408,6 +409,10 @@ public class MainActivity extends ADeepLinkableActivity {
                 .setMessage(message)
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    public static boolean isPlaceholderSet() {
+        return API_KEY_LIVE.equals(REPLACE_DETAILS_HERE) && API_KEY_TEST.equals(REPLACE_DETAILS_HERE);
     }
 
     ////////// Inner Class(es) //////////
