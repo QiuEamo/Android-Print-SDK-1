@@ -60,7 +60,8 @@ public class KiteSampleTestCase extends AndroidTestCase {
 
     public void testAPIKeyPlaceholder() {
 
-        if(!MainActivity.isPlaceholderSet())
+        if(!MainActivity.isPlaceholderSet()) {
             fail("API keys not removed from MainActivity");
+        }
     }
 }

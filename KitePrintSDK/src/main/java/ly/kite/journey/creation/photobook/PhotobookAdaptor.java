@@ -685,13 +685,13 @@ public class PhotobookAdaptor extends RecyclerView.Adapter {
      * Instructions view holder.
      *
      *****************************************************/
-    private class InstructionsViewHolder extends RecyclerView.ViewHolder{
+    private class InstructionsViewHolder extends RecyclerView.ViewHolder {
         InstructionsViewHolder(View view) {
             super(view);
-            TextView instructions= (TextView) view.findViewById(R.id.photobook_instructions_text_view);
+            final TextView instructions = (TextView) view.findViewById(R.id.photobook_instructions_text_view);
 
-            String htmlInstructions = view.getResources().getString(R.string.multi_page_instructions_html);
-            Spanned htmlAsSpanned = Html.fromHtml(htmlInstructions);
+            final String htmlInstructions = view.getResources().getString(R.string.multi_page_instructions_html);
+            final Spanned htmlAsSpanned = Html.fromHtml(htmlInstructions);
 
             instructions.setText(htmlAsSpanned);
         }
