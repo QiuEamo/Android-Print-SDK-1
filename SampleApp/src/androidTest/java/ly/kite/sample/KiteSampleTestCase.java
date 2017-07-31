@@ -58,6 +58,6 @@ public class KiteSampleTestCase extends AndroidTestCase {
     private static final String LOG_TAG = "KiteSampleTestCase";
 
     public void testAPIKeyPlaceholder() {
-        assertTrue(MainActivity.isPlaceholderSet());
+        Assert.assertTrue(MainActivity.isPlaceholderSet());
     }
 }
