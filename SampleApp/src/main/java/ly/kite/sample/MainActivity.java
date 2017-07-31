@@ -98,7 +98,7 @@ public class MainActivity extends ADeepLinkableActivity {
      * by logging in to the developer portal at https://www.kite.ly
      **********************************************************************/
 
-    private static String API_KEY_TEST = "123456789";
+    private static String API_KEY_TEST = REPLACE_DETAILS_HERE;
     private static String API_KEY_STAGING = REPLACE_DETAILS_HERE;
     private static String API_KEY_LIVE = REPLACE_DETAILS_HERE;
 
