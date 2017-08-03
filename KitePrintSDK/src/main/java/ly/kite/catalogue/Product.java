@@ -153,8 +153,7 @@ public class Product implements IGroupOrProduct, Parcelable {
 
         this();
 
-        mId =
-                productId;
+        mId = productId;
         mCode = productCode;
         mName = productName;
         mType = productType;
