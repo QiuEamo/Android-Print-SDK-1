@@ -143,6 +143,7 @@
     <string name="Details">Detalles</string>
     <string name="Done">Hecho</string>
     <string name="Edit">Editar</string>
+    <string name="Edit_upper">EDITAR</string>
     <string name="Email">Correo eléctronico</string>
     <string name="End_Session">Terminar sesión</string>
     <string name="Flip">Dar la vuelta</string>
@@ -178,6 +179,7 @@
     <string name="Shipping">Envío</string>
     <string name="Size">Tamaño</string>
     <string name="Total">Total</string>
+    <string name="Total_basket">Total - </string>
 
     <string name="image_source_device">Cámara</string>
     <string name="image_source_instagram">Instagram</string>

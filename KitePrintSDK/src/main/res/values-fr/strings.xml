@@ -140,6 +140,7 @@
     <string name="Details">Détails</string>
     <string name="Done">Terminé</string>
     <string name="Edit">Modifier</string>
+    <string name="Edit_upper">MODIFIER</string>
     <string name="Email">E-mail</string>
     <string name="End_Session">Terminer session</string>
     <string name="Flip">Pivoter</string>
@@ -175,6 +176,7 @@
     <string name="Shipping">Livraison</string>
     <string name="Size">Taille</string>
     <string name="Total">Total</string>
+    <string name="Total_basket">Total - </string>
 
     <string name="image_source_device">Appareil Photo</string>
     <string name="image_source_instagram">Instagram</string>

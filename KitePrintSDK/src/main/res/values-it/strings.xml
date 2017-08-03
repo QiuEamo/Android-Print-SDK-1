@@ -139,6 +139,7 @@
     <string name="Details">Dettagli</string>
     <string name="Done">Fatto</string>
     <string name="Edit">Modifica</string>
+    <string name="Edit_upper">MODIFICA</string>
     <string name="Email">Email</string>
     <string name="End_Session">Termina sessione</string>
     <string name="Flip">"Capovolgi "</string>
@@ -174,6 +175,7 @@
     <string name="Shipping">Spedizione</string>
     <string name="Size">Dimensioni</string>
     <string name="Total">Totale</string>
+    <string name="Total_basket">Total - </string>
 
     <string name="image_source_device">Macchina fotografica</string>
     <string name="image_source_instagram">Instagram</string>

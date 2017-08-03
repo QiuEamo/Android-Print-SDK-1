@@ -138,6 +138,7 @@
     <string name="Details">Detaljer</string>
     <string name="Done">Færdig</string>
     <string name="Edit">Rediger</string>
+    <string name="Edit_upper">REDIGER</string>
     <string name="Email">E-mail</string>
     <string name="End_Session">Afslut session</string>
     <string name="Flip">Vend</string>
@@ -172,6 +173,7 @@
     <string name="Shipping">Forsendelse</string>
     <string name="Size">Størrelse</string>
     <string name="Total">Total</string>
+    <string name="Total_basket">Total - </string>
 
     <string name="image_source_device">Kamera</string>
     <string name="image_source_instagram">Instagram</string>
