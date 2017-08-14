@@ -266,7 +266,7 @@ public class MainActivity extends ADeepLinkableActivity {
 //    environment = KiteSDK.DefaultEnvironment.STAGING_DO_NOT_USE;
 
         // Check that the API has been set in code
-        if (!isPlaceholderSet()) {
+        if (isPlaceholderSet()) {
             showError("Set API Keys", "Please set your Kite API keys at the top of the SampleApp's MainActivity.java. You can find these " +
                     "by logging into https://www.kite.ly.");
 

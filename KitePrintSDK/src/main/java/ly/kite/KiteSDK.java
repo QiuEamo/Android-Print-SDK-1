@@ -100,7 +100,7 @@ public class KiteSDK {
     public static final boolean DISPLAY_PRODUCT_JSON = false;
     public static final boolean DISPLAY_PRODUCTS = false;
 
-    public static final String SDK_VERSION = "5.7.4";
+    public static final String SDK_VERSION = "5.8.0";
 
     public static final String IMAGE_CATEGORY_APP = "app";
     public static final String IMAGE_CATEGORY_PRODUCT_ITEM = "product_item";
