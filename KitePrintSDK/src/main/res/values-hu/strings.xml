@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="powered_by">"A szolgáltatás a Kite.ly motorjával fut."</string>
+
+    <string name="unit_centimeters">"centiméter"</string>
+    <string name="unit_inches">"hüvelyk"</string>
+    <string name="unit_pixels">"pixel"</string>
+
+    <string name="unit_centimeters_short">"cm"</string>
+    <string name="unit_inches_short">"in"</string>
+    <string name="unit_pixels_short">"px"</string>
+
+    <string name="month_hint">"HH"</string> 
+    <string name="year_hint">"ÉÉÉÉ"</string> 
+
+    <string name="title_choose_product_group">"Nyomatbolt"</string>
+    <string name="title_create_phone_case">"Snap tokok"</string>
+    <string name="title_image_source">"Fényképek elérése"</string>
+    <string name="title_photobook">"Fotóalbumhoz"</string>
+    <string name="title_calendar">"Naptár"</string>
+    <string name="title_poster">"Poszter"</string>
+    <string name="title_basket">"Kosár"</string>
+    <string name="title_payment_sandbox">"Fizetés (TESZT)"</string>
+    <string name="title_payment">"Fizetés"</string>
+    <string name="title_payment_source_sandbox">"Fizetés (TESZT)"</string>
+    <string name="title_payment_source">"Fizetés"</string>
+    <string name="title_order_history">"Rendelési előzmények"</string>
+
+    <string name="settings_title_show_notification_messages">"Üzenetek"</string>
+    <string name="settings_title_support">"Támogatás"</string>
+    <string name="settings_title_privacy">"Adatvédelmi szabályzat"</string>
+    <string name="settings_title_terms">"Általános szerződéses feltételek"</string>
+    <string name="settings_title_legal">"Jogi információk"</string>
+    <string name="settings_title_licences">"Nyílt forráskódú licencek"</string>
+    <string name="settings_summary_licences">"Nyílt forráskódú licencek"</string>
+    <string name="settings_title_build_version">"Verzió"</string>
+
+    <string name="alert_dialog_title_pack_not_full_format_string">"%s fotó kiválasztása"</string>
+    <string name="alert_dialog_message_pack_not_full_format_string" tools:ignore="PluralsCandidate">"%d további hozzáadása lehetséges ezen az áron"</string>
+
+    <string name="alert_dialog_title_oops">"Oeps!"</string>
+    <string name="alert_dialog_message_pricing_format_string">"Probléma lépett fel a kérelmével:\n%s"</string>
+
+    <string name="alert_dialog_title_error_retrieving_products">"Hoppá!"</string>
+    <string name="alert_dialog_message_error_retrieving_products">"Úgy tűnik, nincs internetkapcsolat."</string>
+
+    <string name="alert_dialog_title_product_not_found">"Hoppá!"</string>
+    <string name="alert_dialog_message_product_not_found">"Úgy tűnik, nincs internetkapcsolat."</string>
+
+    <string name="alert_dialog_title_delete_photo">"Törlöd a fotót?"</string>
+    <string name="alert_dialog_message_delete_photo">"Biztosan törlöd ezt a fényképet?"</string>
+    <string name="alert_dialog_delete_photo_cancel_text">"Tartás"</string>
+    <string name="alert_dialog_delete_photo_confirm_text">"Törlés"</string>
+
+    <string name="alert_dialog_message_no_images_selected">"Válasszon ki néhány képet."</string>
+
+    <string name="alert_dialog_message_no_recipient">"Add meg a címzett nevét."</string>
+    <string name="alert_dialog_message_no_line1">"Töltse ki a cím 1. sorát."</string>
+    <string name="alert_dialog_message_no_postal_code">"Adja meg az irányítószámot."</string>
+    <string name="alert_dialog_message_no_email_address">"Adj meg egy e-mail-címet."</string>
+    <string name="alert_dialog_message_no_city">"Adja meg a várost."</string>
+
+    <string name="alert_dialog_title_invalid_delivery_address">"Érvénytelen szállítási cím"</string>
+    <string name="alert_dialog_message_invalid_delivery_address">"Válassz ki egy szállítási címet."</string>
+
+    <string name="alert_dialog_title_invalid_email_address">"Érvénytelen e-mail-cím"</string>
+    <string name="alert_dialog_message_invalid_email_address">"Érvényes e-mai-címet adj meg."</string>
+
+    <string name="alert_dialog_title_invalid_phone_number">"Érvénytelen telefonszám"</string>
+    <string name="alert_dialog_message_invalid_phone_number">"Érvényes telefonszámot adj meg."</string>
+
+    <string name="alert_dialog_message_connectivity">"Úgy tűnik, nincs internetkapcsolat."</string>
+
+    <string name="alert_dialog_message_processing">"Egy pillanat..."</string>
+
+    <string name="alert_dialog_title_end_customer_session">"Munkamenet befejezése"</string>
+    <string name="alert_dialog_message_end_customer_session">"Biztosan befejezed ezt a munkamenetet?"</string>
+
+    <string name="alert_dialog_title_remove_item">"Tétel eltávolítása"</string>
+    <string name="alert_dialog_message_remove_item">"Erősítse meg, hogy valóban el szeretnéd távolítani a tételt a kosárból."</string>
+
+    <string name="alert_dialog_title_empty_basket">"Üres kosár"</string>
+    <string name="alert_dialog_message_empty_basket">"A kosarad jelenleg üres. A kifizetést megelőzően adj hozzá egy tételt."</string>
+
+    <string name="alert_dialog_message_uploading_images">"Kép feltöltése"</string>
+
+    <string name="alert_dialog_message_unable_to_store_card">"A kártya tárolása nem lehetséges"</string>
+    <string name="alert_dialog_message_no_payment_id">"A fizetési bizonylaton nem található fizetési azonosító"</string>
+    <string name="alert_dialog_message_no_proof_of_payment">"A fizetést megerősítő dokumentumon nem található fizetési bizonylat"</string>
+    <string name="alert_dialog_message_no_paypal_confirmation">"A PayPaltól nem érkezett fizetést megerősítő dokumentum"</string>
+    <string name="alert_dialog_message_card_expired">"Sajnáljuk, de a kártyád valószínűleg lejárt. Próbáld meg újra."</string>
+    <string name="alert_dialog_message_card_not_recognised">"Sajnáljuk, de a kártyádat nem tudtuk felismerni. Szükség esetén a kártyád adatait próbáld meg manuálisan megadni."</string>
+
+    <string name="alert_dialog_item_pay_with_new_card">"Fizetés új kártyával"</string>
+    <string name="alert_dialog_item_pay_with_existing_card_format_string">"Fizetés %1$s számjegyekkel végződő kártyával"</string>
+
+    <string name="log_out_warning">"Automatikus\nkijelentkeztetés"</string>
+
+    <string name="progress_dialog_title_add_to_basket">"Kosárhoz ad"</string>
+    <string name="progress_dialog_title_updating_basket">"Kosár frissítése"</string>
+
+    <string name="add_more">"Továbbiak hozzáadása"</string>
+    <string name="Cancel">"Mégse"</string>
+    <string name="Choose_Delivery_Address">"Szállítási cím kiválasztása"</string>
+    <string name="Continue_Shopping">"Vásárlás folytatása"</string>
+    <string name="Country">"Ország"</string>
+    <string name="Description">"Leírás"</string>
+    <string name="Details">"Részletek"</string>
+    <string name="Done">"Kész"</string>
+    <string name="Edit">"Szerkesztés"</string>
+    <string name="Email">"E-mail"</string>
+    <string name="End_Session">"Munkamenet befejezése"</string>
+    <string name="Flip">"Tükrözés"</string>
+    <string name="Free">"Ingyenes"</string>
+    <string name="ITEM">"TÉTEL"</string>
+    <string name="Keep">"Tartás"</string>
+    <string name="Loading">"Betöltés"</string>
+    <string name="Loading_catalogue">"Katalógus betöltése"</string>
+    <string name="Log_Out">"Kijelentkezés"</string>
+    <string name="Next">"Tovább"</string>
+    <string name="Next_Customer">"Tovább"</string>
+    <string name="No_Results">"Nincs találat"</string>
+    <string name="OK">"OK"</string>
+    <string name="Order_Id">"Rendelési azonosító"</string>
+    <string name="ORDER_ID">"Megrendelés azonosítója"</string>
+    <string name="Order_Summary">"Megrendelés összesítése"</string>
+    <string name="ORDER_SUMMARY">"MEGRENDELÉS ÖSSZESÍTÉSE"</string>
+    <string name="Oops_">"Hoppá!"</string>
+    <string name="Pay">"Fizetés"</string>
+    <string name="Payment_Id">"Fizetési azonosító"</string>
+    <string name="PAYMENT_ID">"FIZETÉSI AZONOÍTÓ"</string>
+    <string name="PRICE">"ÁR"</string>
+    <string name="print_these">"Ezek kinyomtatása"</string>
+    <string name="Processing_">"Feldolgozás…"</string>
+    <string name="Promotional_Discount">"Promóciós kedvezmény"</string>
+    <string name="Remove">"Eltávolítás"</string>
+    <string name="Rotate">"Forgatás"</string>
+    <string name="Quantity">"Mennyiség"</string>
+    <string name="QUANTITY">"MENNYISÉG"</string>
+    <string name="Retry">"Újrapróbálkozás"</string>
+    <string name="Save">"Mentés"</string>
+    <string name="Select_Image">"Kép kiválasztása"</string>
+    <string name="Shipping">"Szállítás"</string>
+    <string name="Size">"Méret"</string>
+    <string name="Total">"Összesen"</string>
+
+    <string name="image_source_device">"Fényképezőgép"</string>
+    <string name="image_source_instagram">"Instagram"</string>
+    <string name="image_source_facebook">"Facebook"</string>
+    <string name="image_source_from_phone">"Feltöltés telefonból"</string>
+
+    <string name="select_photo_from_device">"Fényképezőgéppel készített fotó kiválasztása"</string>
+    <string name="select_photo_from_instagram">"Instagram-fotó kiválasztása"</string>
+    <string name="select_photo_from_facebook">"Facebook-fotó kiválasztása"</string>
+    <string name="upload_photo_from_phone">"Telefonnal készített fotó feltöltése"</string>
+
+    <string name="destination_description_gbr">"Egyesült Királyság"</string>
+    <string name="destination_description_europe">"Európa"</string>
+    <string name="destination_description_rest_of_world">"A világ többi része"</string>
+
+    <string name="placeholder_message">"További tételek\nhamarosan!"</string>
+
+    <string name="order_success_banner_message">"Megkaptuk\nrendelését"</string>
+    <string name="order_failure_banner_message">"Hiba történt.\nPróbálkozz újból alább."</string>
+    <string name="order_failure_message">"Hiba történt.\nPróbáld meg újra."</string>
+
+    <string name="product_quantity_format_string">"Csomag tartalma: %d"</string>
+
+    <string name="product_free_shipping">"Ingyenes"</string>
+    <string name="product_shipping_summary_format_string">"%s ártól"</string>
+
+    <string name="product_free_worldwide_shipping">"Ingyenes szállítás világszerte"</string>
+
+    <string name="product_overview_guarantee_title">"Minőséggarancia"</string>
+    <string name="product_overview_guarantee_text" formatted="false">"Bízunk benne, hogy termékeinkkel több lesz mint elégedett. Azonban a biztonság kedvéért teljes körű visszatérítést biztosítunk, ha nem lennél maximálisan elégedett – akkor is, ha éppen csak rossz napod van."</string>
+
+    <string name="product_overview_start_button_text">"Létrehozás indítása"</string>
+
+    <string name="image_selection_empty_message">"A fenti ikonok megérintésével adj\nhozzá fényképeket"</string>
+
+    <string name="edit_border_text_hint">"Szöveget ide írj"</string>
+
+    <string name="multi_page_instructions_html">"<![CDATA[A szerkesztéshez <b>érintsd meg</b> a képet.<br>Az újbóli rendeléshez <b>tartsd lenyomva</b>.]]>"</string>
+
+    <string name="address_book_empty">"A címjegyzék üres"</string>
+
+    <string name="image_source_prompt">"Az opciók egyikének megérintésével adj hozzá fényképeket"</string>
+
+    <string name="image_selection_pack_title_format_string" tools:ignore="PluralsCandidate">"#%1$d/%2$d csomag %3$s"</string>
+
+    <string name="image_selection_clear_photos_format_string">"%s törlése"</string>
+
+    <string name="edit_image_prompt_text">"Fotó újrapozicionálása"</string>
+
+    <string name="image_selection_proceed_button_text">"Áttekintés és szerkesztés"</string>
+
+    <string name="review_and_edit_title_format_string">"%1$d / %2$d"</string>
+    <string name="review_and_edit_proceed_button_text">"Megerősítés"</string>
+
+    <string name="edit_image_title">"Kép szerkesztése"</string>
+
+    <string name="basket_empty">"A kosár tartalma üres"</string>
+    <string name="basket_left_button_text">"Vásárlás folytatása"</string>
+    <string name="basket_right_button_text">"Fizetés"</string>
+
+    <string name="address_hint_text_recipient">"Név"</string>
+    <string name="address_hint_text_line_1">"1. címsor"</string>
+    <string name="address_hint_text_line_2">"2. címsor"</string>
+    <string name="address_hint_text_city">"Település"</string>
+    <string name="address_hint_text_county_or_state">"Megye/tagállam"</string>
+    <string name="address_hint_text_postcode_or_zip">"Irányítószám"</string>
+
+    <string name="shipping_delivery_address_button_text">Szállítási cím kiválasztása</string>
+    <string name="shipping_phone_hint_text">"Telefon"</string>
+    <string name="shipping_email_reason">"A rendelés megerősítésére vonatkozó friss információk elküldéséhez add meg az e-mail-címedet."</string>
+    <string name="shipping_phone_reason">"Add meg a telefonszámodat, ha a kiszállítás során probléma merülne fel."</string>
+    <string name="shipping_proceed_button_text">@string/Done</string>
+
+    <string name="address_search_prompt">"Keresés a fenti címek között"</string>
+
+    <string name="address_search_hint_format_string">"%1$s keresése"</string>
+    <string name="address_search_empty_results">"Keresés a fenti címek között"</string>
+    <string name="address_search_dialog_title">"Adatok beszerzése"</string>
+    <string name="address_search_dialog_message">"Címadatok beszerzése"</string>
+    <string name="address_search_no_results">"Nincs találat"</string>
+
+    <string name="button_text_edit_address">"Cím szerkesztése"</string>
+    <string name="button_text_delete_address">"Cím törlése"</string>
+
+    <string name="address_edit_proceed_button_text">"Mentés"</string>
+
+    <string name="payment_promo_hint">"Promóciós kód"</string>
+    <string name="payment_promo_button_text_apply">"Alkalmaz"</string>
+    <string name="payment_promo_button_text_clear">"Törlés"</string>
+    <string name="payment_credit_card_button_text">"Hitelkártya"</string>
+    <string name="payment_credit_card_button_text_free">"Ingyenes"</string>
+    <string name="payment_paypal_button_text">"PayPal"</string>
+
+    <string name="stripe_error_invalid_card_details">"Érvénytelen kártyaadatok"</string>
+    <string name="stripe_error_create_object">"Stripe token lekérése nem lehetséges"</string>
+    <string name="stripe_error_retrieve_token">"Stripe token lekérése nem lehetséges"</string>
+
+    <string name="send_email_chooser_title">"E-mail küldése"</string>
+
+    <string name="Card_Number">"Kártya száma"</string>
+    <string name="Expires">"Lejár"</string>
+    <string name="CVV">"CVV"</string>
+
+    <string name="card_error_invalid_number">"Érvénytelen kártyaszám"</string>
+    <string name="card_error_invalid_expiry_date">"Érvénytelen lejárati dátum"</string>
+    <string name="card_error_invalid_cvv">"Érvénytelen ellenőrzési érték"</string>
+
+    <string name="order_submission_message_uploading">"Képek feltöltése"</string>
+    <string name="order_submission_message_posted">"Feladva"</string>
+    <string name="order_submission_message_received">"Átvéve"</string>
+    <string name="order_submission_message_accepted">"Elfogadva"</string>
+    <string name="order_submission_message_validated">"Ellenőrizve"</string>
+    <string name="order_submission_message_processed">"Feldolgozva"</string>
+
+
+    <string name="alert_dialog_title_order_submission_error">"Rendelésküldési hiba"</string>
+    <string name="order_timeout_message">"Úgy tűnik, a rendelésed még nincs feldolgozva. Előfordulhat, hogy a kiszolgálók jelenleg foglaltak, a fizetés pedig egyszerűen több időt vesz igénybe. Próbáld meg később."</string>
+
+    <string name="alert_dialog_title_order_cancelled">"A rendelés törölve"</string>
+    <string name="alert_dialog_message_order_cancelled">"Valami nem stimmel – úgy tűnik, a rendelésed az elküldés során törlődött."</string>
+
+    <string name="alert_dialog_message_server_offline_maintenance">"A kiszolgáló karbantartás miatt jelenleg offline."</string>
+    <string name="alert_dialog_message_server_returned_html">"A kiszolgáló érvénytelen (HTML) választ küldött. Ez általában akkor fordul elő, amikor a kiszolgáló nem érhető el."</string>
+
+    <string name="scan_qr_code">"QR-kód beolvasása"</string>
+    <string name="scan_qr_code_instructions">"Az eszközén található QR-kód olvasó alkalmazás\nsegítségével olvassa be a QR-kódot."</string>
+    <string name="scan_qr_code_alternate_instructions">"Alternatív megoldásként a következő URL-címet is beírhatod a mobilkészüléked böngészőjének címsorába:"</string>
+
+    <string name="action_settings">"Beállítások"</string>
+    <string name="title_activity_checkout">"Szállítás"</string>
+    <string name="title_activity_order_receipt">"Nyugta"</string>
+    <string name="title_activity_payment">"Fizetés"</string>
+    <string name="title_activity_address_book">"Címjegyzék"</string>
+
+    <string name="add_address">"Adres toevoegen"</string>
+    <string name="title_activity_address_add">"Cím hozzáadása"</string>
+    <string name="title_activity_address_edit">"Cím szerkesztése"</string>
+    <string name="action_save_address">"Cím mentése"</string>
+
+    <plurals name="Photo_plurals">
+        <item quantity="zero">"%d fénykép"</item>
+        <item quantity="one">"%d fénykép"</item>
+        <item quantity="two">"%d fénykép"</item>
+        <item quantity="few">"%d fénykép"</item>
+        <item quantity="many">"%d fénykép"</item>
+        <item quantity="other">"%d fénykép"</item>
+    </plurals>
+
+    <plurals name="photo_plurals">
+        <item quantity="zero">"%d fénykép"</item>
+        <item quantity="one">"%d fénykép"</item>
+        <item quantity="two">"%d fénykép"</item>
+        <item quantity="few">"%d fénykép"</item>
+        <item quantity="many">"%d fénykép"</item>
+        <item quantity="other">"%d fénykép"</item>
+    </plurals>
+
+</resources>
