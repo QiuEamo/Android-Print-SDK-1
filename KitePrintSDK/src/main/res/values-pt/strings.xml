@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="powered_by">"Com tecnologia da Kite.ly"</string>
+
+    <string name="unit_centimeters">"centímetros"</string>
+    <string name="unit_inches">"polegadas"</string>
+    <string name="unit_pixels">"pixels"</string>
+
+    <string name="unit_centimeters_short">"cm"</string>
+    <string name="unit_inches_short">"pol"</string>
+    <string name="unit_pixels_short">"px"</string>
+
+    <string name="month_hint">"MM"</string> 
+    <string name="year_hint">"AAAA"</string> 
+
+    <string name="title_choose_product_group">"Centro de impressão"</string>
+    <string name="title_create_phone_case">"Capa para telemóvel"</string>
+    <string name="title_image_source">"Aceder às fotografias"</string>
+    <string name="title_photobook">"Álbum de fotografias"</string>
+    <string name="title_calendar">"Calendário"</string>
+    <string name="title_poster">"Póster"</string>
+    <string name="title_basket">"Cesto"</string>
+    <string name="title_payment_sandbox">"Pagamento (TESTE)"</string>
+    <string name="title_payment">"Pagamento"</string>
+    <string name="title_payment_source_sandbox">"Pagamento (TESTE)"</string>
+    <string name="title_payment_source">"Pagamento"</string>
+    <string name="title_order_history">"Histórico de encomendas"</string>
+
+    <string name="settings_title_show_notification_messages">"Mensagens"</string>
+    <string name="settings_title_support">"Suporte"</string>
+    <string name="settings_title_privacy">"Política de privacidade"</string>
+    <string name="settings_title_terms">"Termos e Condições"</string>
+    <string name="settings_title_legal">"Jurídico"</string>
+    <string name="settings_title_licences">"Licenças de código aberto"</string>
+    <string name="settings_summary_licences">"Licenças de código aberto"</string>
+    <string name="settings_title_build_version">"Versão"</string>
+
+    <string name="alert_dialog_title_pack_not_full_format_string">"Selecionou %s"</string>
+    <string name="alert_dialog_message_pack_not_full_format_string" tools:ignore="PluralsCandidate">"Pode adicionar mais %d pelo mesmo preço"</string>
+
+    <string name="alert_dialog_title_oops">"Oeps!"</string>
+    <string name="alert_dialog_message_pricing_format_string">"Ocorreu um problema com o seu pedido:\n%s"</string>
+
+    <string name="alert_dialog_title_error_retrieving_products">"Ups!"</string>
+    <string name="alert_dialog_message_error_retrieving_products">"A ligação à Internet parece estar offline."</string>
+
+    <string name="alert_dialog_title_product_not_found">"Ups!"</string>
+    <string name="alert_dialog_message_product_not_found">"A ligação à Internet parece estar offline."</string>
+
+    <string name="alert_dialog_title_delete_photo">"Eliminar fotografia?"</string>
+    <string name="alert_dialog_message_delete_photo">"Tem a certeza de que pretende eliminar esta fotografia?"</string>
+    <string name="alert_dialog_delete_photo_cancel_text">"Manter"</string>
+    <string name="alert_dialog_delete_photo_confirm_text">"Eliminar"</string>
+
+    <string name="alert_dialog_message_no_images_selected">"Selecione algumas imagens."</string>
+
+    <string name="alert_dialog_message_no_recipient">"Introduza o nome do destinatário."</string>
+    <string name="alert_dialog_message_no_line1">"Preencha a Linha 1 do endereço."</string>
+    <string name="alert_dialog_message_no_postal_code">"Introduza o seu código postal."</string>
+    <string name="alert_dialog_message_no_email_address">"Introduza um endereço de e-mail."</string>
+    <string name="alert_dialog_message_no_city">"Introduza a sua localidade."</string>
+
+    <string name="alert_dialog_title_invalid_delivery_address">"Endereço de entrega inválido"</string>
+    <string name="alert_dialog_message_invalid_delivery_address">"Selecione um endereço de entrega."</string>
+
+    <string name="alert_dialog_title_invalid_email_address">"Endereço de e-mail inválido"</string>
+    <string name="alert_dialog_message_invalid_email_address">"Introduza um endereço de e-mail válido."</string>
+
+    <string name="alert_dialog_title_invalid_phone_number">"Número de telefone inválido"</string>
+    <string name="alert_dialog_message_invalid_phone_number">"Introduza um número de telefone válido."</string>
+
+    <string name="alert_dialog_message_connectivity">"A ligação à Internet parece estar offline."</string>
+
+    <string name="alert_dialog_message_processing">"Aguarde um momento…"</string>
+
+    <string name="alert_dialog_title_end_customer_session">"Terminar sessão"</string>
+    <string name="alert_dialog_message_end_customer_session">"Tem a certeza de que pretende terminar a sessão?"</string>
+
+    <string name="alert_dialog_title_remove_item">"Remover artigo"</string>
+    <string name="alert_dialog_message_remove_item">"Confirme que pretende remover este artigo do cesto."</string>
+
+    <string name="alert_dialog_title_empty_basket">"Esvaziar cesto"</string>
+    <string name="alert_dialog_message_empty_basket">"O seu cesto está atualmente vazio. Adicione um artigo antes de prosseguir para a fase de pagamento."</string>
+
+    <string name="alert_dialog_message_uploading_images">"A carregar imagens"</string>
+
+    <string name="alert_dialog_message_unable_to_store_card">"Não é possível guardar o cartão"</string>
+    <string name="alert_dialog_message_no_payment_id">"Nenhuma id de pagamento encontrada na prova de pagamento"</string>
+    <string name="alert_dialog_message_no_proof_of_payment">"Nenhuma prova de pagamento encontrada na confirmação de pagamento"</string>
+    <string name="alert_dialog_message_no_paypal_confirmation">"Nenhuma confirmação de pagamento recebida do PayPal"</string>
+    <string name="alert_dialog_message_card_expired">"Lamentamos, parece que o seu cartão expirou. Tente novamente."</string>
+    <string name="alert_dialog_message_card_not_recognised">"Lamentamos, não conseguimos reconhecer o seu cartão. Tente introduzir de novo manualmente os detalhes do seu cartão, se necessário."</string>
+
+    <string name="alert_dialog_item_pay_with_new_card">"Pagar com cartão novo"</string>
+    <string name="alert_dialog_item_pay_with_existing_card_format_string">"Pagar com cartão que vence em %1$s"</string>
+
+    <string name="log_out_warning">"A terminar automaticamente\na sessão"</string>
+
+    <string name="progress_dialog_title_add_to_basket">"Adicionar ao cesto"</string>
+    <string name="progress_dialog_title_updating_basket">"A atualizar o cesto"</string>
+
+    <string name="add_more">"Adicionar mais"</string>
+    <string name="Cancel">"Cancelar"</string>
+    <string name="Choose_Delivery_Address">"Selecionar endereço de entrega"</string>
+    <string name="Continue_Shopping">"Continuar a comprar"</string>
+    <string name="Country">"País"</string>
+    <string name="Description">"Descrição"</string>
+    <string name="Details">"Detalhes"</string>
+    <string name="Done">"Concluído"</string>
+    <string name="Edit">"Editar"</string>
+    <string name="Email">"E-mail"</string>
+    <string name="End_Session">"Terminar sessão"</string>
+    <string name="Flip">"Rodar"</string>
+    <string name="Free">"Gratuito"</string>
+    <string name="ITEM">"ARTIGO"</string>
+    <string name="Keep">"Manter"</string>
+    <string name="Loading">"A carregar"</string>
+    <string name="Loading_catalogue">"A carregar o catálogo"</string>
+    <string name="Log_Out">"Terminar sessão"</string>
+    <string name="Next">"Seguinte"</string>
+    <string name="Next_Customer">"Seguinte"</string>
+    <string name="No_Results">"Nenhum resultado encontrado"</string>
+    <string name="OK">"OK"</string>
+    <string name="Order_Id">"ID da encomenda"</string>
+    <string name="ORDER_ID">"ID DA ENCOMENDA"</string>
+    <string name="Order_Summary">"Resumo da encomenda"</string>
+    <string name="ORDER_SUMMARY">"RESUMO DA ENCOMENDA"</string>
+    <string name="Oops_">"Ups!"</string>
+    <string name="Pay">"Pagamento"</string>
+    <string name="Payment_Id">"ID de pagamento"</string>
+    <string name="PAYMENT_ID">"ID DE PAGAMENTO"</string>
+    <string name="PRICE">"PREÇO"</string>
+    <string name="print_these">"Imprimir estes artigos"</string>
+    <string name="Processing_">"A processar…"</string>
+    <string name="Promotional_Discount">"Desconto promocional"</string>
+    <string name="Remove">"Remover"</string>
+    <string name="Rotate">"Rodar"</string>
+    <string name="Quantity">"Quantidade"</string>
+    <string name="QUANTITY">"QUANTIDADE"</string>
+    <string name="Retry">"Tentar novamente"</string>
+    <string name="Save">"Poupe"</string>
+    <string name="Select_Image">"Selecionar imagem"</string>
+    <string name="Shipping">"Envio"</string>
+    <string name="Size">"Tamanho"</string>
+    <string name="Total">"Total"</string>
+
+    <string name="image_source_device">"Câmara"</string>
+    <string name="image_source_instagram">"Instagram"</string>
+    <string name="image_source_facebook">"Facebook"</string>
+    <string name="image_source_from_phone">"Carregar a partir do telemóvel"</string>
+
+    <string name="select_photo_from_device">"Selecionar fotografia da câmara"</string>
+    <string name="select_photo_from_instagram">"Selecionar fotografia do Instagram"</string>
+    <string name="select_photo_from_facebook">"Selecionar fotografia do Facebook"</string>
+    <string name="upload_photo_from_phone">"Carregar fotografia do telemóvel"</string>
+
+    <string name="destination_description_gbr">"Reino Unido"</string>
+    <string name="destination_description_europe">"Europa"</string>
+    <string name="destination_description_rest_of_world">"Todo o mundo"</string>
+
+    <string name="placeholder_message">"Mais artigos\nem breve!"</string>
+
+    <string name="order_success_banner_message">"Recebemos a sua\nencomenda"</string>
+    <string name="order_failure_banner_message">"Ocorreu um erro.\nTente novamente abaixo."</string>
+    <string name="order_failure_message">"Ocorreu um erro.\nTente novamente."</string>
+
+    <string name="product_quantity_format_string">"Pacote de %d"</string>
+
+    <string name="product_free_shipping">"Gratuito"</string>
+    <string name="product_shipping_summary_format_string">"De %s"</string>
+
+    <string name="product_free_worldwide_shipping">"Portes de envio gratuitos para todo o mundo"</string>
+
+    <string name="product_overview_guarantee_title">"Garantia de qualidade"</string>
+    <string name="product_overview_guarantee_text" formatted="false">"Esperamos que os nossos produtos sejam do seu agrado. Contudo, oferecemos-lhe um reembolso total se não estiver 100% satisfeito - mesmo se estiver a ter um mau dia."</string>
+
+    <string name="product_overview_start_button_text">"Começar a criar"</string>
+
+    <string name="image_selection_empty_message">"Adicione fotografias tocando\nnos ícones acima"</string>
+
+    <string name="edit_border_text_hint">"Adicione texto aqui"</string>
+
+    <string name="multi_page_instructions_html">"<![CDATA[<b>Toque</b> na imagem para editar.<br><b>Mantenha-a premida</b> para reordenar.]]>"</string>
+
+    <string name="address_book_empty">"Livro de endereços vazio"</string>
+
+    <string name="image_source_prompt">"Adicione fotografias tocando numa das opções"</string>
+
+    <string name="image_selection_pack_title_format_string" tools:ignore="PluralsCandidate">"#%1$d pacote de %2$d %3$s"</string>
+
+    <string name="image_selection_clear_photos_format_string">"Eliminar %s"</string>
+
+    <string name="edit_image_prompt_text">"Reposicionar a fotografia"</string>
+
+    <string name="image_selection_proceed_button_text">"Rever e editar"</string>
+
+    <string name="review_and_edit_title_format_string">"%1$d / %2$d"</string>
+    <string name="review_and_edit_proceed_button_text">"Confirmar"</string>
+
+    <string name="edit_image_title">"Editar imagem"</string>
+
+    <string name="basket_empty">"O cesto está vazio"</string>
+    <string name="basket_left_button_text">"Continuar a comprar"</string>
+    <string name="basket_right_button_text">"Fase de pagamento"</string>
+
+    <string name="address_hint_text_recipient">"Nome"</string>
+    <string name="address_hint_text_line_1">"Linha de endereço 1"</string>
+    <string name="address_hint_text_line_2">"Linha de endereço 2"</string>
+    <string name="address_hint_text_city">"Localidade"</string>
+    <string name="address_hint_text_county_or_state">"Distrito"</string>
+    <string name="address_hint_text_postcode_or_zip">"Código postal"</string>
+
+    <string name="shipping_delivery_address_button_text">Selecionar endereço de entrega</string>
+    <string name="shipping_phone_hint_text">"Telefone"</string>
+    <string name="shipping_email_reason">"Necessitamos do seu e-mail para lhe enviarmos atualizações sobre a confirmação da sua encomenda."</string>
+    <string name="shipping_phone_reason">"Necessitamos do seu número de telefone para o caso de problemas na entrega."</string>
+    <string name="shipping_proceed_button_text">@string/Done</string>
+
+    <string name="address_search_prompt">"Procurar endereços acima"</string>
+
+    <string name="address_search_hint_format_string">"Procurar %1$s"</string>
+    <string name="address_search_empty_results">"Procurar endereços acima"</string>
+    <string name="address_search_dialog_title">"A procurar detalhes"</string>
+    <string name="address_search_dialog_message">"A procurar detalhes do endereço"</string>
+    <string name="address_search_no_results">"Nenhum resultado encontrado"</string>
+
+    <string name="button_text_edit_address">"Editar endereço"</string>
+    <string name="button_text_delete_address">"Eliminar endereço"</string>
+
+    <string name="address_edit_proceed_button_text">"Poupe"</string>
+
+    <string name="payment_promo_hint">"Código promocional"</string>
+    <string name="payment_promo_button_text_apply">"Aplicar"</string>
+    <string name="payment_promo_button_text_clear">"Limpar"</string>
+    <string name="payment_credit_card_button_text">"Cartão de crédito"</string>
+    <string name="payment_credit_card_button_text_free">"Gratuito"</string>
+    <string name="payment_paypal_button_text">"PayPal"</string>
+
+    <string name="stripe_error_invalid_card_details">"Detalhes do cartão inválidos"</string>
+    <string name="stripe_error_create_object">"Não é possível recuperar o token Stripe"</string>
+    <string name="stripe_error_retrieve_token">"Não é possível recuperar o token Stripe"</string>
+
+    <string name="send_email_chooser_title">"Enviar e-mail"</string>
+
+    <string name="Card_Number">"Número do cartão"</string>
+    <string name="Expires">"Expira"</string>
+    <string name="CVV">"CVV"</string>
+
+    <string name="card_error_invalid_number">"Número do cartão inválido"</string>
+    <string name="card_error_invalid_expiry_date">"Data de validade inválida"</string>
+    <string name="card_error_invalid_cvv">"Valor de verificação inválido"</string>
+
+    <string name="order_submission_message_uploading">"A carregar imagens"</string>
+    <string name="order_submission_message_posted">"Enviado"</string>
+    <string name="order_submission_message_received">"Recebido"</string>
+    <string name="order_submission_message_accepted">"Aceite"</string>
+    <string name="order_submission_message_validated">"Validado"</string>
+    <string name="order_submission_message_processed">"Processado"</string>
+
+
+    <string name="alert_dialog_title_order_submission_error">"Erro de envio da encomenda"</string>
+    <string name="order_timeout_message">"A sua encomenda parece não ter sido ainda processada. Os servidores podem estar atualmente ocupados e o pagamento está a demorar algum tempo a ser processado. Tente novamente mais tarde."</string>
+
+    <string name="alert_dialog_title_order_cancelled">"Encomenda cancelada"</string>
+    <string name="alert_dialog_message_order_cancelled">"Ocorreu um erro - a sua encomenda parece ter sido cancelada durante o envio."</string>
+
+    <string name="alert_dialog_message_server_offline_maintenance">"O servidor está atualmente offline para manutenção."</string>
+    <string name="alert_dialog_message_server_returned_html">"O servidor forneceu uma resposta (HTML) inválida. Isto ocorre normalmente quando o servidor está indisponível."</string>
+
+    <string name="scan_qr_code">"Digitalizar código QR"</string>
+    <string name="scan_qr_code_instructions">"Digitalize o código QR utilizando a aplicação do\nleitor de códigos QR no seu dispositivo."</string>
+    <string name="scan_qr_code_alternate_instructions">"Em alternativa, introduza o seguinte URL na barra de endereço do browser do seu telemóvel:"</string>
+
+    <string name="action_settings">"Definições"</string>
+    <string name="title_activity_checkout">"Envio"</string>
+    <string name="title_activity_order_receipt">"Recibo"</string>
+    <string name="title_activity_payment">"Pagamento"</string>
+    <string name="title_activity_address_book">"Catálogo de endereços"</string>
+
+    <string name="add_address">"Adres toevoegen"</string>
+    <string name="title_activity_address_add">"Adicionar endereço"</string>
+    <string name="title_activity_address_edit">"Editar endereço"</string>
+    <string name="action_save_address">"Guardar endereço"</string>
+
+    <plurals name="Photo_plurals">
+        <item quantity="zero">"%d fotografias"</item>
+        <item quantity="one">"%d fotografia"</item>
+        <item quantity="two">"%d fotografias"</item>
+        <item quantity="few">"%d fotografias"</item>
+        <item quantity="many">"%d fotografias"</item>
+        <item quantity="other">"%d fotografias"</item>
+    </plurals>
+
+    <plurals name="photo_plurals">
+        <item quantity="zero">"%d fotografias"</item>
+        <item quantity="one">"%d fotografia"</item>
+        <item quantity="two">"%d fotografias"</item>
+        <item quantity="few">"%d fotografias"</item>
+        <item quantity="many">"%d fotografias"</item>
+        <item quantity="other">"%d fotografias"</item>
+    </plurals>
+
+</resources>
