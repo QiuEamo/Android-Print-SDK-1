@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="powered_by">"Yhteistyössä Kite.ly"</string>
+
+    <string name="unit_centimeters">"senttimetriä"</string>
+    <string name="unit_inches">"tuumaa"</string>
+    <string name="unit_pixels">"pikseliä"</string>
+
+    <string name="unit_centimeters_short">"cm"</string>
+    <string name="unit_inches_short">"in"</string>
+    <string name="unit_pixels_short">"px"</string>
+
+    <string name="month_hint">"KK"</string> 
+    <string name="year_hint">"VVVV"</string> 
+
+    <string name="title_choose_product_group">"Print Shop"</string>
+    <string name="title_create_phone_case">"Snap-suojakuori"</string>
+    <string name="title_image_source">"Avaa kuvat"</string>
+    <string name="title_photobook">"Kuvakirja"</string>
+    <string name="title_calendar">"Kalenteri"</string>
+    <string name="title_poster">"Juliste"</string>
+    <string name="title_basket">"Ostoskori"</string>
+    <string name="title_payment_sandbox">"Maksu (TESTI)"</string>
+    <string name="title_payment">"Maksu"</string>
+    <string name="title_payment_source_sandbox">"Maksu (TESTI)"</string>
+    <string name="title_payment_source">"Maksu"</string>
+    <string name="title_order_history">"Tilaushistoria"</string>
+
+    <string name="settings_title_show_notification_messages">"Viestien"</string>
+    <string name="settings_title_support">"Tuki"</string>
+    <string name="settings_title_privacy">"Tietosuojakäytäntö"</string>
+    <string name="settings_title_terms">"Käyttöehdot"</string>
+    <string name="settings_title_legal">"Oikeudelliset tiedot"</string>
+    <string name="settings_title_licences">"Avoimen lähdekoodin lisenssit"</string>
+    <string name="settings_summary_licences">"Avoimen lähdekoodin lisenssit"</string>
+    <string name="settings_title_build_version">"Versio"</string>
+
+    <string name="alert_dialog_title_pack_not_full_format_string">"Olet valinnut %s"</string>
+    <string name="alert_dialog_message_pack_not_full_format_string" tools:ignore="PluralsCandidate">"Voit tilata %d lisää samaan hintaan"</string>
+
+    <string name="alert_dialog_title_oops">"Oeps!"</string>
+    <string name="alert_dialog_message_pricing_format_string">"Pyynnön käsittely epäonnistui:\n%s"</string>
+
+    <string name="alert_dialog_title_error_retrieving_products">"Hups!"</string>
+    <string name="alert_dialog_message_error_retrieving_products">"Internetyhteys ei toimi."</string>
+
+    <string name="alert_dialog_title_product_not_found">"Hups!"</string>
+    <string name="alert_dialog_message_product_not_found">"Internetyhteys ei toimi."</string>
+
+    <string name="alert_dialog_title_delete_photo">"Poistetaanko kuva?"</string>
+    <string name="alert_dialog_message_delete_photo">"Haluatko varmasti poistaa tämän kuvan?"</string>
+    <string name="alert_dialog_delete_photo_cancel_text">"Pidä"</string>
+    <string name="alert_dialog_delete_photo_confirm_text">"Poista"</string>
+
+    <string name="alert_dialog_message_no_images_selected">"Valitse kuvia."</string>
+
+    <string name="alert_dialog_message_no_recipient">"Kirjoita vastaanottajan nimi."</string>
+    <string name="alert_dialog_message_no_line1">"Täytä osoiterivi 1."</string>
+    <string name="alert_dialog_message_no_postal_code">"Anna postinumerosi."</string>
+    <string name="alert_dialog_message_no_email_address">"Anna sähköpostiosoite."</string>
+    <string name="alert_dialog_message_no_city">"Anna kaupunkisi."</string>
+
+    <string name="alert_dialog_title_invalid_delivery_address">"Virheellinen toimitusosoite"</string>
+    <string name="alert_dialog_message_invalid_delivery_address">"Valitse toimitusosoite."</string>
+
+    <string name="alert_dialog_title_invalid_email_address">"Virheellinen sähköpostiosoite"</string>
+    <string name="alert_dialog_message_invalid_email_address">"Anna kelvollinen sähköpostiosoite."</string>
+
+    <string name="alert_dialog_title_invalid_phone_number">"Virheellinen puhelinnumero"</string>
+    <string name="alert_dialog_message_invalid_phone_number">"Anna kelvollinen puhelinnumero."</string>
+
+    <string name="alert_dialog_message_connectivity">"Internetyhteys ei toimi."</string>
+
+    <string name="alert_dialog_message_processing">"Pieni hetki…"</string>
+
+    <string name="alert_dialog_title_end_customer_session">"Lopeta istunto"</string>
+    <string name="alert_dialog_message_end_customer_session">"Haluatko varmasti lopettaa tämän istunnon?"</string>
+
+    <string name="alert_dialog_title_remove_item">"Poista tuote"</string>
+    <string name="alert_dialog_message_remove_item">"Vahvista, että haluat poistaa tämän tuotteen ostoskorista."</string>
+
+    <string name="alert_dialog_title_empty_basket">"Tyhjä ostoskori"</string>
+    <string name="alert_dialog_message_empty_basket">"Ostoskorisi on tyhjä. Lisää tuotteita ostoskoriin, ennen kuin menet kassalle."</string>
+
+    <string name="alert_dialog_message_uploading_images">"Ladataan kuvia"</string>
+
+    <string name="alert_dialog_message_unable_to_store_card">"Kortin tallennus ei onnistu"</string>
+    <string name="alert_dialog_message_no_payment_id">"Maksutunnusta ei löydetty kuitista"</string>
+    <string name="alert_dialog_message_no_proof_of_payment">"Kuittia ei löydetty maksuvahvistuksesta"</string>
+    <string name="alert_dialog_message_no_paypal_confirmation">"PayPalilta ei saatu maksuvahvistusta"</string>
+    <string name="alert_dialog_message_card_expired">"Käyttämäsi kortti on vanhentunut. Yritä uudelleen."</string>
+    <string name="alert_dialog_message_card_not_recognised">"Emme tunnistaneet korttiasi. Yritä uudelleen ja anna kortin tiedot tarvittaessa manuaalisesti."</string>
+
+    <string name="alert_dialog_item_pay_with_new_card">"Maksa uudella kortilla"</string>
+    <string name="alert_dialog_item_pay_with_existing_card_format_string">"Maksa kortilla, jonka loppuosa on %1$s"</string>
+
+    <string name="log_out_warning">"Sinut kirjataan\nulos automaattisesti"</string>
+
+    <string name="progress_dialog_title_add_to_basket">"Lisää ostoskoriin"</string>
+    <string name="progress_dialog_title_updating_basket">"Päivitetään ostoskoria"</string>
+
+    <string name="add_more">"Lisää enemmän"</string>
+    <string name="Cancel">"Peruuta"</string>
+    <string name="Choose_Delivery_Address">"Valitse toimitusosoite"</string>
+    <string name="Continue_Shopping">"Jatka tuotteiden selaamista"</string>
+    <string name="Country">"Maa"</string>
+    <string name="Description">"Kuvaus"</string>
+    <string name="Details">"Tiedot"</string>
+    <string name="Done">"Valmis"</string>
+    <string name="Edit">"Muokkaa"</string>
+    <string name="Email">"Sähköposti"</string>
+    <string name="End_Session">"Lopeta istunto"</string>
+    <string name="Flip">"Käännä vaakasuorassa"</string>
+    <string name="Free">"Ilmainen"</string>
+    <string name="ITEM">"TUOTE"</string>
+    <string name="Keep">"Pidä"</string>
+    <string name="Loading">"Ladataan"</string>
+    <string name="Loading_catalogue">"Ladataan kuvastoa"</string>
+    <string name="Log_Out">"Kirjaudu ulos"</string>
+    <string name="Next">"Seuraava"</string>
+    <string name="Next_Customer">"Seuraava"</string>
+    <string name="No_Results">"Tuloksia ei löytynyt."</string>
+    <string name="OK">"OK"</string>
+    <string name="Order_Id">"Tilausnumero"</string>
+    <string name="ORDER_ID">"TILAUSNUMERO"</string>
+    <string name="Order_Summary">"Tilauksen yhteenveto"</string>
+    <string name="ORDER_SUMMARY">"TILAUKSEN YHTEENVETO"</string>
+    <string name="Oops_">"Hups!"</string>
+    <string name="Pay">"Maksa"</string>
+    <string name="Payment_Id">"Maksutunnus"</string>
+    <string name="PAYMENT_ID">"MAKSUTUNNUS"</string>
+    <string name="PRICE">"HINTA"</string>
+    <string name="print_these">"Tulosta nämä"</string>
+    <string name="Processing_">"Käsitellään…"</string>
+    <string name="Promotional_Discount">"Kampanja-alennus"</string>
+    <string name="Remove">"Poista"</string>
+    <string name="Rotate">"Kierrä"</string>
+    <string name="Quantity">"Määrä"</string>
+    <string name="QUANTITY">"MÄÄRÄ"</string>
+    <string name="Retry">"Yritä uudelleen"</string>
+    <string name="Save">"Tallenna"</string>
+    <string name="Select_Image">"Valitse kuva"</string>
+    <string name="Shipping">"Toimitus"</string>
+    <string name="Size">"Koko"</string>
+    <string name="Total">"Yhteensä"</string>
+
+    <string name="image_source_device">"Kamera"</string>
+    <string name="image_source_instagram">"Instagram"</string>
+    <string name="image_source_facebook">"Facebook"</string>
+    <string name="image_source_from_phone">"Lataa puhelimesta"</string>
+
+    <string name="select_photo_from_device">"Valitse kuva kamerasta"</string>
+    <string name="select_photo_from_instagram">"Valitse kuva Instagramista"</string>
+    <string name="select_photo_from_facebook">"Valitse kuva Facebookista"</string>
+    <string name="upload_photo_from_phone">"Lataa kuva puhelimesta"</string>
+
+    <string name="destination_description_gbr">"Iso-Britannia"</string>
+    <string name="destination_description_europe">"Eurooppa"</string>
+    <string name="destination_description_rest_of_world">"Koko maailma"</string>
+
+    <string name="placeholder_message">"Lisää tuotteita\ntulossa pian!"</string>
+
+    <string name="order_success_banner_message">"Olemme vastaanottaneet\ntilauksesi"</string>
+    <string name="order_failure_banner_message">"Jokin meni vikaan.\nYritä uudelleen alla."</string>
+    <string name="order_failure_message">"Jokin meni vikaan.\nYritä uudelleen."</string>
+
+    <string name="product_quantity_format_string">"Pakkaus: %d"</string>
+
+    <string name="product_free_shipping">"Ilmainen"</string>
+    <string name="product_shipping_summary_format_string">"Alkaen %s"</string>
+
+    <string name="product_free_worldwide_shipping">"Ilmainen toimitus kaikkialle maailmaan"</string>
+
+    <string name="product_overview_guarantee_title">"Laatutakuu"</string>
+    <string name="product_overview_guarantee_text" formatted="false">"Olemme varmoja, että tuotteemme täyttävät odotuksesi. Jos kuitenkaan et ole täysin tyytyväinen tuotteisiin, saat rahasi takaisin – olipa syy mikä tahansa."</string>
+
+    <string name="product_overview_start_button_text">"Aloita tuotteen luominen"</string>
+
+    <string name="image_selection_empty_message">"Lisää kuvia napauttamalla\nyllä olevia kuvakkeita"</string>
+
+    <string name="edit_border_text_hint">"Lisää teksti tähän"</string>
+
+    <string name="multi_page_instructions_html">"<![CDATA[Muokkaa <b>napauttamalla</b> kuvaa.<br>Tee uusi tilaus <b>painamalla pitkään.</b>]]>"</string>
+
+    <string name="address_book_empty">"Osoitekirja on tyhjä"</string>
+
+    <string name="image_source_prompt">"Lisää kuvia napauttamalla jotakin vaihtoehdoista"</string>
+
+    <string name="image_selection_pack_title_format_string" tools:ignore="PluralsCandidate">"#%1$d paketti / %2$d x %3$s"</string>
+
+    <string name="image_selection_clear_photos_format_string">"Tyhjennä %s"</string>
+
+    <string name="edit_image_prompt_text">"Siirrä kuvaa"</string>
+
+    <string name="image_selection_proceed_button_text">"Tarkista ja muokkaa"</string>
+
+    <string name="review_and_edit_title_format_string">"%1$d / %2$d"</string>
+    <string name="review_and_edit_proceed_button_text">"Vahvista"</string>
+
+    <string name="edit_image_title">"Muokkaa kuvaa"</string>
+
+    <string name="basket_empty">"Ostoskori on tyhjä"</string>
+    <string name="basket_left_button_text">"Jatka tuotteiden selaamista"</string>
+    <string name="basket_right_button_text">"Kassalle"</string>
+
+    <string name="address_hint_text_recipient">"Nimi"</string>
+    <string name="address_hint_text_line_1">"Osoiterivi 1"</string>
+    <string name="address_hint_text_line_2">"Osoiterivi 2"</string>
+    <string name="address_hint_text_city">"Kaupunki"</string>
+    <string name="address_hint_text_county_or_state">"Alue/osavaltio"</string>
+    <string name="address_hint_text_postcode_or_zip">"Postinumero"</string>
+
+    <string name="shipping_delivery_address_button_text">Valitse toimitusosoite</string>
+    <string name="shipping_phone_hint_text">"Puhelin"</string>
+    <string name="shipping_email_reason">"Tarvitsemme sähköpostiosoitteesi, jotta voimme lähettää sinulle vahvistuksen ja tietoja tilauksen etenemisestä."</string>
+    <string name="shipping_phone_reason">"Tarvitsemme puhelinnumerosi toimitusongelmien varalta."</string>
+    <string name="shipping_proceed_button_text">@string/Done</string>
+
+    <string name="address_search_prompt">"Hae osoitteita ylhäältä"</string>
+
+    <string name="address_search_hint_format_string">"Etsi %1$s"</string>
+    <string name="address_search_empty_results">"Hae osoitteita ylhäältä"</string>
+    <string name="address_search_dialog_title">"Haetaan tietoja"</string>
+    <string name="address_search_dialog_message">"Haetaan osoitetietoja"</string>
+    <string name="address_search_no_results">"Tuloksia ei löytynyt."</string>
+
+    <string name="button_text_edit_address">"Muokkaa osoitetta"</string>
+    <string name="button_text_delete_address">"Poista osoite"</string>
+
+    <string name="address_edit_proceed_button_text">"Tallenna"</string>
+
+    <string name="payment_promo_hint">"Alennuskoodi"</string>
+    <string name="payment_promo_button_text_apply">"Käytä"</string>
+    <string name="payment_promo_button_text_clear">"Tyhjennä"</string>
+    <string name="payment_credit_card_button_text">"Luottokortti"</string>
+    <string name="payment_credit_card_button_text_free">"Ilmainen"</string>
+    <string name="payment_paypal_button_text">"PayPal"</string>
+
+    <string name="stripe_error_invalid_card_details">"Virheelliset korttitiedot"</string>
+    <string name="stripe_error_create_object">"Stripe-tunnisteen haku epäonnistui"</string>
+    <string name="stripe_error_retrieve_token">"Stripe-tunnisteen haku epäonnistui"</string>
+
+    <string name="send_email_chooser_title">"Lähetä sähköpostia"</string>
+
+    <string name="Card_Number">"Kortin numero"</string>
+    <string name="Expires">"Vanhentuu"</string>
+    <string name="CVV">"CVV"</string>
+
+    <string name="card_error_invalid_number">"Virheellinen kortin numero"</string>
+    <string name="card_error_invalid_expiry_date">"Virheellinen vanhenemisajankohta"</string>
+    <string name="card_error_invalid_cvv">"Virheellinen vahvistusarvo"</string>
+
+    <string name="order_submission_message_uploading">"Ladataan kuvia"</string>
+    <string name="order_submission_message_posted">"Julkaistu"</string>
+    <string name="order_submission_message_received">"Vastaanotettu"</string>
+    <string name="order_submission_message_accepted">"Hyväksytty"</string>
+    <string name="order_submission_message_validated">"Vahvistettu"</string>
+    <string name="order_submission_message_processed">"Käsitelty"</string>
+
+
+    <string name="alert_dialog_title_order_submission_error">"Tilauksen lähetysvirhe"</string>
+    <string name="order_timeout_message">"Tilaustasi ei ole vielä käsitelty. Maksun käsittely voi kestää, jos palvelimet ovat varattuja. Yritä myöhemmin uudestaan."</string>
+
+    <string name="alert_dialog_title_order_cancelled">"Tilaus peruutettu"</string>
+    <string name="alert_dialog_message_order_cancelled">"Jokin meni vikaan – tilauksesi on peruutettu lähetyksen aikana."</string>
+
+    <string name="alert_dialog_message_server_offline_maintenance">"Palvelin on poissa käytöstä huollon takia."</string>
+    <string name="alert_dialog_message_server_returned_html">"Palvelin lähetti virheellisen (HTML) vastauksen. Tämä tarkoittaa yleensä sitä, että palvelin ei ole käytettävissä."</string>
+
+    <string name="scan_qr_code">"Skannaa QR-koodi"</string>
+    <string name="scan_qr_code_instructions">"Skannaa QR-koodi käyttämällä laitteesee\nasennettua QR-lukusovellusta."</string>
+    <string name="scan_qr_code_alternate_instructions">"Voit myös kirjoittaa seuraavan URL-osoitteen mobiiliselaimesi osoitekenttään:"</string>
+
+    <string name="action_settings">"Asetukset"</string>
+    <string name="title_activity_checkout">"Toimitus"</string>
+    <string name="title_activity_order_receipt">"Kuitti"</string>
+    <string name="title_activity_payment">"Maksu"</string>
+    <string name="title_activity_address_book">"Osoitekirja"</string>
+
+    <string name="add_address">"Adres toevoegen"</string>
+    <string name="title_activity_address_add">"Lisää osoite"</string>
+    <string name="title_activity_address_edit">"Muokkaa osoitetta"</string>
+    <string name="action_save_address">"Tallenna osoite"</string>
+
+    <plurals name="Photo_plurals">
+        <item quantity="zero">"%d kuvaa"</item>
+        <item quantity="one">"%d kuva"</item>
+        <item quantity="two">"%d kuvaa"</item>
+        <item quantity="few">"%d kuvaa"</item>
+        <item quantity="many">"%d kuvaa"</item>
+        <item quantity="other">"%d kuvaa"</item>
+    </plurals>
+
+    <plurals name="photo_plurals">
+        <item quantity="zero">"%d kuvaa"</item>
+        <item quantity="one">"%d kuva"</item>
+        <item quantity="two">"%d kuvaa"</item>
+        <item quantity="few">"%d kuvaa"</item>
+        <item quantity="many">"%d kuvaa"</item>
+        <item quantity="other">"%d kuvaa"</item>
+    </plurals>
+
+</resources>
